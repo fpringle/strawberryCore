@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="100">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>action.h</itemPath>
+      <itemPath>board.h</itemPath>
+      <itemPath>eval.h</itemPath>
+      <itemPath>exceptions.h</itemPath>
+      <itemPath>hash.h</itemPath>
+      <itemPath>init.h</itemPath>
+      <itemPath>move.h</itemPath>
+      <itemPath>play.h</itemPath>
+      <itemPath>search.h</itemPath>
+      <itemPath>twiddle.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>action.cpp</itemPath>
+      <itemPath>board.cpp</itemPath>
+      <itemPath>check.cpp</itemPath>
+      <itemPath>eval.cpp</itemPath>
+      <itemPath>hash.cpp</itemPath>
+      <itemPath>init.cpp</itemPath>
+      <itemPath>main.cpp</itemPath>
+      <itemPath>move.cpp</itemPath>
+      <itemPath>play.cpp</itemPath>
+      <itemPath>search.cpp</itemPath>
+      <itemPath>twiddle.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+      <logicalFolder name="f1"
+                     displayName="board.h test"
+                     projectFiles="true"
+                     kind="TEST">
+        <itemPath>tests/boardtestclass.cpp</itemPath>
+        <itemPath>tests/boardtestclass.h</itemPath>
+        <itemPath>tests/boardtestrunner.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f2"
+                     displayName="eval.cpp test"
+                     projectFiles="true"
+                     kind="TEST">
+        <itemPath>tests/evaltestclass.cpp</itemPath>
+        <itemPath>tests/evaltestclass.h</itemPath>
+        <itemPath>tests/evaltestrunner.cpp</itemPath>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </compileType>
+      <item path="action.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="action.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="board.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="board.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="check.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="eval.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="eval.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="exceptions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <folder path="TestFiles">
+        <linkerTool>
+          <commandLine>-lcppunit</commandLine>
+        </linkerTool>
+      </folder>
+      <folder path="TestFiles/f1">
+        <cTool>
+          <commandLine>`cppunit-config --cflags`</commandLine>
+        </cTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f1</output>
+        </linkerTool>
+      </folder>
+      <folder path="TestFiles/f2">
+        <cTool>
+          <commandLine>`cppunit-config --cflags`</commandLine>
+        </cTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f2</output>
+        </linkerTool>
+      </folder>
+      <item path="hash.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="hash.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="init.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="init.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="move.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="move.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="play.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="play.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="search.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="search.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/boardtestclass.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/boardtestclass.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/boardtestrunner.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/evaltestclass.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/evaltestclass.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/evaltestrunner.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="twiddle.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="twiddle.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+      </compileType>
+      <item path="action.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="action.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="board.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="board.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="check.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="eval.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="eval.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="exceptions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <folder path="TestFiles/f1">
+        <cTool>
+          <commandLine>`cppunit-config --cflags`</commandLine>
+        </cTool>
+        <ccTool>
+          <commandLine>`cppunit-config --cflags`</commandLine>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f1</output>
+          <linkerLibItems>
+            <linkerOptionItem>`cppunit-config --libs`</linkerOptionItem>
+          </linkerLibItems>
+        </linkerTool>
+      </folder>
+      <folder path="TestFiles/f2">
+        <cTool>
+          <commandLine>`cppunit-config --cflags`</commandLine>
+        </cTool>
+        <ccTool>
+          <commandLine>`cppunit-config --cflags`</commandLine>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f2</output>
+          <linkerLibItems>
+            <linkerOptionItem>`cppunit-config --libs`</linkerOptionItem>
+          </linkerLibItems>
+        </linkerTool>
+      </folder>
+      <item path="hash.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="hash.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="init.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="init.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="move.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="move.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="play.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="play.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="search.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="search.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/boardtestclass.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/boardtestclass.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/boardtestrunner.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/evaltestclass.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/evaltestclass.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/evaltestrunner.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="twiddle.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="twiddle.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
