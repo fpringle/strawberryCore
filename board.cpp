@@ -192,6 +192,23 @@ void board::getSide(colour * dest) {
   *dest = sideToMove;
 }
 
+void print_bb(bitboard bb, char c, std::ostream& cout) {//  = 'x') {
+  int i,j;
+  char to_print[64];
+  for (i=0;i<64;i++) {
+    if (bb&1ULL) to_print[i]=c;
+    else to_print[i]='.';
+    bb >>= 1;
+  }
+  for (i=7;i>=0;i--) {
+    for (j=0;j<8;j++) {
+      cout << to_print[i*8+j] << ' ';
+    }
+    cout << endl;
+  }
+  cout << endl;
+}
+
 // display the current state of the board
 void board::print_board(std::ostream& cout) {
   // uppercase = black, lowercase = white

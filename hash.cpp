@@ -97,6 +97,7 @@ uint64_t board::zobrist_hash() {
       if (tmp & 1ULL) {
         ret ^= zobristKeys[cP*64 + i];
       }
+      tmp >>= 1;
     }
   }
 

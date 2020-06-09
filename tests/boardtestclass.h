@@ -18,6 +18,7 @@ class boardtestclass : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(testBoard2);
     CPPUNIT_TEST(testBoard3);
     
+    CPPUNIT_TEST(testPrint_bb);
     CPPUNIT_TEST(testPrint_board);
     CPPUNIT_TEST(testPrint_all);
     CPPUNIT_TEST(testFEN);
@@ -43,6 +44,7 @@ private:
     void testBoard2();
     void testBoard3();
     
+    void testPrint_bb();
     void testPrint_board();
     void testPrint_all();
     void testFEN();

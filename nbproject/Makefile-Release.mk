@@ -53,14 +53,23 @@ TESTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tests
 # Test Files
 TESTFILES= \
 	${TESTDIR}/TestFiles/f1 \
-	${TESTDIR}/TestFiles/f2
+	${TESTDIR}/TestFiles/f2 \
+	${TESTDIR}/TestFiles/f3 \
+	${TESTDIR}/TestFiles/f5 \
+	${TESTDIR}/TestFiles/f4
 
 # Test Object Files
 TESTOBJECTFILES= \
 	${TESTDIR}/tests/boardtestclass.o \
 	${TESTDIR}/tests/boardtestrunner.o \
 	${TESTDIR}/tests/evaltestclass.o \
-	${TESTDIR}/tests/evaltestrunner.o
+	${TESTDIR}/tests/evaltestrunner.o \
+	${TESTDIR}/tests/hashtestclass.o \
+	${TESTDIR}/tests/hastestrunner.o \
+	${TESTDIR}/tests/movetestclass.o \
+	${TESTDIR}/tests/movetestrunner.o \
+	${TESTDIR}/tests/twiddletestclass.o \
+	${TESTDIR}/tests/twiddletestrunner.o
 
 # C Compiler Flags
 CFLAGS=
@@ -156,6 +165,18 @@ ${TESTDIR}/TestFiles/f2: ${TESTDIR}/tests/evaltestclass.o ${TESTDIR}/tests/evalt
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc} -o ${TESTDIR}/TestFiles/f2 $^ ${LDLIBSOPTIONS}   `cppunit-config --libs`   
 
+${TESTDIR}/TestFiles/f3: ${TESTDIR}/tests/hashtestclass.o ${TESTDIR}/tests/hastestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
+	${MKDIR} -p ${TESTDIR}/TestFiles
+	${LINK.cc} -o ${TESTDIR}/TestFiles/f3 $^ ${LDLIBSOPTIONS}   
+
+${TESTDIR}/TestFiles/f5: ${TESTDIR}/tests/movetestclass.o ${TESTDIR}/tests/movetestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
+	${MKDIR} -p ${TESTDIR}/TestFiles
+	${LINK.cc} -o ${TESTDIR}/TestFiles/f5 $^ ${LDLIBSOPTIONS}   
+
+${TESTDIR}/TestFiles/f4: ${TESTDIR}/tests/twiddletestclass.o ${TESTDIR}/tests/twiddletestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
+	${MKDIR} -p ${TESTDIR}/TestFiles
+	${LINK.cc} -o ${TESTDIR}/TestFiles/f4 $^ ${LDLIBSOPTIONS}   
+
 
 ${TESTDIR}/tests/boardtestclass.o: tests/boardtestclass.cpp 
 	${MKDIR} -p ${TESTDIR}/tests
@@ -179,6 +200,42 @@ ${TESTDIR}/tests/evaltestrunner.o: tests/evaltestrunner.cpp
 	${MKDIR} -p ${TESTDIR}/tests
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 `cppunit-config --cflags` -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/evaltestrunner.o tests/evaltestrunner.cpp
+
+
+${TESTDIR}/tests/hashtestclass.o: tests/hashtestclass.cpp 
+	${MKDIR} -p ${TESTDIR}/tests
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/hashtestclass.o tests/hashtestclass.cpp
+
+
+${TESTDIR}/tests/hastestrunner.o: tests/hastestrunner.cpp 
+	${MKDIR} -p ${TESTDIR}/tests
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/hastestrunner.o tests/hastestrunner.cpp
+
+
+${TESTDIR}/tests/movetestclass.o: tests/movetestclass.cpp 
+	${MKDIR} -p ${TESTDIR}/tests
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/movetestclass.o tests/movetestclass.cpp
+
+
+${TESTDIR}/tests/movetestrunner.o: tests/movetestrunner.cpp 
+	${MKDIR} -p ${TESTDIR}/tests
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/movetestrunner.o tests/movetestrunner.cpp
+
+
+${TESTDIR}/tests/twiddletestclass.o: tests/twiddletestclass.cpp 
+	${MKDIR} -p ${TESTDIR}/tests
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/twiddletestclass.o tests/twiddletestclass.cpp
+
+
+${TESTDIR}/tests/twiddletestrunner.o: tests/twiddletestrunner.cpp 
+	${MKDIR} -p ${TESTDIR}/tests
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/twiddletestrunner.o tests/twiddletestrunner.cpp
 
 
 ${OBJECTDIR}/action_nomain.o: ${OBJECTDIR}/action.o action.cpp 
@@ -330,6 +387,9 @@ ${OBJECTDIR}/twiddle_nomain.o: ${OBJECTDIR}/twiddle.o twiddle.cpp
 	then  \
 	    ${TESTDIR}/TestFiles/f1 || true; \
 	    ${TESTDIR}/TestFiles/f2 || true; \
+	    ${TESTDIR}/TestFiles/f3 || true; \
+	    ${TESTDIR}/TestFiles/f5 || true; \
+	    ${TESTDIR}/TestFiles/f4 || true; \
 	else  \
 	    ./${TEST} || true; \
 	fi

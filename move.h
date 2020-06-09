@@ -66,8 +66,7 @@ struct move_t {
     uint16_t give();
   };
 
-void print_bb(bitboard,char);
-void print_move(struct move_t);
+void print_move( struct move_t, std::ostream& cout = std::cout );
 
 // naive move generation
 // pawns

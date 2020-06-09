@@ -6,7 +6,6 @@
 #include "twiddle.h"
 #include <bitset>
 //#include <string>
-using namespace std;
 
 // initialise constants declared in move.h
 const int N   =  +8;
@@ -71,35 +70,17 @@ bool move_t::is_queenCastle(){ return ( flags() == 6 ); }
 bool move_t::is_castle()    { return ( is_kingCastle() | is_queenCastle() ); }
 uint16_t move_t::give()     { return data;}
 
-void print_bb(bitboard bb, char c) {//  = 'x') {
-  int i,j;
-  char to_print[64];
-  for (i=0;i<64;i++) {
-    if (bb&1ULL) to_print[i]=c;
-    else to_print[i]='.';
-    bb >>= 1;
-  }
-  for (i=7;i>=0;i--) {
-    for (j=0;j<8;j++) {
-      cout << to_print[i*8+j] << ' ';
-    }
-    cout << endl;
-  }
-  cout << endl;
-}
 
-void print_move(struct move_t move) {
-  char to_rank,to_file;
-  char fr_rank,fr_file;
+void print_move(struct move_t move, std::ostream& cout) {
+  char   to_c[2];
+  char from_c[2];
   int fromSq = move.from_sq();
   int toSq   = move.to_sq();
+  
+  itos( fromSq, from_c );
+  itos(   toSq,   to_c );
 
-  fr_rank = '1' + fromSq/8;
-  fr_file = 'a' + fromSq%8;
-  to_rank = '1' + toSq/8;
-  to_file = 'a' + toSq%8;
-
-  cout << fr_file << fr_rank << " to " << to_file << to_rank;
+  cout << from_c[0] << from_c[1] << " to " << to_c[0] << to_c[1];
 }
 
 // calculate ray tables for move generation

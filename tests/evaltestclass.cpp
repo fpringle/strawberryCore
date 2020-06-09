@@ -8,7 +8,7 @@
 
 #include "evaltestclass.h"
 #include "board.h"
-
+#include "eval.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(evaltestclass);
 

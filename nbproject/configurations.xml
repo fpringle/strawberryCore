@@ -54,6 +54,30 @@
         <itemPath>tests/evaltestclass.h</itemPath>
         <itemPath>tests/evaltestrunner.cpp</itemPath>
       </logicalFolder>
+      <logicalFolder name="f3"
+                     displayName="hash test"
+                     projectFiles="true"
+                     kind="TEST">
+        <itemPath>tests/hashtestclass.cpp</itemPath>
+        <itemPath>tests/hastestclass.h</itemPath>
+        <itemPath>tests/hastestrunner.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f5"
+                     displayName="move test"
+                     projectFiles="true"
+                     kind="TEST">
+        <itemPath>tests/movetestclass.cpp</itemPath>
+        <itemPath>tests/movetestclass.h</itemPath>
+        <itemPath>tests/movetestrunner.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f4"
+                     displayName="twiddle test"
+                     projectFiles="true"
+                     kind="TEST">
+        <itemPath>tests/twiddletestclass.cpp</itemPath>
+        <itemPath>tests/twiddletestclass.h</itemPath>
+        <itemPath>tests/twiddletestrunner.cpp</itemPath>
+      </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -117,6 +141,51 @@
           <output>${TESTDIR}/TestFiles/f2</output>
         </linkerTool>
       </folder>
+      <folder path="TestFiles/f3">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f3</output>
+        </linkerTool>
+      </folder>
+      <folder path="TestFiles/f4">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f4</output>
+        </linkerTool>
+      </folder>
+      <folder path="TestFiles/f5">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f5</output>
+        </linkerTool>
+      </folder>
       <item path="hash.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="hash.h" ex="false" tool="3" flavor2="0">
@@ -150,6 +219,24 @@
       <item path="tests/evaltestclass.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/evaltestrunner.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/hashtestclass.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/hastestclass.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/hastestrunner.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/movetestclass.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/movetestclass.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/movetestrunner.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/twiddletestclass.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/twiddletestclass.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/twiddletestrunner.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="twiddle.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -220,6 +307,51 @@
           </linkerLibItems>
         </linkerTool>
       </folder>
+      <folder path="TestFiles/f3">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f3</output>
+        </linkerTool>
+      </folder>
+      <folder path="TestFiles/f4">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f4</output>
+        </linkerTool>
+      </folder>
+      <folder path="TestFiles/f5">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f5</output>
+        </linkerTool>
+      </folder>
       <item path="hash.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="hash.h" ex="false" tool="3" flavor2="0">
@@ -253,6 +385,24 @@
       <item path="tests/evaltestclass.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/evaltestrunner.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/hashtestclass.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/hastestclass.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/hastestrunner.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/movetestclass.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/movetestclass.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/movetestrunner.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/twiddletestclass.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/twiddletestclass.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/twiddletestrunner.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="twiddle.cpp" ex="false" tool="1" flavor2="0">
       </item>
