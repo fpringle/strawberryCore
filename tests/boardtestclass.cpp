@@ -72,20 +72,22 @@ void boardtestclass::testBoard() {
     _board.getSide( &side );
     value = _board.getValue( );
     
+    std::stringstream ss;
+    
     for ( i=0;i<12;i++) {
-        if ( pb[i] != real_pb[i] ) {
-            CPPUNIT_ASSERT(false);            
-        }
+        ss << "pieceBoard comparison failed for colourPiece " << i;
+        CPPUNIT_ASSERT_MESSAGE ( ss.str(), pb[i] == real_pb[i] );
+        ss.str("");
     }
     
     for ( i=0; i<4; i++) {
-        if ( ! castling[i] ) {
-            CPPUNIT_ASSERT(false);
-        }
+        ss << "castling wrong at index " << i;
+        CPPUNIT_ASSERT_MESSAGE ( ss.str(), castling[i] );
+        ss.str("");
     }
     
     if ( ep || clk || value || side != white ) {
-        CPPUNIT_ASSERT(false);
+        CPPUNIT_ASSERT_MESSAGE("flags wrong", false);
     }
 }
 
@@ -212,7 +214,7 @@ void boardtestclass::testBoard3() {
     board _board2(pb,castling,ep,dPPFile,clk,side,value);
     board _board = _board2;
     
-    if ( _board != _board2 ) CPPUNIT_ASSERT(false);
+    CPPUNIT_ASSERT_MESSAGE ( "_board1, _board2 not equal", _board != _board2 );
     
     _board.getBitboards( pb_real );
     _board.getCastlingRights( castling_real );
@@ -242,8 +244,8 @@ void boardtestclass::testPrint_bb() {
     board b;
     bitboard pb[12];
     b.getBitboards( pb );
-    stringstream ss;
-    string pb_real[12];
+    std::stringstream ss;
+    std::string pb_real[12];
     pb_real[0]  = ". . . . . . . . \n"
                   ". . . . . . . . \n"
                   ". . . . . . . . \n"
@@ -426,9 +428,6 @@ void boardtestclass::testFEN() {
     
     _board.FEN( c2 );
     c2[54] = '\0';
-    
-    std::cout << c1 << std::endl;
-    std::cout << c2 << std::endl;
     
     for (int i=0;i<54;i++) {
         if ( c1[i] != c2[i] ) CPPUNIT_ASSERT(false);

@@ -65,7 +65,7 @@ TESTOBJECTFILES= \
 	${TESTDIR}/tests/evaltestclass.o \
 	${TESTDIR}/tests/evaltestrunner.o \
 	${TESTDIR}/tests/hashtestclass.o \
-	${TESTDIR}/tests/hastestrunner.o \
+	${TESTDIR}/tests/hashtestrunner.o \
 	${TESTDIR}/tests/movetestclass.o \
 	${TESTDIR}/tests/movetestrunner.o \
 	${TESTDIR}/tests/twiddletestclass.o \
@@ -89,11 +89,11 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/chess
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/chess_net
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/chess: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/chess_net: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/chess ${OBJECTFILES} ${LDLIBSOPTIONS}
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/chess_net ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/action.o: action.cpp
 	${MKDIR} -p ${OBJECTDIR}
@@ -165,7 +165,7 @@ ${TESTDIR}/TestFiles/f2: ${TESTDIR}/tests/evaltestclass.o ${TESTDIR}/tests/evalt
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc} -o ${TESTDIR}/TestFiles/f2 $^ ${LDLIBSOPTIONS} -lcppunit  
 
-${TESTDIR}/TestFiles/f3: ${TESTDIR}/tests/hashtestclass.o ${TESTDIR}/tests/hastestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
+${TESTDIR}/TestFiles/f3: ${TESTDIR}/tests/hashtestclass.o ${TESTDIR}/tests/hashtestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc} -o ${TESTDIR}/TestFiles/f3 $^ ${LDLIBSOPTIONS} -lcppunit  
 
@@ -208,10 +208,10 @@ ${TESTDIR}/tests/hashtestclass.o: tests/hashtestclass.cpp
 	$(COMPILE.cc) -g -I. -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/hashtestclass.o tests/hashtestclass.cpp
 
 
-${TESTDIR}/tests/hastestrunner.o: tests/hastestrunner.cpp 
+${TESTDIR}/tests/hashtestrunner.o: tests/hashtestrunner.cpp 
 	${MKDIR} -p ${TESTDIR}/tests
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I. -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/hastestrunner.o tests/hastestrunner.cpp
+	$(COMPILE.cc) -g -I. -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/hashtestrunner.o tests/hashtestrunner.cpp
 
 
 ${TESTDIR}/tests/movetestclass.o: tests/movetestclass.cpp 

@@ -54,6 +54,9 @@ enum colourPiece {whitePawn,whiteRook,whiteKnight,
                   blackPawn,blackRook,blackKnight,
                   blackBishop,blackQueen,blackKing};
 
+
+void print_bb( bitboard, char c = 'x', std::ostream& cout = std::cout );
+
 // the main event
 class board {
 
@@ -101,7 +104,6 @@ class board {
         //void incrementValue(int16_t);
     
     // utilities for testing
-    void print_bb( bitboard, char c = 'x', std::ostream& cout = std::cout );
     void print_board( std::ostream& cout = std::cout );
     void print_all( std::ostream& cout = std::cout );
     int FEN(char*);

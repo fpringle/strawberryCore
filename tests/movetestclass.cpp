@@ -29,20 +29,24 @@ void movetestclass::tearDown() {
 
 void movetestclass::testItos() {
     int i,j;
+    stringstream ss;
     char real[64][2];
     for ( i=0; i<8; i++ ) {
         for ( j=0; j<8; j++ ) {
-            real[i*8 + j][0] = 'a' + i;
-            real[i*8 + j][1] = '1' + j;
+            real[i*8 + j][0] = 'a' + j;
+            real[i*8 + j][1] = '1' + i;
         }
     }
     
     char dest[2];
     
     for ( i=0;i<64;i++ ) {
+        ss << "wrong string at square ";
+        ss << real[i][0] << real[i][1];
         itos( i, dest );
-        if ( dest[0] != real[i][0] ) CPPUNIT_ASSERT(false);
-        if ( dest[1] != real[i][1] ) CPPUNIT_ASSERT(false);
+        CPPUNIT_ASSERT_MESSAGE ( ss.str(), dest[0] == real[i][0] );
+        CPPUNIT_ASSERT_MESSAGE ( ss.str(), dest[1] == real[i][1] );
+        ss.str("");
     }
 }
 
@@ -51,8 +55,8 @@ void movetestclass::testStoi() {
     char real[64][2];
     for ( i=0; i<8; i++ ) {
         for ( j=0; j<8; j++ ) {
-            real[i*8 + j][0] = 'a' + i;
-            real[i*8 + j][1] = '1' + j;
+            real[i*8 + j][0] = 'a' + j;
+            real[i*8 + j][1] = '1' + i;
         }
     }
     
@@ -61,11 +65,11 @@ void movetestclass::testStoi() {
     }
 }
 
-bool test_move(int from, int to, bool prom, bool cap, bool s1, bool s2) {
-    struct move_t _move ( from, to, prom, cap, s1, s1);
-    bool is_quiet = ! ( prom || cap || s1 || s2 );
-    int data = from + (to * (2**6))  + (cap * (2**12)) +
-               (s0 * (2**13)) + (s1 * (2**14)) + (prom * (2**15)); 
+bool test_move(int from, int to, bool prom, bool cap, bool s1, bool s0) {
+    struct move_t _move ( from, to, prom, cap, s1, s0);
+    bool is_quiet = ! ( prom || cap || s1 || s0 );
+    int data = from + (to * (1ULL<<6))  + (cap * (1ULL<<12)) +
+               (s0 * (1ULL<<13)) + (s1 * (1ULL<<14)) + (prom * (1ULL<<15)); 
     
     if ( _move.from_sq() != from ) return false;
     if ( _move.to_sq() != to ) return false;
@@ -82,7 +86,7 @@ bool test_move(int from, int to, bool prom, bool cap, bool s1, bool s2) {
     return true;
 }
 
-void movetestclass::testMove_T() {
+void movetestclass::testMove_t() {
     // normal capture
     CPPUNIT_ASSERT(test_move(10, 19, false,  true, false, false));
     // promotion
@@ -111,7 +115,7 @@ void movetestclass::testInit_rays() {
     
 }
 
-void movestestclass::testPawnPushNaive() {
+void movetestclass::testPawnPushNaive() {
     int sq = 19;
     bitboard blockers = ( 1ULL << 11 ) | ( 1ULL << 25 ) |
                         ( 1ULL << 28 ) | ( 1ULL << 35 ) |
@@ -123,7 +127,7 @@ void movestestclass::testPawnPushNaive() {
     CPPUNIT_ASSERT( pawnPushNaive( sq, blockers, mc ) == bb_real ); 
 }
 
-void movestestclass::testPawnAttackNaive() {
+void movetestclass::testPawnAttackNaive() {
     int sq = 19;
     colour mc = white;
     bitboard bb_real = 0x0000000014000000;
@@ -131,7 +135,7 @@ void movestestclass::testPawnAttackNaive() {
     CPPUNIT_ASSERT( pawnAttackNaive( sq, mc ) == bb_real ); 
 }
 
-void movestestclass::testPawnAttacks() {
+void movetestclass::testPawnAttacks() {
     int sq = 19;
     colour mc = white;
     bitboard _white = ( 1ULL << 11 ) | ( 1ULL << 35 ) |
@@ -145,7 +149,7 @@ void movestestclass::testPawnAttacks() {
     CPPUNIT_ASSERT( pawnAttacks( sq, _white, _black, mc ) == bb_real );
 }
 
-void movestestclass::testPawnTargets() {
+void movetestclass::testPawnTargets() {
     int sq = 19;
     colour mc = white;
     bitboard _white = ( 1ULL << 11 ) | ( 1ULL << 35 ) |
@@ -159,7 +163,7 @@ void movestestclass::testPawnTargets() {
     CPPUNIT_ASSERT( pawnTargets( sq, _white, _black, mc ) == bb_real );
 }
 
-void movestestclass::testKnightPushNaive() {
+void movetestclass::testKnightPushNaive() {
     int sq = 9;
     bitboard bb_real = ( 1ULL <<  3 ) | ( 1ULL << 19 ) |
                        ( 1ULL << 26 ) | ( 1ULL << 24 ) ;
@@ -167,7 +171,7 @@ void movestestclass::testKnightPushNaive() {
     CPPUNIT_ASSERT( knightPushNaive( sq ) == bb_real ) ; 
 }
 
-void movestestclass::testKnightTargets() {
+void movetestclass::testKnightTargets() {
     int sq = 9;
     colour mc = white;
     bitboard _white = ( 1ULL << 24 ) | ( 1ULL << 35 ) |
@@ -182,7 +186,7 @@ void movestestclass::testKnightTargets() {
     CPPUNIT_ASSERT( knightTargets( sq, _white, _black, mc ) == bb_real ); 
 }
 
-void movestestclass::testKingPushNaive() {
+void movetestclass::testKingPushNaive() {
     int sq = 19;
     bitboard bb_real = ( 1ULL << 27 ) | ( 1ULL << 11 ) |
                        ( 1ULL << 20 ) | ( 1ULL << 18 ) |
@@ -192,7 +196,7 @@ void movestestclass::testKingPushNaive() {
     CPPUNIT_ASSERT( kingPushNaive( sq ) == bb_real ); 
 }
 
-void movestestclass::testKingTargets() {
+void movetestclass::testKingTargets() {
     int sq = 19;
     colour mc = white;
     bitboard _white = ( 1ULL << 11 ) | ( 1ULL << 35 ) |
@@ -209,7 +213,7 @@ void movestestclass::testKingTargets() {
     CPPUNIT_ASSERT( kingTargets( sq, _white, _black, mc ) == bb_real ); 
 }
 
-void movestestclass::testBishopPushNaive() {
+void movetestclass::testBishopPushNaive() {
     int sq = 19;
     bitboard blockers = ( 1ULL << 11 ) | ( 1ULL << 35 ) |
                       ( 1ULL << 42 ) | ( 1ULL << 62 ) |
@@ -225,7 +229,7 @@ void movestestclass::testBishopPushNaive() {
     CPPUNIT_ASSERT( bishopPushNaive( sq, blockers ) == bb_real ); 
 }
 
-void movestestclass::testBishopTargets() {
+void movetestclass::testBishopTargets() {
     int sq = 19;
     colour mc = white;
     bitboard _white = ( 1ULL << 11 ) | ( 1ULL << 35 ) |
@@ -240,5 +244,5 @@ void movestestclass::testBishopTargets() {
                        ( 1ULL << 28 ) | ( 1ULL << 10 ) |
                        ( 1ULL << 26 ) | ( 1ULL << 12 ) ;
     
-    CPPUNIT_ASSERT( bishopPushNaiveTargets( sq, _white, _black, mc ) == bb_real ); 
+    CPPUNIT_ASSERT( bishopTargets( sq, _white, _black, mc ) == bb_real ); 
 }

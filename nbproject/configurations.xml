@@ -39,7 +39,7 @@
                    projectFiles="false"
                    kind="TEST_LOGICAL_FOLDER">
       <logicalFolder name="f1"
-                     displayName="board.h test"
+                     displayName="board test"
                      projectFiles="true"
                      kind="TEST">
         <itemPath>tests/boardtestclass.cpp</itemPath>
@@ -47,7 +47,7 @@
         <itemPath>tests/boardtestrunner.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="f2"
-                     displayName="eval.cpp test"
+                     displayName="eval test"
                      projectFiles="true"
                      kind="TEST">
         <itemPath>tests/evaltestclass.cpp</itemPath>
@@ -59,8 +59,8 @@
                      projectFiles="true"
                      kind="TEST">
         <itemPath>tests/hashtestclass.cpp</itemPath>
-        <itemPath>tests/hastestclass.h</itemPath>
-        <itemPath>tests/hastestrunner.cpp</itemPath>
+        <itemPath>tests/hashtestclass.h</itemPath>
+        <itemPath>tests/hashtestrunner.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="f5"
                      displayName="move test"
@@ -222,9 +222,9 @@
       </item>
       <item path="tests/hashtestclass.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="tests/hastestclass.h" ex="false" tool="3" flavor2="0">
+      <item path="tests/hashtestclass.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="tests/hastestrunner.cpp" ex="false" tool="1" flavor2="0">
+      <item path="tests/hashtestrunner.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="tests/movetestclass.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -388,9 +388,9 @@
       </item>
       <item path="tests/hashtestclass.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="tests/hastestclass.h" ex="false" tool="3" flavor2="0">
+      <item path="tests/hashtestclass.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="tests/hastestrunner.cpp" ex="false" tool="1" flavor2="0">
+      <item path="tests/hashtestrunner.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="tests/movetestclass.cpp" ex="false" tool="1" flavor2="0">
       </item>

@@ -26,7 +26,7 @@ void twiddletestclass::tearDown() {
 }
 
 
-void testCount_bits_set() {
+void twiddletestclass::testCount_bits_set() {
     bitboard _bitboard1 = 0x178e92000181fa89;
     bitboard _bitboard2 = 0xffffffffffffffff;
     bitboard _bitboard3 = 0x0000000000000000;
@@ -35,7 +35,7 @@ void testCount_bits_set() {
     if ( count_bits_set( _bitboard3 ) !=  0 ) CPPUNIT_ASSERT(false);
 }
 
-void testFirst_set_bit() {
+void twiddletestclass::testFirst_set_bit() {
     bitboard _bitboard1 = 0x178e92000181fa89;
     bitboard _bitboard2 = 0xfffffffffffffff0;
     bitboard _bitboard3 = 0x0000000100000000;
@@ -44,16 +44,28 @@ void testFirst_set_bit() {
     if ( first_set_bit( _bitboard3 ) != 32 ) CPPUNIT_ASSERT(false);
 }
 
-void testLast_set_bit() {
-    bitboard _bitboard1 = 0x178e92000181fa89;
-    bitboard _bitboard2 = 0x10fffffffffffff0;
-    bitboard _bitboard3 = 0x0000000100000000;
-    if ( last_set_bit( _bitboard1 ) !=  0 ) CPPUNIT_ASSERT(false);
-    if ( last_set_bit( _bitboard2 ) != 61 ) CPPUNIT_ASSERT(false);
-    if ( last_set_bit( _bitboard3 ) != 32 ) CPPUNIT_ASSERT(false);
+void twiddletestclass::testLast_set_bit() {
+    bitboard bb[3] = { 0x178e92000181fa89,
+                       0x0000effffffffff0,
+                       0x0000000100000000 };
+    
+    
+    int real_ans[3] = { 60, 47, 32 };
+    int ans;
+    
+    stringstream ss;
+    
+    for ( int i=0; i<3; i++) {
+        ans = last_set_bit( bb[i] );
+        ss << "last bit set wrong at " << i << "\n  real answer:  " << real_ans[i];
+        ss << "\n  our answer:   " << ans;
+        CPPUNIT_ASSERT_MESSAGE ( ss.str(), real_ans[i] == ans );
+        ss.str("");
+    }
+
 }
 
-void testIs_bit_set() {
+void twiddletestclass::testIs_bit_set() {
     bitboard _bitboard1 = 0x178e92000181fa89;
     bitboard _bitboard2 = 0x10fffffffffffff0;
     bitboard _bitboard3 = 0x0000000100000000;
@@ -63,7 +75,7 @@ void testIs_bit_set() {
     if (   is_bit_set( _bitboard3, 31 ) ) CPPUNIT_ASSERT(false);
 }
 
-void testOneN() {
+void twiddletestclass::testOneN() {
     bitboard _bitboard1 = 0x178e92000181fa89;
     bitboard _bitboard2 = 0x10fffffffffffff0;
     bitboard _bitboard3 = 0x0000000100000000;
@@ -72,16 +84,16 @@ void testOneN() {
     if ( oneN( _bitboard3 ) != 0x0000010000000000 ) CPPUNIT_ASSERT(false);
 }
 
-void testOneE() {
+void twiddletestclass::testOneE() {
     bitboard _bitboard1 = 0x178e92000181fa89;
     bitboard _bitboard2 = 0x10fffffffffffff0;
     bitboard _bitboard3 = 0x0000000100000000;
-    if ( oneE( _bitboard1 ) != 0x2f1d24000303f512 ) CPPUNIT_ASSERT(false);
-    if ( oneE( _bitboard2 ) != 0x21ffffffffffffe0 ) CPPUNIT_ASSERT(false);
+    if ( oneE( _bitboard1 ) != 0x2e1c24000202f412 ) CPPUNIT_ASSERT(false);
+    if ( oneE( _bitboard2 ) != 0x20fefefefefefee0 ) CPPUNIT_ASSERT(false);
     if ( oneE( _bitboard3 ) != 0x0000000200000000 ) CPPUNIT_ASSERT(false);
 }
 
-void testOneS() {
+void twiddletestclass::testOneS() {
     bitboard _bitboard1 = 0x178e92000181fa89;
     bitboard _bitboard2 = 0x10fffffffffffff0;
     bitboard _bitboard3 = 0x0000000100000000;
@@ -90,66 +102,71 @@ void testOneS() {
     if ( oneS( _bitboard3 ) != 0x0000000001000000 ) CPPUNIT_ASSERT(false);
 }
 
-void testOneW() {
+void twiddletestclass::testOneW() {
     bitboard _bitboard1 = 0x178e92000181fa89;
     bitboard _bitboard2 = 0x10fffffffffffff0;
     bitboard _bitboard3 = 0x0000000100000000;
-    if ( oneW( _bitboard1 ) != 0x0bc7490000c0fd44 ) CPPUNIT_ASSERT(false);
-    if ( oneW( _bitboard2 ) != 0x087ffffffffffff8 ) CPPUNIT_ASSERT(false);
-    if ( oneW( _bitboard3 ) != 0x0000000080000000 ) CPPUNIT_ASSERT(false);
+    if ( oneW( _bitboard1 ) != 0xb47490000407d44 ) CPPUNIT_ASSERT(false);
+    if ( oneW( _bitboard2 ) != 0x87f7f7f7f7f7f78 ) CPPUNIT_ASSERT(false);
+    if ( oneW( _bitboard3 ) != 0x0000000000000000 ) CPPUNIT_ASSERT(false);
 }
 
-void testOneNE() {
+void twiddletestclass::testOneNE() {
     bitboard _bitboard1 = 0x178e92000181fa89;
     bitboard _bitboard2 = 0x10fffffffffffff0;
     bitboard _bitboard3 = 0x0000000100000000;
-    if ( oneNE( _bitboard1 ) != 0x1d24000303f51200 ) CPPUNIT_ASSERT(false);
-    if ( oneNE( _bitboard2 ) != 0xffffffffffffe000 ) CPPUNIT_ASSERT(false);
-    if ( oneNE( _bitboard3 ) != 0x0000020000000000 ) CPPUNIT_ASSERT(false);
+    
+    if ( oneNE( _bitboard1 ) != 2027745740863050240ULL ) CPPUNIT_ASSERT(false);
+    if ( oneNE( _bitboard2 ) != 18374403900871467008ULL ) CPPUNIT_ASSERT(false);
+    if ( oneNE( _bitboard3 ) != 2199023255552ULL ) CPPUNIT_ASSERT(false);
 }
 
-void testOneSE() {
+void twiddletestclass::testOneSE() {
     bitboard _bitboard1 = 0x178e92000181fa89;
     bitboard _bitboard2 = 0x10fffffffffffff0;
     bitboard _bitboard3 = 0x0000000100000000;
-    if ( oneSE( _bitboard1 ) != 0x002f1d24000303f5 ) CPPUNIT_ASSERT(false);
-    if ( oneSE( _bitboard2 ) != 0x0021ffffffffffff ) CPPUNIT_ASSERT(false);
-    if ( oneSE( _bitboard3 ) != 0x0000000002000000 ) CPPUNIT_ASSERT(false);
+    
+    if ( oneSE( _bitboard1 ) != 12978789873222388ULL ) CPPUNIT_ASSERT(false);
+    if ( oneSE( _bitboard2 ) != 9287570408013566ULL ) CPPUNIT_ASSERT(false);
+    if ( oneSE( _bitboard3 ) != 33554432ULL ) CPPUNIT_ASSERT(false);
 }
 
-void testOneSW() {
+void twiddletestclass::testOneSW() {
     bitboard _bitboard1 = 0x178e92000181fa89;
     bitboard _bitboard2 = 0x10fffffffffffff0;
     bitboard _bitboard3 = 0x0000000100000000;
-    if ( oneSW( _bitboard1 ) != 0x000bc7490000c0fd ) CPPUNIT_ASSERT(false);
-    if ( oneSW( _bitboard2 ) != 0x00087fffffffffff ) CPPUNIT_ASSERT(false);
-    if ( oneSW( _bitboard3 ) != 0x0000000000800000 ) CPPUNIT_ASSERT(false);
+    
+    if ( oneSW( _bitboard1 ) != 3174603602018429ULL ) CPPUNIT_ASSERT(false);
+    if ( oneSW( _bitboard2 ) != 2391985390321535ULL ) CPPUNIT_ASSERT(false);
+    if ( oneSW( _bitboard3 ) != 0ULL ) CPPUNIT_ASSERT(false);
 }
 
-void testOneNW() {
+void twiddletestclass::testOneNW() {
     bitboard _bitboard1 = 0x178e92000181fa89;
     bitboard _bitboard2 = 0x10fffffffffffff0;
     bitboard _bitboard3 = 0x0000000100000000;
-    if ( oneNW( _bitboard1 ) != 0xc7490000c0fd4480 ) CPPUNIT_ASSERT(false);
-    if ( oneNW( _bitboard2 ) != 0x7ffffffffffff800 ) CPPUNIT_ASSERT(false);
-    if ( oneNW( _bitboard3 ) != 0x0000008000000000 ) CPPUNIT_ASSERT(false);
+
+    if ( oneNW( _bitboard1 ) != 5136636851074712576ULL ) CPPUNIT_ASSERT(false);
+    if ( oneNW( _bitboard2 ) != 9187201950435735552ULL ) CPPUNIT_ASSERT(false);
+    if ( oneNW( _bitboard3 ) != 0ULL ) CPPUNIT_ASSERT(false);
 }
 
-void testTwoN() {
+void twiddletestclass::testTwoN() {
     bitboard _bitboard1 = 0x178e92000181fa89;
     bitboard _bitboard2 = 0x10fffffffffffff0;
     bitboard _bitboard3 = 0x0000000100000000;
-    if ( twoS( _bitboard1 ) != 0x92000181fa890000 ) CPPUNIT_ASSERT(false);
-    if ( twoS( _bitboard2 ) != 0xfffffffffff00000 ) CPPUNIT_ASSERT(false);
-    if ( twoS( _bitboard3 ) != 0x0001000000000000 ) CPPUNIT_ASSERT(false);
+
+    if ( twoN( _bitboard1 ) != 10520410387303170048ULL ) CPPUNIT_ASSERT(false);
+    if ( twoN( _bitboard2 ) != 18446744073708503040ULL ) CPPUNIT_ASSERT(false);
+    if ( twoN( _bitboard3 ) != 281474976710656ULL ) CPPUNIT_ASSERT(false);
 }
 
-void testTwoS() {
+void twiddletestclass::testTwoS() {
     bitboard _bitboard1 = 0x178e92000181fa89;
     bitboard _bitboard2 = 0x10fffffffffffff0;
     bitboard _bitboard3 = 0x0000000100000000;
-    if ( twoS( _bitboard1 ) != 0x0000178e92000181 ) CPPUNIT_ASSERT(false);
-    if ( twoS( _bitboard2 ) != 0x000010ffffffffff ) CPPUNIT_ASSERT(false);
-    if ( twoS( _bitboard3 ) != 0x0000000000010000 ) CPPUNIT_ASSERT(false);
-}
 
+    if ( twoS( _bitboard1 ) != 25901102268801ULL ) CPPUNIT_ASSERT(false);
+    if ( twoS( _bitboard2 ) != 18691697672191ULL ) CPPUNIT_ASSERT(false);
+    if ( twoS( _bitboard3 ) != 65536ULL ) CPPUNIT_ASSERT(false);
+}

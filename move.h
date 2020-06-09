@@ -72,6 +72,7 @@ void print_move( struct move_t, std::ostream& cout = std::cout );
 // pawns
 bitboard pawnPushNaive        (int,bitboard,colour);
 bitboard pawnAttackNaive      (int,colour);
+bitboard pawnAttacks          (int,bitboard,bitboard,colour);
 bitboard pawnTargets          (int,bitboard,bitboard,colour);
 
 // knights
