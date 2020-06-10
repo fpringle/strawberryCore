@@ -90,5 +90,5 @@ void evaltestclass::testEvaluate() {
     
     board _board( bb, castling, false, 0, 4, black, -105);
     
-    CPPUNIT_ASSERT( _board.evaluate() != -105 );
+    CPPUNIT_ASSERT( _board.evaluate() == -105 );
 }

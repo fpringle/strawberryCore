@@ -46,6 +46,14 @@
         <itemPath>tests/boardtestclass.h</itemPath>
         <itemPath>tests/boardtestrunner.cpp</itemPath>
       </logicalFolder>
+      <logicalFolder name="f6"
+                     displayName="check test"
+                     projectFiles="true"
+                     kind="TEST">
+        <itemPath>tests/checktestclass.cpp</itemPath>
+        <itemPath>tests/checktestclass.h</itemPath>
+        <itemPath>tests/checktestrunner.cpp</itemPath>
+      </logicalFolder>
       <logicalFolder name="f2"
                      displayName="eval test"
                      projectFiles="true"
@@ -186,6 +194,21 @@
           <output>${TESTDIR}/TestFiles/f5</output>
         </linkerTool>
       </folder>
+      <folder path="TestFiles/f6">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f6</output>
+        </linkerTool>
+      </folder>
       <item path="hash.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="hash.h" ex="false" tool="3" flavor2="0">
@@ -213,6 +236,12 @@
       <item path="tests/boardtestclass.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/boardtestrunner.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/checktestclass.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/checktestclass.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/checktestrunner.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="tests/evaltestclass.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -352,6 +381,21 @@
           <output>${TESTDIR}/TestFiles/f5</output>
         </linkerTool>
       </folder>
+      <folder path="TestFiles/f6">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f6</output>
+        </linkerTool>
+      </folder>
       <item path="hash.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="hash.h" ex="false" tool="3" flavor2="0">
@@ -379,6 +423,12 @@
       <item path="tests/boardtestclass.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/boardtestrunner.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/checktestclass.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/checktestclass.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/checktestrunner.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="tests/evaltestclass.cpp" ex="false" tool="1" flavor2="0">
       </item>

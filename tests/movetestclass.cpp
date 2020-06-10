@@ -64,7 +64,7 @@ void movetestclass::testStoi() {
     for ( i=0; i<64; i++ ) {
         ss << "wrong index at square ";
         ss << real[i][0] << real[i][1];
-        CPPUNIT_ASSERT_MESSAGE( ss.str(), stoi( real[i] ) != i );
+        CPPUNIT_ASSERT_MESSAGE( ss.str(), stoi( real[i] ) == i );
         ss.str("");
     }
 }

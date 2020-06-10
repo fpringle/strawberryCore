@@ -53,6 +53,7 @@ TESTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tests
 # Test Files
 TESTFILES= \
 	${TESTDIR}/TestFiles/f1 \
+	${TESTDIR}/TestFiles/f6 \
 	${TESTDIR}/TestFiles/f2 \
 	${TESTDIR}/TestFiles/f3 \
 	${TESTDIR}/TestFiles/f5 \
@@ -62,6 +63,8 @@ TESTFILES= \
 TESTOBJECTFILES= \
 	${TESTDIR}/tests/boardtestclass.o \
 	${TESTDIR}/tests/boardtestrunner.o \
+	${TESTDIR}/tests/checktestclass.o \
+	${TESTDIR}/tests/checktestrunner.o \
 	${TESTDIR}/tests/evaltestclass.o \
 	${TESTDIR}/tests/evaltestrunner.o \
 	${TESTDIR}/tests/hashtestclass.o \
@@ -161,6 +164,10 @@ ${TESTDIR}/TestFiles/f1: ${TESTDIR}/tests/boardtestclass.o ${TESTDIR}/tests/boar
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc} -o ${TESTDIR}/TestFiles/f1 $^ ${LDLIBSOPTIONS}   `cppunit-config --libs`   
 
+${TESTDIR}/TestFiles/f6: ${TESTDIR}/tests/checktestclass.o ${TESTDIR}/tests/checktestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
+	${MKDIR} -p ${TESTDIR}/TestFiles
+	${LINK.cc} -o ${TESTDIR}/TestFiles/f6 $^ ${LDLIBSOPTIONS}   
+
 ${TESTDIR}/TestFiles/f2: ${TESTDIR}/tests/evaltestclass.o ${TESTDIR}/tests/evaltestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc} -o ${TESTDIR}/TestFiles/f2 $^ ${LDLIBSOPTIONS}   `cppunit-config --libs`   
@@ -188,6 +195,18 @@ ${TESTDIR}/tests/boardtestrunner.o: tests/boardtestrunner.cpp
 	${MKDIR} -p ${TESTDIR}/tests
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 `cppunit-config --cflags` -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/boardtestrunner.o tests/boardtestrunner.cpp
+
+
+${TESTDIR}/tests/checktestclass.o: tests/checktestclass.cpp 
+	${MKDIR} -p ${TESTDIR}/tests
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/checktestclass.o tests/checktestclass.cpp
+
+
+${TESTDIR}/tests/checktestrunner.o: tests/checktestrunner.cpp 
+	${MKDIR} -p ${TESTDIR}/tests
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/checktestrunner.o tests/checktestrunner.cpp
 
 
 ${TESTDIR}/tests/evaltestclass.o: tests/evaltestclass.cpp 
@@ -386,6 +405,7 @@ ${OBJECTDIR}/twiddle_nomain.o: ${OBJECTDIR}/twiddle.o twiddle.cpp
 	@if [ "${TEST}" = "" ]; \
 	then  \
 	    ${TESTDIR}/TestFiles/f1 || true; \
+	    ${TESTDIR}/TestFiles/f6 || true; \
 	    ${TESTDIR}/TestFiles/f2 || true; \
 	    ${TESTDIR}/TestFiles/f3 || true; \
 	    ${TESTDIR}/TestFiles/f5 || true; \

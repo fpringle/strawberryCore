@@ -300,7 +300,9 @@ std::string board::FEN() {
       ss << '/';
     }
   }
-  ss << (sideToMove==white) ? " w " : " b ";
+  
+  
+  if (sideToMove==white) ss << " w "; else ss << " b ";
 
   
   if ( !( castleWhiteKingSide | castleWhiteQueenSide | castleBlackKingSide | castleBlackQueenSide ) ) {
@@ -353,7 +355,7 @@ void board::FEN( std::ostream& ss ) {
       if (to_print[i*8+j]=='.') {
         count1 = j;
         while (to_print[i*8+count1]=='.' && count1<8) count1++;
-        ss << "0"+(count1-j);
+        ss << char('0'+(count1-j));
         j=count1-1;
       }
       else {
@@ -364,7 +366,8 @@ void board::FEN( std::ostream& ss ) {
       ss << "/";
     }
   }
-  ss << (sideToMove==white) ? " w " : " b ";
+  
+  if (sideToMove==white) ss << " w "; else ss << " b ";
 
   
   if ( !( castleWhiteKingSide | castleWhiteQueenSide | castleBlackKingSide | castleBlackQueenSide ) ) {

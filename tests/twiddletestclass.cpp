@@ -69,10 +69,10 @@ void twiddletestclass::testIs_bit_set() {
     bitboard _bitboard1 = 0x178e92000181fa89;
     bitboard _bitboard2 = 0x10fffffffffffff0;
     bitboard _bitboard3 = 0x0000000100000000;
-    CPPUNIT_ASSERT(   is_bit_set( _bitboard1, 35 ) );
-    CPPUNIT_ASSERT( ! is_bit_set( _bitboard2, 60 ) );
-    CPPUNIT_ASSERT( ! is_bit_set( _bitboard3, 32 ) );
-    CPPUNIT_ASSERT(   is_bit_set( _bitboard3, 31 ) );
+    CPPUNIT_ASSERT_MESSAGE( "1", ! is_bit_set( _bitboard1, 35 ) );
+    CPPUNIT_ASSERT_MESSAGE( "2",   is_bit_set( _bitboard2, 60 ) );
+    CPPUNIT_ASSERT_MESSAGE( "3",   is_bit_set( _bitboard3, 32 ) );
+    CPPUNIT_ASSERT_MESSAGE( "4", ! is_bit_set( _bitboard3, 31 ) );
 }
 
 void twiddletestclass::testOneN() {
