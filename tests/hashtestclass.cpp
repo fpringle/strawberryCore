@@ -85,7 +85,5 @@ void hashtestclass::testZobrist_hash() {
     
     board _board;
     
-    std::cout << _board.zobrist_hash() << std::endl;
-    
-    CPPUNIT_ASSERT_MESSAGE ( "zobrist hash for starting board is wrong", _board.zobrist_hash() == 1758780544675427086ULL );
+    CPPUNIT_ASSERT_MESSAGE ( "zobrist hash for starting board is wrong", _board.zobrist_hash() == 9597562740140802116ULL );
 }

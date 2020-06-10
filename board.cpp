@@ -121,6 +121,10 @@ board::board(board & b1) {
 
   // en passant pawn capture
   lastMoveDoublePawnPush = b1.lastMoveDoublePawnPush;
+  
+  // double pawn push file
+  
+  dPPFile = b1.dPPFile;
 
   // side to move
   sideToMove = b1.sideToMove;
@@ -135,23 +139,44 @@ bool board::operator==( const board& other) {
     int i;
     
     for ( i=0; i<12; i++ ) {
-        if ( pieceBoards[i] != other.pieceBoards[i] ) return false;
+        if ( pieceBoards[i] != other.pieceBoards[i] ) {
+            std::cout << "pieceBoard[" << i << "] is wrong\n";
+            return false;
+        }
     }
     
-    if ( castleWhiteKingSide != other.castleWhiteKingSide ) return false;
-    if ( castleWhiteQueenSide != other.castleWhiteQueenSide ) return false;
-    if ( castleBlackKingSide != other.castleBlackKingSide ) return false;
-    if ( castleBlackQueenSide != other.castleBlackQueenSide ) return false;
+    if ( castleWhiteKingSide != other.castleWhiteKingSide ||
+         castleWhiteQueenSide != other.castleWhiteQueenSide ||
+         castleBlackKingSide != other.castleBlackKingSide ||
+         castleBlackQueenSide != other.castleBlackQueenSide ) {
+        std::cout << "castling rights wrong\n";
+        return false;
+    }
     
-    if ( halfMoveClock != other.halfMoveClock ) return false;
+    if ( halfMoveClock != other.halfMoveClock ) {
+        std::cout << "clock wrong\n";
+        return false;
+    }
     
-    if ( lastMoveDoublePawnPush != other.lastMoveDoublePawnPush ) return false;
+    if ( lastMoveDoublePawnPush != other.lastMoveDoublePawnPush ) {
+        std::cout << "ep wrong\n";
+        return false;
+    }
     
-    if ( lastMoveDoublePawnPush && dPPFile != other.dPPFile ) return false;
+    if ( (lastMoveDoublePawnPush) && (dPPFile != other.dPPFile) ) {
+        std::cout << "dPPFile wrong\n";
+        return false;
+    }
     
-    if ( sideToMove != other.sideToMove ) return false;
+    if ( sideToMove != other.sideToMove ) {
+        std::cout << "side wrong\n";
+        return false;
+    }
     
-    if ( value != other.value ) return false;
+    if ( value != other.value ) {
+        std::cout << "value wrong\n";
+        return false;
+    }
     
     return true;
 }
