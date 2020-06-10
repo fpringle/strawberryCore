@@ -44,7 +44,7 @@ void evaltestclass::testEvaluate_material() {
     
     board _board( bb, castling, false, 0, 4, black, -105);
     
-    if ( _board.evaluate_material() != -100 ) CPPUNIT_ASSERT(false);
+    CPPUNIT_ASSERT( _board.evaluate_material() == -100 ) ;
 }
 
 void evaltestclass::testEvaluate_pieceSquareTables() {
@@ -67,7 +67,7 @@ void evaltestclass::testEvaluate_pieceSquareTables() {
     
     board _board( bb, castling, false, 0, 4, black, -105);
     
-    if ( _board.evaluate_pieceSquareTables() != -5 ) CPPUNIT_ASSERT(false);
+   CPPUNIT_ASSERT( _board.evaluate_pieceSquareTables() == -5 );
 }
 
 void evaltestclass::testEvaluate() {
@@ -90,5 +90,5 @@ void evaltestclass::testEvaluate() {
     
     board _board( bb, castling, false, 0, 4, black, -105);
     
-    if ( _board.evaluate() != -105 ) CPPUNIT_ASSERT(false);
+    CPPUNIT_ASSERT( _board.evaluate() != -105 );
 }

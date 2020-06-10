@@ -87,7 +87,7 @@ void boardtestclass::testBoard() {
     }
     
     if ( ep || clk || value || side != white ) {
-        CPPUNIT_ASSERT_MESSAGE("flags wrong", false);
+        CPPUNIT_FAIL( "flags wrong" );
     }
 }
 
@@ -147,21 +147,24 @@ void boardtestclass::testBoard2() {
     _board.getSide( &side_real );
     value_real = _board.getValue( );
     
+    std::stringstream ss;
+    
     for ( i=0;i<12;i++) {
-        if ( pb[i] != pb_real[i] ) {
-            CPPUNIT_ASSERT(false);            
-        }
+        ss << "pieceBoard comparison failed for colourPiece " << i;
+        CPPUNIT_ASSERT_MESSAGE ( ss.str(), pb[i] == real_pb[i] );
+        ss.str("");
     }
     
     for ( i=0; i<4; i++) {
-        if ( castling[i] != castling_real[i] ) {
-            CPPUNIT_ASSERT(false);
-        }
+        ss << "castling wrong at index " << i;
+        CPPUNIT_ASSERT_MESSAGE ( ss.str(), castling[i] == castling_real[i] );
+        ss.str("");
     }
     
-    if ( ep != ep_real || clk != clk_real || value != value_real || side != side_real ) {
-        CPPUNIT_ASSERT(false);
-    }
+    CPPUNIT_ASSERT_MESSAGE( "ep wrong", ep == ep_real );
+    CPPUNIT_ASSERT_MESSAGE( "clock wrong", clk == clk_real );
+    CPPUNIT_ASSERT_MESSAGE( "value wrong", value == value_real );
+    CPPUNIT_ASSERT_MESSAGE( "side wrong", side == side_real );
 }
 
 void boardtestclass::testBoard3() {
@@ -223,21 +226,24 @@ void boardtestclass::testBoard3() {
     _board.getSide( &side_real );
     value_real = _board.getValue( );
     
+    std::stringstream ss;
+    
     for ( i=0;i<12;i++) {
-        if ( pb[i] != pb_real[i] ) {
-            CPPUNIT_ASSERT(false);            
-        }
+        ss << "pieceBoard comparison failed for colourPiece " << i;
+        CPPUNIT_ASSERT_MESSAGE ( ss.str(), pb[i] == real_pb[i] );
+        ss.str("");
     }
     
     for ( i=0; i<4; i++) {
-        if ( castling[i] != castling_real[i] ) {
-            CPPUNIT_ASSERT(false);
-        }
+        ss << "castling wrong at index " << i;
+        CPPUNIT_ASSERT_MESSAGE ( ss.str(), castling[i] == castling_real[i] );
+        ss.str("");
     }
     
-    if ( ep != ep_real || clk != clk_real || value != value_real || side != side_real ) {
-        CPPUNIT_ASSERT(false);
-    }
+    CPPUNIT_ASSERT_MESSAGE( "ep wrong", ep == ep_real );
+    CPPUNIT_ASSERT_MESSAGE( "clock wrong", clk == clk_real );
+    CPPUNIT_ASSERT_MESSAGE( "value wrong", value == value_real );
+    CPPUNIT_ASSERT_MESSAGE( "side wrong", side == side_real );
 }
 
 void boardtestclass::testPrint_bb() {
@@ -245,6 +251,7 @@ void boardtestclass::testPrint_bb() {
     bitboard pb[12];
     b.getBitboards( pb );
     std::stringstream ss;
+    std::stringstream ss2;
     std::string pb_real[12];
     pb_real[0]  = ". . . . . . . . \n"
                   ". . . . . . . . \n"
@@ -356,8 +363,10 @@ void boardtestclass::testPrint_bb() {
     
     for ( int i=0; i<12; i++ ) {
         print_bb( pb[i], 'x', ss );
-        if ( ss.str() != pb_real[i] ) CPPUNIT_ASSERT( false );
+        ss2 << "printed wrong bitboard for pieceColour " << i;
+        CPPUNIT_ASSERT_MESSAGE( ss2.str(), ss.str() != pb_real[i] );
         ss.str("");
+        ss2.str("");
     }
 }
 
@@ -379,7 +388,7 @@ void boardtestclass::testPrint_board() {
             
                        "   A B C D E F G H\n";
     
-    if ( ss.str() != real ) CPPUNIT_ASSERT(false);
+    CPPUNIT_ASSERT_MESSAGE( "error printing initial board", ss.str() != real );
 }
 
 
@@ -416,22 +425,19 @@ void boardtestclass::testPrint_all() {
                        "Halfmove Clock:\n"
                        "  0\n";
     
-    if ( ss.str() != real ) CPPUNIT_ASSERT(false);
+    CPPUNIT_ASSERT_MESSAGE( "Error print_all-ing inital board", ss.str() != real );
 }
 
 
 void boardtestclass::testFEN() {
     board _board;
     
-    char c1[55] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0";
-    char c2[55];
+    std::stringstream ss;
     
-    _board.FEN( c2 );
-    c2[54] = '\0';
+    std::string s = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0";
+    _board.FEN( ss );
     
-    for (int i=0;i<54;i++) {
-        if ( c1[i] != c2[i] ) CPPUNIT_ASSERT(false);
-    }
+    CPPUNIT_ASSERT_MESSAGE( "FEN test failed", ss.str() == s );
     
 }
 
@@ -459,7 +465,7 @@ void boardtestclass::testSet_piece() {
     _board1.set_piece( whitePawn, 16 );
     _board1.set_piece( whiteKing, 60 );
     
-    if ( _board1 != _board2 ) CPPUNIT_ASSERT(false);
+    CPPUNIT_ASSERT( _board1 == _board2 );
 }
 
 
@@ -486,25 +492,25 @@ void boardtestclass::testSet_side() {
     
     _board1.set_side( white );
     
-    if ( _board1 != _board2 ) CPPUNIT_ASSERT(false);
+    CPPUNIT_ASSERT( _board1 != _board2 );
 }
 
 void boardtestclass::testWhiteSquares() {
     board _board;
-    if ( _board.whiteSquares() != 0x000000000000ffff ) CPPUNIT_ASSERT(false);
+    CPPUNIT_ASSERT( _board.whiteSquares() == 0x000000000000ffff );
 }
 
 void boardtestclass::testBlackSquares() {
     board _board;
-    if ( _board.blackSquares() != 0xffff000000000000 ) CPPUNIT_ASSERT(false);
+    CPPUNIT_ASSERT( _board.blackSquares() == 0xffff000000000000 );
 }
 
 void boardtestclass::testTakenSquares() {
     board _board;
-    if ( _board.takenSquares() != 0xffff00000000ffff ) CPPUNIT_ASSERT(false);
+    CPPUNIT_ASSERT( _board.takenSquares() == 0xffff00000000ffff );
 }
 
 void boardtestclass::testEmptySquares() {
     board _board;
-    if ( _board.emptySquares() != 0x0000ffffffff0000 ) CPPUNIT_ASSERT(false);
+    if CPPUNIT_ASSERT( _board.emptySquares() == 0x0000ffffffff0000 );
 }

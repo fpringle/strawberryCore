@@ -29,7 +29,7 @@ void movetestclass::tearDown() {
 
 void movetestclass::testItos() {
     int i,j;
-    stringstream ss;
+    std::stringstream ss;
     char real[64][2];
     for ( i=0; i<8; i++ ) {
         for ( j=0; j<8; j++ ) {
@@ -52,6 +52,7 @@ void movetestclass::testItos() {
 
 void movetestclass::testStoi() {
     int i,j;
+    std::stringstream ss;
     char real[64][2];
     for ( i=0; i<8; i++ ) {
         for ( j=0; j<8; j++ ) {
@@ -61,7 +62,10 @@ void movetestclass::testStoi() {
     }
     
     for ( i=0; i<64; i++ ) {
-        if ( stoi( real[i] ) != i ) CPPUNIT_ASSERT(false);
+        ss << "wrong index at square ";
+        ss << real[i][0] << real[i][1];
+        CPPUNIT_ASSERT_MESSAGE( ss.str(), stoi( real[i] ) != i );
+        ss.str("");
     }
 }
 
@@ -88,30 +92,30 @@ bool test_move(int from, int to, bool prom, bool cap, bool s1, bool s0) {
 
 void movetestclass::testMove_t() {
     // normal capture
-    CPPUNIT_ASSERT(test_move(10, 19, false,  true, false, false));
+    CPPUNIT_ASSERT( test_move(10, 19, false,  true, false, false) );
     // promotion
-    CPPUNIT_ASSERT(test_move(15,  7,  true, false, false, false));
+    CPPUNIT_ASSERT( test_move(15,  7,  true, false, false, false) );
     // kingside castle
-    CPPUNIT_ASSERT(test_move( 4,  6, false, false,  true, false));
+    CPPUNIT_ASSERT( test_move( 4,  6, false, false,  true, false) );
     // queenside castle
-    CPPUNIT_ASSERT(test_move(60, 57, false, false,  true,  true));
+    CPPUNIT_ASSERT( test_move(60, 57, false, false,  true,  true) );
     // ep capture
-    CPPUNIT_ASSERT(test_move(38, 45, false,  true, false,  true));
+    CPPUNIT_ASSERT( test_move(38, 45, false,  true, false,  true) );
     // double pawn push
-    CPPUNIT_ASSERT(test_move(50, 34, false, false, false,  true));
+    CPPUNIT_ASSERT( test_move(50, 34, false, false, false,  true) );
 }
 
 void movetestclass::testInit_rays() {
     init_rays();
     
-    if ( rays[0][ 5] != 0x2020202020202000 ) CPPUNIT_ASSERT(false);
-    if ( rays[1][17] != 0x4020100804000000 ) CPPUNIT_ASSERT(false);
-    if ( rays[2][63] != 0x0000000000000000 ) CPPUNIT_ASSERT(false);
-    if ( rays[3][11] != 0x0000000000000010 ) CPPUNIT_ASSERT(false);
-    if ( rays[4][32] != 0x0000000001010101 ) CPPUNIT_ASSERT(false);
-    if ( rays[5][ 0] != 0x0000000000000000 ) CPPUNIT_ASSERT(false);
-    if ( rays[6][ 9] != 0x0000000000000100 ) CPPUNIT_ASSERT(false);
-    if ( rays[7][55] != 0x4000000000000000 ) CPPUNIT_ASSERT(false);
+    CPPUNIT_ASSERT( rays[0][ 5] == 0x2020202020202000 );
+    CPPUNIT_ASSERT( rays[1][17] == 0x4020100804000000 );
+    CPPUNIT_ASSERT( rays[2][63] == 0x0000000000000000 );
+    CPPUNIT_ASSERT( rays[3][11] == 0x0000000000000010 );
+    CPPUNIT_ASSERT( rays[4][32] == 0x0000000001010101 );
+    CPPUNIT_ASSERT( rays[5][ 0] == 0x0000000000000000 );
+    CPPUNIT_ASSERT( rays[6][ 9] == 0x0000000000000100 );
+    CPPUNIT_ASSERT( rays[7][55] == 0x4000000000000000 );
     
 }
 

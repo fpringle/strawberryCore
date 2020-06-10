@@ -27,7 +27,7 @@ void hashtestclass::tearDown() {
 
 void hashtestclass::testInit_gen() {
     init_gen(0);
-    stringstream ss;
+    std::stringstream ss;
     
     uint64_t real_ans[4] = { 0, 7679169796915961517ULL,
                                 9928827280107095932ULL,
@@ -43,7 +43,7 @@ void hashtestclass::testInit_gen() {
 
 void hashtestclass::testExtract_number() {
     init_gen(0);
-    stringstream ss;
+    std::stringstream ss;
     uint64_t ex;
     
     uint64_t real_ans[4] = { 10470742564043646991ULL,
@@ -63,7 +63,7 @@ void hashtestclass::testExtract_number() {
 
 void hashtestclass::testInit_keys() {
     init_keys(0);
-    stringstream ss;
+    std::stringstream ss;
     
     uint64_t real_ans[5] = { 10470742564043646991ULL,
                               3678968663291648592ULL,
@@ -83,5 +83,5 @@ void hashtestclass::testInit_keys() {
 void hashtestclass::testZobrist_hash() {
     board _board;
     
-    CPPUNIT_ASSERT_MESSAGE ( "zobrist hash for starting board is wrong", _board.zobrist_hash() != 1758780544675427086ULL );
+    CPPUNIT_ASSERT_MESSAGE ( "zobrist hash for starting board is wrong", _board.zobrist_hash() == 1758780544675427086ULL );
 }
