@@ -18,6 +18,7 @@
 //#include "move.h"
 #include <cstdint>
 #include <iostream>
+#include <string>
 
 // define 64-bit integer
 
@@ -106,11 +107,13 @@ class board {
     // utilities for testing
     void print_board( std::ostream& cout = std::cout );
     void print_all( std::ostream& cout = std::cout );
-    int FEN(char*);
+    std::string FEN( );
+    void FEN( std::ostream& );
 
     // set data
     void set_piece(colourPiece,int);
     void set_side(colour);
+    void clear_square( int );
 
     // move generation
     bitboard whiteSquares();

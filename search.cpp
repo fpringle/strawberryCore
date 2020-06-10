@@ -6,9 +6,6 @@
 #include "init.h"
 #include <limits>
 #include <cstdint>
-#include <iostream>
-using namespace std;
-
 
 // tree structure
 struct node * newNode(uint64_t data) {

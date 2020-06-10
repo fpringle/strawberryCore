@@ -381,12 +381,12 @@ int board::gen_moves ( move_t * moves) {
   }
 
   // castling
-  if ( sideToMove == white ) {
+  if ( sideToMove == white && ! is_check(white) ) {
     if ( castleWhiteKingSide &&  ( ! ( ( _white | _black ) & 0x0000000000000060 ) ) ) {
       // can't castle through check
       board copy = *this;
       copy.set_piece(whiteKing,5);
-      copy.set_piece(whiteKing,6);
+      copy.clear_square(4);
       if ( !copy.is_check(white) ) {
         *moves = move_t(4,6,0,0,1,0);
         moves++;
@@ -396,9 +396,8 @@ int board::gen_moves ( move_t * moves) {
     }
     if ( castleWhiteQueenSide && ( ! ( ( _white | _black ) & 0x000000000000000e ) ) ) {
       board copy = *this;
-      copy.set_piece(whiteKing,1);
-      copy.set_piece(whiteKing,2);
       copy.set_piece(whiteKing,3);
+      copy.clear_square(4);
       if ( !copy.is_check(white) ) {
         *moves = move_t(4,2,0,0,1,1);
         moves++;
@@ -407,11 +406,11 @@ int board::gen_moves ( move_t * moves) {
       copy.print_board(std::cout);
     }
   }
-  else {
+  else if ( sideToMove == black && ! is_check(black) ){
     if ( castleBlackKingSide &&  ( ! ( ( _white | _black ) & 0x6000000000000000 ) ) ) {
       board copy = *this;
       copy.set_piece(whiteKing,61);
-      copy.set_piece(whiteKing,62);
+      copy.clear_square(60);
       if ( !copy.is_check(black) ) {
         *moves = move_t(60,62,0,0,1,0);
         moves++;
@@ -421,9 +420,8 @@ int board::gen_moves ( move_t * moves) {
     }
     if ( castleBlackQueenSide && ( ! ( ( _white | _black ) & 0x0e00000000000000 ) ) ) {
       board copy = *this;
-      copy.set_piece(whiteKing,57);
-      copy.set_piece(whiteKing,58);
       copy.set_piece(whiteKing,59);
+      copy.clear_square(60);
       if ( !copy.is_check(black) ) {
         *moves = move_t(60,58,0,0,1,1);
         moves++;

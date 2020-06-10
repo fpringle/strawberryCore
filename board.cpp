@@ -1,4 +1,3 @@
-#include <iostream>
 #include "board.h"
 //#include "twiddle.h"
 #include "exceptions.h"
@@ -6,9 +5,8 @@
 #include <assert.h>
 #include <iostream>
 #include <math.h>
-
-using namespace std;
-
+#include <string>
+#include <sstream>
 
 // initialise constants declared in board.h
 const char symbols[12]  = {'p','r','n','b','q','k',
@@ -266,10 +264,9 @@ void board::print_all(std::ostream& cout) {
   cout << "  " << halfMoveClock << "\n";
 }
 
-int board::FEN(char * fen) {
+std::string board::FEN() {
   int count1;
-  int count2=0;
-  char *p = fen;
+  std::stringstream ss;
   int i,j,k;
   bitboard tmp;
   char to_print[64];
@@ -287,69 +284,111 @@ int board::FEN(char * fen) {
     }
   }
 
-  count2=0;
   for (i=0; i<8; i++) {
     for (j=0; j<8; j++) {
       if (to_print[i*8+j]=='.') {
         count1 = j;
         while (to_print[i*8+count1]=='.' && count1<8) count1++;
-        *p++ = '0'+(count1-j);
-        count2++;
+        ss << '0'+(count1-j);
         j=count1-1;
       }
       else {
-        *p++ = to_print[i*8+j];
-        count2++;
+        ss << to_print[i*8+j];
       }
     }
     if (i!=7) {
-      *p++ = '/';
-      count2++;
+      ss << '/';
     }
   }
-  *p++ = ' ';
-  *p++ = (sideToMove==white) ? 'w' : 'b';
-  count2+=2;
+  ss << (sideToMove==white) ? " w " : " b ";
 
-  *p++ = ' ';
-  count2++;
+  
   if ( !( castleWhiteKingSide | castleWhiteQueenSide | castleBlackKingSide | castleBlackQueenSide ) ) {
-    *p++ = '-';
-    count2++;
+    ss << "-";
   }
 
   else {
-    if ( castleWhiteKingSide )  { *p++ = 'K'; count2++; }
-    if ( castleWhiteQueenSide ) { *p++ = 'Q'; count2++; }
-    if ( castleBlackKingSide )  { *p++ = 'k'; count2++; }
-    if ( castleBlackQueenSide ) { *p++ = 'q'; count2++; }
+    if ( castleWhiteKingSide )  ss << "K";
+    if ( castleWhiteQueenSide ) ss << "Q";
+    if ( castleBlackKingSide )  ss << "k";
+    if ( castleBlackQueenSide ) ss << "q";
   }
 
-  count2++;
   if ( lastMoveDoublePawnPush ) {
-    *p++ = ' ';
-    *p++ = 'a'+dPPFile;
-    *p++ = (sideToMove==white) ? '6' : '3';
-    count2+=3;
+    ss << " ";
+    ss << "a"+dPPFile;
+    ss << (sideToMove==white) ? "6" : "3";
   }
 
   else {
-    *p++ = ' ';
-    *p++ = '-';
-    count2+=2;
+    ss << " -";
   }
 
-  *p++ = ' ';
-  count2++;
-  int len = (halfMoveClock>0) ? 1+log10(halfMoveClock) : 1;
-  int tempi = halfMoveClock;
-  for (i=0; i<len; i++) {
-    p[len-1-i] = '0' + (tempi%10);
-    tempi/=10;
-  }
-  count2+=len-1;
+  ss << " " << halfMoveClock;
 
-  return count2;
+  return ss.str();
+}
+
+void board::FEN( std::ostream& ss ) {
+  int count1;
+  int i,j,k;
+  bitboard tmp;
+  char to_print[64];
+  for (i=0;i<64;i++) to_print[i]='.';
+
+  for (i=0;i<12;i++) {
+    tmp = pieceBoards[i];
+    for (j=0;j<8;j++) {
+      for (k=0;k<8;k++) {
+        if (tmp & 1ULL) {
+          to_print[((7-j)*8)+k] = symbols[(i+6)%12];
+        }
+        tmp >>= 1;
+      }
+    }
+  }
+
+  for (i=0; i<8; i++) {
+    for (j=0; j<8; j++) {
+      if (to_print[i*8+j]=='.') {
+        count1 = j;
+        while (to_print[i*8+count1]=='.' && count1<8) count1++;
+        ss << "0"+(count1-j);
+        j=count1-1;
+      }
+      else {
+        ss << to_print[i*8+j];
+      }
+    }
+    if (i!=7) {
+      ss << "/";
+    }
+  }
+  ss << (sideToMove==white) ? " w " : " b ";
+
+  
+  if ( !( castleWhiteKingSide | castleWhiteQueenSide | castleBlackKingSide | castleBlackQueenSide ) ) {
+    ss << "-";
+  }
+
+  else {
+    if ( castleWhiteKingSide )  ss << "K";
+    if ( castleWhiteQueenSide ) ss << "Q";
+    if ( castleBlackKingSide )  ss << "k";
+    if ( castleBlackQueenSide ) ss << "q";
+  }
+
+  if ( lastMoveDoublePawnPush ) {
+    ss << " ";
+    ss << "a"+dPPFile;
+    ss << (sideToMove==white) ? "6" : "3";
+  }
+
+  else {
+    ss << " -";
+  }
+
+  ss << " " << halfMoveClock;
 }
 
 
@@ -359,6 +398,11 @@ void board::set_piece(colourPiece cP,int pos) {
 
 void board::set_side(colour side) {
   sideToMove = side;
+}
+
+void board::clear_square( int ind ) {
+    bitboard b = ! ( 1ULL << ind );
+    for ( int i=0; i<12; i++ ) pieceBoards[i] &= b;
 }
 
 bitboard board::whiteSquares() {

@@ -2,8 +2,6 @@
 #include "twiddle.h"
 #include "eval.h"
 #include <cstdint>
-#include <iostream>
-using namespace std;
 
 board doMove(board startBoard, move_t move) {
   int i;
@@ -36,11 +34,9 @@ board doMove(board startBoard, move_t move) {
 
 
   if ( move.is_capture() ) {
-//    cout << "capture\n";
     if ( ! move.is_ep_capture() ) {
       for (i=(1-movingColour)*6;i<12;i++) {
         if (is_bit_set(startingPos[i], toSquare) ) {
-//          cout << "captured piece: " << i << "\n";
           startingPos[i] = (startingPos[i] & ~( 1ULL << toSquare) );
           value -= pieceSquareTables[i][toSquare];
           value -= pieceValues[i];
@@ -50,12 +46,9 @@ board doMove(board startBoard, move_t move) {
     }
 
     else {
-//      cout << "ep capture\n";
       if ( movingColour == white ) {
-//        cout << "white capturing black\n";
         for (i=(1-movingColour)*6;i<12;i++) {
           if (is_bit_set(startingPos[i], toSquare+S) ) {
-//            cout << "captured piece: " << i << "\n";
             startingPos[i] = (startingPos[i] & ~( 1ULL << (toSquare+S) ) );
             value -= pieceSquareTables[i][toSquare+S];
             value -= pieceValues[i];
@@ -64,10 +57,8 @@ board doMove(board startBoard, move_t move) {
         }
       }
       else {
-//        cout << "black capturing white\n";
         for (i=(1-movingColour)*6;i<12;i++) {
           if (is_bit_set(startingPos[i], toSquare+N) ) {
-//            cout << "captured piece: " << i << "\n";
             startingPos[i] = (startingPos[i] & ~( 1ULL << (toSquare+N) ) );
             value -= pieceSquareTables[i][toSquare+N];
             value -= pieceValues[i];

@@ -1,8 +1,6 @@
 #include "board.h"
 #include "eval.h"
 #include "twiddle.h"
-#include <iostream>
-using namespace std;
 
 // initialise constants declared in eval.h
 

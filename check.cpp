@@ -2,6 +2,7 @@
 #include "move.h"
 #include "action.h"
 #include <math.h>
+#include <iostream>
 
 
 bool board::is_check(colour side) {
@@ -34,9 +35,9 @@ bool board::is_checkmate(colour side) {
   struct move_t moves[256];
   int num_moves = cpy.gen_moves( moves );
 
-//  for (int i=0; i<num_moves; i++) {
-//    child = doMove(cpy,moves[i]);
-//    if ( ! child.is_check(side) ) return false;
-//  }
-  return ( num_moves == 0 );
+  for (int i=0; i<num_moves; i++) {
+    child = doMove(cpy,moves[i]);
+    if ( ! child.is_check(side) ) return false;
+  }
+  return true;
 }

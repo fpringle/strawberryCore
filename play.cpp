@@ -8,7 +8,6 @@
 
 #include <string>
 #include <iostream>
-using namespace std;
 
 
 void play(int plies) {
@@ -33,10 +32,10 @@ void play(int plies) {
 
     bool false_move = true;
     while ( false_move ) {
-      cout << "From square: ";
-      cin >> from_str;
-      cout << "To square: ";
-      cin >> to_str;
+      std::cout << "From square: ";
+      std::cin >> from_str;
+      std::cout << "To square: ";
+      std:cin >> to_str;
 
       from_square = stoi(from_str);
       to_square = stoi(to_str);
@@ -48,7 +47,7 @@ void play(int plies) {
           break;
         }
       }
-      if ( false_move ) cout << "Invalid move.\n";
+      if ( false_move ) std::cout << "Invalid move.\n";
     }
 
 
@@ -59,7 +58,7 @@ void play(int plies) {
     count++;
 
     b.print_board(std::cout);
-    cout << "Computer thinking...\n";
+    std::cout << "Computer thinking...\n";
 
     comp_move = search_negamaxAB( b, plies, black );
     b = doMove( b, comp_move );
