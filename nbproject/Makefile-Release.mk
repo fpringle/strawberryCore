@@ -57,6 +57,7 @@ TESTFILES= \
 	${TESTDIR}/TestFiles/f2 \
 	${TESTDIR}/TestFiles/f3 \
 	${TESTDIR}/TestFiles/f5 \
+	${TESTDIR}/TestFiles/f7 \
 	${TESTDIR}/TestFiles/f4
 
 # Test Object Files
@@ -71,6 +72,8 @@ TESTOBJECTFILES= \
 	${TESTDIR}/tests/hashtestrunner.o \
 	${TESTDIR}/tests/movetestclass.o \
 	${TESTDIR}/tests/movetestrunner.o \
+	${TESTDIR}/tests/perfttestclass.o \
+	${TESTDIR}/tests/perfttestrunner.o \
 	${TESTDIR}/tests/twiddletestclass.o \
 	${TESTDIR}/tests/twiddletestrunner.o
 
@@ -180,6 +183,10 @@ ${TESTDIR}/TestFiles/f5: ${TESTDIR}/tests/movetestclass.o ${TESTDIR}/tests/movet
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc} -o ${TESTDIR}/TestFiles/f5 $^ ${LDLIBSOPTIONS}   
 
+${TESTDIR}/TestFiles/f7: ${TESTDIR}/tests/perfttestclass.o ${TESTDIR}/tests/perfttestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
+	${MKDIR} -p ${TESTDIR}/TestFiles
+	${LINK.cc} -o ${TESTDIR}/TestFiles/f7 $^ ${LDLIBSOPTIONS}   `cppunit-config --libs`   
+
 ${TESTDIR}/TestFiles/f4: ${TESTDIR}/tests/twiddletestclass.o ${TESTDIR}/tests/twiddletestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc} -o ${TESTDIR}/TestFiles/f4 $^ ${LDLIBSOPTIONS}   
@@ -243,6 +250,18 @@ ${TESTDIR}/tests/movetestrunner.o: tests/movetestrunner.cpp
 	${MKDIR} -p ${TESTDIR}/tests
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/movetestrunner.o tests/movetestrunner.cpp
+
+
+${TESTDIR}/tests/perfttestclass.o: tests/perfttestclass.cpp 
+	${MKDIR} -p ${TESTDIR}/tests
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 `cppunit-config --cflags` -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/perfttestclass.o tests/perfttestclass.cpp
+
+
+${TESTDIR}/tests/perfttestrunner.o: tests/perfttestrunner.cpp 
+	${MKDIR} -p ${TESTDIR}/tests
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 `cppunit-config --cflags` -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/perfttestrunner.o tests/perfttestrunner.cpp
 
 
 ${TESTDIR}/tests/twiddletestclass.o: tests/twiddletestclass.cpp 
@@ -409,6 +428,7 @@ ${OBJECTDIR}/twiddle_nomain.o: ${OBJECTDIR}/twiddle.o twiddle.cpp
 	    ${TESTDIR}/TestFiles/f2 || true; \
 	    ${TESTDIR}/TestFiles/f3 || true; \
 	    ${TESTDIR}/TestFiles/f5 || true; \
+	    ${TESTDIR}/TestFiles/f7 || true; \
 	    ${TESTDIR}/TestFiles/f4 || true; \
 	else  \
 	    ./${TEST} || true; \

@@ -78,6 +78,16 @@
         <itemPath>tests/movetestclass.h</itemPath>
         <itemPath>tests/movetestrunner.cpp</itemPath>
       </logicalFolder>
+      <logicalFolder name="f7"
+                     displayName="perft test"
+                     projectFiles="true"
+                     kind="TEST">
+        <itemPath>tests/perft_results_all.txt</itemPath>
+        <itemPath>tests/perft_results_checks.txt</itemPath>
+        <itemPath>tests/perfttestclass.cpp</itemPath>
+        <itemPath>tests/perfttestclass.h</itemPath>
+        <itemPath>tests/perfttestrunner.cpp</itemPath>
+      </logicalFolder>
       <logicalFolder name="f4"
                      displayName="twiddle test"
                      projectFiles="true"
@@ -209,6 +219,14 @@
           <output>${TESTDIR}/TestFiles/f6</output>
         </linkerTool>
       </folder>
+      <folder path="TestFiles/f7">
+        <cTool>
+          <commandLine>`cppunit-config --cflags`</commandLine>
+        </cTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f7</output>
+        </linkerTool>
+      </folder>
       <item path="hash.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="hash.h" ex="false" tool="3" flavor2="0">
@@ -260,6 +278,16 @@
       <item path="tests/movetestclass.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/movetestrunner.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/perft_results_all.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/perft_results_checks.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/perfttestclass.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/perfttestclass.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/perfttestrunner.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="tests/twiddletestclass.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -396,6 +424,20 @@
           <output>${TESTDIR}/TestFiles/f6</output>
         </linkerTool>
       </folder>
+      <folder path="TestFiles/f7">
+        <cTool>
+          <commandLine>`cppunit-config --cflags`</commandLine>
+        </cTool>
+        <ccTool>
+          <commandLine>`cppunit-config --cflags`</commandLine>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f7</output>
+          <linkerLibItems>
+            <linkerOptionItem>`cppunit-config --libs`</linkerOptionItem>
+          </linkerLibItems>
+        </linkerTool>
+      </folder>
       <item path="hash.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="hash.h" ex="false" tool="3" flavor2="0">
@@ -447,6 +489,16 @@
       <item path="tests/movetestclass.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/movetestrunner.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/perft_results_all.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/perft_results_checks.txt" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/perfttestclass.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/perfttestclass.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/perfttestrunner.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="tests/twiddletestclass.cpp" ex="false" tool="1" flavor2="0">
       </item>

@@ -317,7 +317,7 @@ bitboard pieceTargets(int sq, bitboard _white, bitboard _black, colourPiece cP) 
 }
 
 
-// generate pseudo-legel moves (without checking for checks)
+// generate pseudo-legal moves (without checking for checks)
 // returns the number of moves
 int board::gen_moves ( move_t * moves) {
   int piece;
