@@ -440,6 +440,9 @@ void boardtestclass::testFEN() {
     
     CPPUNIT_ASSERT_MESSAGE( "FEN test failed", ss.str() == s );
     
+    board _board2 ( "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0" );
+    _board2.print_board();
+    
 }
 
 void boardtestclass::testSet_piece() {

@@ -84,6 +84,7 @@ class board {
     board();
     board(bitboard*,bool*,bool,int,uint8_t,colour,int32_t);
     board(board&);
+    board(std::string);
     
     // operator overloading
     bool operator==(const board&);

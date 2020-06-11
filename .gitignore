@@ -3,3 +3,4 @@
 /tests/perft_results.txt
 /tests/perft_results_all.txt
 /tests/perft_results_checks.txt
+/tests/perfttest.cpp

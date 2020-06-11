@@ -133,6 +133,75 @@ board::board(board & b1) {
   value = b1.value;
 }
 
+board::board( std::string fen ) {
+    bitboard pieceBoards[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
+    int i=0,j;
+    int cp;
+    
+//    for ( int count_slash=0; count_slash<0; count_slash++ ) {
+//        j = 0;
+//        while ( fen[i] != '/' && fen[i] != ' ' ) {
+//            switch ( fen[i] ) {
+//                case '1':
+//                case '2':
+//                case '3':
+//                case '4':
+//                case '5':
+//                case '6':
+//                case '7':
+//                case '8':
+//                    j += int(fen[i]-'0');
+//                    std::cout << "number " << fen[i] << std::endl;
+//                    i++;
+//                    cp = -1;
+//                    break;
+//                case 'P':                        
+//                    cp = 0;
+//                    break;
+//                case 'R':
+//                    cp = 1;
+//                    break;
+//                case 'N':
+//                    cp = 2;
+//                    break;
+//                case 'B':
+//                    cp = 3;
+//                    break;
+//                case 'Q':
+//                    cp = 4;
+//                    break;
+//                case 'K':
+//                    cp = 5;
+//                    break;
+//                case 'p':
+//                    cp = 6;
+//                    break;
+//                case 'r':
+//                    cp = 7;
+//                    break;
+//                case 'n':
+//                    cp = 8;
+//                    break;
+//                case 'b':
+//                    cp = 9;
+//                    break;
+//                case 'q':
+//                    cp = 10;
+//                    break;
+//                case 'k':
+//                    cp = 11;
+//                    break;
+//            }
+//            if ( cp != -1) {
+//                pieceBoards[cp] |= ( 1ULL << ( (7-count_slash)*8 + j ) );
+//                j++;
+//                i++;
+//            }
+//        }
+//        i++;
+//    }
+}
+
 
 // operator overloading
 bool board::operator==( const board& other) {

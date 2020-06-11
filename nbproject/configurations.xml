@@ -82,8 +82,7 @@
                      displayName="perft test"
                      projectFiles="true"
                      kind="TEST">
-        <itemPath>tests/perft_results_all.txt</itemPath>
-        <itemPath>tests/perft_results_checks.txt</itemPath>
+        <itemPath>tests/perfttest.cpp</itemPath>
         <itemPath>tests/perfttestclass.cpp</itemPath>
         <itemPath>tests/perfttestclass.h</itemPath>
         <itemPath>tests/perfttestrunner.cpp</itemPath>
@@ -279,9 +278,7 @@
       </item>
       <item path="tests/movetestrunner.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="tests/perft_results_all.txt" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="tests/perft_results_checks.txt" ex="false" tool="3" flavor2="0">
+      <item path="tests/perfttest.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="tests/perfttestclass.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -490,9 +487,7 @@
       </item>
       <item path="tests/movetestrunner.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="tests/perft_results_all.txt" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="tests/perft_results_checks.txt" ex="false" tool="3" flavor2="0">
+      <item path="tests/perfttest.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="tests/perfttestclass.cpp" ex="false" tool="1" flavor2="0">
       </item>
