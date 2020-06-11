@@ -1,5 +1,5 @@
 #include "board.h"
-//#include "twiddle.h"
+#include "twiddle.h"
 #include "exceptions.h"
 
 #include <assert.h>
@@ -215,6 +215,14 @@ void board::getSide(colour * dest) {
   *dest = sideToMove;
 }
 
+int board::num_pieces_left() {
+    int ret = 0;
+    for ( int i=0; i<12; i++ ) {
+        ret += count_bits_set( pieceBoards[i] );
+    }
+    return ret;
+}
+
 void print_bb(bitboard bb, char c, std::ostream& cout) {//  = 'x') {
   int i,j;
   char to_print[64];
@@ -260,6 +268,40 @@ void board::print_board(std::ostream& cout) {
     cout << "  " << i+1 << endl;
   }
   cout << "\n   A B C D E F G H\n";
+}
+
+void board::print_board_indent( std::ostream& cout, int indent ) {
+  // uppercase = black, lowercase = white
+  int i,j;
+  bitboard tmp;
+  char to_print[64];
+  for (i=0;i<64;i++) to_print[i]='.';
+  
+  for (i=0;i<12;i++) {
+    tmp = pieceBoards[i];//pieces[i];
+    for (j=0;j<64;j++) {
+      if (tmp & 1ULL) {
+        to_print[j] = symbols[i];
+      }
+      tmp >>= 1;
+      //if (~tmp) break;
+    }
+  }
+  
+  for (i=0;i<indent;i++) cout << " ";
+  
+  cout << "   A B C D E F G H\n\n";
+  for (i=7;i>=0;i--) {
+    for (j=0;j<indent;j++) cout << " ";
+    cout << i+1 << " ";
+    for (j=0;j<8;j++) {
+      cout << " " << to_print[i*8+j];
+    }
+    cout << "  " << i+1 << endl;
+  }
+  cout << std::endl;
+  for (i=0;i<indent;i++) cout << " ";
+  cout << "   A B C D E F G H\n";
 }
 
 void board::print_all(std::ostream& cout) {
@@ -429,7 +471,7 @@ void board::set_side(colour side) {
 }
 
 void board::clear_square( int ind ) {
-    bitboard b = ! ( 1ULL << ind );
+    bitboard b = ~ ( 1ULL << ind );
     for ( int i=0; i<12; i++ ) pieceBoards[i] &= b;
 }
 

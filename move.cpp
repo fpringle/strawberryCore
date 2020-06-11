@@ -96,8 +96,25 @@ void print_move(struct move_t move, std::ostream& cout) {
   //itos(   toSq,   to_c );
   
   itos( fromSq, cout );
-  cout << " to ";
+  // cout << " to ";
   itos( toSq, cout );
+  
+  if ( move.is_promotion() ) {
+    switch ( move.flags() & 6 ) {
+        case 0:
+            cout << "Q";
+            break;
+        case 2:
+            cout << "R";
+            break;
+        case 4:
+            cout << "B";
+            break;
+        case 6:
+            cout << "N";
+            break;
+    }
+  }
 
   //cout << from_c[0] << from_c[1] << " to " << to_c[0] << to_c[1];
 }
@@ -341,11 +358,23 @@ int board::gen_moves ( move_t * moves) {
 //            cout << "Found a move!\n";
             if ( ( ( 1ULL << to_sq ) & _black ) | ( ( 1ULL << to_sq ) & _white ) ) {
               // capture
-              *moves = move_t(from_sq,to_sq,
-                              bool( (piece%6==0) && ((rankOne|rankEight)&(1ULL<<to_sq)) ),
-                              1,0,0);
-              moves++;
-              count++;
+              if ( piece%6==0 && ((rankOne|rankEight)&(1ULL<<to_sq)) ) {
+                  // promotion
+                  *moves = move_t(from_sq,to_sq,1,1,0,0);
+                  moves++;
+                  *moves = move_t(from_sq,to_sq,1,1,0,1);
+                  moves++;
+                  *moves = move_t(from_sq,to_sq,1,1,1,0);
+                  moves++;
+                  *moves = move_t(from_sq,to_sq,1,1,1,1);
+                  moves++;
+                  count += 4;
+              }
+              else {
+                  *moves = move_t(from_sq,to_sq,0,1,0,0);
+                  moves++;
+                  count++;
+              }
             }
             else {
               // non-capture
@@ -363,11 +392,23 @@ int board::gen_moves ( move_t * moves) {
               }
               else {
                 // quiet move
-                *moves = move_t(from_sq,to_sq,
-                                bool( (piece%6==0) && ((rankOne|rankEight)&(1ULL<<to_sq)) ),
-                                0,0,0);
-                moves++;
-                count++;
+                if ( piece%6==0 && ((rankOne|rankEight)&(1ULL<<to_sq)) ) {
+                  // promotion
+                  *moves = move_t(from_sq,to_sq,1,1,0,0);
+                  moves++;
+                  *moves = move_t(from_sq,to_sq,1,0,0,1);
+                  moves++;
+                  *moves = move_t(from_sq,to_sq,1,0,1,0);
+                  moves++;
+                  *moves = move_t(from_sq,to_sq,1,0,1,1);
+                  moves++;
+                  count += 4;
+                }
+                else {
+                    *moves = move_t(from_sq,to_sq,0,0,0,0);
+                    moves++;
+                    count++;
+                }
               }
             }
 //            moves++;
@@ -382,17 +423,21 @@ int board::gen_moves ( move_t * moves) {
 
   // ep capture
   if ( lastMoveDoublePawnPush ) {
-    // if white to move: potential squares are ( 40 + dPPFile +-1 )
-    // if black to move: potential squares are ( 32 + dPPFile +-1 )
-    int leftSquare    = 40 - ( 8 * sideToMove ) + dPPFile - 1;
-    int rightSquare   = 40 - ( 8 * sideToMove ) + dPPFile + 1;
-    int captureSquare = 32 + ( 8 * sideToMove ) + dPPFile;
-    if ( ( 1ULL << leftSquare ) & ( pieceBoards[ 6 * sideToMove ] ) ) {
+    // if white to move: potential squares are ( 32 + dPPFile +-1 )
+    // if black to move: potential squares are ( 24 + dPPFile +-1 )
+    int oppPawnSquare = 32 - (  8 * sideToMove ) + dPPFile;
+    bitboard oppPawn = ( 1ULL << oppPawnSquare );
+    bitboard left    = oneW( oppPawn );
+    bitboard right   = oneE( oppPawn );
+    int captureSquare = 40 - ( 24 * sideToMove ) + dPPFile;
+    if ( left & ( pieceBoards[ 6 * sideToMove ] ) ) {
+      int leftSquare = last_set_bit( left );
       *moves = move_t(leftSquare,captureSquare,0,1,0,1);
       moves++;
       count++;
     }
-    if ( ( 1ULL << rightSquare ) & ( pieceBoards[ 6 * sideToMove ] ) ) {
+    if ( right & ( pieceBoards[ 6 * sideToMove ] ) ) {
+      int rightSquare = last_set_bit( right );
       *moves = move_t(rightSquare,captureSquare,0,1,0,1);
       moves++;
       count++;
@@ -411,7 +456,7 @@ int board::gen_moves ( move_t * moves) {
         moves++;
         count++;
       }
-      copy.print_board(std::cout);
+      //copy.print_board(std::cout);
     }
     if ( castleWhiteQueenSide && ( ! ( ( _white | _black ) & 0x000000000000000e ) ) ) {
       board copy = *this;
@@ -422,31 +467,31 @@ int board::gen_moves ( move_t * moves) {
         moves++;
         count++;
       }
-      copy.print_board(std::cout);
+      //copy.print_board(std::cout);
     }
   }
   else if ( sideToMove == black && ! is_check(black) ){
     if ( castleBlackKingSide &&  ( ! ( ( _white | _black ) & 0x6000000000000000 ) ) ) {
       board copy = *this;
-      copy.set_piece(whiteKing,61);
+      copy.set_piece(blackKing,61);
       copy.clear_square(60);
       if ( !copy.is_check(black) ) {
         *moves = move_t(60,62,0,0,1,0);
         moves++;
         count++;
       }
-      copy.print_board(std::cout);
+      //copy.print_board(std::cout);
     }
     if ( castleBlackQueenSide && ( ! ( ( _white | _black ) & 0x0e00000000000000 ) ) ) {
       board copy = *this;
-      copy.set_piece(whiteKing,59);
+      copy.set_piece(blackKing,59);
       copy.clear_square(60);
       if ( !copy.is_check(black) ) {
         *moves = move_t(60,58,0,0,1,1);
         moves++;
         count++;
       }
-      copy.print_board(std::cout);
+      //copy.print_board(std::cout);
     }
   }
 

@@ -81,16 +81,34 @@ board doMove(board startBoard, move_t move) {
     value -= pieceSquareTables[1+(6*movingColour)][fromSquare-4];
     value += pieceSquareTables[1+(6*movingColour)][toSquare+1];
   }
-
+  
+  // promotion
+  if ( move.is_promotion() ) {
+    startingPos[6*movingColour] &= ( ~ ( 1ULL << toSquare ) );
+    
+    switch ( move.flags() & 6 ) {
+        case 0:
+            startingPos[(6*movingColour)+4] |= ( 1ULL << toSquare );
+            break;
+        case 2:
+            startingPos[(6*movingColour)+1] |= ( 1ULL << toSquare );
+            break;
+        case 4:
+            startingPos[(6*movingColour)+3] |= ( 1ULL << toSquare );
+            break;
+        case 6:
+            startingPos[(6*movingColour)+2] |= ( 1ULL << toSquare );
+            break;
+    }
+  }
 
   startBoard.getCastlingRights(castling);
-//  startBoard.getEP(&ep);
   startBoard.getClock(&clk);
 
   // check for double pawn push
   if (move.is_doublePP()) {
     ep=true;
-    dpp= fromSquare%6;
+    dpp= fromSquare%8;
   }
   else ep=false;
 
@@ -122,6 +140,22 @@ board doMove(board startBoard, move_t move) {
         castling[3] = false;
         break;
     }
+  }
+  
+  switch ( toSquare ) {
+    case 0:
+      castling[1] = false;
+      break;
+    case 7:
+      castling[0] = false;
+      break;
+    case 56:
+      castling[3] = false;
+      break;
+    case 63:
+      castling[2] = false;
+      break;
+  
   }
 
   // increment halfMoveClock

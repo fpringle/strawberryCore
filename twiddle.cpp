@@ -7,7 +7,7 @@
 
 
 
-// initialise constants decalred in twiddle.h
+// initialise constants declared in twiddle.h
 const bitboard fileA        = 0x0101010101010101;
 const bitboard fileB        = 0x0202020202020202;
 const bitboard fileG        = 0x4040404040404040;

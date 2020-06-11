@@ -3,8 +3,10 @@
 #ifndef __TWIDDLE_H
 #define __TWIDDLE_H
 
-#include "board.h"
-#include "move.h"
+//#include "board.h"
+//#include "move.h"
+
+using bitboard = unsigned long long int;
 
 // general-purpose bit twiddling functions
 int count_bits_set(bitboard);
