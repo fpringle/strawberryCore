@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "twiddle.h"
 #include <bitset>
-//#include <string>
+#include <string>
 
 // initialise constants declared in move.h
 const int N   =  +8;
@@ -31,11 +31,26 @@ void itos (int i, char * dest) {
   *(dest+1) = '1' + (i/8);
 }
 
+std::string itos (int i) {
+    std::string ret = "  ";
+    ret[0] = 'a' + (i%8);
+    ret[1] = '1' + (i/8);
+    return ret;
+}
+
+void itos(int i, std::ostream& cout) {
+    cout << char('a'+(i%8)) << char('1'+(i/8));
+}
+
 int stoi(char * s) {
   char file = s[0];
   char rank = s[1];
 
   return int(rank-'1')*8 + int(file-'a');
+}
+
+int stoi( std::string s ) {
+    return int(s[0]-'1')*8 + int(s[1]-'a');
 }
 
 // move_t constructors
@@ -72,15 +87,19 @@ uint16_t move_t::give()     { return data;}
 
 
 void print_move(struct move_t move, std::ostream& cout) {
-  char   to_c[2];
-  char from_c[2];
+  //char   to_c[2];
+  //char from_c[2];
   int fromSq = move.from_sq();
   int toSq   = move.to_sq();
   
-  itos( fromSq, from_c );
-  itos(   toSq,   to_c );
+  //itos( fromSq, from_c );
+  //itos(   toSq,   to_c );
+  
+  itos( fromSq, cout );
+  cout << " to ";
+  itos( toSq, cout );
 
-  cout << from_c[0] << from_c[1] << " to " << to_c[0] << to_c[1];
+  //cout << from_c[0] << from_c[1] << " to " << to_c[0] << to_c[1];
 }
 
 // calculate ray tables for move generation

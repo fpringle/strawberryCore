@@ -438,9 +438,6 @@ void boardtestclass::testFEN() {
     std::string s = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0";
     _board.FEN( ss );
     
-    std::cout << s << "end\n";
-    std::cout << ss.str() << "end\n";
-    
     CPPUNIT_ASSERT_MESSAGE( "FEN test failed", ss.str() == s );
     
 }

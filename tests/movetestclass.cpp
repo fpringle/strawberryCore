@@ -30,23 +30,34 @@ void movetestclass::tearDown() {
 void movetestclass::testItos() {
     int i,j;
     std::stringstream ss;
+    std::stringstream ss2;
     char real[64][2];
+    std::string real_string[64];
     for ( i=0; i<8; i++ ) {
         for ( j=0; j<8; j++ ) {
             real[i*8 + j][0] = 'a' + j;
             real[i*8 + j][1] = '1' + i;
+            real_string[i*8+j] = "  ";
+            real_string[i*8+j][0] = 'a'+j;
+            real_string[i*8+j][1] = '1'+i;
         }
     }
     
     char dest[2];
+    std::string _string = "  ";
     
     for ( i=0;i<64;i++ ) {
         ss << "wrong string at square ";
         ss << real[i][0] << real[i][1];
         itos( i, dest );
+        _string = itos(i);
+        itos(i,ss2);
         CPPUNIT_ASSERT_MESSAGE ( ss.str(), dest[0] == real[i][0] );
         CPPUNIT_ASSERT_MESSAGE ( ss.str(), dest[1] == real[i][1] );
+        CPPUNIT_ASSERT_MESSAGE ( ss.str(), _string == real_string[i] );
+        CPPUNIT_ASSERT_MESSAGE ( ss.str(), _string == ss2.str() );
         ss.str("");
+        ss2.str("");
     }
 }
 
