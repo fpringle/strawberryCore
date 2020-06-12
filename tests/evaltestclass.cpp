@@ -9,6 +9,7 @@
 #include "evaltestclass.h"
 #include "board.h"
 #include "eval.h"
+#include "action.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(evaltestclass);
 
@@ -92,3 +93,37 @@ void evaltestclass::testEvaluate() {
     
     CPPUNIT_ASSERT( _board.evaluate() == -105 );
 }
+
+
+void evaltestclass::testIncremental_evaluation() {
+
+    board _board;
+    
+    move_t e2e4 ( 12, 28, 0, 0, 0, 1 );
+    move_t e7e5 ( 52, 36, 0, 0, 0, 1 );
+    move_t b1c3 (  1, 18, 0, 0, 0, 1 );
+    move_t f8b4 ( 61, 25, 0, 0, 0, 1 );
+    move_t c3b5 ( 18, 33, 0, 0, 0, 1 );
+    move_t b4d2 ( 25, 11, 0, 0, 0, 1 );
+    
+    _board = doMove( e2e4 );
+    _board.print_board();
+    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
+    _board = doMove( e7e5 );
+    _board.print_board();
+    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
+    _board = doMove( b1c3 );
+    _board.print_board();
+    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
+    _board = doMove( f8b4 );
+    _board.print_board();
+    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
+    _board = doMove( c3b5 );
+    _board.print_board();
+    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
+    _board = doMove( b4d2 );
+    _board.print_board();
+    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
+
+}
+

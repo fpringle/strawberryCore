@@ -17,6 +17,7 @@ class evaltestclass : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(testEvaluate_material);
     CPPUNIT_TEST(testEvaluate_pieceSquareTables);
     CPPUNIT_TEST(testEvaluate);
+    CPPUNIT_TEST(testIncremental_evaluation);
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -30,6 +31,7 @@ private:
     void testEvaluate_material();
     void testEvaluate_pieceSquareTables();
     void testEvaluate();
+    void testIncremental_evaluation();
 
 };
 

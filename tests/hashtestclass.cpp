@@ -9,7 +9,10 @@
 #include "hashtestclass.h"
 #include "board.h"
 #include "hash.h"
-
+#include "init.h"
+#include "move.h";
+#include "action.h"
+#include "play.h";
 
 CPPUNIT_TEST_SUITE_REGISTRATION(hashtestclass);
 
@@ -86,4 +89,20 @@ void hashtestclass::testZobrist_hash() {
     board _board;
     
     CPPUNIT_ASSERT_MESSAGE ( "zobrist hash for starting board is wrong", _board.zobrist_hash() == 9597562740140802116ULL );
+}
+
+
+void hashtestclass::testIncremental_hash() {
+    init(0);
+    
+    board _board;
+    
+    move_t player_move;
+    
+    for ( int i=0; i<10; i++ ) {
+        player_move = input_move( _board );
+        _board = doMove( _board, player_move );
+        CPPUNIT_ASSERT( _board.getHash() == _board.zobrist_hash() );
+    }
+
 }
