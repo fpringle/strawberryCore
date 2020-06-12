@@ -3,7 +3,8 @@
 
 #include <cstdint>
 #include <string>
-using namespace std;
+#include <iostream>
+#include "board.h"
 
 
 // some constants
@@ -31,7 +32,7 @@ void itos(int,char*);
 std::string itos(int);
 void itos(int, std::ostream&);
 int stoi(char*);
-int stoi(std::string);
+int stoi(std::string, std::string=" ");
 
 // enumerate directions for ray generation
 enum direction {dirN,dirNE,dirE,dirSE,dirS,dirSW,dirW,dirNW};
@@ -70,6 +71,7 @@ struct move_t {
   };
 
 void print_move( struct move_t, std::ostream& cout = std::cout );
+move_t stom( move_t*, int, std::string);
 
 // naive move generation
 // pawns

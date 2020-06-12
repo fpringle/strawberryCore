@@ -71,9 +71,12 @@ board::board() {
 
   // value starts at 0
   value=0;
+  
+  // initial hash value
+  hash_value = zobrist_hash();
 }
 
-board::board(bitboard * startPositions, bool * castling, bool ep, int dpp, uint8_t clock, uint8_t full_clock, colour side, int32_t val) {
+board::board(bitboard * startPositions, bool * castling, bool ep, int dpp, uint8_t clock, uint8_t full_clock, colour side, int32_t val, uint64_t hash) {
   // parameterised constructor
 
   // initialise an array of pointers to the piece bitboards
@@ -101,6 +104,9 @@ board::board(bitboard * startPositions, bool * castling, bool ep, int dpp, uint8
 
   // value
   value = val;
+  
+  // hash
+  hash_value = hash;
 }
 
 board::board(board & b1) {
@@ -134,6 +140,9 @@ board::board(board & b1) {
 
   // value
   value = b1.value;
+  
+  // hash
+  hash_value = b1.hash_value;
 }
 
 board::board( std::string fen ) {
@@ -269,10 +278,13 @@ board::board( std::string fen ) {
     
     // value starts at 0
     value=evaluate();
+    
+    // hash
+    hash_value = zobrist_hash();
 }
 
 
-// operator overloading
+// operator overloading - do this with hashes instead?
 bool board::operator==( const board& other) {
     int i;
     
@@ -360,6 +372,10 @@ void board::getFullClock(int * dest) {
 
 void board::getSide(colour * dest) {
   *dest = sideToMove;
+}
+
+void board::getHash(uint64_t * dest) {
+    *dest = hash_value;
 }
 
 int board::num_pieces_left() {
@@ -546,7 +562,7 @@ std::string board::FEN() {
 
   ss << " " << halfMoveClock;
 
-  ss << "" << full MoveClock;
+  ss << "" << fullMoveClock;
 
   return ss.str();
 }

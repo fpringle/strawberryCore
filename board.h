@@ -78,12 +78,16 @@ class board {
   colour sideToMove;
 
   // maintain a running value
-  int32_t value = 0;
+  // int32_t value = 0;
+  int32_t value;
+  
+  // store hash of current state
+  uint64_t hash_value;
 
   public:
     // constructors
     board();
-    board(bitboard*,bool*,bool,int,uint8_t,uint8_t,colour,int32_t);
+    board(bitboard*,bool*,bool,int,uint8_t,uint8_t,colour,int32_t,uint64_t hash=0);
     board(board&);
     board(std::string);
     
@@ -99,6 +103,7 @@ class board {
     void getClock(int*);
     void getFullClock(int*);
     void getSide(colour*);
+    void getHash(uint64_t*);
     int num_pieces_left();
 
     // evaluation

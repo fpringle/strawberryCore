@@ -10,6 +10,24 @@
 #include <iostream>
 
 
+move_t input_move( board b ) {
+    move_t moves[256];
+    int n_moves = b.gen_moves( moves );
+    move_t ret;
+    
+    std::string inp;
+    std::cout << "Enter move as FileRankFileRank (e.g. e2e4): ";
+    std::cin >> inp;
+    ret = stom( moves, n_moves, inp );
+    while ( ret.give() == 0 ) {
+        std::cout << "Sorry, that's not a valid move.\n";
+        std::cout << "Enter move as FileRankFileRank (e.g. e2e4): ";
+        std::cin >> inp;
+        ret = stom( moves, n_moves, inp );
+    }
+    return ret;
+}
+
 void play(int plies) {
   init();
   board b;
@@ -35,7 +53,7 @@ void play(int plies) {
       std::cout << "From square: ";
       std::cin >> from_str;
       std::cout << "To square: ";
-      std:cin >> to_str;
+      std::cin >> to_str;
 
       from_square = stoi(from_str);
       to_square = stoi(to_str);

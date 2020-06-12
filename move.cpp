@@ -49,7 +49,7 @@ int stoi(char * s) {
   return int(rank-'1')*8 + int(file-'a');
 }
 
-int stoi( std::string s ) {
+int stoi( std::string s, std::string s2 ) {
     return int(s[0]-'1')*8 + int(s[1]-'a');
 }
 
@@ -117,6 +117,22 @@ void print_move(struct move_t move, std::ostream& cout) {
   }
 
   //cout << from_c[0] << from_c[1] << " to " << to_c[0] << to_c[1];
+}
+
+move_t stom( move_t* moves, int n_moves, std::string s ) {
+    std::string from = s.substr( 0, 2 );
+    std::string to = s.substr( 2, 2 );
+    int from_ind = stoi( from, " " );
+    int to_ind   = stoi( to, " " );
+    
+    for ( int i=0; i<n_moves; i++ ) {
+        if ( ( moves[i].from_sq() == from_ind ) &&
+             (  moves[i].to_sq()  ==  to_ind  ) ) {
+                return moves[i];
+        }
+    }
+    
+    return move_t ( 0, 0, 0, 0, 0, 0 );
 }
 
 // calculate ray tables for move generation
@@ -498,7 +514,82 @@ int board::gen_moves ( move_t * moves) {
   return count;
 }
 
-
-
-// from to prom cap 1 0
-
+bool board::is_legal( struct move_t move ) {
+    colourPiece movingPiece;
+    int from_ind = move.from_sq();
+    int to_ind = move.to_sq();
+    bitboard from_square = ( 1ULL << from_ind );
+    for ( int i=sideToMove*6; i<(1+sideToMove)*6; i++ ) {
+        if ( pieceBoards[i] & from_square ) {
+            movingPiece = colourPiece(i);
+            break;
+        }
+    }
+    
+    colour otherSide = ( sideToMove == white ) ? black : white;
+    bitboard _white = whiteSquares();
+    bitboard _black = blackSquares();
+    
+    // king can't move into check
+    if ( movingPiece%6 == 5 ) {
+        if ( pawnAttackNaive( from_ind, sideToMove ) & pieceBoards[6*otherSide] ) return false;
+        if ( rookTargets( from_ind, _white, _black, sideToMove ) & pieceBoards[(6*otherSide)+1] ) return false;
+        if ( knightTargets( from_ind, _white, _black, sideToMove ) & pieceBoards[(6*otherSide)+2] ) return false;
+        if ( bishopTargets( from_ind, _white, _black, sideToMove ) & pieceBoards[(6*otherSide)+3] ) return false;
+        if ( queenTargets( from_ind, _white, _black, sideToMove ) & pieceBoards[(6*otherSide)+4] ) return false;
+        if ( kingTargets( from_ind, _white, _black, sideToMove ) & pieceBoards[(6*otherSide)+5] ) return false;
+        return true;
+    }
+    
+    // can't move pinned pieces
+    bitboard _ray;
+    bitboard blockers = takenSquares();
+    bitboard tmp;
+    bitboard attacker;
+    
+    for ( int i=0; i<8; i++ ) {
+        if ( rays[i][from_ind] & pieceBoards[(6*sideToMove)+5] ) {
+            int j = 7-i;
+            if ( i%2 ) {
+                // bishops and queens
+                _ray = rays[j][from_ind];
+                tmp = blockers & _ray;
+                if (tmp) {
+                    if ( (j+2)%6 < 4 ) attacker = ( 1ULL << first_set_bit( tmp ) );
+                    else attacker = ( 1ULL << last_set_bit( tmp ) );
+                    if ( attacker & pieceBoards[(6*otherSide)+3] ) return false;
+                    if ( attacker & pieceBoards[(6*otherSide)+5] ) return false;
+                }
+            }
+            else {
+                // rooks and queens
+                _ray = rays[j][from_ind];
+                tmp = blockers & _ray;
+                if (tmp) {
+                    if ( (j+2)%6 < 4 ) ( attacker = 1ULL << first_set_bit( tmp ) );
+                    else attacker = ( 1ULL << last_set_bit( tmp ) );
+                    if ( attacker & pieceBoards[(6*otherSide)+1] ) return false;
+                    if ( attacker & pieceBoards[(6*otherSide)+5] ) return false;
+                }
+            }
+        }
+    }
+    
+    if ( move.is_ep_capture() ) {
+        int other_pawn_ind = to_ind + ( ( sideToMove==white ) ? S : N );
+        bitboard left_ray  = rays[6][from_ind] & rays[6][other_pawn_ind] & blockers;
+        bitboard right_ray = rays[2][from_ind] & rays[2][other_pawn_ind] & blockers;
+        bitboard attacker_left  = ( 1ULL << first_set_bit(left_ray) );
+        bitboard attacker_right = ( 1ULL << last_set_bit(right_ray) );
+        
+        if ( ( attacker_left  & pieceBoards[sideToMove*6] ) &&
+             ( attacker_right & ( pieceBoards[(otherSide*6) + 1] |
+                                  pieceBoards[(otherSide*6) + 4] ) ) ) return false;
+        if ( ( attacker_right & pieceBoards[sideToMove*6] ) &&
+             ( attacker_left  & ( pieceBoards[(otherSide*6) + 1] |
+                                  pieceBoards[(otherSide*6) + 4] ) ) ) return false;
+        
+    }
+    
+    return true;
+}

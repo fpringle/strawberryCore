@@ -1,6 +1,7 @@
 #include "action.h"
 #include "twiddle.h"
 #include "eval.h"
+#include "hash.h"
 #include <cstdint>
 
 board doMove(board startBoard, move_t move) {
@@ -9,9 +10,13 @@ board doMove(board startBoard, move_t move) {
   uint16_t toSquare   = move.to_sq();
   bool castling[4];
   bool ep;
+  startBoard.getEP(&ep);
   int dpp;
+  startBoard.getdPPFile(&dpp);
   int clk;
   int full_clk;
+  uint64_t hash;
+  startBoard.getHash( &hash );
   int32_t value = startBoard.getValue();
   colour movingColour;
   startBoard.getSide( & movingColour );
@@ -23,12 +28,14 @@ board doMove(board startBoard, move_t move) {
 
   startBoard.getBitboards(startingPos);
 
-  for (i=0;i<12;i++) {
+  for (i=(movingColour*6);i<(1+movingColour*6);i++) {
     if ( is_bit_set(startingPos[i], fromSquare) ) {
       movingPiece = colourPiece(i);
       startingPos[i] = (startingPos[i] & ~( 1ULL << fromSquare) ) | ( 1ULL << toSquare );
       value -= pieceSquareTables[i][fromSquare];
       value += pieceSquareTables[i][toSquare];
+      hash ^= zobristKeys[i*64 + fromSquare];
+      hash ^= zobristKeys[i*64 + toSquare];
       break;
     }
   }
@@ -36,37 +43,23 @@ board doMove(board startBoard, move_t move) {
 
   if ( move.is_capture() ) {
     if ( ! move.is_ep_capture() ) {
-      for (i=(1-movingColour)*6;i<12;i++) {
+      for (i=(1-movingColour)*6;i<(2-movingColour)*6;i++) {
         if (is_bit_set(startingPos[i], toSquare) ) {
           startingPos[i] = (startingPos[i] & ~( 1ULL << toSquare) );
           value -= pieceSquareTables[i][toSquare];
           value -= pieceValues[i];
+          hash ^= zobristKeys[i*64 + toSquare];
           break;
         }
       }
     }
 
     else {
-      if ( movingColour == white ) {
-        for (i=(1-movingColour)*6;i<12;i++) {
-          if (is_bit_set(startingPos[i], toSquare+S) ) {
-            startingPos[i] = (startingPos[i] & ~( 1ULL << (toSquare+S) ) );
-            value -= pieceSquareTables[i][toSquare+S];
-            value -= pieceValues[i];
-            break;
-          }
-        }
-      }
-      else {
-        for (i=(1-movingColour)*6;i<12;i++) {
-          if (is_bit_set(startingPos[i], toSquare+N) ) {
-            startingPos[i] = (startingPos[i] & ~( 1ULL << (toSquare+N) ) );
-            value -= pieceSquareTables[i][toSquare+N];
-            value -= pieceValues[i];
-            break;
-          }
-        }
-      }
+      int _dir = ( movingColour == white ) ? S : N;
+      startingPos[(1-movingColour)*6] &= ~( 1ULL << (toSquare + _dir) );
+      value -= pieceSquareTables[(1-movingColour)*6][toSquare + _dir];
+      value -= pieceValues[(1-movingColour)*6];
+      hash ^= zobristKeys[(1-movingColour)*6*64 + toSquare + _dir];
     }
   }
 
@@ -75,30 +68,44 @@ board doMove(board startBoard, move_t move) {
                                   | ( 1ULL << (toSquare-1) );
     value -= pieceSquareTables[1+(6*movingColour)][fromSquare+3];
     value += pieceSquareTables[1+(6*movingColour)][toSquare-1];
+    hash ^= zobristKeys[(1+(6*movingColour))*64 + fromSquare + 3];
+    hash ^= zobristKeys[(1+(6*movingColour))*64 + toSquare - 1];
   }
   else if ( move.is_queenCastle() ) {
     startingPos[1+(6*movingColour)] = (startingPos[1+(6*movingColour)] & ~( 1ULL << (fromSquare-4)) )
                                   | ( 1ULL << (toSquare+1) );
     value -= pieceSquareTables[1+(6*movingColour)][fromSquare-4];
     value += pieceSquareTables[1+(6*movingColour)][toSquare+1];
+    hash ^= zobristKeys[(1+(6*movingColour))*64 + fromSquare - 4];
+    hash ^= zobristKeys[(1+(6*movingColour))*64 + toSquare + 1];
   }
   
   // promotion
   if ( move.is_promotion() ) {
     startingPos[6*movingColour] &= ( ~ ( 1ULL << toSquare ) );
+    value -= pieceSquareTables[6*movingColour][toSquare];
+    hash &= zobristKeys[6*movingColour*64 + toSquare];
     
     switch ( move.flags() & 6 ) {
         case 0:
             startingPos[(6*movingColour)+4] |= ( 1ULL << toSquare );
+            value += pieceSquareTables[(6*movingColour)+4][toSquare];
+            hash &= zobristKeys[((6*movingColour)+4)*64 + toSquare];
             break;
         case 2:
             startingPos[(6*movingColour)+1] |= ( 1ULL << toSquare );
+            value += pieceSquareTables[(6*movingColour)+1][toSquare];
+            hash &= zobristKeys[((6*movingColour)+1)*64 + toSquare];
             break;
         case 4:
             startingPos[(6*movingColour)+3] |= ( 1ULL << toSquare );
+            value += pieceSquareTables[(6*movingColour)+3][toSquare];
+            hash &= zobristKeys[((6*movingColour)+3)*64 + toSquare];
             break;
         case 6:
             startingPos[(6*movingColour)+2] |= ( 1ULL << toSquare );
+            value += pieceSquareTables[(6*movingColour)+2][toSquare];
+            hash &= zobristKeys[((6*movingColour)+2)*64 + toSquare];
             break;
     }
   }
@@ -108,9 +115,13 @@ board doMove(board startBoard, move_t move) {
   startBoard.getFullClock(&full_clk);
 
   // check for double pawn push
+  if ( ep ) {
+    hash ^= zobristKeys[772 + dpp];
+  }
   if (move.is_doublePP()) {
     ep=true;
     dpp= fromSquare%8;
+    hash ^= zobristKeys[772 + dpp];
   }
   else ep=false;
 
@@ -118,28 +129,52 @@ board doMove(board startBoard, move_t move) {
   if (movingPiece % 6 == 1) {
     switch (fromSquare) {
       case 0:
-        castling[1] = false;
+        if (castling[1]) {
+            hash ^= zobristKeys[769];
+            castling[1] = false;
+        }
         break;
       case 7:
-        castling[0] = false;
+        if (castling[0]) {
+            hash ^= zobristKeys[768];
+            castling[0] = false;
+        }
         break;
       case 56:
-        castling[3] = false;
+        if (castling[3]) {
+            hash ^= zobristKeys[771];
+            castling[3] = false;
+        }
         break;
       case 63:
-        castling[2] = false;
+        if (castling[2]) {
+            hash ^= zobristKeys[770];
+            castling[2] = false;
+        }
         break;
     }
   }
   else if (movingPiece % 6 == 5) {
     switch (movingColour) {
       case white:
-        castling[0] = false;
-        castling[1] = false;
+        if (castling[1]) {
+            hash ^= zobristKeys[769];
+            castling[1] = false;
+        }
+        if (castling[0]) {
+            hash ^= zobristKeys[768];
+            castling[0] = false;
+        }
         break;
       case black:
-        castling[2] = false;
-        castling[3] = false;
+        if (castling[3]) {
+            hash ^= zobristKeys[771];
+            castling[3] = false;
+        }
+        if (castling[2]) {
+            hash ^= zobristKeys[770];
+            castling[2] = false;
+        }
         break;
     }
   }
@@ -157,7 +192,6 @@ board doMove(board startBoard, move_t move) {
     case 63:
       castling[2] = false;
       break;
-  
   }
 
   // increment halfMoveClock
@@ -166,8 +200,11 @@ board doMove(board startBoard, move_t move) {
 
   // increment fullMoveClock
   if ( movingColour == black ) full_clk++;
+  
+  // change hash for different side to move
+  hash ^= zobristKeys[780];
 
-  board endBoard (startingPos, castling, ep, dpp, clk, full_clk, otherColour, value );
+  board endBoard (startingPos, castling, ep, dpp, clk, full_clk, otherColour, value, hash );
 
   return endBoard;
 }
