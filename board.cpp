@@ -546,6 +546,8 @@ std::string board::FEN() {
 
   ss << " " << halfMoveClock;
 
+  ss << "" << full MoveClock;
+
   return ss.str();
 }
 
