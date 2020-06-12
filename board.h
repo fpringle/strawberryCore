@@ -126,6 +126,7 @@ class board {
     bitboard takenSquares();// { return (whiteSquares() | blackSquares()); }
     bitboard emptySquares();// { return ( ~ takenSquares()); }
     int gen_moves(struct move_t*);
+    bool is_legal(struct move_t);
 
     // hashing
     uint64_t zobrist_hash();
