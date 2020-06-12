@@ -69,6 +69,7 @@ class board {
   bool castleBlackQueenSide;
   
   int halfMoveClock;
+  int fullMoveClock;
   
   bool lastMoveDoublePawnPush;
   int dPPFile;        // if lastMoveDoublePawnPush = true, epFile gives the file
@@ -82,7 +83,7 @@ class board {
   public:
     // constructors
     board();
-    board(bitboard*,bool*,bool,int,uint8_t,colour,int32_t);
+    board(bitboard*,bool*,bool,int,uint8_t,uint8_t,colour,int32_t);
     board(board&);
     board(std::string);
     
@@ -96,6 +97,7 @@ class board {
     void getEP(bool*);
     void getdPPFile(int*);
     void getClock(int*);
+    void getFullClock(int*);
     void getSide(colour*);
     int num_pieces_left();
 

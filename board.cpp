@@ -59,6 +59,7 @@ board::board() {
   // to enforce the 50-move rule
   // because that always comes into effect.
   halfMoveClock = 0;
+  fullMoveClock = 0;
   
   // keep track of whether the previous move was a double
   // pawn push, for en passant pawn capture
@@ -72,7 +73,7 @@ board::board() {
   value=0;
 }
 
-board::board(bitboard * startPositions, bool * castling, bool ep, int dpp, uint8_t clock, colour side, int32_t val) {
+board::board(bitboard * startPositions, bool * castling, bool ep, int dpp, uint8_t clock, uint8_t full_clock, colour side, int32_t val) {
   // parameterised constructor
 
   // initialise an array of pointers to the piece bitboards
@@ -89,6 +90,7 @@ board::board(bitboard * startPositions, bool * castling, bool ep, int dpp, uint8
   
   // 50-move rule
   halfMoveClock = clock;
+  fullMoveClock = full_clock;
   
   // en passant pawn capture
   lastMoveDoublePawnPush = ep;
@@ -118,6 +120,7 @@ board::board(board & b1) {
 
   // 50-move rule
   halfMoveClock          = b1.halfMoveClock;
+  fullMoveClock          = b1.fullMoveClock;
 
   // en passant pawn capture
   lastMoveDoublePawnPush = b1.lastMoveDoublePawnPush;
@@ -134,72 +137,138 @@ board::board(board & b1) {
 }
 
 board::board( std::string fen ) {
-    bitboard pieceBoards[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
-    int i=0,j;
+    std::cout << "Constructing board from FEN\n";
+    int j,i=0;
+    for ( j=0;j<12;j++ ) pieceBoards[j] = 0;
     int cp;
     
-//    for ( int count_slash=0; count_slash<0; count_slash++ ) {
-//        j = 0;
-//        while ( fen[i] != '/' && fen[i] != ' ' ) {
-//            switch ( fen[i] ) {
-//                case '1':
-//                case '2':
-//                case '3':
-//                case '4':
-//                case '5':
-//                case '6':
-//                case '7':
-//                case '8':
-//                    j += int(fen[i]-'0');
+    for ( int count_slash=0; count_slash<8; count_slash++ ) {
+        j = 0;
+        while ( fen[i] != '/' && fen[i] != ' ' ) {
+//            std::cout << fen[i];
+            switch ( fen[i] ) {
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                    j += int(fen[i]-'0');
 //                    std::cout << "number " << fen[i] << std::endl;
-//                    i++;
-//                    cp = -1;
-//                    break;
-//                case 'P':                        
-//                    cp = 0;
-//                    break;
-//                case 'R':
-//                    cp = 1;
-//                    break;
-//                case 'N':
-//                    cp = 2;
-//                    break;
-//                case 'B':
-//                    cp = 3;
-//                    break;
-//                case 'Q':
-//                    cp = 4;
-//                    break;
-//                case 'K':
-//                    cp = 5;
-//                    break;
-//                case 'p':
-//                    cp = 6;
-//                    break;
-//                case 'r':
-//                    cp = 7;
-//                    break;
-//                case 'n':
-//                    cp = 8;
-//                    break;
-//                case 'b':
-//                    cp = 9;
-//                    break;
-//                case 'q':
-//                    cp = 10;
-//                    break;
-//                case 'k':
-//                    cp = 11;
-//                    break;
-//            }
-//            if ( cp != -1) {
-//                pieceBoards[cp] |= ( 1ULL << ( (7-count_slash)*8 + j ) );
-//                j++;
-//                i++;
-//            }
-//        }
-//        i++;
-//    }
+                    i++;
+                    cp = -1;
+                    break;
+                case 'P':                        
+                    cp = 0;
+                    break;
+                case 'R':
+                    cp = 1;
+                    break;
+                case 'N':
+                    cp = 2;
+                    break;
+                case 'B':
+                    cp = 3;
+                    break;
+                case 'Q':
+                    cp = 4;
+                    break;
+                case 'K':
+                    cp = 5;
+                    break;
+                case 'p':
+                    cp = 6;
+                    break;
+                case 'r':
+                    cp = 7;
+                    break;
+                case 'n':
+                    cp = 8;
+                    break;
+                case 'b':
+                    cp = 9;
+                    break;
+                case 'q':
+                    cp = 10;
+                    break;
+                case 'k':
+                    cp = 11;
+                    break;
+            }
+            if ( cp != -1) {
+                pieceBoards[cp] |= ( 1ULL << ( (7-count_slash)*8 + j ) );
+                j++;
+                i++;
+            }
+            
+        }
+        i++;
+    }
+    
+    sideToMove = ( fen[i] == 'w' ) ? white : black;
+    i += 2;
+    
+    castleWhiteKingSide  = false;
+    castleWhiteQueenSide = false;
+    castleBlackKingSide  = false;
+    castleBlackQueenSide = false;
+    
+    if ( fen[i] == '-' ) {
+        i += 2;
+    }
+    else {
+        while ( fen[i] != ' ' ) {
+            switch ( fen[i] ) {
+                case 'K':
+                    castleWhiteKingSide  = true;
+                    break;
+                case 'Q':
+                    castleWhiteQueenSide = true;
+                    break;
+                case 'k':
+                    castleBlackKingSide = true;
+                    break;
+                case 'q':
+                    castleBlackQueenSide = true;
+                    break;
+            }
+            i++;
+        }
+        i++;
+    }
+    
+    if ( fen[i] == '-' ) {
+        lastMoveDoublePawnPush = false;
+        i += 2;
+    }
+    else {
+        lastMoveDoublePawnPush = true;
+        dPPFile = int( fen[i] - 'a' );
+        i += 3;
+    }
+    
+    std::stringstream clock;
+    
+    while ( fen[i] != ' ' ) {
+        clock << fen[i];
+        i++;
+    }
+    clock >> halfMoveClock;
+    clock.str();
+    i++;
+    
+    //come back to this
+    while ( fen[i] != '\0' ) {
+        clock << fen[i];
+        i++;
+    }
+    clock >> fullMoveClock;
+    
+    
+    // value starts at 0
+    value=evaluate();
 }
 
 
@@ -223,7 +292,12 @@ bool board::operator==( const board& other) {
     }
     
     if ( halfMoveClock != other.halfMoveClock ) {
-        std::cout << "clock wrong\n";
+        std::cout << "half move clock wrong\n";
+        return false;
+    }
+    
+    if ( fullMoveClock != other.fullMoveClock ) {
+        std::cout << "full move clock clock wrong\n";
         return false;
     }
     
@@ -278,6 +352,10 @@ void board::getdPPFile(int * dest) {
 
 void board::getClock(int * dest) {
   *dest = halfMoveClock;
+}
+
+void board::getFullClock(int * dest) {
+  *dest = fullMoveClock;
 }
 
 void board::getSide(colour * dest) {
@@ -375,9 +453,11 @@ void board::print_board_indent( std::ostream& cout, int indent ) {
 
 void board::print_all(std::ostream& cout) {
   print_board(cout);
+  
   cout << "\nSide to move:\n";
   if ( sideToMove==white) cout << "  White\n";
   else cout << "  Black\n";
+  
   cout << "\nCastling rights:\n";
   cout << "  White can";
   if ( !castleWhiteKingSide ) cout << "not";
@@ -397,7 +477,9 @@ void board::print_all(std::ostream& cout) {
   else cout << "  last move was not a double pawn push\n";
 
   cout << "\nHalfmove Clock:\n";
-  cout << "  " << halfMoveClock << "\n";
+  cout << "  " << halfMoveClock;
+  cout << "\nFullmove Clock:\n";
+  cout << "  " << fullMoveClock << "\n";
 }
 
 std::string board::FEN() {

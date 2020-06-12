@@ -72,7 +72,6 @@ TESTOBJECTFILES= \
 	${TESTDIR}/tests/hashtestrunner.o \
 	${TESTDIR}/tests/movetestclass.o \
 	${TESTDIR}/tests/movetestrunner.o \
-	${TESTDIR}/tests/perfttest.o \
 	${TESTDIR}/tests/perfttestclass.o \
 	${TESTDIR}/tests/perfttestrunner.o \
 	${TESTDIR}/tests/twiddletestclass.o \
@@ -184,7 +183,7 @@ ${TESTDIR}/TestFiles/f5: ${TESTDIR}/tests/movetestclass.o ${TESTDIR}/tests/movet
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc} -o ${TESTDIR}/TestFiles/f5 $^ ${LDLIBSOPTIONS}   
 
-${TESTDIR}/TestFiles/f7: ${TESTDIR}/tests/perfttest.o ${TESTDIR}/tests/perfttestclass.o ${TESTDIR}/tests/perfttestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
+${TESTDIR}/TestFiles/f7: ${TESTDIR}/tests/perfttestclass.o ${TESTDIR}/tests/perfttestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc} -o ${TESTDIR}/TestFiles/f7 $^ ${LDLIBSOPTIONS}   `cppunit-config --libs`   
 
@@ -251,12 +250,6 @@ ${TESTDIR}/tests/movetestrunner.o: tests/movetestrunner.cpp
 	${MKDIR} -p ${TESTDIR}/tests
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/movetestrunner.o tests/movetestrunner.cpp
-
-
-${TESTDIR}/tests/perfttest.o: tests/perfttest.cpp 
-	${MKDIR} -p ${TESTDIR}/tests
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 `cppunit-config --cflags` -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/perfttest.o tests/perfttest.cpp
 
 
 ${TESTDIR}/tests/perfttestclass.o: tests/perfttestclass.cpp 

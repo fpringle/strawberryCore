@@ -101,6 +101,8 @@ void boardtestclass::testBoard2() {
     int dPPFile_real;
     int clk = 12;
     int clk_real;
+    int full_clk = 30;
+    int full_clk_real;
     colour side = black;
     colour side_real;
     uint32_t value = -251;
@@ -138,12 +140,13 @@ void boardtestclass::testBoard2() {
     pb[10] = blackQueenStart;
     pb[11] = blackKingStart;
     
-    board _board(pb,castling,ep,dPPFile,clk,side,value);
+    board _board(pb,castling,ep,dPPFile,clk,full_clk,side,value);
     
     _board.getBitboards( pb_real );
     _board.getCastlingRights( castling_real );
     _board.getEP( &ep_real );
     _board.getClock( &clk_real );
+    _board.getFullClock( &full_clk_real );
     _board.getSide( &side_real );
     value_real = _board.getValue( );
     
@@ -162,7 +165,8 @@ void boardtestclass::testBoard2() {
     }
     
     CPPUNIT_ASSERT_MESSAGE( "ep wrong", ep == ep_real );
-    CPPUNIT_ASSERT_MESSAGE( "clock wrong", clk == clk_real );
+    CPPUNIT_ASSERT_MESSAGE( "half move clock wrong", clk == clk_real );
+    CPPUNIT_ASSERT_MESSAGE( "full move clock wrong", full_clk == full_clk_real );
     CPPUNIT_ASSERT_MESSAGE( "value wrong", value == value_real );
     CPPUNIT_ASSERT_MESSAGE( "side wrong", side == side_real );
 }
@@ -177,6 +181,8 @@ void boardtestclass::testBoard3() {
     int dPPFile_real;
     int clk = 12;
     int clk_real;
+    int full_clk = 30;
+    int full_clk_real;
     colour side = black;
     colour side_real;
     uint32_t value = -251;
@@ -214,7 +220,7 @@ void boardtestclass::testBoard3() {
     pb[10] = blackQueenStart;
     pb[11] = blackKingStart;
     
-    board _board2(pb,castling,ep,dPPFile,clk,side,value);
+    board _board2(pb,castling,ep,dPPFile,clk,full_clk,side,value);
     board _board = _board2;
     
     CPPUNIT_ASSERT_MESSAGE ( "_board1, _board2 not equal", _board == _board2 );
@@ -223,6 +229,7 @@ void boardtestclass::testBoard3() {
     _board.getCastlingRights( castling_real );
     _board.getEP( &ep_real );
     _board.getClock( &clk_real );
+    _board.getFullClock( &full_clk_real );
     _board.getSide( &side_real );
     value_real = _board.getValue( );
     
@@ -241,7 +248,8 @@ void boardtestclass::testBoard3() {
     }
     
     CPPUNIT_ASSERT_MESSAGE( "ep wrong", ep == ep_real );
-    CPPUNIT_ASSERT_MESSAGE( "clock wrong", clk == clk_real );
+    CPPUNIT_ASSERT_MESSAGE( "half move clock wrong", clk == clk_real );
+    CPPUNIT_ASSERT_MESSAGE( "full move clock wrong", full_clk == full_clk_real );
     CPPUNIT_ASSERT_MESSAGE( "value wrong", value == value_real );
     CPPUNIT_ASSERT_MESSAGE( "side wrong", side == side_real );
 }
@@ -424,7 +432,13 @@ void boardtestclass::testPrint_all() {
                        "  last move was not a double pawn push\n\n"
             
                        "Halfmove Clock:\n"
+                       "  0\n"
+            
+                       "Fullmove Clock:\n"
                        "  0\n";
+    
+    std::cout << ss.str();
+    std::cout << real;
     
     CPPUNIT_ASSERT_MESSAGE( "Error print_all-ing inital board", ss.str() == real );
 }
@@ -433,16 +447,21 @@ void boardtestclass::testPrint_all() {
 void boardtestclass::testFEN() {
     board _board;
     
-    std::stringstream ss;
+    std::stringstream ss, ss2;
     
     std::string s = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0";
     _board.FEN( ss );
     
-    CPPUNIT_ASSERT_MESSAGE( "FEN test failed", ss.str() == s );
+    CPPUNIT_ASSERT_MESSAGE( "FEN output test failed", ss.str() == s );
     
-    board _board2 ( "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0" );
-    _board2.print_board();
+    ss.str("");
+    board _board2 ( s );
+    _board.print_all( ss );
+    _board2.print_all( ss2 );
+//    _board.print_all( );
+//    _board2.print_all( );
     
+    CPPUNIT_ASSERT_MESSAGE( "FEN input test failed", ss.str() == ss2.str() );
 }
 
 void boardtestclass::testSet_piece() {
@@ -464,7 +483,7 @@ void boardtestclass::testSet_piece() {
     bool castling[] = {1,1,1,1};
     
     board _board1;
-    board _board2(bb,castling,0,0,0,white,0);
+    board _board2(bb,castling,0,0,0,0,white,0);
     
     _board1.set_piece( whitePawn, 16 );
     _board1.set_piece( whiteKing, 60 );
@@ -491,8 +510,8 @@ void boardtestclass::testSet_side() {
     
     bool castling[] = {1,1,1,1};
     
-    board _board1(bb,castling,0,0,0,black,0);
-    board _board2(bb,castling,0,0,0,white,0);
+    board _board1(bb,castling,0,0,0,0,black,0);
+    board _board2(bb,castling,0,0,0,0,white,0);
     
     _board1.set_side( white );
     

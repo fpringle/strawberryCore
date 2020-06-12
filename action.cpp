@@ -11,6 +11,7 @@ board doMove(board startBoard, move_t move) {
   bool ep;
   int dpp;
   int clk;
+  int full_clk;
   int32_t value = startBoard.getValue();
   colour movingColour;
   startBoard.getSide( & movingColour );
@@ -104,6 +105,7 @@ board doMove(board startBoard, move_t move) {
 
   startBoard.getCastlingRights(castling);
   startBoard.getClock(&clk);
+  startBoard.getFullClock(&full_clk);
 
   // check for double pawn push
   if (move.is_doublePP()) {
@@ -162,7 +164,10 @@ board doMove(board startBoard, move_t move) {
   if ( move.is_capture() | ( movingPiece % 6 == 0 ) ) clk = 0;
   else clk ++;
 
-  board endBoard (startingPos, castling, ep, dpp, clk, otherColour, value );
+  // increment fullMoveClock
+  if ( movingColour == black ) full_clk++;
+
+  board endBoard (startingPos, castling, ep, dpp, clk, full_clk, otherColour, value );
 
   return endBoard;
 }

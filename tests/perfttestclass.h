@@ -21,6 +21,8 @@ class perfttestclass : public CPPUNIT_NS::TestFixture {
     
     CPPUNIT_TEST(testStartBoard);
     CPPUNIT_TEST(testPosition2);
+    CPPUNIT_TEST(testPosition3);
+    CPPUNIT_TEST(testPosition4);
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -34,6 +36,7 @@ private:
     void testStartBoard();
     void testPosition2();
     void testPosition3();
+    void testPosition4();
 };
 
 #endif /* PERFTTESTCLASS_H */
