@@ -84,6 +84,22 @@ bool move_t::is_kingCastle(){ return ( flags() == 4 ); }
 bool move_t::is_queenCastle(){ return ( flags() == 6 ); }
 bool move_t::is_castle()    { return ( is_kingCastle() | is_queenCastle() ); }
 uint16_t move_t::give()     { return data;}
+piece move_t::which_promotion() {
+    switch ( flags() & 6 ) {
+        case 0:
+            return queen;
+            break;
+        case 2:
+            return rook;
+            break;
+        case 4:
+            return bishop;
+            break;
+        case 6:
+            return knight;
+            break;
+    }
+}
 
 
 void print_move(struct move_t move, std::ostream& cout) {
@@ -150,7 +166,7 @@ void init_rays() {
     for (sq=0;sq<64;sq++) {
       ray_bb = 0;
       tmp = (1ULL << sq);
-      while (tmp) {
+      while ( tmp ) {
         tmp = oneGeneral8(tmp,dir);
         ray_bb |= tmp;
       }
@@ -217,32 +233,32 @@ bitboard bishopPushNaive(int sq, bitboard blockers) {
   // NE
   diagRays |= rays[dirNE][sq];
   tmp = blockers & rays[dirNE][sq];
-  if (tmp) {
-    diagRays &= ~rays[dirNE][first_set_bit(tmp)];
+  if ( tmp ) {
+    diagRays &= ~rays[dirNE][first_set_bit( tmp )];
   }
   //print_bb(diagRays,'1');
   
   // SE
   diagRays |= rays[dirSE][sq];
   tmp = blockers & rays[dirSE][sq];
-  if (tmp) {
-    diagRays &= ~rays[dirSE][last_set_bit(tmp)];
+  if ( tmp ) {
+    diagRays &= ~rays[dirSE][last_set_bit( tmp )];
   }
   //print_bb(diagRays,'1');
   
   // SW
   diagRays |= rays[dirSW][sq];
   tmp = blockers & rays[dirSW][sq];
-  if (tmp) {
-    diagRays &= ~rays[dirSW][last_set_bit(tmp)];
+  if ( tmp ) {
+    diagRays &= ~rays[dirSW][last_set_bit( tmp )];
   }
   //print_bb(diagRays,'1');
   
   // NW
   diagRays |= rays[dirNW][sq];
   tmp = blockers & rays[dirNW][sq];
-  if (tmp) {
-    diagRays &= ~rays[dirNW][first_set_bit(tmp)];
+  if ( tmp ) {
+    diagRays &= ~rays[dirNW][first_set_bit( tmp )];
   }
   //print_bb(diagRays,'1');
   
@@ -263,32 +279,32 @@ bitboard rookPushNaive(int sq, bitboard blockers) {
   // N
   compRays |= rays[dirN][sq];  
   tmp = blockers & rays[dirN][sq];
-  if (tmp) {
-    compRays &= ~rays[dirN][first_set_bit(tmp)];
+  if ( tmp ) {
+    compRays &= ~rays[dirN][first_set_bit( tmp )];
   }
   //print_bb(compRays,'1');
   
   // E
   compRays |= rays[dirE][sq];
   tmp = blockers & rays[dirE][sq];
-  if (tmp) {
-    compRays &= ~rays[dirE][first_set_bit(tmp)];
+  if ( tmp ) {
+    compRays &= ~rays[dirE][first_set_bit( tmp )];
   }
   //print_bb(compRays,'1');
   
   // S
   compRays |= rays[dirS][sq];
   tmp = blockers & rays[dirS][sq];
-  if (tmp) {
-    compRays &= ~rays[dirS][last_set_bit(tmp)];
+  if ( tmp ) {
+    compRays &= ~rays[dirS][last_set_bit( tmp )];
   }
   //print_bb(compRays,'1');
   
   // W
   compRays |= rays[dirW][sq];
   tmp = blockers & rays[dirW][sq];
-  if (tmp) {
-    compRays &= ~rays[dirW][last_set_bit(tmp)];
+  if ( tmp ) {
+    compRays &= ~rays[dirW][last_set_bit( tmp )];
   }
   //print_bb(compRays,'1');
   
@@ -549,14 +565,14 @@ bool board::is_legal( struct move_t move ) {
     
     for ( int i=0; i<8; i++ ) {
         if ( rays[i][from_ind] & pieceBoards[(6*sideToMove)+5] ) {
-            int j = 7-i;
+            int j = (i+4)%8;
             if ( i%2 ) {
                 // bishops and queens
                 _ray = rays[j][from_ind];
                 tmp = blockers & _ray;
-                if (tmp) {
+                if ( tmp ) {
                     if ( (j+2)%6 < 4 ) attacker = ( 1ULL << first_set_bit( tmp ) );
-                    else attacker = ( 1ULL << last_set_bit( tmp ) );
+                    else               attacker = ( 1ULL <<  last_set_bit( tmp ) );
                     if ( attacker & pieceBoards[(6*otherSide)+3] ) return false;
                     if ( attacker & pieceBoards[(6*otherSide)+5] ) return false;
                 }
@@ -565,9 +581,9 @@ bool board::is_legal( struct move_t move ) {
                 // rooks and queens
                 _ray = rays[j][from_ind];
                 tmp = blockers & _ray;
-                if (tmp) {
-                    if ( (j+2)%6 < 4 ) ( attacker = 1ULL << first_set_bit( tmp ) );
-                    else attacker = ( 1ULL << last_set_bit( tmp ) );
+                if ( tmp ) {
+                    if ( (j+2)%6 < 4 ) attacker = ( 1ULL << first_set_bit( tmp ) );
+                    else               attacker = ( 1ULL <<  last_set_bit( tmp ) );
                     if ( attacker & pieceBoards[(6*otherSide)+1] ) return false;
                     if ( attacker & pieceBoards[(6*otherSide)+5] ) return false;
                 }
@@ -579,13 +595,13 @@ bool board::is_legal( struct move_t move ) {
         int other_pawn_ind = to_ind + ( ( sideToMove==white ) ? S : N );
         bitboard left_ray  = rays[6][from_ind] & rays[6][other_pawn_ind] & blockers;
         bitboard right_ray = rays[2][from_ind] & rays[2][other_pawn_ind] & blockers;
-        bitboard attacker_left  = ( 1ULL << first_set_bit(left_ray) );
-        bitboard attacker_right = ( 1ULL << last_set_bit(right_ray) );
+        bitboard attacker_left  = ( 1ULL << last_set_bit(left_ray) );
+        bitboard attacker_right = ( 1ULL << first_set_bit(right_ray) );
         
-        if ( ( attacker_left  & pieceBoards[sideToMove*6] ) &&
+        if ( ( attacker_left  & pieceBoards[(sideToMove*6)+5] ) &&
              ( attacker_right & ( pieceBoards[(otherSide*6) + 1] |
                                   pieceBoards[(otherSide*6) + 4] ) ) ) return false;
-        if ( ( attacker_right & pieceBoards[sideToMove*6] ) &&
+        if ( ( attacker_right & pieceBoards[(sideToMove*6)+5] ) &&
              ( attacker_left  & ( pieceBoards[(otherSide*6) + 1] |
                                   pieceBoards[(otherSide*6) + 4] ) ) ) return false;
         

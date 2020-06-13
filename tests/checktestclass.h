@@ -16,6 +16,8 @@ class checktestclass : public CPPUNIT_NS::TestFixture {
 
     CPPUNIT_TEST(testIs_check);
     CPPUNIT_TEST(testIs_checkmate);
+    CPPUNIT_TEST(testCheck_lastmove);
+    CPPUNIT_TEST(testCheck_lastmove2);
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -28,6 +30,8 @@ public:
 private:
     void testIs_check();
     void testIs_checkmate();
+    void testCheck_lastmove();
+    void testCheck_lastmove2();
 
 };
 

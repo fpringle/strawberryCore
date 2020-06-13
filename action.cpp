@@ -8,8 +8,6 @@ board doMove(board startBoard, move_t move) {
   int i;
   uint16_t fromSquare = move.from_sq();
   uint16_t toSquare   = move.to_sq();
-//  std::cout << "From square: " << fromSquare << std::endl;
-//  std::cout << "To square: " << toSquare << std::endl;
   bool castling[4];
   bool ep;
   startBoard.getEP(&ep);
@@ -31,9 +29,7 @@ board doMove(board startBoard, move_t move) {
   startBoard.getBitboards(startingPos);
 
   for (i=(movingColour*6);i<(1+movingColour)*6;i++) {
-//    std::cout << "Piece: " << i << std::endl;
     if ( is_bit_set(startingPos[i], fromSquare) ) {
-//      std::cout << "                    MATCH\n" << std::endl;
       movingPiece = colourPiece(i);
       startingPos[i] = (startingPos[i] & ~( 1ULL << fromSquare) ) | ( 1ULL << toSquare );
       value -= pieceSquareTables[i][fromSquare];
@@ -88,30 +84,19 @@ board doMove(board startBoard, move_t move) {
   if ( move.is_promotion() ) {
     startingPos[6*movingColour] &= ( ~ ( 1ULL << toSquare ) );
     value -= pieceSquareTables[6*movingColour][toSquare];
-    hash &= zobristKeys[6*movingColour*64 + toSquare];
+    value -= pieceValues[6*movingColour];
+//    std::cout << "--- added " << - int(pieceSquareTables[(6*movingColour)][toSquare]);
+//    std::cout << " to value ---\n";
+    hash ^= zobristKeys[6*movingColour*64 + toSquare];
     
-    switch ( move.flags() & 6 ) {
-        case 0:
-            startingPos[(6*movingColour)+4] |= ( 1ULL << toSquare );
-            value += pieceSquareTables[(6*movingColour)+4][toSquare];
-            hash &= zobristKeys[((6*movingColour)+4)*64 + toSquare];
-            break;
-        case 2:
-            startingPos[(6*movingColour)+1] |= ( 1ULL << toSquare );
-            value += pieceSquareTables[(6*movingColour)+1][toSquare];
-            hash &= zobristKeys[((6*movingColour)+1)*64 + toSquare];
-            break;
-        case 4:
-            startingPos[(6*movingColour)+3] |= ( 1ULL << toSquare );
-            value += pieceSquareTables[(6*movingColour)+3][toSquare];
-            hash &= zobristKeys[((6*movingColour)+3)*64 + toSquare];
-            break;
-        case 6:
-            startingPos[(6*movingColour)+2] |= ( 1ULL << toSquare );
-            value += pieceSquareTables[(6*movingColour)+2][toSquare];
-            hash &= zobristKeys[((6*movingColour)+2)*64 + toSquare];
-            break;
-    }
+    colourPiece prom_piece = colourPiece( (6*movingColour) + move.which_promotion() );
+    
+    startingPos[prom_piece] |= ( 1ULL << toSquare );
+    value += pieceSquareTables[prom_piece][toSquare];
+    value += pieceValues[prom_piece];
+//            std::cout << "--- added " << int(pieceSquareTables[prom_piece][toSquare]);
+//            std::cout << " to value ---\n";
+    hash ^= zobristKeys[prom_piece*64 + toSquare];
   }
 
   startBoard.getCastlingRights(castling);

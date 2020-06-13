@@ -139,6 +139,7 @@ class board {
     // check
     bool is_check(colour);
     bool is_checkmate(colour);
+    bool was_lastmove_check(move_t);
 };
 
 #endif

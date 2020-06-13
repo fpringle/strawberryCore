@@ -117,14 +117,52 @@ void hashtestclass::testIncremental_hash() {
     uint64_t hsh, real_hsh;
     
     for ( int i=0; i<13; i++ ) {
+        _board.print_board();
         _board = doMove( _board, moves[i] );
         _board.getHash( &hsh );
         real_hsh = _board.zobrist_hash();
-        std::cout << "calculated hash:  " << real_hsh <<std::endl;
-        std::cout << "incremental hash: " <<      hsh <<std::endl;
+//        std::cout << "calculated hash:  " << real_hsh <<std::endl;
+//        std::cout << "incremental hash: " <<      hsh <<std::endl;
         CPPUNIT_ASSERT( hsh == real_hsh );
     }
     
-    _board.print_board();
+//    _board.print_board();
+
+}
+
+
+void hashtestclass::testIncremental_hash2() {
+    init(0);
+    
+    board pos3 ( "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 b - - 0 0" );
+    std::stringstream ss;
+    
+    move_t d6d5 ( 43, 35, 0, 0, 0, 0 );
+    move_t e2e3 ( 12, 20, 0, 0, 0, 0 );
+    move_t c7c5 ( 50, 34, 0, 0, 0, 1 );
+    move_t b5c6 ( 33, 42, 0, 1, 0, 1 );
+    move_t f4e3 ( 29, 20, 0, 1, 0, 0 );
+    move_t c6c7 ( 42, 50, 0, 0, 0, 0 );
+    move_t e3e2 ( 20, 12, 0, 0, 0, 0 );
+    move_t c7c8 ( 50, 58, 1, 0, 1, 1 );
+    move_t e2e1 ( 12,  4, 1, 0, 0, 1 );
+    
+    move_t moves[9] = { d6d5, e2e3, c7c5, b5c6, f4e3,
+                        c6c7, e3e2, c7c8, e2e1       };
+    
+    uint64_t hsh, real_hsh;
+    
+    for ( int i=0; i<9; i++ ) {
+        ss << "Incremental evaluation failure at move " << i;
+        pos3 = doMove( pos3, moves[i] );
+        pos3.getHash( &hsh );
+        real_hsh = pos3.zobrist_hash();
+//        std::cout << "calculated hash:  " << real_hsh <<std::endl;
+//        std::cout << "incremental hash: " <<      hsh <<std::endl;
+        CPPUNIT_ASSERT_MESSAGE( ss.str(), hsh == real_hsh );
+        ss.str("");
+    }
+    
+//    pos3.print_board();
 
 }

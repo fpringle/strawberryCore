@@ -45,7 +45,12 @@ OBJECTFILES= \
 	${OBJECTDIR}/move.o \
 	${OBJECTDIR}/play.o \
 	${OBJECTDIR}/search.o \
-	${OBJECTDIR}/twiddle.o
+	${OBJECTDIR}/twiddle.o \
+	${OBJECTDIR}/util/doublylinkedlist.o \
+	${OBJECTDIR}/util/linkedlist.o \
+	${OBJECTDIR}/util/queue.o \
+	${OBJECTDIR}/util/stack.o \
+	${OBJECTDIR}/util/tree.o
 
 # Test Directory
 TESTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tests
@@ -155,6 +160,31 @@ ${OBJECTDIR}/twiddle.o: twiddle.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/twiddle.o twiddle.cpp
+
+${OBJECTDIR}/util/doublylinkedlist.o: util/doublylinkedlist.cpp
+	${MKDIR} -p ${OBJECTDIR}/util
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/doublylinkedlist.o util/doublylinkedlist.cpp
+
+${OBJECTDIR}/util/linkedlist.o: util/linkedlist.cpp
+	${MKDIR} -p ${OBJECTDIR}/util
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/linkedlist.o util/linkedlist.cpp
+
+${OBJECTDIR}/util/queue.o: util/queue.cpp
+	${MKDIR} -p ${OBJECTDIR}/util
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/queue.o util/queue.cpp
+
+${OBJECTDIR}/util/stack.o: util/stack.cpp
+	${MKDIR} -p ${OBJECTDIR}/util
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/stack.o util/stack.cpp
+
+${OBJECTDIR}/util/tree.o: util/tree.cpp
+	${MKDIR} -p ${OBJECTDIR}/util
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/tree.o util/tree.cpp
 
 # Subprojects
 .build-subprojects:
@@ -417,6 +447,71 @@ ${OBJECTDIR}/twiddle_nomain.o: ${OBJECTDIR}/twiddle.o twiddle.cpp
 	    $(COMPILE.cc) -O2 -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/twiddle_nomain.o twiddle.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/twiddle.o ${OBJECTDIR}/twiddle_nomain.o;\
+	fi
+
+${OBJECTDIR}/util/doublylinkedlist_nomain.o: ${OBJECTDIR}/util/doublylinkedlist.o util/doublylinkedlist.cpp 
+	${MKDIR} -p ${OBJECTDIR}/util
+	@NMOUTPUT=`${NM} ${OBJECTDIR}/util/doublylinkedlist.o`; \
+	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
+	then  \
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/doublylinkedlist_nomain.o util/doublylinkedlist.cpp;\
+	else  \
+	    ${CP} ${OBJECTDIR}/util/doublylinkedlist.o ${OBJECTDIR}/util/doublylinkedlist_nomain.o;\
+	fi
+
+${OBJECTDIR}/util/linkedlist_nomain.o: ${OBJECTDIR}/util/linkedlist.o util/linkedlist.cpp 
+	${MKDIR} -p ${OBJECTDIR}/util
+	@NMOUTPUT=`${NM} ${OBJECTDIR}/util/linkedlist.o`; \
+	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
+	then  \
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/linkedlist_nomain.o util/linkedlist.cpp;\
+	else  \
+	    ${CP} ${OBJECTDIR}/util/linkedlist.o ${OBJECTDIR}/util/linkedlist_nomain.o;\
+	fi
+
+${OBJECTDIR}/util/queue_nomain.o: ${OBJECTDIR}/util/queue.o util/queue.cpp 
+	${MKDIR} -p ${OBJECTDIR}/util
+	@NMOUTPUT=`${NM} ${OBJECTDIR}/util/queue.o`; \
+	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
+	then  \
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/queue_nomain.o util/queue.cpp;\
+	else  \
+	    ${CP} ${OBJECTDIR}/util/queue.o ${OBJECTDIR}/util/queue_nomain.o;\
+	fi
+
+${OBJECTDIR}/util/stack_nomain.o: ${OBJECTDIR}/util/stack.o util/stack.cpp 
+	${MKDIR} -p ${OBJECTDIR}/util
+	@NMOUTPUT=`${NM} ${OBJECTDIR}/util/stack.o`; \
+	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
+	then  \
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/stack_nomain.o util/stack.cpp;\
+	else  \
+	    ${CP} ${OBJECTDIR}/util/stack.o ${OBJECTDIR}/util/stack_nomain.o;\
+	fi
+
+${OBJECTDIR}/util/tree_nomain.o: ${OBJECTDIR}/util/tree.o util/tree.cpp 
+	${MKDIR} -p ${OBJECTDIR}/util
+	@NMOUTPUT=`${NM} ${OBJECTDIR}/util/tree.o`; \
+	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
+	then  \
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/tree_nomain.o util/tree.cpp;\
+	else  \
+	    ${CP} ${OBJECTDIR}/util/tree.o ${OBJECTDIR}/util/tree_nomain.o;\
 	fi
 
 # Run Test Targets

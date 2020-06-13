@@ -59,6 +59,7 @@ struct move_t {
     uint16_t flags();
     bool is_quiet();
     bool is_promotion();
+    piece which_promotion();
     bool is_capture();
     bool is_ep_capture();
 //    bool special1();

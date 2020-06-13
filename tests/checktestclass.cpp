@@ -267,7 +267,7 @@ void checktestclass::testIs_checkmate() {
 
 void checktestclass::testCheck_lastmove() {
     init_rays();
-    board pos3 ( "8/2p5/3p4/KP5r/1R2pp1k/8/4P1P1/8 b - - 0 0" );
+    board pos3 ( "8/2p5/3p4/KP5r/1R2ppk1/8/4P1P1/8 b - - 0 0" );
     std::stringstream ss;
     
     move_t d6d5 ( 43, 35, 0, 0, 0, 0 );
@@ -277,7 +277,7 @@ void checktestclass::testCheck_lastmove() {
     move_t f4e3 ( 29, 20, 0, 1, 0, 0 );
     move_t c6c7 ( 42, 50, 0, 0, 0, 0 );
     move_t e3e2 ( 20, 12, 0, 0, 0, 0 );
-    move_t c7c8 ( 50, 58, 1, 0, 1, 1 );
+    move_t c7c8 ( 50, 58, 1, 0, 1, 0 );
     move_t e2e1 ( 12,  4, 1, 0, 0, 1 );
     
     move_t moves[9] = { d6d5, e2e3, c7c5, b5c6, f4e3,
@@ -292,10 +292,34 @@ void checktestclass::testCheck_lastmove() {
         if      ( pos3.is_check( side ) & ( ! pos3.was_lastmove_check( moves[i] ) ) ) {
             ss << "False negative at move " << i;
             CPPUNIT_FAIL( ss.str() );
+            ss.str("");
         }
         else if ( ( ! pos3.is_check( side ) ) & pos3.was_lastmove_check( moves[i] ) ) {
             ss << "False positive at move " << i;
             CPPUNIT_FAIL( ss.str() );
+            ss.str("");
         }
+    }
+}
+
+
+void checktestclass::testCheck_lastmove2() {
+    init_rays();
+    board _board ( "3k4/8/8/8/8/8/8/R3K3 w KQkq - 0 0" );
+    _board.print_board();
+    std::stringstream ss;
+    
+    move_t _castle (  4,  2, 0, 0, 1, 1 );
+    
+    colour side;
+    
+    _board = doMove( _board, _castle );
+    _board.getSide( &side );
+    _board.print_board();
+    if      ( _board.is_check( side ) & ( ! _board.was_lastmove_check( _castle ) ) ) {
+        CPPUNIT_FAIL( "False negative" );
+    }
+    else if ( ( ! _board.is_check( side ) ) & _board.was_lastmove_check( _castle ) ) {
+        CPPUNIT_FAIL( "False positive" );
     }
 }

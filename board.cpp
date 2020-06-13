@@ -276,7 +276,7 @@ board::board( std::string fen ) {
     
     
     // value starts at 0
-    value=evaluate();
+    value = evaluate();
     
     // hash
     hash_value = zobrist_hash();

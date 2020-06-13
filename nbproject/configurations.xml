@@ -4,6 +4,13 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <logicalFolder name="f1" displayName="util" projectFiles="true">
+        <itemPath>util/doublylinkedlist.h</itemPath>
+        <itemPath>util/linkedlist.h</itemPath>
+        <itemPath>util/queue.h</itemPath>
+        <itemPath>util/stack.h</itemPath>
+        <itemPath>util/tree.h</itemPath>
+      </logicalFolder>
       <itemPath>action.h</itemPath>
       <itemPath>board.h</itemPath>
       <itemPath>eval.h</itemPath>
@@ -13,6 +20,7 @@
       <itemPath>move.h</itemPath>
       <itemPath>play.h</itemPath>
       <itemPath>search.h</itemPath>
+      <itemPath>structures.h</itemPath>
       <itemPath>twiddle.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -22,6 +30,13 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <logicalFolder name="f1" displayName="util" projectFiles="true">
+        <itemPath>util/doublylinkedlist.cpp</itemPath>
+        <itemPath>util/linkedlist.cpp</itemPath>
+        <itemPath>util/queue.cpp</itemPath>
+        <itemPath>util/stack.cpp</itemPath>
+        <itemPath>util/tree.cpp</itemPath>
+      </logicalFolder>
       <itemPath>action.cpp</itemPath>
       <itemPath>board.cpp</itemPath>
       <itemPath>check.cpp</itemPath>
@@ -247,6 +262,8 @@
       </item>
       <item path="search.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="structures.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="tests/boardtestclass.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="tests/boardtestclass.h" ex="false" tool="3" flavor2="0">
@@ -292,6 +309,26 @@
       <item path="twiddle.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="twiddle.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="util/doublylinkedlist.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="util/doublylinkedlist.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="util/linkedlist.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="util/linkedlist.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="util/queue.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="util/queue.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="util/stack.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="util/stack.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="util/tree.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="util/tree.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -454,6 +491,8 @@
       </item>
       <item path="search.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="structures.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="tests/boardtestclass.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="tests/boardtestclass.h" ex="false" tool="3" flavor2="0">
@@ -499,6 +538,26 @@
       <item path="twiddle.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="twiddle.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="util/doublylinkedlist.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="util/doublylinkedlist.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="util/linkedlist.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="util/linkedlist.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="util/queue.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="util/queue.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="util/stack.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="util/stack.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="util/tree.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="util/tree.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

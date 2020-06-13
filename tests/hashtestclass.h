@@ -19,6 +19,7 @@ class hashtestclass : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(testInit_keys);
     CPPUNIT_TEST(testZobrist_hash);
     CPPUNIT_TEST(testIncremental_hash);
+    CPPUNIT_TEST(testIncremental_hash2);
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -34,6 +35,7 @@ private:
     void testInit_keys();
     void testZobrist_hash();
     void testIncremental_hash();
+    void testIncremental_hash2();
 
 };
 
