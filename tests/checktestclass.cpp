@@ -263,3 +263,39 @@ void checktestclass::testIs_checkmate() {
     CPPUNIT_ASSERT_MESSAGE( "failed to recognise that white is in checkmate in test 5", _board5.is_checkmate( white ) );
         
 }
+
+
+void checktestclass::testCheck_lastmove() {
+    init_rays();
+    board pos3 ( "8/2p5/3p4/KP5r/1R2pp1k/8/4P1P1/8 b - - 0 0" );
+    std::stringstream ss;
+    
+    move_t d6d5 ( 43, 35, 0, 0, 0, 0 );
+    move_t e2e3 ( 12, 20, 0, 0, 0, 0 );
+    move_t c7c5 ( 50, 34, 0, 0, 0, 1 );
+    move_t b5c6 ( 33, 42, 0, 1, 0, 1 );
+    move_t f4e3 ( 29, 20, 0, 1, 0, 0 );
+    move_t c6c7 ( 42, 50, 0, 0, 0, 0 );
+    move_t e3e2 ( 20, 12, 0, 0, 0, 0 );
+    move_t c7c8 ( 50, 58, 1, 0, 1, 1 );
+    move_t e2e1 ( 12,  4, 1, 0, 0, 1 );
+    
+    move_t moves[9] = { d6d5, e2e3, c7c5, b5c6, f4e3,
+                        c6c7, e3e2, c7c8, e2e1       };
+    
+    colour side;
+    
+    for ( int i=0; i<9; i++ ) {
+        pos3 = doMove( pos3, moves[i] );
+        pos3.getSide( &side );
+        pos3.print_board();
+        if      ( pos3.is_check( side ) & ( ! pos3.was_lastmove_check( moves[i] ) ) ) {
+            ss << "False negative at move " << i;
+            CPPUNIT_FAIL( ss.str() );
+        }
+        else if ( ( ! pos3.is_check( side ) ) & pos3.was_lastmove_check( moves[i] ) ) {
+            ss << "False positive at move " << i;
+            CPPUNIT_FAIL( ss.str() );
+        }
+    }
+}
