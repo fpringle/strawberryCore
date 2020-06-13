@@ -10,9 +10,9 @@
 #include "board.h"
 #include "hash.h"
 #include "init.h"
-#include "move.h";
+#include "move.h"
 #include "action.h"
-#include "play.h";
+#include "play.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(hashtestclass);
 
@@ -97,12 +97,34 @@ void hashtestclass::testIncremental_hash() {
     
     board _board;
     
-    move_t player_move;
+    move_t e2e4 ( 12, 28, 0, 0, 0, 1 );
+    move_t e7e5 ( 52, 36, 0, 0, 0, 1 );
+    move_t b1c3 (  1, 18, 0, 0, 0, 0 );
+    move_t f8b4 ( 61, 25, 0, 0, 0, 0 );
+    move_t c3b5 ( 18, 33, 0, 0, 0, 0 );
+    move_t b4d2 ( 25, 11, 0, 1, 0, 0 );
+    move_t c1d2 (  2, 11, 0, 1, 0, 0 );
+    move_t d8g5 ( 59, 38, 0, 0, 0, 0 );
+    move_t d2g5 ( 11, 38, 0, 1, 0, 0 );
+    move_t e8d8 ( 60, 59, 0, 0, 0, 0 );
+    move_t d1d7 (  3, 51, 0, 1, 0, 0 );
+    move_t e8d7 ( 58, 51, 0, 1, 0, 0 );
+    move_t e1c1 (  4,  2, 0, 0, 1, 1 );
     
-    for ( int i=0; i<10; i++ ) {
-        player_move = input_move( _board );
-        _board = doMove( _board, player_move );
-        CPPUNIT_ASSERT( _board.getHash() == _board.zobrist_hash() );
+    move_t moves[13] = { e2e4, e7e5, b1c3, f8b4, c3b5, b4d2, c1d2,
+                         d8g5, d2g5, e8d8, d1d7, e8d7, e1c1       };
+    
+    uint64_t hsh, real_hsh;
+    
+    for ( int i=0; i<13; i++ ) {
+        _board = doMove( _board, moves[i] );
+        _board.getHash( &hsh );
+        real_hsh = _board.zobrist_hash();
+        std::cout << "calculated hash:  " << real_hsh <<std::endl;
+        std::cout << "incremental hash: " <<      hsh <<std::endl;
+        CPPUNIT_ASSERT( hsh == real_hsh );
     }
+    
+    _board.print_board();
 
 }

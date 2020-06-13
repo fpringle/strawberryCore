@@ -9,6 +9,7 @@
 #include "checktestclass.h"
 #include "board.h"
 #include "move.h"
+#include "action.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(checktestclass);
 
@@ -180,6 +181,17 @@ void checktestclass::testIs_checkmate() {
     
     bool castling2[] = { 0,0,0,0 };
     board _board2 ( pb2, castling2, 0, 0, 3, 3, black, 200 );
+    
+//    if ( _board2.is_checkmate( black ) ) {
+//        _board2.print_board();
+//    }
+//    
+//    move_t c8b8 ( 58, 57, 0, 0, 0, 0 );
+//    
+//    board child;
+//    child = doMove( _board2, c8b8 );
+//    std::cout << "CHILD\n";
+//    child.print_board();
     
     CPPUNIT_ASSERT_MESSAGE( "failed to recognise that black is not in checkmate in test 2", ! _board2.is_checkmate( black ) );
     CPPUNIT_ASSERT_MESSAGE( "failed to recognise that white is not in checkmate in test 2", ! _board2.is_checkmate( white ) );

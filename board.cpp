@@ -146,7 +146,6 @@ board::board(board & b1) {
 }
 
 board::board( std::string fen ) {
-    std::cout << "Constructing board from FEN\n";
     int j,i=0;
     for ( j=0;j<12;j++ ) pieceBoards[j] = 0;
     int cp;
@@ -265,7 +264,7 @@ board::board( std::string fen ) {
         i++;
     }
     clock >> halfMoveClock;
-    clock.str();
+    clock.str("");
     i++;
     
     //come back to this
@@ -562,7 +561,7 @@ std::string board::FEN() {
 
   ss << " " << halfMoveClock;
 
-  ss << "" << fullMoveClock;
+  ss << " " << fullMoveClock;
 
   return ss.str();
 }
@@ -628,6 +627,7 @@ void board::FEN( std::ostream& ss ) {
   }
 
   ss << " " << halfMoveClock;
+  ss << " " << fullMoveClock;
 }
 
 

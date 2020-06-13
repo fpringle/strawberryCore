@@ -437,9 +437,6 @@ void boardtestclass::testPrint_all() {
                        "Fullmove Clock:\n"
                        "  0\n";
     
-    std::cout << ss.str();
-    std::cout << real;
-    
     CPPUNIT_ASSERT_MESSAGE( "Error print_all-ing inital board", ss.str() == real );
 }
 
@@ -449,8 +446,18 @@ void boardtestclass::testFEN() {
     
     std::stringstream ss, ss2;
     
-    std::string s = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    std::string s = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0";
     _board.FEN( ss );
+    
+    if ( ss.str() != s ) {
+        std::cout << ss.str() << std::endl;
+        std::cout << s << std::endl;
+    }
+    
+    if ( ss.str() != s ) {
+        std::cout << ss.str() << std::endl;
+        std::cout << s << std::endl;
+    }
     
     CPPUNIT_ASSERT_MESSAGE( "FEN output test failed", ss.str() == s );
     
@@ -460,6 +467,11 @@ void boardtestclass::testFEN() {
     _board2.print_all( ss2 );
 //    _board.print_all( );
 //    _board2.print_all( );
+    
+    if ( ss.str() != ss2.str()  ) {
+        std::cout << ss.str() << std::endl;
+        std::cout << ss2.str() << std::endl;
+    }
     
     CPPUNIT_ASSERT_MESSAGE( "FEN input test failed", ss.str() == ss2.str() );
 }

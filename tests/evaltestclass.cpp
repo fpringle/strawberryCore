@@ -8,6 +8,7 @@
 
 #include "evaltestclass.h"
 #include "board.h"
+#include "move.h"
 #include "eval.h"
 #include "action.h"
 
@@ -96,34 +97,67 @@ void evaltestclass::testEvaluate() {
 
 
 void evaltestclass::testIncremental_evaluation() {
-
+    init_rays();
     board _board;
     
     move_t e2e4 ( 12, 28, 0, 0, 0, 1 );
     move_t e7e5 ( 52, 36, 0, 0, 0, 1 );
-    move_t b1c3 (  1, 18, 0, 0, 0, 1 );
-    move_t f8b4 ( 61, 25, 0, 0, 0, 1 );
-    move_t c3b5 ( 18, 33, 0, 0, 0, 1 );
-    move_t b4d2 ( 25, 11, 0, 0, 0, 1 );
+    move_t b1c3 (  1, 18, 0, 0, 0, 0 );
+    move_t f8b4 ( 61, 25, 0, 0, 0, 0 );
+    move_t c3b5 ( 18, 33, 0, 0, 0, 0 );
+    move_t b4d2 ( 25, 11, 0, 1, 0, 0 );
+    move_t c1d2 (  2, 11, 0, 1, 0, 0 );
+    move_t d8g5 ( 59, 38, 0, 0, 0, 0 );
+    move_t d2g5 ( 11, 38, 0, 1, 0, 0 );
+    move_t e8d8 ( 60, 59, 0, 0, 0, 0 );
+    move_t d1d7 (  3, 51, 0, 1, 0, 0 );
+    move_t e8d7 ( 58, 51, 0, 1, 0, 0 );
+    move_t e1c1 (  4,  2, 0, 0, 1, 1 );
     
-    _board = doMove( e2e4 );
+    
+    _board = doMove( _board, e2e4 );
     _board.print_board();
     CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
-    _board = doMove( e7e5 );
+    _board = doMove( _board, e7e5 );
     _board.print_board();
     CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
-    _board = doMove( b1c3 );
+    _board = doMove( _board, b1c3 );
     _board.print_board();
     CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
-    _board = doMove( f8b4 );
+    _board = doMove( _board, f8b4 );
     _board.print_board();
     CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
-    _board = doMove( c3b5 );
+    _board = doMove( _board, c3b5 );
     _board.print_board();
     CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
-    _board = doMove( b4d2 );
+    _board = doMove( _board, b4d2 );
     _board.print_board();
     CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
+    CPPUNIT_ASSERT( _board.is_check( white ) );
+    _board = doMove( _board, c1d2 );
+    _board.print_board();
+    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
+    _board = doMove( _board, d8g5 );
+    _board.print_board();
+    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
+    _board = doMove( _board, d2g5 );
+    _board.print_board();
+    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );   
+    _board = doMove( _board, e8d8 );
+    _board.print_board();
+    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
+    _board = doMove( _board, d1d7 );
+    _board.print_board();
+    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );    
+    CPPUNIT_ASSERT( _board.is_check( black ) );
+    CPPUNIT_ASSERT( ! _board.is_checkmate( black ) );
+    _board = doMove( _board, e8d7 );
+    _board.print_board();
+    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
+    _board = doMove( _board, e1c1 );
+    _board.print_board();
+    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
+    
 
 }
 

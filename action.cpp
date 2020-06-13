@@ -8,6 +8,8 @@ board doMove(board startBoard, move_t move) {
   int i;
   uint16_t fromSquare = move.from_sq();
   uint16_t toSquare   = move.to_sq();
+//  std::cout << "From square: " << fromSquare << std::endl;
+//  std::cout << "To square: " << toSquare << std::endl;
   bool castling[4];
   bool ep;
   startBoard.getEP(&ep);
@@ -28,8 +30,10 @@ board doMove(board startBoard, move_t move) {
 
   startBoard.getBitboards(startingPos);
 
-  for (i=(movingColour*6);i<(1+movingColour*6);i++) {
+  for (i=(movingColour*6);i<(1+movingColour)*6;i++) {
+//    std::cout << "Piece: " << i << std::endl;
     if ( is_bit_set(startingPos[i], fromSquare) ) {
+//      std::cout << "                    MATCH\n" << std::endl;
       movingPiece = colourPiece(i);
       startingPos[i] = (startingPos[i] & ~( 1ULL << fromSquare) ) | ( 1ULL << toSquare );
       value -= pieceSquareTables[i][fromSquare];

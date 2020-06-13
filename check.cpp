@@ -39,5 +39,28 @@ bool board::is_checkmate(colour side) {
     child = doMove(cpy,moves[i]);
     if ( ! child.is_check(side) ) return false;
   }
+  
+//  for ( int i=0; i<num_moves; i++ ) {
+//    print_move( moves[i] );
+//    std::cout << ": is a check\n";
+//  }
+  
+//  move_t c8b8 = moves[ num_moves - 2 ];
+//  print_move( c8b8 );
+//  std::cout << std::endl;
+//  std::cout << c8b8.give();
+//  std::cout << std::endl;
+//  child = doMove( cpy, c8b8 );
+//  
+//  child.print_board();
+//  
+//  std::cout << bool( child == cpy ) << std::endl;
+//  
+//  bitboard pb[12];
+//  
+//  child.getBitboards( pb );
+//  
+//  std::cout << pb[11] << std::endl;
+  
   return true;
 }
