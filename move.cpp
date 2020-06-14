@@ -378,6 +378,8 @@ bool board::add_moves( move_t ** dest, move_t move, bool check_legal ) {
             return 1;
         }
         else {
+//            print_move( move );
+//            std::cout << " is not a legal move\n";
             return 0;
         }
     }
@@ -450,7 +452,7 @@ int board::gen_moves ( move_t * moves) {
                 else {
                     count += add_moves( &moves, move_t(from_sq,to_sq,0,0,0,0), false );
 //                    print_move( moves[count-1] );
-                    std::cout << std::endl;
+//                    std::cout << std::endl;
                 }
               }
             }
@@ -536,12 +538,11 @@ int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingIn
     bitboard _black = blackSquares();
     bitboard _other = ( sideToMove == white ) ? _black : _white;
     colour otherSide = ( sideToMove == white ) ? black : white;
-    std::cout << "we're in check\n";
       // king moves out of check
       int king_ind = last_set_bit( pieceBoards[(sideToMove*6)+5] );
       bitboard targets = pieceTargets( king_ind, _white, _black, colourPiece((sideToMove*6)+5) );
       int to_ind ;
-      targets >>= to_ind;
+//      targets >>= to_ind;
       
       while ( targets ) {
           to_ind = first_set_bit( targets );
@@ -559,7 +560,7 @@ int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingIn
       // take the checking piece
       int from_sq;
       bitboard defender;
-      std::cout << "Checking index: " << checkingInd << std::endl;
+//      std::cout << "Checking index: " << checkingInd << std::endl;
       for ( int i=(6*sideToMove); i<(6*sideToMove)+6; i++ ) {
           defender = pieceTargets( checkingInd, _white, _black, colourPiece((6*otherSide)+i) ) & pieceBoards[i];
           while ( defender ) {
@@ -595,25 +596,40 @@ int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingIn
             else return count;
         }
         else {
-            if ( ind_diff == -63 || (-ind_diff)%9 == 0 ) _dir = NE;
+            if ( ind_diff == -63 || (-ind_diff)%9 == 0 ) _dir = SW;
             else if ( (-ind_diff)%7 == 0 ) _dir = SE;
             else if ( (-ind_diff)%8 == 0 ) _dir = S;
             else if ( ind_diff > -8 ) _dir = W;
             else return count;
         }
         
-        for ( blockingInd=kingInd+_dir; blockingInd<checkingInd; blockingInd+=_dir ) {
-            for ( blockingPiece=(sideToMove*6); blockingPiece<(sideToMove*6)+5; blockingPiece++ ) {
-                blockers = pieceBoards[blockingPiece] & pieceTargets( blockingInd, _white, _black, colourPiece(blockingPiece) );
+        for ( blockingInd=kingInd+_dir; blockingInd!=checkingInd; blockingInd+=_dir ) {
+            // pawns
+            blockers = pieceBoards[sideToMove*6];
+            while ( blockers ) {
+                defenderInd = first_set_bit(blockers);
+                if ( is_bit_set( pieceTargets( defenderInd, _white, _black, colourPiece(sideToMove*6) ), blockingInd ) ) {
+                    switch ( abs(defenderInd-blockingInd) ) {
+                        case 8:
+                            count += add_moves( &moves, move_t( defenderInd, blockingInd, 0, 0, 0, 0 ), true );
+                            break;
+                        case 16:
+                            count += add_moves( &moves, move_t( defenderInd, blockingInd, 0, 0, 0, 1 ), true );
+                            break;
+                    }
+                }
+                blockers &= ( blockers - 1 );
+            }
+            
+            
+            // rooks, bishops, knights, queens
+            for ( blockingPiece=(sideToMove*6)+1; blockingPiece<(sideToMove*6)+5; blockingPiece++ ) {
+                if ( blockingInd == 42 && blockingPiece==6 ) std::cout << "FOUND ONE\n\n\n";
+                blockers = pieceBoards[blockingPiece] & pieceTargets( blockingInd, _white, _black, colourPiece((blockingPiece+6)%12) );
+//                print_bb( blockers );
                 while ( blockers ) {
-                    // need to add double pawn push
                     defenderInd = first_set_bit(blockers);
-                    if ( blockingPiece%6 == 0 && abs(defenderInd-blockingInd)==16) {
-                        count += add_moves( &moves, move_t( defenderInd, blockingInd, 0, 0, 0, 1 ), true );
-                    }
-                    else {
-                        count += add_moves( &moves, move_t( defenderInd, blockingInd, 0, 0, 0, 0 ), true );
-                    }
+                    count += add_moves( &moves, move_t( defenderInd, blockingInd, 0, 0, 0, 0 ), true );
                     blockers &= (blockers - 1ULL);
                 }
             }
@@ -784,6 +800,8 @@ bool board::is_legal( struct move_t move ) {
     colour otherSide = ( sideToMove == white ) ? black : white;
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
+    bitboard _other = ( sideToMove == white ) ? _black : _white;
+    bitboard _own   = ( sideToMove == white ) ? _white : _black;
     
     // king can't move into check
     if ( movingPiece%6 == 5 ) {
@@ -798,22 +816,27 @@ bool board::is_legal( struct move_t move ) {
     
     // can't move pinned pieces
     bitboard _ray;
+    bitboard _ray2;
     bitboard blockers = takenSquares();
     bitboard tmp;
     bitboard attacker;
+    bitboard first;
     
     for ( int i=0; i<8; i++ ) {
-        if ( rays[i][from_ind] & pieceBoards[(6*sideToMove)+5] ) {
+        _ray2 = rays[i][from_ind] & _own;
+        if ( (i+2)%8 < 4 ) _ray2 = ( 1ULL << first_set_bit( _ray2 ) );
+        else               _ray2 = ( 1ULL << last_set_bit( _ray2 ) );
+        if ( _ray2   & pieceBoards[(6*sideToMove)+5] ) {
             int j = (i+4)%8;
             if ( i%2 ) {
                 // bishops and queens
                 _ray = rays[j][from_ind];
                 tmp = blockers & _ray;
                 if ( tmp ) {
-                    if ( (j+2)%6 < 4 ) attacker = ( 1ULL << first_set_bit( tmp ) );
+                    if ( (j+2)%8 < 4 ) attacker = ( 1ULL << first_set_bit( tmp ) );
                     else               attacker = ( 1ULL <<  last_set_bit( tmp ) );
-                    if ( attacker & pieceBoards[(6*otherSide)+3] ) return false;
-                    if ( attacker & pieceBoards[(6*otherSide)+5] ) return false;
+                    if ( attacker & pieceBoards[(6*otherSide)+3] ) { return false; }
+                    if ( attacker & pieceBoards[(6*otherSide)+4] ) { return false; }
                 }
             }
             else {
@@ -821,10 +844,10 @@ bool board::is_legal( struct move_t move ) {
                 _ray = rays[j][from_ind];
                 tmp = blockers & _ray;
                 if ( tmp ) {
-                    if ( (j+2)%6 < 4 ) attacker = ( 1ULL << first_set_bit( tmp ) );
+                    if ( (j+2)%8 < 4 ) attacker = ( 1ULL << first_set_bit( tmp ) );
                     else               attacker = ( 1ULL <<  last_set_bit( tmp ) );
-                    if ( attacker & pieceBoards[(6*otherSide)+1] ) return false;
-                    if ( attacker & pieceBoards[(6*otherSide)+5] ) return false;
+                    if ( attacker & pieceBoards[(6*otherSide)+1] ) { return false; }
+                    if ( attacker & pieceBoards[(6*otherSide)+4] ) { return false; }
                 }
             }
         }
