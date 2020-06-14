@@ -63,6 +63,7 @@ TESTFILES= \
 	${TESTDIR}/TestFiles/f3 \
 	${TESTDIR}/TestFiles/f5 \
 	${TESTDIR}/TestFiles/f7 \
+	${TESTDIR}/TestFiles/f8 \
 	${TESTDIR}/TestFiles/f4
 
 # Test Object Files
@@ -79,6 +80,8 @@ TESTOBJECTFILES= \
 	${TESTDIR}/tests/movetestrunner.o \
 	${TESTDIR}/tests/perfttestclass.o \
 	${TESTDIR}/tests/perfttestrunner.o \
+	${TESTDIR}/tests/structurestestclass.o \
+	${TESTDIR}/tests/structurestestrunner.o \
 	${TESTDIR}/tests/twiddletestclass.o \
 	${TESTDIR}/tests/twiddletestrunner.o
 
@@ -217,6 +220,10 @@ ${TESTDIR}/TestFiles/f7: ${TESTDIR}/tests/perfttestclass.o ${TESTDIR}/tests/perf
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc} -o ${TESTDIR}/TestFiles/f7 $^ ${LDLIBSOPTIONS}   `cppunit-config --libs`   
 
+${TESTDIR}/TestFiles/f8: ${TESTDIR}/tests/structurestestclass.o ${TESTDIR}/tests/structurestestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
+	${MKDIR} -p ${TESTDIR}/TestFiles
+	${LINK.cc} -o ${TESTDIR}/TestFiles/f8 $^ ${LDLIBSOPTIONS}   `cppunit-config --libs`   
+
 ${TESTDIR}/TestFiles/f4: ${TESTDIR}/tests/twiddletestclass.o ${TESTDIR}/tests/twiddletestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc} -o ${TESTDIR}/TestFiles/f4 $^ ${LDLIBSOPTIONS}   
@@ -292,6 +299,18 @@ ${TESTDIR}/tests/perfttestrunner.o: tests/perfttestrunner.cpp
 	${MKDIR} -p ${TESTDIR}/tests
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 `cppunit-config --cflags` -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/perfttestrunner.o tests/perfttestrunner.cpp
+
+
+${TESTDIR}/tests/structurestestclass.o: tests/structurestestclass.cpp 
+	${MKDIR} -p ${TESTDIR}/tests
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 `cppunit-config --cflags` -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/structurestestclass.o tests/structurestestclass.cpp
+
+
+${TESTDIR}/tests/structurestestrunner.o: tests/structurestestrunner.cpp 
+	${MKDIR} -p ${TESTDIR}/tests
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 `cppunit-config --cflags` -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/structurestestrunner.o tests/structurestestrunner.cpp
 
 
 ${TESTDIR}/tests/twiddletestclass.o: tests/twiddletestclass.cpp 
@@ -524,6 +543,7 @@ ${OBJECTDIR}/util/tree_nomain.o: ${OBJECTDIR}/util/tree.o util/tree.cpp
 	    ${TESTDIR}/TestFiles/f3 || true; \
 	    ${TESTDIR}/TestFiles/f5 || true; \
 	    ${TESTDIR}/TestFiles/f7 || true; \
+	    ${TESTDIR}/TestFiles/f8 || true; \
 	    ${TESTDIR}/TestFiles/f4 || true; \
 	else  \
 	    ./${TEST} || true; \

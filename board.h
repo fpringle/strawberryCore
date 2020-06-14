@@ -130,14 +130,17 @@ class board {
     bitboard blackSquares();
     bitboard takenSquares();// { return (whiteSquares() | blackSquares()); }
     bitboard emptySquares();// { return ( ~ takenSquares()); }
-    int gen_moves(struct move_t*);
-    bool is_legal(struct move_t);
+    bool add_moves( struct move_t**, struct move_t, bool );
+    int gen_moves( struct move_t* );
+    bool is_legal( struct move_t );
+    int gen_legal_moves( struct move_t* );
 
     // hashing
     uint64_t zobrist_hash();
 
     // check
     bool is_check(colour);
+    bool is_check(colour, piece*, int*);
     bool is_checkmate(colour);
     bool was_lastmove_check(move_t);
 };

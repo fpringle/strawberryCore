@@ -98,6 +98,9 @@ piece move_t::which_promotion() {
         case 6:
             return knight;
             break;
+        default:
+            return queen;
+            break;
     }
 }
 
@@ -366,6 +369,24 @@ bitboard pieceTargets(int sq, bitboard _white, bitboard _black, colourPiece cP) 
 }
 
 
+bool board::add_moves( move_t ** dest, move_t move, bool check_legal ) {
+    if ( check_legal ) {
+        if ( is_legal( move ) ) {
+            **dest = move;
+            (*dest)++;
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+    else{
+        **dest = move;
+        (*dest)++;
+        return 1;
+    }
+}
+
 // generate pseudo-legal moves (without checking for checks)
 // returns the number of moves
 int board::gen_moves ( move_t * moves) {
@@ -392,20 +413,13 @@ int board::gen_moves ( move_t * moves) {
               // capture
               if ( piece%6==0 && ((rankOne|rankEight)&(1ULL<<to_sq)) ) {
                   // promotion
-                  *moves = move_t(from_sq,to_sq,1,1,0,0);
-                  moves++;
-                  *moves = move_t(from_sq,to_sq,1,1,0,1);
-                  moves++;
-                  *moves = move_t(from_sq,to_sq,1,1,1,0);
-                  moves++;
-                  *moves = move_t(from_sq,to_sq,1,1,1,1);
-                  moves++;
-                  count += 4;
+                  count += add_moves( &moves, move_t(from_sq,to_sq,1,1,0,0), false );
+                  count += add_moves( &moves, move_t(from_sq,to_sq,1,1,0,1), false );
+                  count += add_moves( &moves, move_t(from_sq,to_sq,1,1,1,0), false );
+                  count += add_moves( &moves, move_t(from_sq,to_sq,1,1,1,1), false );
               }
               else {
-                  *moves = move_t(from_sq,to_sq,0,1,0,0);
-                  moves++;
-                  count++;
+                  count += add_moves( &moves, move_t(from_sq,to_sq,0,1,0,0), false );
               }
             }
             else {
@@ -413,9 +427,7 @@ int board::gen_moves ( move_t * moves) {
               if ( ( piece % 6 == 0 ) & ( abs(from_sq-to_sq) == 16 ) ) {
                 // double pawn push
                 if ( !( ( 1ULL << ((from_sq+to_sq)/2) ) & ( _black | _white ) ) ) {
-                  *moves = move_t(from_sq,to_sq,0,0,0,1);
-                  moves++;
-                  count++;
+                  count += add_moves( &moves, move_t(from_sq,to_sq,0,0,0,1), false );
                 }
                 else {
 //                  cout << "Falsely identified as blocked double pawn push: ";
@@ -426,20 +438,13 @@ int board::gen_moves ( move_t * moves) {
                 // quiet move
                 if ( piece%6==0 && ((rankOne|rankEight)&(1ULL<<to_sq)) ) {
                   // promotion
-                  *moves = move_t(from_sq,to_sq,1,1,0,0);
-                  moves++;
-                  *moves = move_t(from_sq,to_sq,1,0,0,1);
-                  moves++;
-                  *moves = move_t(from_sq,to_sq,1,0,1,0);
-                  moves++;
-                  *moves = move_t(from_sq,to_sq,1,0,1,1);
-                  moves++;
-                  count += 4;
+                  count += add_moves( &moves, move_t(from_sq,to_sq,1,1,0,0), false );
+                  count += add_moves( &moves, move_t(from_sq,to_sq,1,0,0,1), false );
+                  count += add_moves( &moves, move_t(from_sq,to_sq,1,0,1,0), false );
+                  count += add_moves( &moves, move_t(from_sq,to_sq,1,0,1,1), false );
                 }
                 else {
-                    *moves = move_t(from_sq,to_sq,0,0,0,0);
-                    moves++;
-                    count++;
+                    count += add_moves( &moves, move_t(from_sq,to_sq,0,0,0,0), false );
                 }
               }
             }
@@ -464,15 +469,11 @@ int board::gen_moves ( move_t * moves) {
     int captureSquare = 40 - ( 24 * sideToMove ) + dPPFile;
     if ( left & ( pieceBoards[ 6 * sideToMove ] ) ) {
       int leftSquare = last_set_bit( left );
-      *moves = move_t(leftSquare,captureSquare,0,1,0,1);
-      moves++;
-      count++;
+      count += add_moves( &moves, move_t(leftSquare,captureSquare,0,1,0,1), false );
     }
     if ( right & ( pieceBoards[ 6 * sideToMove ] ) ) {
       int rightSquare = last_set_bit( right );
-      *moves = move_t(rightSquare,captureSquare,0,1,0,1);
-      moves++;
-      count++;
+      count += add_moves( &moves, move_t(rightSquare,captureSquare,0,1,0,1), false );
     }
   }
 
@@ -484,9 +485,7 @@ int board::gen_moves ( move_t * moves) {
       copy.set_piece(whiteKing,5);
       copy.clear_square(4);
       if ( !copy.is_check(white) ) {
-        *moves = move_t(4,6,0,0,1,0);
-        moves++;
-        count++;
+        count += add_moves( &moves, move_t(4,6,0,0,1,0), false );
       }
       //copy.print_board(std::cout);
     }
@@ -495,9 +494,7 @@ int board::gen_moves ( move_t * moves) {
       copy.set_piece(whiteKing,3);
       copy.clear_square(4);
       if ( !copy.is_check(white) ) {
-        *moves = move_t(4,2,0,0,1,1);
-        moves++;
-        count++;
+        count += add_moves( &moves, move_t(4,2,0,0,1,1), false );
       }
       //copy.print_board(std::cout);
     }
@@ -508,9 +505,7 @@ int board::gen_moves ( move_t * moves) {
       copy.set_piece(blackKing,61);
       copy.clear_square(60);
       if ( !copy.is_check(black) ) {
-        *moves = move_t(60,62,0,0,1,0);
-        moves++;
-        count++;
+        count += add_moves( &moves, move_t(60,62,0,0,1,0), false );
       }
       //copy.print_board(std::cout);
     }
@@ -519,9 +514,198 @@ int board::gen_moves ( move_t * moves) {
       copy.set_piece(blackKing,59);
       copy.clear_square(60);
       if ( !copy.is_check(black) ) {
-        *moves = move_t(60,58,0,0,1,1);
-        moves++;
-        count++;
+        count += add_moves( &moves, move_t(60,58,0,0,1,1), false );
+      }
+      //copy.print_board(std::cout);
+    }
+  }
+
+  return count;
+}
+
+
+// generate pseudo-legal moves (without checking for checks)
+// returns the number of moves
+int board::gen_legal_moves ( move_t * moves) {
+  int _piece;
+  int from_sq;
+  int to_sq;
+  int count=0;
+  bitboard targets;
+  bitboard _white = whiteSquares();
+  bitboard _black = blackSquares();
+  bitboard _other = ( ( sideToMove == white ) ? _black : _white );
+  colour otherSide = ( ( sideToMove == white ) ? black : white );
+  bitboard defender;
+  
+  // if we're in check we can limit the search
+  piece checkingPiece;
+  int checkingInd;
+  if ( is_check( sideToMove, &checkingPiece, &checkingInd ) ) {
+      std::cout << "we're in check\n";
+      // king moves out of check
+      int king_ind = last_set_bit( pieceBoards[(sideToMove*6)+5] );
+      bitboard targets = pieceTargets( king_ind, _white, _black, colourPiece((sideToMove*6)+5) );
+      int to_ind = first_set_bit( targets );
+      targets >>= to_ind;
+      
+      while ( targets ) {
+          if ( targets & ( 1ULL ) ) {
+              if ( _other & ( 1ULL << to_ind ) ) {
+                  count += add_moves( &moves, move_t(king_ind,to_ind,0,1,0,0), true );
+              }
+              else {
+                  count += add_moves( &moves, move_t(king_ind,to_ind,0,0,0,0), true );
+              }
+          }
+          to_ind++;
+          targets >>= 1;
+      }
+      
+      // take the checking piece
+      from_sq = 0;
+      std::cout << "Checking index: " << checkingInd << std::endl;
+      for ( int i=(6*sideToMove); i<(6*sideToMove)+6; i++ ) {
+          defender = pieceTargets( checkingInd, _white, _black, colourPiece((6*otherSide)+i) ) & pieceBoards[i];
+          while ( defender ) {
+              if ( defender & 1ULL ) {
+                  count += add_moves( &moves, move_t( from_sq, checkingInd, 0, 1, 0, 0 ), true );
+              }
+              defender >>= 1;
+              from_sq++;
+          }
+      }
+      bitboard left  = oneW(1ULL << checkingInd);
+      bitboard right = oneE(1ULL << checkingInd);
+      if ( lastMoveDoublePawnPush && ( checkingPiece==0 ) ) {
+          to_ind = checkingInd + ( ( sideToMove == white ) ? N : S );
+          if ( pieceBoards[sideToMove*6] & right ) count += add_moves( &moves, move_t( checkingInd+1, to_ind, 0, 1, 0, 1 ), true );
+          if ( pieceBoards[sideToMove*6] & left )  count += add_moves( &moves, move_t( checkingInd-1, to_ind, 0, 1, 0, 1 ), true );
+      }
+      
+      // moving into the way
+      
+      
+      return count;
+  }
+
+  for (_piece=sideToMove*6;_piece<(1+sideToMove)*6;_piece++) {
+    for ( from_sq=0; from_sq<64; from_sq++) {
+      if ( pieceBoards[_piece] & ( 1ULL << from_sq ) ) {
+//        cout << "Piece " << _piece << " at square " << from_sq << ":\n";
+        targets = pieceTargets(from_sq,_white,_black,colourPiece(_piece));
+//        print_bb(targets,'x');
+
+        for ( to_sq=0; to_sq<64; to_sq++ ) {
+          if (targets & 1ULL) {
+            // found a move!
+//            cout << "Found a move!\n";
+            if ( ( ( 1ULL << to_sq ) & _black ) | ( ( 1ULL << to_sq ) & _white ) ) {
+              // capture
+              if ( _piece%6==0 && ((rankOne|rankEight)&(1ULL<<to_sq)) ) {
+                  // promotion
+                  count += add_moves( &moves, move_t(from_sq,to_sq,1,1,0,0), true );
+                  count += add_moves( &moves, move_t(from_sq,to_sq,1,1,0,1), true );
+                  count += add_moves( &moves, move_t(from_sq,to_sq,1,1,1,0), true );
+                  count += add_moves( &moves, move_t(from_sq,to_sq,1,1,1,1), true );
+              }
+              else {
+                  count += add_moves( &moves, move_t(from_sq,to_sq,0,1,0,0), true );
+              }
+            }
+            else {
+              // non-capture
+              if ( ( _piece % 6 == 0 ) & ( abs(from_sq-to_sq) == 16 ) ) {
+                // double pawn push
+                if ( !( ( 1ULL << ((from_sq+to_sq)/2) ) & ( _black | _white ) ) ) {
+                  count += add_moves( &moves, move_t(from_sq,to_sq,0,0,0,1), true );
+                }
+                else {
+//                  cout << "Falsely identified as blocked double pawn push: ";
+//                  cout << from_sq << " " << to_sq << " " << ((from_sq+to_sq)/2) << endl;
+                }
+              }
+              else {
+                // quiet move
+                if ( _piece%6==0 && ((rankOne|rankEight)&(1ULL<<to_sq)) ) {
+                  // promotion
+                  count += add_moves( &moves, move_t(from_sq,to_sq,1,1,0,0), true );
+                  count += add_moves( &moves, move_t(from_sq,to_sq,1,0,0,1), true );
+                  count += add_moves( &moves, move_t(from_sq,to_sq,1,0,1,0), true );
+                  count += add_moves( &moves, move_t(from_sq,to_sq,1,0,1,1), true );
+                }
+                else {
+                    count += add_moves( &moves, move_t(from_sq,to_sq,0,0,0,0), true );
+                }
+              }
+            }
+//            moves++;
+//            count++;
+          }
+          targets >>= 1;
+        }
+      }
+    }
+  }
+  // fringe cases
+
+  // ep capture
+  if ( lastMoveDoublePawnPush ) {
+    // if white to move: potential squares are ( 32 + dPPFile +-1 )
+    // if black to move: potential squares are ( 24 + dPPFile +-1 )
+    int oppPawnSquare = 32 - (  8 * sideToMove ) + dPPFile;
+    bitboard oppPawn = ( 1ULL << oppPawnSquare );
+    bitboard left    = oneW( oppPawn );
+    bitboard right   = oneE( oppPawn );
+    int captureSquare = 40 - ( 24 * sideToMove ) + dPPFile;
+    if ( left & ( pieceBoards[ 6 * sideToMove ] ) ) {
+      int leftSquare = last_set_bit( left );
+      count += add_moves( &moves, move_t(leftSquare,captureSquare,0,1,0,1), true );
+    }
+    if ( right & ( pieceBoards[ 6 * sideToMove ] ) ) {
+      int rightSquare = last_set_bit( right );
+      count += add_moves( &moves, move_t(rightSquare,captureSquare,0,1,0,1), true );
+    }
+  }
+
+  // castling
+  if ( sideToMove == white && ! is_check(white) ) {
+    if ( castleWhiteKingSide &&  ( ! ( ( _white | _black ) & 0x0000000000000060 ) ) ) {
+      // can't castle through check
+      board copy = *this;
+      copy.set_piece(whiteKing,5);
+      copy.clear_square(4);
+      if ( !copy.is_check(white) ) {
+        count += add_moves( &moves, move_t(4,6,0,0,1,0), true );
+      }
+      //copy.print_board(std::cout);
+    }
+    if ( castleWhiteQueenSide && ( ! ( ( _white | _black ) & 0x000000000000000e ) ) ) {
+      board copy = *this;
+      copy.set_piece(whiteKing,3);
+      copy.clear_square(4);
+      if ( !copy.is_check(white) ) {
+        count += add_moves( &moves, move_t(4,2,0,0,1,1), true );
+      }
+      //copy.print_board(std::cout);
+    }
+  }
+  else if ( sideToMove == black && ! is_check(black) ){
+    if ( castleBlackKingSide &&  ( ! ( ( _white | _black ) & 0x6000000000000000 ) ) ) {
+      board copy = *this;
+      copy.set_piece(blackKing,61);
+      copy.clear_square(60);
+      if ( !copy.is_check(black) ) {
+        count += add_moves( &moves, move_t(60,62,0,0,1,0), true );
+      }
+      //copy.print_board(std::cout);
+    }
+    if ( castleBlackQueenSide && ( ! ( ( _white | _black ) & 0x0e00000000000000 ) ) ) {
+      board copy = *this;
+      copy.set_piece(blackKing,59);
+      copy.clear_square(60);
+      if ( !copy.is_check(black) ) {
+        count += add_moves( &moves, move_t(60,58,0,0,1,1), true );
       }
       //copy.print_board(std::cout);
     }
@@ -548,12 +732,12 @@ bool board::is_legal( struct move_t move ) {
     
     // king can't move into check
     if ( movingPiece%6 == 5 ) {
-        if ( pawnAttackNaive( from_ind, sideToMove ) & pieceBoards[6*otherSide] ) return false;
-        if ( rookTargets( from_ind, _white, _black, sideToMove ) & pieceBoards[(6*otherSide)+1] ) return false;
-        if ( knightTargets( from_ind, _white, _black, sideToMove ) & pieceBoards[(6*otherSide)+2] ) return false;
-        if ( bishopTargets( from_ind, _white, _black, sideToMove ) & pieceBoards[(6*otherSide)+3] ) return false;
-        if ( queenTargets( from_ind, _white, _black, sideToMove ) & pieceBoards[(6*otherSide)+4] ) return false;
-        if ( kingTargets( from_ind, _white, _black, sideToMove ) & pieceBoards[(6*otherSide)+5] ) return false;
+        if ( pawnAttackNaive( to_ind, sideToMove ) & pieceBoards[6*otherSide] ) return false;
+        if ( rookTargets( to_ind, _white, _black, sideToMove ) & pieceBoards[(6*otherSide)+1] ) return false;
+        if ( knightTargets( to_ind, _white, _black, sideToMove ) & pieceBoards[(6*otherSide)+2] ) return false;
+        if ( bishopTargets( to_ind, _white, _black, sideToMove ) & pieceBoards[(6*otherSide)+3] ) return false;
+        if ( queenTargets( to_ind, _white, _black, sideToMove ) & pieceBoards[(6*otherSide)+4] ) return false;
+        if ( kingTargets( to_ind, _white, _black, sideToMove ) & pieceBoards[(6*otherSide)+5] ) return false;
         return true;
     }
     

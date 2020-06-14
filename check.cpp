@@ -27,6 +27,34 @@ bool board::is_check(colour side) {
 }
 
 
+bool board::is_check(colour side, piece * checkingPiece, int * checkingInd ) {
+  // on-the-fly check detection
+  int kingpos = log2( pieceBoards[ ( 6 * side ) + 5 ] );
+  bitboard _white = whiteSquares();
+  bitboard _black = blackSquares();
+  colour otherSide = ( side == white ) ? black : white;
+  bitboard _check;
+
+  // pawns
+  _check = pawnAttackNaive   (kingpos, side) & pieceBoards[(6*otherSide)+0];
+  if ( _check ) { *checkingPiece = piece(0); *checkingInd = last_set_bit( _check ); return true; }
+  // rooks
+  _check = rookTargets   (kingpos, _white, _black, side) & pieceBoards[(6*otherSide)+1];
+  if ( _check ) { *checkingPiece = piece(0); *checkingInd = last_set_bit( _check ); return true; }
+  // knights
+  _check = knightTargets   (kingpos, _white, _black, side) & pieceBoards[(6*otherSide)+2];
+  if ( _check ) { *checkingPiece = piece(0); *checkingInd = last_set_bit( _check ); return true; }
+  // bishops
+  _check = bishopTargets   (kingpos, _white, _black, side) & pieceBoards[(6*otherSide)+3];
+  if ( _check ) { *checkingPiece = piece(0); *checkingInd = last_set_bit( _check ); return true; }
+  // queens
+  _check = queenTargets   (kingpos, _white, _black, side) & pieceBoards[(6*otherSide)+4];
+  if ( _check ) { *checkingPiece = piece(0); *checkingInd = last_set_bit( _check ); return true; }
+
+  return false;
+}
+
+
 bool board::is_checkmate(colour side) {
   if ( ! is_check(side) ) return false;
   board child;
