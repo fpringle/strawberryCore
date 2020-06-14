@@ -6,6 +6,7 @@
 #include "twiddle.h"
 #include <bitset>
 #include <string>
+#include <math.h>
 
 // initialise constants declared in move.h
 const int N   =  +8;
@@ -401,14 +402,17 @@ int board::gen_moves ( move_t * moves) {
   for (piece=sideToMove*6;piece<(1+sideToMove)*6;piece++) {
     for ( from_sq=0; from_sq<64; from_sq++) {
       if ( pieceBoards[piece] & ( 1ULL << from_sq ) ) {
-//        cout << "Piece " << piece << " at square " << from_sq << ":\n";
+//        std::cout << "Piece " << piece << " at square " << from_sq << ":\n";
         targets = pieceTargets(from_sq,_white,_black,colourPiece(piece));
 //        print_bb(targets,'x');
+//        std::cout << targets;
+//        std::cout << std::endl;
 
-        for ( to_sq=0; to_sq<64; to_sq++ ) {
-          if (targets & 1ULL) {
+        while ( targets ) {
+          to_sq = first_set_bit( targets );
+//          if (targets & 1ULL) {
             // found a move!
-//            cout << "Found a move!\n";
+//            std::cout << "Found a move: ";
             if ( ( ( 1ULL << to_sq ) & _black ) | ( ( 1ULL << to_sq ) & _white ) ) {
               // capture
               if ( piece%6==0 && ((rankOne|rankEight)&(1ULL<<to_sq)) ) {
@@ -445,13 +449,15 @@ int board::gen_moves ( move_t * moves) {
                 }
                 else {
                     count += add_moves( &moves, move_t(from_sq,to_sq,0,0,0,0), false );
+//                    print_move( moves[count-1] );
+                    std::cout << std::endl;
                 }
               }
             }
 //            moves++;
 //            count++;
-          }
-          targets >>= 1;
+//          }
+          targets &= ( targets - 1ULL );
         }
       }
     }
@@ -524,6 +530,98 @@ int board::gen_moves ( move_t * moves) {
 }
 
 
+int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingInd, int kingInd ) {
+    int count=0;
+    bitboard _white = whiteSquares();
+    bitboard _black = blackSquares();
+    bitboard _other = ( sideToMove == white ) ? _black : _white;
+    colour otherSide = ( sideToMove == white ) ? black : white;
+    std::cout << "we're in check\n";
+      // king moves out of check
+      int king_ind = last_set_bit( pieceBoards[(sideToMove*6)+5] );
+      bitboard targets = pieceTargets( king_ind, _white, _black, colourPiece((sideToMove*6)+5) );
+      int to_ind ;
+      targets >>= to_ind;
+      
+      while ( targets ) {
+          to_ind = first_set_bit( targets );
+          if ( targets & ( 1ULL ) ) {
+              if ( _other & ( 1ULL << to_ind ) ) {
+                  count += add_moves( &moves, move_t(king_ind,to_ind,0,1,0,0), true );
+              }
+              else {
+                  count += add_moves( &moves, move_t(king_ind,to_ind,0,0,0,0), true );
+              }
+          }
+          targets &= ( targets - 1ULL );
+      }
+      
+      // take the checking piece
+      int from_sq;
+      bitboard defender;
+      std::cout << "Checking index: " << checkingInd << std::endl;
+      for ( int i=(6*sideToMove); i<(6*sideToMove)+6; i++ ) {
+          defender = pieceTargets( checkingInd, _white, _black, colourPiece((6*otherSide)+i) ) & pieceBoards[i];
+          while ( defender ) {
+              from_sq = first_set_bit( defender );
+//              if ( defender & 1ULL ) {
+                  count += add_moves( &moves, move_t( from_sq, checkingInd, 0, 1, 0, 0 ), true );
+//              }
+              defender &= ( defender - 1ULL );
+          }
+      }
+      bitboard left  = oneW(1ULL << checkingInd);
+      bitboard right = oneE(1ULL << checkingInd);
+      if ( lastMoveDoublePawnPush && ( checkingPiece==0 ) ) {
+          to_ind = checkingInd + ( ( sideToMove == white ) ? N : S );
+          if ( pieceBoards[sideToMove*6] & right ) count += add_moves( &moves, move_t( checkingInd+1, to_ind, 0, 1, 0, 1 ), true );
+          if ( pieceBoards[sideToMove*6] & left )  count += add_moves( &moves, move_t( checkingInd-1, to_ind, 0, 1, 0, 1 ), true );
+      }
+      
+        // moving into the way
+        // first find all the squares in the way?
+        int blockingInd;
+        int blockingPiece;
+        int ind_diff = checkingInd - kingInd;
+        bitboard blockers;
+        int defenderInd;
+        int _dir;
+        
+        if ( ind_diff>0 ) {
+            if ( ind_diff == 63 || ind_diff%9 == 0 ) _dir = NE;
+            else if ( ind_diff%7 == 0 ) _dir = NW;
+            else if ( ind_diff%8 == 0 ) _dir = N;
+            else if ( ind_diff < 8 ) _dir = E;
+            else return count;
+        }
+        else {
+            if ( ind_diff == -63 || (-ind_diff)%9 == 0 ) _dir = NE;
+            else if ( (-ind_diff)%7 == 0 ) _dir = SE;
+            else if ( (-ind_diff)%8 == 0 ) _dir = S;
+            else if ( ind_diff > -8 ) _dir = W;
+            else return count;
+        }
+        
+        for ( blockingInd=kingInd+_dir; blockingInd<checkingInd; blockingInd+=_dir ) {
+            for ( blockingPiece=(sideToMove*6); blockingPiece<(sideToMove*6)+5; blockingPiece++ ) {
+                blockers = pieceBoards[blockingPiece] & pieceTargets( blockingInd, _white, _black, colourPiece(blockingPiece) );
+                while ( blockers ) {
+                    // need to add double pawn push
+                    defenderInd = first_set_bit(blockers);
+                    if ( blockingPiece%6 == 0 && abs(defenderInd-blockingInd)==16) {
+                        count += add_moves( &moves, move_t( defenderInd, blockingInd, 0, 0, 0, 1 ), true );
+                    }
+                    else {
+                        count += add_moves( &moves, move_t( defenderInd, blockingInd, 0, 0, 0, 0 ), true );
+                    }
+                    blockers &= (blockers - 1ULL);
+                }
+            }
+        }
+      
+      return count;
+}
+
 // generate pseudo-legal moves (without checking for checks)
 // returns the number of moves
 int board::gen_legal_moves ( move_t * moves) {
@@ -542,51 +640,7 @@ int board::gen_legal_moves ( move_t * moves) {
   piece checkingPiece;
   int checkingInd;
   if ( is_check( sideToMove, &checkingPiece, &checkingInd ) ) {
-      std::cout << "we're in check\n";
-      // king moves out of check
-      int king_ind = last_set_bit( pieceBoards[(sideToMove*6)+5] );
-      bitboard targets = pieceTargets( king_ind, _white, _black, colourPiece((sideToMove*6)+5) );
-      int to_ind = first_set_bit( targets );
-      targets >>= to_ind;
-      
-      while ( targets ) {
-          if ( targets & ( 1ULL ) ) {
-              if ( _other & ( 1ULL << to_ind ) ) {
-                  count += add_moves( &moves, move_t(king_ind,to_ind,0,1,0,0), true );
-              }
-              else {
-                  count += add_moves( &moves, move_t(king_ind,to_ind,0,0,0,0), true );
-              }
-          }
-          to_ind++;
-          targets >>= 1;
-      }
-      
-      // take the checking piece
-      from_sq = 0;
-      std::cout << "Checking index: " << checkingInd << std::endl;
-      for ( int i=(6*sideToMove); i<(6*sideToMove)+6; i++ ) {
-          defender = pieceTargets( checkingInd, _white, _black, colourPiece((6*otherSide)+i) ) & pieceBoards[i];
-          while ( defender ) {
-              if ( defender & 1ULL ) {
-                  count += add_moves( &moves, move_t( from_sq, checkingInd, 0, 1, 0, 0 ), true );
-              }
-              defender >>= 1;
-              from_sq++;
-          }
-      }
-      bitboard left  = oneW(1ULL << checkingInd);
-      bitboard right = oneE(1ULL << checkingInd);
-      if ( lastMoveDoublePawnPush && ( checkingPiece==0 ) ) {
-          to_ind = checkingInd + ( ( sideToMove == white ) ? N : S );
-          if ( pieceBoards[sideToMove*6] & right ) count += add_moves( &moves, move_t( checkingInd+1, to_ind, 0, 1, 0, 1 ), true );
-          if ( pieceBoards[sideToMove*6] & left )  count += add_moves( &moves, move_t( checkingInd-1, to_ind, 0, 1, 0, 1 ), true );
-      }
-      
-      // moving into the way
-      
-      
-      return count;
+      return get_out_of_check( moves, checkingPiece, checkingInd, log2( pieceBoards[(6*sideToMove)+5] ) );
   }
 
   for (_piece=sideToMove*6;_piece<(1+sideToMove)*6;_piece++) {
@@ -596,8 +650,9 @@ int board::gen_legal_moves ( move_t * moves) {
         targets = pieceTargets(from_sq,_white,_black,colourPiece(_piece));
 //        print_bb(targets,'x');
 
-        for ( to_sq=0; to_sq<64; to_sq++ ) {
-          if (targets & 1ULL) {
+        while ( targets ) {
+          to_sq = first_set_bit( targets );
+//          if (targets & 1ULL) {
             // found a move!
 //            cout << "Found a move!\n";
             if ( ( ( 1ULL << to_sq ) & _black ) | ( ( 1ULL << to_sq ) & _white ) ) {
@@ -641,8 +696,8 @@ int board::gen_legal_moves ( move_t * moves) {
             }
 //            moves++;
 //            count++;
-          }
-          targets >>= 1;
+//          }
+          targets &= ( targets - 1ULL );
         }
       }
     }

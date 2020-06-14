@@ -3,6 +3,7 @@
 #include "hash.h"
 #include <assert.h>
 #include <time.h>
+#include "twiddle.h"
 
 
 // transposition table
@@ -93,11 +94,10 @@ uint64_t board::zobrist_hash() {
   // pieces
   for (cP=0; cP<12; cP++) {
     tmp = pieceBoards[cP];
-    for (i=0; i<64; i++) {
-      if (tmp & 1ULL) {
+    while ( tmp ) {
+        i = first_set_bit( tmp );
         ret ^= zobristKeys[cP*64 + i];
-      }
-      tmp >>= 1;
+        tmp &= ( tmp - 1ULL );
     }
   }
 

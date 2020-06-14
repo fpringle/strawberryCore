@@ -182,9 +182,9 @@ void checktestclass::testIs_checkmate() {
     bool castling2[] = { 0,0,0,0 };
     board _board2 ( pb2, castling2, 0, 0, 3, 3, black, 200 );
     
-//    if ( _board2.is_checkmate( black ) ) {
-//        _board2.print_board();
-//    }
+    if ( _board2.is_checkmate( black ) ) {
+        _board2.print_board();
+    }
 //    
 //    move_t c8b8 ( 58, 57, 0, 0, 0, 0 );
 //    

@@ -115,10 +115,11 @@ void hashtestclass::testIncremental_hash() {
                          d8g5, d2g5, e8d8, d1d7, e8d7, e1c1       };
     
     uint64_t hsh, real_hsh;
+    _board.print_board();
     
     for ( int i=0; i<13; i++ ) {
-        _board.print_board();
         _board = doMove( _board, moves[i] );
+        _board.print_board();
         _board.getHash( &hsh );
         real_hsh = _board.zobrist_hash();
 //        std::cout << "calculated hash:  " << real_hsh <<std::endl;

@@ -64,6 +64,8 @@ bool board::is_checkmate(colour side) {
   int num_moves = cpy.gen_moves( moves );
 
   for (int i=0; i<num_moves; i++) {
+//      print_move( moves[i] );
+//      std::cout << std::endl;
     child = doMove(cpy,moves[i]);
     if ( ! child.is_check(side) ) return false;
   }

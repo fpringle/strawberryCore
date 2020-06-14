@@ -154,11 +154,9 @@ int16_t board::evaluate_pieceSquareTables() {
 
   for (i=0; i<12; i++) {
     tmp = pieceBoards[i];
-    for (j=0; j<64; j++) {
-      if (tmp & 1ULL) {
-        ret += pieceSquareTables[i][j];
-      }
-      tmp >>= 1;
+    while ( tmp ) {
+        ret += pieceSquareTables[i][first_set_bit( tmp )];
+        tmp &= ( tmp - 1ULL );
     }
   }
   return ret;

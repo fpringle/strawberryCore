@@ -195,7 +195,7 @@ void perfttestclass::testPosition4() {
     std::stringstream ss;
     
     for ( int i=0; i<5; i++ ) {
-        n_nodes = PERFT_legalcheck( _board, i );
+        n_nodes = PERFT_simple( _board, i );
         ss << "Error checking PERFT result for depth " << i << ". ";
         ss << "Real answer: " << real[i] << std::endl;
         ss << "Our answer:  " << n_nodes << std::endl;
