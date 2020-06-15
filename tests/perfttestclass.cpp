@@ -42,7 +42,7 @@ tree<std::string> pop_perft_tree( board ) {
     return root;
 }
 
-unsigned int PERFT_simple( board b , int depth ) {
+unsigned int PERFT_simple( board b , int depth, bool print_progress=false ) {
     move_t movelist[256];
     int n_moves, i;
     unsigned int ret = 0;
@@ -58,12 +58,13 @@ unsigned int PERFT_simple( board b , int depth ) {
     for ( i=0; i<n_moves; i++ ) {
         child = doMove( b, movelist[i] );
         if ( child.is_check(side) ) continue;
-        ret += PERFT_simple( child, depth-1 );
+        ret += PERFT_simple( child, depth-1, false );
+        if ( print_progress ) std::cout << "pseud completed: " << i+1 << " / " << n_moves << std::endl;
     }
     return ret;
 }
 
-unsigned int PERFT_legalcheck( board b , int depth ) {
+unsigned int PERFT_legalcheck( board b , int depth, bool print_progress=false ) {
     move_t movelist[256];
     int n_moves, i;
     unsigned int ret = 0;
@@ -78,17 +79,32 @@ unsigned int PERFT_legalcheck( board b , int depth ) {
     n_moves = b.gen_legal_moves( movelist );
     for ( i=0; i<n_moves; i++ ) {
         child = doMove( b, movelist[i] );
-//        if ( child.is_check(side) ) continue;
-//        if ( depth==2 ) {
-//            print_move( movelist[i] );
-//            std::cout << std::endl << std::endl;
-//        }
-        ret += PERFT_legalcheck( child, depth-1 );
-//        if ( depth==1 ) {
-//            print_move( movelist[i] );
-//            std::cout << std::endl;
-//        }
-//        if (depth==2) break;
+        ret += PERFT_legalcheck( child, depth-1, false );
+        if ( print_progress ) std::cout << "legal completed: " << i+1 << " / " << n_moves << std::endl;
+    }
+    return ret;
+}
+
+unsigned int PERFT_legalcheck_faster( board b , int depth, bool print_progress=false ) {
+    if ( depth==0 ) return 1;
+    move_t movelist[256];
+    int n_moves;
+    int i;
+    unsigned int ret = 0;
+    board child;
+    colour side;
+    b.getSide( &side );
+    
+    n_moves = b.gen_legal_moves( movelist );
+    
+    if ( depth==1 ) {
+        return n_moves;
+    }
+    
+    for ( i=0; i<n_moves; i++ ) {
+        child = doMove( b, movelist[i] );
+        ret += PERFT_legalcheck_faster( child, depth-1, false );
+        if ( print_progress ) std::cout << "legal completed: " << i+1 << " / " << n_moves << std::endl;
     }
     return ret;
 }
@@ -101,10 +117,10 @@ void perfttestclass::testStartBoard() {
     std::stringstream ss;
     
     unsigned int real[7] = { 1, 20, 400, 8902, 197281,
-                             4865609, 119060324 };
+                             4865609, 119060324 };  // 7
     
-    for ( int i=0; i< 5; i++ ) {
-        n_nodes = PERFT_legalcheck( _board, i );
+    for ( int i=0; i<6; i++ ) {
+        n_nodes = PERFT_legalcheck_faster( _board, i );
         ss << "Error checking PERFT result for depth " << i << ". ";
         ss << "Real answer: " << real[i] << std::endl;
         ss << "Our answer:  " << n_nodes << std::endl;
@@ -123,13 +139,13 @@ void perfttestclass::testPosition2() {
     board _board( "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 1 0" );
     
     unsigned int real[6] = { 1, 48, 2039, 97862,
-                             4085603, 193690690 };
+                             4085603, 193690690 };  // 6
     
     unsigned int n_nodes;
     std::stringstream ss;
     
-    for ( int i=0; i<4; i++ ) {
-        n_nodes = PERFT_legalcheck( _board, i );
+    for ( int i=0; i<6; i++ ) {
+        n_nodes = PERFT_legalcheck_faster( _board, i );
         ss << "Error checking PERFT result for depth " << i << ". ";
         ss << "Real answer: " << real[i] << std::endl;
         ss << "Our answer:  " << n_nodes << std::endl;
@@ -148,7 +164,7 @@ void perfttestclass::testPosition3() {
     board _board( "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1" );
     
     unsigned int real[6] = { 1, 14, 191, 2812,
-                             43238, 674624};
+                             43238, 674624};  // 6
     
     unsigned int n_nodes;
     std::stringstream ss;
@@ -156,7 +172,7 @@ void perfttestclass::testPosition3() {
 //    _board.print_board();
     
     for ( int i=0; i<6; i++ ) {
-        n_nodes = PERFT_legalcheck( _board, i );
+        n_nodes = PERFT_legalcheck_faster( _board, i );
         ss << "Error checking PERFT result for depth " << i << ". ";
         ss << "Real answer: " << real[i] << std::endl;
         ss << "Our answer:  " << n_nodes << std::endl;
@@ -200,13 +216,13 @@ void perfttestclass::testPosition4() {
     board _board( "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1" );
     
     unsigned int real[6] = { 1, 6, 264, 9467,
-                             422333, 15833292 };
+                             422333, 15833292 }; // 6
     
     unsigned int n_nodes;
     std::stringstream ss;
     
-    for ( int i=0; i<5; i++ ) {
-        n_nodes = PERFT_legalcheck( _board, i );
+    for ( int i=0; i<6; i++ ) {
+        n_nodes = PERFT_legalcheck_faster( _board, i );
         ss << "Error checking PERFT result for depth " << i << ". ";
         ss << "Real answer: " << real[i] << std::endl;
         ss << "Our answer:  " << n_nodes << std::endl;
@@ -240,6 +256,7 @@ void perfttestclass::testPosition4() {
 }
 
 void divide_pseud( board _board, int depth, unsigned int * cache ) {
+    bool print_progress = false;
     bool _print_moves = 0;
     bool _print_total = 0;
     move_t moves[256];
@@ -254,7 +271,7 @@ void divide_pseud( board _board, int depth, unsigned int * cache ) {
     for ( int i=0; i<num_moves; i++ ) {
         _child = doMove( _board, moves[i] );
         if ( _child.is_check( side ) ) continue;
-        num_perft = PERFT_simple( _child, depth-1 );
+        num_perft = PERFT_simple( _child, depth-1, print_progress );
         if ( _print_moves ) {
             print_move( moves[i] );
             std::cout << ": " << num_perft << std::endl;
@@ -267,6 +284,7 @@ void divide_pseud( board _board, int depth, unsigned int * cache ) {
 }
 
 bool divide_legal( board _board, int depth, unsigned int * cache ) {
+    bool print_progress = false;
     bool _print_moves = 0;
     bool _print_total = 0;
     move_t moves[256];
@@ -287,7 +305,7 @@ bool divide_legal( board _board, int depth, unsigned int * cache ) {
     for ( int i=0; i<num_legal; i++ ) {
         _child = doMove( _board, moves[i] );
 //        if ( _child.is_check( side ) ) continue;
-        num_perft = PERFT_legalcheck( _child, depth-1 );
+        num_perft = PERFT_legalcheck_faster( _child, depth-1, print_progress );
         if ( _print_moves ) {
             print_move( moves[i] );
             std::cout << ": " << num_perft << std::endl;
@@ -312,6 +330,7 @@ void perfttestclass::testGen_moves() {
 }
 
 void perfttestclass::divideStartboard() {
+    init_rays();
     board b;
     
     move_t c2c3 ( 10, 18, 0, 0, 0, 0 );
@@ -376,14 +395,19 @@ void perfttestclass::divideStartboard() {
 }
 
 void perfttestclass::dividePos2() {
+    init_rays();
     board b ( "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 1 0" );
     
-    move_t e1d1 (  4,  3, 0, 0, 0, 0 );
-    move_t a6e2 ( 40, 12, 0, 1, 0, 0 );
-//    b = doMove( b, e1d1 );
-//    b = doMove( b, a6e2 );
+    move_t e1f1 (  4,  5, 0, 0, 0, 0 );
+    move_t b6c4 ( 41, 26, 0, 0, 0, 0 );
+    move_t e2d1 ( 12,  3, 0, 0, 0, 0 );
+    move_t c4e3 ( 26, 20, 0, 0, 0, 0 );
+//    b = doMove( b, e1f1 );
+//    b = doMove( b, b6c4 );
+//    b = doMove( b, e2d1 );
+//    b = doMove( b, c4e3 );
     
-    b.print_all();
+    b.print_board();
     std::cout << "\n\n";
     
     int i;
@@ -398,8 +422,8 @@ void perfttestclass::dividePos2() {
         legal_cache[i] = _max;
     }
     
-         divide_pseud( b, 3, pseud_cache );
-    if ( divide_legal( b, 3, legal_cache ) ) {
+         divide_pseud( b, 5, pseud_cache );
+    if ( divide_legal( b, 5, legal_cache ) ) {
 
         std::cout << "move   pseud   legal\n";
 
@@ -442,12 +466,82 @@ void perfttestclass::dividePos3() {
     init_rays();
     board b ( "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1" );
     
-    move_t e2e3 ( 12, 20, 0, 0, 0, 0 );
-    move_t h4g5 ( 31, 38, 0, 0, 0, 0 );
-    move_t b5b6 ( 33, 41, 0, 0, 0, 0 );
-    b = doMove( b, e2e3 );
-    b = doMove( b, h4g5 );
-    b = doMove( b, b5b6 );
+    move_t b4c4 ( 25, 26, 0, 0, 0, 0 );
+    move_t h5d5 ( 39, 35, 0, 0, 0, 0 );
+    move_t a5a4 ( 32, 24, 0, 0, 0, 0 );
+    move_t d5d4 ( 35, 27, 0, 0, 0, 0 );
+//    b = doMove( b, b4c4 );
+//    b = doMove( b, h5d5 );
+//    b = doMove( b, a5a4 );
+//    b = doMove( b, d5d4 );
+    
+    b.print_board();
+    std::cout << "\n\n";
+    
+    int i;
+    unsigned int _max = std::numeric_limits<unsigned int>::max();
+    unsigned int pseud_cache[4096];
+    unsigned int legal_cache[4096];
+    int from_sq;
+    int to_sq;
+    
+    for ( i=0; i<4096; i++ ) {
+        pseud_cache[i] = _max;
+        legal_cache[i] = _max;
+    }
+    
+         divide_pseud( b, 5, pseud_cache );
+    if ( divide_legal( b, 5, legal_cache ) ) {
+
+        std::cout << "move   pseud   legal\n";
+
+        for ( i=0; i<4096; i++ ) {
+            if ( legal_cache[i] != _max || pseud_cache[i] != _max ) {
+                from_sq = i / 64;
+                to_sq   = i % 64;
+                itos( from_sq, std::cout );
+                std::cout << " ";
+                itos(   to_sq, std::cout );
+                std::cout << ":  ";
+                std::cout << pseud_cache[i] << "   ";
+                std::cout << legal_cache[i] << "    ";
+                if ( pseud_cache[i] != legal_cache[i] ) {
+                    std::cout << "ERROR";
+                }
+                std::cout << std::endl;
+            }
+        }
+    }
+    
+    else {
+        move_t pseud[256];
+        move_t legal[256];
+        int n_pseud = b.gen_moves( pseud );
+        int n_legal = b.gen_legal_moves( legal );
+        std::cout << "real num: " << n_pseud << ", our num: " << n_legal << std::endl;
+        int i;
+        
+        for ( i=0; i<std::max(n_pseud, n_legal); i++ ) {
+            print_move( pseud[i] );
+            std::cout << "   ";
+            print_move( legal[i] );
+            std::cout << "\n";
+        }
+    }
+}
+
+void perfttestclass::dividePos4() {
+    init_rays();
+    board b ( "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1" );
+    
+    move_t b4c5 ( 25, 34, 0, 0, 0, 0 );
+    move_t a3d3 ( 16, 19, 0, 0, 0, 0 );
+    move_t h2h3 ( 15, 23, 0, 0, 0, 0 );
+    move_t b6c5 ( 41, 34, 0, 1, 0, 0 );
+//    b = doMove( b, b4c5 );
+//    b = doMove( b, a3d3 );
+//    b = doMove( b, h2h3 );
+//    b = doMove( b, b6c5 );
     
     b.print_all();
     std::cout << "\n\n";
@@ -464,8 +558,8 @@ void perfttestclass::dividePos3() {
         legal_cache[i] = _max;
     }
     
-         divide_pseud( b, 2, pseud_cache );
-    if ( divide_legal( b, 2, legal_cache ) ) {
+         divide_pseud( b, 4, pseud_cache );
+    if ( divide_legal( b, 4, legal_cache ) ) {
 
         std::cout << "move   pseud   legal\n";
 

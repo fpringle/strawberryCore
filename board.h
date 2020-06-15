@@ -133,7 +133,7 @@ class board {
     bool add_moves( struct move_t**, struct move_t, bool );
     int gen_moves( struct move_t* );
     bool is_legal( struct move_t );
-    int get_out_of_check( struct move_t*, piece, int, int );
+    int get_out_of_check( struct move_t*, piece, int, int, bool );
     int gen_legal_moves( struct move_t* );
 
     // hashing
@@ -141,7 +141,7 @@ class board {
 
     // check
     bool is_check(colour);
-    bool is_check(colour, piece*, int*);
+    bool is_check(colour, piece*, int*, bool*);
     bool is_checkmate(colour);
     bool was_lastmove_check(move_t);
 };

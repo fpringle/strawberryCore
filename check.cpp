@@ -27,31 +27,68 @@ bool board::is_check(colour side) {
 }
 
 
-bool board::is_check(colour side, piece * checkingPiece, int * checkingInd ) {
+bool board::is_check(colour side, piece * checkingPiece,  int * checkingInd, bool * doubleCheck ) {
   // on-the-fly check detection
   int kingpos = log2( pieceBoards[ ( 6 * side ) + 5 ] );
   bitboard _white = whiteSquares();
   bitboard _black = blackSquares();
   colour otherSide = ( side == white ) ? black : white;
   bitboard _check;
+  int count=0;
 
   // pawns
   _check = pawnAttackNaive   (kingpos, side) & pieceBoards[(6*otherSide)+0];
-  if ( _check ) { *checkingPiece = piece(0); *checkingInd = last_set_bit( _check ); return true; }
+  if ( _check ) { 
+      *checkingPiece = piece(0);
+      *checkingInd = last_set_bit( _check );
+      count++;
+  }
   // rooks
   _check = rookTargets   (kingpos, _white, _black, side) & pieceBoards[(6*otherSide)+1];
-  if ( _check ) { *checkingPiece = piece(0); *checkingInd = last_set_bit( _check ); return true; }
+  if ( _check ) {
+      *checkingPiece = piece(1);
+      *checkingInd = last_set_bit( _check );
+      count++;
+      if ( count==2 ) {
+          * doubleCheck = true;
+          return true;
+      }
+  }
   // knights
   _check = knightTargets   (kingpos, _white, _black, side) & pieceBoards[(6*otherSide)+2];
-  if ( _check ) { *checkingPiece = piece(0); *checkingInd = last_set_bit( _check ); return true; }
+  if ( _check ) {
+      *checkingPiece = piece(2);
+      *checkingInd = last_set_bit( _check );
+      count++;
+      if ( count==2 ) {
+          * doubleCheck = true;
+          return true;
+      }
+  }
   // bishops
   _check = bishopTargets   (kingpos, _white, _black, side) & pieceBoards[(6*otherSide)+3];
-  if ( _check ) { *checkingPiece = piece(0); *checkingInd = last_set_bit( _check ); return true; }
+  if ( _check ) {
+      *checkingPiece = piece(3);
+      *checkingInd = last_set_bit( _check );
+      count++;
+      if ( count==2 ) {
+          * doubleCheck = true;
+          return true;
+      }
+  }
   // queens
   _check = queenTargets   (kingpos, _white, _black, side) & pieceBoards[(6*otherSide)+4];
-  if ( _check ) { *checkingPiece = piece(0); *checkingInd = last_set_bit( _check ); return true; }
+  if ( _check ) {
+      *checkingPiece = piece(4);
+      *checkingInd = last_set_bit( _check );
+      count++;
+      if ( count==2 ) {
+          * doubleCheck = true;
+          return true;
+      }
+  }
 
-  return false;
+  return ( count>0 );
 }
 
 

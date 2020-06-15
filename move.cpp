@@ -532,7 +532,8 @@ int board::gen_moves ( move_t * moves) {
 }
 
 
-int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingInd, int kingInd ) {
+int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingInd, int kingInd, bool double_check ) {
+    bool print_method = false;
     int count=0;
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
@@ -548,13 +549,25 @@ int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingIn
       while ( targets ) {
           to_ind = first_set_bit( targets );
             if ( _other & ( 1ULL << to_ind ) ) {
+                if ( print_method ) {
+                    std::cout << "take ";
+                    print_move(move_t( king_ind, to_ind, 0, 1, 0, 0 ));
+                    std::cout << std::endl;
+                }
                 count += add_moves( &moves, move_t(king_ind,to_ind,0,1,0,0), true );
             }
             else {
+                if ( print_method ) {
+                    std::cout << "avoid ";
+                    print_move(move_t( king_ind, to_ind, 0, 0, 0, 0 ));
+                    std::cout << std::endl;
+                }
                 count += add_moves( &moves, move_t(king_ind,to_ind,0,0,0,0), true );
             }
           targets &= ( targets - 1ULL );
       }
+      
+      if ( double_check ) return count;
       
       // take the checking piece
       int from_sq;
@@ -567,6 +580,11 @@ int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingIn
               from_sq = first_set_bit( defender );
 //              if ( defender & 1ULL ) {
 //              std::cout << "can take checking piece with " << defender << std::endl;
+                    if ( print_method) {
+                        std::cout << "take ";
+                        print_move(move_t( from_sq, checkingInd, 0, 0, 0, 0 ));
+                        std::cout << std::endl;
+                    }
                   count += add_moves( &moves, move_t( from_sq, checkingInd, 0, 1, 0, 0 ), true );
 //              }
               defender &= ( defender - 1ULL );
@@ -579,6 +597,10 @@ int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingIn
           if ( pieceBoards[sideToMove*6] & right ) count += add_moves( &moves, move_t( checkingInd+1, to_ind, 0, 1, 0, 1 ), true );
           if ( pieceBoards[sideToMove*6] & left )  count += add_moves( &moves, move_t( checkingInd-1, to_ind, 0, 1, 0, 1 ), true );
       }
+      if ( is_bit_set( kingTargets( kingInd, _white, _black, sideToMove ), checkingInd ) ) { /*std::cout << "can't block - kiss\n";*/ return count; }
+      if ( checkingPiece%6==0 || checkingPiece%6==2 || checkingPiece%6==5 ) { /*    std::cout << "can't block - attacking piece is " << checkingPiece << "\n"; */return count; }
+        
+      
       
         // moving into the way
         // first find all the squares in the way?
@@ -591,16 +613,16 @@ int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingIn
         
         if ( ind_diff>0 ) {
             if ( ind_diff == 63 || ind_diff%9 == 0 ) _dir = NE;
+            else if ( checkingInd/8 == kingInd/8 ) _dir = E;
             else if ( ind_diff%8 == 0 ) _dir = N;
             else if ( ind_diff%7 == 0 ) _dir = NW;
-            else if ( ind_diff < 8 ) _dir = E;
             else return count;
         }
         else {
             if ( ind_diff == -63 || (-ind_diff)%9 == 0 ) _dir = SW;
+            else if ( checkingInd/8 == kingInd/8 ) _dir = W;
             else if ( (-ind_diff)%8 == 0 ) _dir = S;
             else if ( (-ind_diff)%7 == 0 ) _dir = SE;
-            else if ( ind_diff > -8 ) _dir = W;
             else return count;
         }
         
@@ -612,9 +634,20 @@ int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingIn
                 if ( is_bit_set( pieceTargets( defenderInd, _white, _black, colourPiece(sideToMove*6) ), blockingInd ) ) {
                     switch ( abs(defenderInd-blockingInd) ) {
                         case 8:
+                            if ( print_method) {
+                                std::cout << "block ";
+                                print_move(move_t( defenderInd, blockingInd, 0, 0, 0, 0 ));
+                                std::cout << std::endl;
+                            }
                             count += add_moves( &moves, move_t( defenderInd, blockingInd, 0, 0, 0, 0 ), true );
                             break;
                         case 16:
+                            if ( (_black|_white) & ( 1ULL << ((defenderInd+blockingInd)/2) ) ) break;
+                            if ( print_method) {
+                                std::cout << "block ";
+                                print_move(move_t( defenderInd, blockingInd, 0, 0, 0, 0 ));
+                                std::cout << std::endl;
+                            }
                             count += add_moves( &moves, move_t( defenderInd, blockingInd, 0, 0, 0, 1 ), true );
                             break;
                     }
@@ -625,11 +658,15 @@ int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingIn
             
             // rooks, bishops, knights, queens
             for ( blockingPiece=(sideToMove*6)+1; blockingPiece<(sideToMove*6)+5; blockingPiece++ ) {
-                if ( blockingInd == 42 && blockingPiece==6 ) std::cout << "FOUND ONE\n\n\n";
                 blockers = pieceBoards[blockingPiece] & pieceTargets( blockingInd, _white, _black, colourPiece((blockingPiece+6)%12) );
 //                print_bb( blockers );
                 while ( blockers ) {
                     defenderInd = first_set_bit(blockers);
+                    if ( print_method ) {
+                        std::cout << "block ";
+                        print_move(move_t( defenderInd, blockingInd, 0, 0, 0, 0 ));
+                        std::cout << std::endl;
+                    }
                     count += add_moves( &moves, move_t( defenderInd, blockingInd, 0, 0, 0, 0 ), true );
                     blockers &= (blockers - 1ULL);
                 }
@@ -656,8 +693,9 @@ int board::gen_legal_moves ( move_t * moves) {
   // if we're in check we can limit the search
   piece checkingPiece;
   int checkingInd;
-  if ( is_check( sideToMove, &checkingPiece, &checkingInd ) ) {
-      return get_out_of_check( moves, checkingPiece, checkingInd, log2( pieceBoards[(6*sideToMove)+5] ) );
+  bool double_check;
+  if ( is_check( sideToMove, &checkingPiece, &checkingInd, &double_check) ) {
+      return get_out_of_check( moves, checkingPiece, checkingInd,log2( pieceBoards[(6*sideToMove)+5] ), double_check );
   }
 
   for (_piece=sideToMove*6;_piece<(1+sideToMove)*6;_piece++) {
@@ -837,10 +875,10 @@ bool board::is_legal( struct move_t move ) {
                     if ( (j+1)%8 < 4 ) attacker = ( 1ULL << first_set_bit( tmp ) );
                     else               attacker = ( 1ULL <<  last_set_bit( tmp ) );
                     if ( attacker & pieceBoards[(6*otherSide)+3] ) {
-                        return is_bit_set( _ray, to_ind );
+                        return is_bit_set( _ray, to_ind ) | is_bit_set( rays[i][from_ind], to_ind );
                     }
                     if ( attacker & pieceBoards[(6*otherSide)+4] ) {
-                        return is_bit_set( _ray, to_ind );
+                        return is_bit_set( _ray, to_ind ) | is_bit_set( rays[i][from_ind], to_ind );
                     }
                 }
             }
@@ -858,10 +896,10 @@ bool board::is_legal( struct move_t move ) {
                     if ( (j+1)%8 < 4 ) attacker = ( 1ULL << first_set_bit( tmp ) );
                     else               attacker = ( 1ULL <<  last_set_bit( tmp ) );
                     if ( attacker & pieceBoards[(6*otherSide)+1] ) {
-                        return is_bit_set( _ray, to_ind );
+                        return is_bit_set( _ray, to_ind ) | is_bit_set( rays[i][from_ind], to_ind );
                     }
                     if ( attacker & pieceBoards[(6*otherSide)+4] ) {
-                        return is_bit_set( _ray, to_ind );
+                        return is_bit_set( _ray, to_ind ) | is_bit_set( rays[i][from_ind], to_ind );
                     }
                 }
             }
