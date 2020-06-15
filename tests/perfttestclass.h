@@ -20,12 +20,13 @@ class perfttestclass : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(perfttestclass);
     
 //    CPPUNIT_TEST(testStartBoard);
-    CPPUNIT_TEST(testPosition2);
-//    CPPUNIT_TEST(testPosition3);
+//    CPPUNIT_TEST(testPosition2);
+    CPPUNIT_TEST(testPosition3);
 //    CPPUNIT_TEST(testPosition4);
 //    CPPUNIT_TEST(testGen_moves);
 //    CPPUNIT_TEST(divideStartboard);
-    CPPUNIT_TEST(dividePos2);
+//    CPPUNIT_TEST(dividePos2);
+    CPPUNIT_TEST(dividePos3);
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -43,6 +44,7 @@ private:
     void testGen_moves();
     void divideStartboard();
     void dividePos2();
+    void dividePos3();
 };
 
 #endif /* PERFTTESTCLASS_H */
