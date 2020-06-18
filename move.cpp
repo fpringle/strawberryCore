@@ -43,15 +43,11 @@ void itos(int i, std::ostream& cout) {
     cout << char('a'+(i%8)) << char('1'+(i/8));
 }
 
-int stoi(char * s) {
+int _stoi( std::string s ) {
   char file = s[0];
   char rank = s[1];
 
   return int(rank-'1')*8 + int(file-'a');
-}
-
-int stoi( std::string s, std::string s2 ) {
-    return int(s[0]-'1')*8 + int(s[1]-'a');
 }
 
 // move_t constructors
@@ -142,10 +138,17 @@ void print_move(struct move_t move, std::ostream& cout) {
 move_t stom( move_t* moves, int n_moves, std::string s ) {
     std::string from = s.substr( 0, 2 );
     std::string to = s.substr( 2, 2 );
-    int from_ind = stoi( from, " " );
-    int to_ind   = stoi( to, " " );
+//    std::cout << "from string: " << from << std::endl;
+//    std::cout << "to string:   " << to << std::endl;
+    int from_ind = _stoi( from );
+    int to_ind   = _stoi( to );
+//    std::cout << "Inputted from_ind: " << from_ind << std::endl;
+//    std::cout << "Inputted to_ind:   " << to_ind << std::endl;
     
     for ( int i=0; i<n_moves; i++ ) {
+//        std::cout << "Possible move: ";
+//        print_move( moves[i] );
+//        std::cout << std::endl;
         if ( ( moves[i].from_sq() == from_ind ) &&
              (  moves[i].to_sq()  ==  to_ind  ) ) {
                 return moves[i];

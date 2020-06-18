@@ -11,18 +11,18 @@
 
 // simple minimax
 int32_t minimax(board b, int depth, colour side) {
-  if ( depth == 0 ) return b.evaluate();
+  if ( depth == 0 ) return b.getValue();
+  
   int32_t score;
-  board child;
   struct move_t moves[256];
-  int num_moves = b.gen_moves( moves );
+  int num_moves = b.gen_legal_moves( moves );
+  board child;
 
   if ( side == white ) {
     int32_t max_score = std::numeric_limits<int32_t>::min();
 
     for (int i=0; i<num_moves; i++) {
       child = doMove( b, moves[i] );
-      if ( child.is_check(white) ) continue;
       score = minimax( child, depth-1, black );
       if ( score > max_score ) max_score = score;
     }
@@ -34,7 +34,6 @@ int32_t minimax(board b, int depth, colour side) {
 
     for (int i=0; i<num_moves; i++) {
       child = doMove( b, moves[i] );
-      if ( child.is_check( black ) ) continue;
       score = minimax( child, depth-1, white );
       if ( score < min_score ) min_score = score;
     }
@@ -46,7 +45,7 @@ struct move_t search_minimax(board b, int depth, colour side) {
   int32_t score;
   board child;
   struct move_t moves[256];
-  int num_moves = b.gen_moves( moves );
+  int num_moves = b.gen_legal_moves( moves );
   struct move_t best_move;
 
   if ( side == white ) {
@@ -54,7 +53,6 @@ struct move_t search_minimax(board b, int depth, colour side) {
 
     for (int i=0; i<num_moves; i++) {
       child = doMove( b, moves[i] );
-      if ( child.is_check( white ) ) continue;
       score = minimax( child, depth-1, black );
       if ( score > max_score ) {
         max_score = score;
@@ -69,7 +67,6 @@ struct move_t search_minimax(board b, int depth, colour side) {
 
     for (int i=0; i<num_moves; i++) {
       child = doMove( b, moves[i] );
-      if ( child.is_check( black ) ) continue;
       score = minimax( child, depth-1, white );
       if ( score < min_score ) {
         min_score = score;
@@ -91,13 +88,12 @@ int32_t negamax(board b, int depth, colour side) {
   board child;
 
   struct move_t moves[256];
-  int num_moves = b.gen_moves( moves );
+  int num_moves = b.gen_legal_moves( moves );
 
   int32_t max_score = std::numeric_limits<int32_t>::min();
 
   for (int i=0; i<num_moves; i++) {
     child = doMove( b, moves[i] );
-    if ( child.is_check( side ) ) continue;
     score = - negamax( child, depth-1, otherSide );
     if ( score > max_score ) max_score = score;
   }
@@ -111,13 +107,12 @@ struct move_t search_negamax(board b, int depth, colour side) {
   colour otherSide = ( side == white ) ? black : white;
 
   struct move_t moves[256];
-  int num_moves = b.gen_moves( moves );
+  int num_moves = b.gen_legal_moves( moves );
   struct move_t best_move;
 
   int32_t max_score = std::numeric_limits<int32_t>::min();
   for (int i=0; i<num_moves; i++) {
     child = doMove( b, moves[i] );
-    if ( child.is_check( side ) ) continue;
     score = - negamax( child, depth-1, otherSide );
     if ( score > max_score ) {
       max_score = score;
@@ -138,14 +133,13 @@ int32_t negamaxAB(board b, int depth, colour side, int32_t alpha, int32_t beta) 
   board child;
 
   struct move_t moves[256];
-  int num_moves = b.gen_moves( moves );
+  int num_moves = b.gen_legal_moves( moves );
 
-//  int32_t max_score = std::numeric_limits<int32_t>::min();
-  int32_t max_score = alpha;
+  int32_t max_score = std::numeric_limits<int32_t>::min();
+//  int32_t max_score = alpha;
 
   for (int i=0; i<num_moves; i++) {
     child = doMove( b, moves[i] );
-    if ( child.is_check( side ) ) continue;
     score = - negamaxAB( child, depth-1, otherSide, -beta, -alpha );
     if ( score > max_score ) max_score = score;
     if ( max_score > alpha ) alpha = max_score;
@@ -168,13 +162,12 @@ struct move_t search_negamaxAB(board b, int depth, colour side) {
   colour otherSide = ( side == white ) ? black : white;
 
   struct move_t moves[256];
-  int num_moves = b.gen_moves( moves );
+  int num_moves = b.gen_legal_moves( moves );
   struct move_t best_move;
 
   int32_t max_score = std::numeric_limits<int32_t>::min();
   for (int i=0; i<num_moves; i++) {
     child = doMove( b, moves[i] );
-    if ( child.is_check( side ) ) continue;
     score = - negamaxAB( child, depth-1, otherSide );
     if ( score > max_score ) {
       max_score = score;

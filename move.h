@@ -31,8 +31,7 @@ extern const int NNW;
 void itos(int,char*);
 std::string itos(int);
 void itos(int, std::ostream&);
-int stoi(char*);
-int stoi(std::string, std::string=" ");
+int _stoi(std::string);
 
 // enumerate directions for ray generation
 enum direction {dirN,dirNE,dirE,dirSE,dirS,dirSW,dirW,dirNW};
