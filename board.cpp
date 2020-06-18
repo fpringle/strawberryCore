@@ -644,6 +644,22 @@ void board::clear_square( int ind ) {
     for ( int i=0; i<12; i++ ) pieceBoards[i] &= b;
 }
 
+void board::update_value() {
+    value = evaluate();
+}
+
+void board::set_value( int32_t _value ) {
+    value = _value;
+}
+
+void board::update_hash() {
+    hash_value = zobrist_hash();
+}
+
+void board::set_hash( uint64_t _hash ) {
+    hash_value = _hash;
+}
+
 bitboard board::whiteSquares() {
   int i;
   bitboard ret = 0;

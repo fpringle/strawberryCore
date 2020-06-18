@@ -6,17 +6,6 @@
 #include <cstdint>
 
 
-// tree structure
-struct node {
-  uint64_t data;         // the hash value of the node
-  struct node * first;   // pointer to first child
-  struct node * next;    // pointer to next sibling
-};
-//void add_child(struct node*, uint64_t);
-struct node * newNode(uint64_t);
-struct node * lastChild(struct node*);
-void append_sibling(struct node*, uint64_t);
-void append_child(struct node*, uint64_t);
 
 // search algorithms
 int32_t minimax(board,int,colour);

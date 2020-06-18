@@ -309,7 +309,7 @@ void perfttestclass::testPosition5() {                                          
 void perfttestclass::testPosition6() {                                              //    6
     init_rays();
         
-    board _board( "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10 " );
+    board _board( "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10" );
     
     unsigned int real[6] = { 1, 46, 2079, 89890,
                              3894594, 164075551  }; // 6

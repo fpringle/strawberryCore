@@ -23,6 +23,7 @@ board doMove(board startBoard, move_t move) {
   int plus_minus = ( movingColour == white ) ? 1 : -1;
   colour otherColour = ( movingColour == white ) ? black : white;
   colourPiece movingPiece;
+  bool rooktaken=false;
 
   bitboard startingPos[12];
 
@@ -45,6 +46,7 @@ board doMove(board startBoard, move_t move) {
     if ( ! move.is_ep_capture() ) {
       for (i=(1-movingColour)*6;i<(2-movingColour)*6;i++) {
         if (is_bit_set(startingPos[i], toSquare) ) {
+          if ( i%6 == 1 ) rooktaken = true;
           startingPos[i] = (startingPos[i] & ~( 1ULL << toSquare) );
           value -= pieceSquareTables[i][toSquare];
           value -= pieceValues[i];
@@ -168,19 +170,33 @@ board doMove(board startBoard, move_t move) {
     }
   }
   
-  switch ( toSquare ) {
-    case 0:
-      castling[1] = false;
-      break;
-    case 7:
-      castling[0] = false;
-      break;
-    case 56:
-      castling[3] = false;
-      break;
-    case 63:
-      castling[2] = false;
-      break;
+  if ( rooktaken ) {
+    switch ( toSquare ) {
+        case 0:
+            if (castling[1]) {
+                hash ^= zobristKeys[769];
+                castling[1] = false;
+            }
+            break;
+        case 7:
+            if (castling[0]) {
+                hash ^= zobristKeys[768];
+                castling[0] = false;
+            }
+            break;
+        case 56:
+            if (castling[3]) {
+                hash ^= zobristKeys[771];
+                castling[3] = false;
+            }
+          break;
+        case 63:
+            if (castling[2]) {
+                hash ^= zobristKeys[770];
+                castling[2] = false;
+            }
+          break;
+        }
   }
 
   // increment halfMoveClock

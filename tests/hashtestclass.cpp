@@ -83,87 +83,123 @@ void hashtestclass::testInit_keys() {
     
 }
 
-void hashtestclass::testZobrist_hash() {
-    init_keys(0);
+void _testPERFThash( board _board, int depth, int basedepth ) {
+    uint64_t _hash;
+    _board.getHash( &_hash );
+    CPPUNIT_ASSERT( _board.zobrist_hash() == _hash );
+    if ( depth==0 ) return;
+    move_t moves[256];
+    int n_moves = _board.gen_legal_moves( moves );
+    board child;
     
-    board _board;
-    
-    CPPUNIT_ASSERT_MESSAGE ( "zobrist hash for starting board is wrong", _board.zobrist_hash() == 9597562740140802116ULL );
+    for ( int i=0; i<n_moves; i++ ) {
+        child = doMove( _board, moves[i] );
+        _testPERFThash( child, depth-1, basedepth );
+    }
 }
 
-
-void hashtestclass::testIncremental_hash() {
-    init(0);
-    
-    board _board;
-    
-    move_t e2e4 ( 12, 28, 0, 0, 0, 1 );
-    move_t e7e5 ( 52, 36, 0, 0, 0, 1 );
-    move_t b1c3 (  1, 18, 0, 0, 0, 0 );
-    move_t f8b4 ( 61, 25, 0, 0, 0, 0 );
-    move_t c3b5 ( 18, 33, 0, 0, 0, 0 );
-    move_t b4d2 ( 25, 11, 0, 1, 0, 0 );
-    move_t c1d2 (  2, 11, 0, 1, 0, 0 );
-    move_t d8g5 ( 59, 38, 0, 0, 0, 0 );
-    move_t d2g5 ( 11, 38, 0, 1, 0, 0 );
-    move_t e8d8 ( 60, 59, 0, 0, 0, 0 );
-    move_t d1d7 (  3, 51, 0, 1, 0, 0 );
-    move_t e8d7 ( 58, 51, 0, 1, 0, 0 );
-    move_t e1c1 (  4,  2, 0, 0, 1, 1 );
-    
-    move_t moves[13] = { e2e4, e7e5, b1c3, f8b4, c3b5, b4d2, c1d2,
-                         d8g5, d2g5, e8d8, d1d7, e8d7, e1c1       };
-    
-    uint64_t hsh, real_hsh;
-    _board.print_board();
-    
-    for ( int i=0; i<13; i++ ) {
-        _board = doMove( _board, moves[i] );
-        _board.print_board();
-        _board.getHash( &hsh );
-        real_hsh = _board.zobrist_hash();
-//        std::cout << "calculated hash:  " << real_hsh <<std::endl;
-//        std::cout << "incremental hash: " <<      hsh <<std::endl;
-        CPPUNIT_ASSERT( hsh == real_hsh );
-    }
-    
-//    _board.print_board();
-
+void testPERFThash( board _board, int depth ) {
+    init();
+    _board.update_hash();
+    _testPERFThash( _board, depth, depth );
 }
 
+void hashtestclass::incrementalHashStartBoard() {
+    board _board;
+    for ( int i=0; i<6; i++ ) {
+        testPERFThash( _board, i );
+        std::cout << "verified incremental hash at depth " << i << std::endl;
+    }
+}
 
-void hashtestclass::testIncremental_hash2() {
-    init(0);
+void hashtestclass::incrementalHashPos2() {
+    board _board ( "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 1 0" );
+    for ( int i=0; i<6; i++ ) {
+        testPERFThash( _board, i );
+        std::cout << "verified incremental hash at depth " << i << std::endl;
+    }
+}
+
+void hashtestclass::incrementalHashPos3() {
+    board _board ( "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1" );
+    for ( int i=0; i<6; i++ ) {
+        testPERFThash( _board, i );
+        std::cout << "verified incremental hash at depth " << i << std::endl;
+    }
+}
+
+void hashtestclass::incrementalHashPos4() {
+    board _board ( "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1" );
+    for ( int i=0; i<6; i++ ) {
+        testPERFThash( _board, i );
+        std::cout << "verified incremental hash at depth " << i << std::endl;
+    }
+}
+
+void hashtestclass::incrementalHashPos5() {
+    board _board ( "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8" );
+    for ( int i=0; i<6; i++ ) {
+        testPERFThash( _board, i );
+        std::cout << "verified incremental hash at depth " << i << std::endl;
+    }
+}
+
+void hashtestclass::incrementalHashPos6() {
+    board _board ( "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10" );
+    for ( int i=0; i<6; i++ ) {
+        testPERFThash( _board, i );
+        std::cout << "verified incremental hash at depth " << i << std::endl;
+    }
+}
+
+bool perftHash( board b, int depth ) {
+    uint64_t _hsh;
+    b.getHash( &_hsh );
+    if ( _hsh != b.zobrist_hash() ) return false;
+    if ( depth==0 ) return true;
     
-    board pos3 ( "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 b - - 0 0" );
-    std::stringstream ss;
+    move_t moves[256];
+    int n_moves = b.gen_legal_moves( moves );
+    board child;
     
-    move_t d6d5 ( 43, 35, 0, 0, 0, 0 );
-    move_t e2e3 ( 12, 20, 0, 0, 0, 0 );
-    move_t c7c5 ( 50, 34, 0, 0, 0, 1 );
-    move_t b5c6 ( 33, 42, 0, 1, 0, 1 );
-    move_t f4e3 ( 29, 20, 0, 1, 0, 0 );
-    move_t c6c7 ( 42, 50, 0, 0, 0, 0 );
-    move_t e3e2 ( 20, 12, 0, 0, 0, 0 );
-    move_t c7c8 ( 50, 58, 1, 0, 1, 1 );
-    move_t e2e1 ( 12,  4, 1, 0, 0, 1 );
-    
-    move_t moves[9] = { d6d5, e2e3, c7c5, b5c6, f4e3,
-                        c6c7, e3e2, c7c8, e2e1       };
-    
-    uint64_t hsh, real_hsh;
-    
-    for ( int i=0; i<9; i++ ) {
-        ss << "Incremental evaluation failure at move " << i;
-        pos3 = doMove( pos3, moves[i] );
-        pos3.getHash( &hsh );
-        real_hsh = pos3.zobrist_hash();
-//        std::cout << "calculated hash:  " << real_hsh <<std::endl;
-//        std::cout << "incremental hash: " <<      hsh <<std::endl;
-        CPPUNIT_ASSERT_MESSAGE( ss.str(), hsh == real_hsh );
-        ss.str("");
+    for ( int i=0; i<n_moves; i++ ) {
+        child = doMove( b, moves[i] );
+        if ( ! perftHash( child, depth-1 ) ) return false;
     }
     
-//    pos3.print_board();
+    return true;
+}
 
+void divideHash( board b, int depth ) {
+    move_t moves[256];
+    int n_moves = b.gen_legal_moves( moves );
+    board child;
+    
+    for ( int i=0; i<n_moves; i++ ) {
+        child = doMove( b, moves[i] );
+        print_move( moves[i] );
+        if ( perftHash( child, depth-1 ) ) std::cout << "   success\n";
+        else                               std::cout << "   fail\n";
+    }
+}
+
+void hashtestclass::dividePos2() {
+    init();
+    board _board( "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 1 0" );
+    
+    move_t e5g6 ( 36, 46, 0, 1, 0, 0 );
+    move_t h3g2 ( 23, 14, 0, 1, 0, 0 );
+    move_t g6h8 ( 46, 63, 0, 1, 0, 0 );
+    
+//    _board = doMove( _board, e5g6 );
+//    _board = doMove( _board, h3g2 );   
+//    _board = doMove( _board, g6h8 );   
+    
+    _board.print_all(); 
+    
+    uint64_t hsh;
+    _board.getHash( &hsh );
+    CPPUNIT_ASSERT( hsh == _board.zobrist_hash() );
+    
+    divideHash( _board, 4 );
 }

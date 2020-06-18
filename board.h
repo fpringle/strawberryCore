@@ -124,6 +124,10 @@ class board {
     void set_piece(colourPiece,int);
     void set_side(colour);
     void clear_square( int );
+    void update_value();
+    void set_value(int32_t);
+    void update_hash();
+    void set_hash(uint64_t );
 
     // move generation
     bitboard whiteSquares();

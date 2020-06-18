@@ -7,36 +7,6 @@
 #include <limits>
 #include <cstdint>
 
-// tree structure
-struct node * newNode(uint64_t data) {
-  struct node * new_node = new struct node();
-  new_node->data = data;
-  new_node->first = NULL;
-  new_node->next  = NULL;
-  return new_node;
-}
-
-struct node * lastChild(struct node * parent) {
-  if ( parent->first == NULL ) return NULL;
-  struct node * p = parent->first;
-  while ( p->next != NULL ) p = p->next;
-  return p;
-}
-
-void append_sibling(struct node * sib1, uint64_t data) {
-  struct node * sib2 = newNode(data);
-  struct node * p = sib1;
-  while ( p->next != NULL ) p = p->next;
-  p->next = sib2;
-}
-
-void append_child(struct node * parent, uint64_t data) {
-  struct node * child = newNode(data);
-  struct node * p = lastChild(parent);
-  if ( p == NULL ) parent->first = child;
-  else p->next = child;
-}
-
 // search algorithms
 
 // simple minimax

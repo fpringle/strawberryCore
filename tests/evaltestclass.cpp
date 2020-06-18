@@ -26,179 +26,70 @@ void evaltestclass::setUp() {
 void evaltestclass::tearDown() {
 }
 
-void evaltestclass::testEvaluate_material() {
-    bitboard bb[12];
-    bb[0]   = 0x000000000000fe00;
-    bb[1]   = 0x0000000000000081;
-    bb[2] = 0x0000000000000042;
-    bb[3] = 0x0000000000000024;
-    bb[4]  = 0x0000000000000008;
-    bb[5]   = 0x0000000000000010;
-
-    bb[6]   = 0x00ff000000000000;
-    bb[7]   = 0x8100000000000000;
-    bb[8] = 0x4200000000000000;
-    bb[9] = 0x2400000000000000;
-    bb[10]  = 0x0800000000000000;
-    bb[11]   = 0x1000000000000000;
+void _testPERFTeval( board _board, int depth, int basedepth ) {
     
-    bool castling[4] = {true,true,true,true};
+    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
+    if ( depth==0 ) return;
+    move_t moves[256];
+    int n_moves = _board.gen_legal_moves( moves );
+    board child;
     
-    board _board( bb, castling, false, 0, 4, 4, black, -105);
-    
-    CPPUNIT_ASSERT( _board.evaluate_material() == -100 ) ;
+    for ( int i=0; i<n_moves; i++ ) {
+        child = doMove( _board, moves[i] );
+        _testPERFTeval( child, depth-1, basedepth );
+    }
 }
 
-void evaltestclass::testEvaluate_pieceSquareTables() {
-    bitboard bb[12];
-    bb[0]   = 0x000000000000fe00;
-    bb[1]   = 0x0000000000000081;
-    bb[2] = 0x0000000000000042;
-    bb[3] = 0x0000000000000024;
-    bb[4]  = 0x0000000000000008;
-    bb[5]   = 0x0000000000000010;
-
-    bb[6]   = 0x00ff000000000000;
-    bb[7]   = 0x8100000000000000;
-    bb[8] = 0x4200000000000000;
-    bb[9] = 0x2400000000000000;
-    bb[10]  = 0x0800000000000000;
-    bb[11]   = 0x1000000000000000;
-    
-    bool castling[4] = {true,true,true,true};
-    
-    board _board( bb, castling, false, 0, 4, 4, black, -105);
-    
-   CPPUNIT_ASSERT( _board.evaluate_pieceSquareTables() == -5 );
-}
-
-void evaltestclass::testEvaluate() {
-    bitboard bb[12];
-    bb[0]   = 0x000000000000fe00;
-    bb[1]   = 0x0000000000000081;
-    bb[2] = 0x0000000000000042;
-    bb[3] = 0x0000000000000024;
-    bb[4]  = 0x0000000000000008;
-    bb[5]   = 0x0000000000000010;
-
-    bb[6]   = 0x00ff000000000000;
-    bb[7]   = 0x8100000000000000;
-    bb[8] = 0x4200000000000000;
-    bb[9] = 0x2400000000000000;
-    bb[10]  = 0x0800000000000000;
-    bb[11]   = 0x1000000000000000;
-    
-    bool castling[4] = {true,true,true,true};
-    
-    board _board( bb, castling, false, 0, 4, 4, black, -105);
-    
-    CPPUNIT_ASSERT( _board.evaluate() == -105 );
-}
-
-
-void evaltestclass::testIncremental_evaluation() {
+void testPERFTeval( board _board, int depth ) {
     init_rays();
+    _board.update_value();
+    _testPERFTeval( _board, depth, depth );
+}
+
+void evaltestclass::incrementalEvaluationStartBoard() {
     board _board;
-    
-    move_t e2e4 ( 12, 28, 0, 0, 0, 1 );
-    move_t e7e5 ( 52, 36, 0, 0, 0, 1 );
-    move_t b1c3 (  1, 18, 0, 0, 0, 0 );
-    move_t f8b4 ( 61, 25, 0, 0, 0, 0 );
-    move_t c3b5 ( 18, 33, 0, 0, 0, 0 );
-    move_t b4d2 ( 25, 11, 0, 1, 0, 0 );
-    move_t c1d2 (  2, 11, 0, 1, 0, 0 );
-    move_t d8g5 ( 59, 38, 0, 0, 0, 0 );
-    move_t d2g5 ( 11, 38, 0, 1, 0, 0 );
-    move_t e8d8 ( 60, 59, 0, 0, 0, 0 );
-    move_t d1d7 (  3, 51, 0, 1, 0, 0 );
-    move_t e8d7 ( 58, 51, 0, 1, 0, 0 );
-    move_t e1c1 (  4,  2, 0, 0, 1, 1 );
-    
-    
-    _board = doMove( _board, e2e4 );
-    //_board.print_board();
-    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
-    _board = doMove( _board, e7e5 );
-    //_board.print_board();
-    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
-    _board = doMove( _board, b1c3 );
-    //_board.print_board();
-    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
-    _board = doMove( _board, f8b4 );
-    //_board.print_board();
-    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
-    _board = doMove( _board, c3b5 );
-    //_board.print_board();
-    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
-    _board = doMove( _board, b4d2 );
-    //_board.print_board();
-    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
-    CPPUNIT_ASSERT( _board.is_check( white ) );
-    _board = doMove( _board, c1d2 );
-    //_board.print_board();
-    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
-    _board = doMove( _board, d8g5 );
-    //_board.print_board();
-    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
-    _board = doMove( _board, d2g5 );
-    //_board.print_board();
-    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );   
-    _board = doMove( _board, e8d8 );
-    //_board.print_board();
-    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
-    _board = doMove( _board, d1d7 );
-    //_board.print_board();
-    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );    
-    CPPUNIT_ASSERT( _board.is_check( black ) );
-    CPPUNIT_ASSERT( ! _board.is_checkmate( black ) );
-    _board = doMove( _board, e8d7 );
-    //_board.print_board();
-    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
-    _board = doMove( _board, e1c1 );
-    //_board.print_board();
-    CPPUNIT_ASSERT( _board.getValue() == _board.evaluate() );
-    
-
+    for ( int i=0; i<6; i++ ) {
+        testPERFTeval( _board, i );
+        std::cout << "verified incremental evaluation at depth " << i << std::endl;
+    }
 }
 
+void evaltestclass::incrementalEvaluationPos2() {
+    board _board ( "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 1 0" );
+    for ( int i=0; i<6; i++ ) {
+        testPERFTeval( _board, i );
+        std::cout << "verified incremental evaluation at depth " << i << std::endl;
+    }
+}
 
-void evaltestclass::testIncremental_evaluation2() {
-    init_rays();
-    board pos3 ( "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 b - - 0 0" );
-    std::stringstream ss;
-    
-    move_t d6d5 ( 43, 35, 0, 0, 0, 0 );
-    move_t e2e3 ( 12, 20, 0, 0, 0, 0 );
-    move_t c7c5 ( 50, 34, 0, 0, 0, 1 );
-    move_t b5c6 ( 33, 42, 0, 1, 0, 1 );
-    move_t f4e3 ( 29, 20, 0, 1, 0, 0 );
-    move_t c6c7 ( 42, 50, 0, 0, 0, 0 );
-    move_t e3e2 ( 20, 12, 0, 0, 0, 0 );
-    move_t c7c8 ( 50, 58, 1, 0, 1, 1 );
-    move_t e2e1 ( 12,  4, 1, 0, 0, 1 );
-    
-    move_t moves[9] = { d6d5, e2e3, c7c5, b5c6, f4e3,
-                        c6c7, e3e2, c7c8, e2e1       };
-    
-    int real, calc;
-//    pos3.print_board();
-    
-    for ( int i=0; i<9; i++ ) {
-        ss << "Incremental evaluation failure at move " << i;
-        pos3 = doMove( pos3, moves[i] );
-//        pos3.print_board();
-        real = pos3.evaluate();
-        calc = pos3.getValue();
-        CPPUNIT_ASSERT_MESSAGE( ss.str(), real == calc );
-//        if ( real != calc ) {
-//            std::cout << "move " << i << " - wrong :(" << std::endl;
-//            std::cout << "    real: " << real << std::endl;
-//            std::cout << "    calc: " << calc << std::endl;
-//        }
-//        else {
-//            std::cout << "move " << i << " - correct!" << std::endl;
-//            std::cout << "    real: " << real << std::endl;
-//        }
-        ss.str("");
+void evaltestclass::incrementalEvaluationPos3() {
+    board _board ( "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1" );
+    for ( int i=0; i<6; i++ ) {
+        testPERFTeval( _board, i );
+        std::cout << "verified incremental evaluation at depth " << i << std::endl;
+    }
+}
+
+void evaltestclass::incrementalEvaluationPos4() {
+    board _board ( "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1" );
+    for ( int i=0; i<6; i++ ) {
+        testPERFTeval( _board, i );
+        std::cout << "verified incremental evaluation at depth " << i << std::endl;
+    }
+}
+
+void evaltestclass::incrementalEvaluationPos5() {
+    board _board ( "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8" );
+    for ( int i=0; i<6; i++ ) {
+        testPERFTeval( _board, i );
+        std::cout << "verified incremental evaluation at depth " << i << std::endl;
+    }
+}
+
+void evaltestclass::incrementalEvaluationPos6() {
+    board _board ( "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10" );
+    for ( int i=0; i<6; i++ ) {
+        testPERFTeval( _board, i );
+        std::cout << "verified incremental evaluation at depth " << i << std::endl;
     }
 }

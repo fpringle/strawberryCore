@@ -14,11 +14,12 @@
 class evaltestclass : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(evaltestclass);
 
-    CPPUNIT_TEST(testEvaluate_material);
-    CPPUNIT_TEST(testEvaluate_pieceSquareTables);
-    CPPUNIT_TEST(testEvaluate);
-    CPPUNIT_TEST(testIncremental_evaluation);
-    CPPUNIT_TEST(testIncremental_evaluation2);
+    CPPUNIT_TEST(incrementalEvaluationStartBoard);
+    CPPUNIT_TEST(incrementalEvaluationPos2);
+    CPPUNIT_TEST(incrementalEvaluationPos3);
+    CPPUNIT_TEST(incrementalEvaluationPos4);
+    CPPUNIT_TEST(incrementalEvaluationPos5);
+    CPPUNIT_TEST(incrementalEvaluationPos6);
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -29,11 +30,12 @@ public:
     void tearDown();
 
 private:
-    void testEvaluate_material();
-    void testEvaluate_pieceSquareTables();
-    void testEvaluate();
-    void testIncremental_evaluation();
-    void testIncremental_evaluation2();
+    void incrementalEvaluationStartBoard();
+    void incrementalEvaluationPos2();
+    void incrementalEvaluationPos3();
+    void incrementalEvaluationPos4();
+    void incrementalEvaluationPos5();
+    void incrementalEvaluationPos6();
 
 };
 
