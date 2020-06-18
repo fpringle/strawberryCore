@@ -419,6 +419,7 @@ int board::gen_moves ( move_t * moves) {
               // capture
               if ( piece%6==0 && ((rankOne|rankEight)&(1ULL<<to_sq)) ) {
                   // promotion
+//                    std::cout << "PSEUD FOUND A PROMOTION 0\n";
                   count += add_moves( &moves, move_t(from_sq,to_sq,1,1,0,0), false );
                   count += add_moves( &moves, move_t(from_sq,to_sq,1,1,0,1), false );
                   count += add_moves( &moves, move_t(from_sq,to_sq,1,1,1,0), false );
@@ -444,7 +445,8 @@ int board::gen_moves ( move_t * moves) {
                 // quiet move
                 if ( piece%6==0 && ((rankOne|rankEight)&(1ULL<<to_sq)) ) {
                   // promotion
-                  count += add_moves( &moves, move_t(from_sq,to_sq,1,1,0,0), false );
+//                    std::cout << "PSEUD FOUND A PROMOTION 1\n";
+                  count += add_moves( &moves, move_t(from_sq,to_sq,1,0,0,0), false );
                   count += add_moves( &moves, move_t(from_sq,to_sq,1,0,0,1), false );
                   count += add_moves( &moves, move_t(from_sq,to_sq,1,0,1,0), false );
                   count += add_moves( &moves, move_t(from_sq,to_sq,1,0,1,1), false );
@@ -567,7 +569,9 @@ int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingIn
           targets &= ( targets - 1ULL );
       }
       
-      if ( double_check ) return count;
+      if ( double_check ) {
+          return count;
+      }
       
       // take the checking piece
       int from_sq;
@@ -585,7 +589,18 @@ int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingIn
                         print_move(move_t( from_sq, checkingInd, 0, 0, 0, 0 ));
                         std::cout << std::endl;
                     }
-                  count += add_moves( &moves, move_t( from_sq, checkingInd, 0, 1, 0, 0 ), true );
+                  if ( i==(6*sideToMove) && ( checkingInd/8==0 || checkingInd/8==7 ) ) {
+//                      std::cout << "promotion capture to get out of check\n";
+                    move_t prom_queen ( from_sq,checkingInd,1,1,0,0);
+                    if ( ! is_legal( prom_queen ) ) continue;
+                    count += add_moves( &moves, prom_queen, false );
+                    count += add_moves( &moves, move_t( from_sq, checkingInd, 1, 1, 0, 1 ), false );
+                    count += add_moves( &moves, move_t( from_sq, checkingInd, 1, 1, 1, 0 ), false );
+                    count += add_moves( &moves, move_t( from_sq, checkingInd, 1, 1, 1, 1 ), false );
+                  }
+                  else {
+                    count += add_moves( &moves, move_t( from_sq, checkingInd, 0, 1, 0, 0 ), true );
+                  }
 //              }
               defender &= ( defender - 1ULL );
           }
@@ -693,7 +708,7 @@ int board::gen_legal_moves ( move_t * moves) {
   // if we're in check we can limit the search
   piece checkingPiece;
   int checkingInd;
-  bool double_check;
+  bool double_check = false;
   if ( is_check( sideToMove, &checkingPiece, &checkingInd, &double_check) ) {
       return get_out_of_check( moves, checkingPiece, checkingInd,log2( pieceBoards[(6*sideToMove)+5] ), double_check );
   }
@@ -714,6 +729,7 @@ int board::gen_legal_moves ( move_t * moves) {
               // capture
               if ( _piece%6==0 && ((rankOne|rankEight)&(1ULL<<to_sq)) ) {
                   // promotion
+//                    std::cout << "LEGAL FOUND A PROMOTION 3\n";
                   count += add_moves( &moves, move_t(from_sq,to_sq,1,1,0,0), true );
                   count += add_moves( &moves, move_t(from_sq,to_sq,1,1,0,1), true );
                   count += add_moves( &moves, move_t(from_sq,to_sq,1,1,1,0), true );
@@ -739,7 +755,8 @@ int board::gen_legal_moves ( move_t * moves) {
                 // quiet move
                 if ( _piece%6==0 && ((rankOne|rankEight)&(1ULL<<to_sq)) ) {
                   // promotion
-                  count += add_moves( &moves, move_t(from_sq,to_sq,1,1,0,0), true );
+//                    std::cout << "LEGAL FOUND A PROMOTION 4\n";
+                  count += add_moves( &moves, move_t(from_sq,to_sq,1,0,0,0), true );
                   count += add_moves( &moves, move_t(from_sq,to_sq,1,0,0,1), true );
                   count += add_moves( &moves, move_t(from_sq,to_sq,1,0,1,0), true );
                   count += add_moves( &moves, move_t(from_sq,to_sq,1,0,1,1), true );
@@ -761,6 +778,7 @@ int board::gen_legal_moves ( move_t * moves) {
 
   // ep capture
   if ( lastMoveDoublePawnPush ) {
+//      std::cout << "last move was a double pawn push\n";
     // if white to move: potential squares are ( 32 + dPPFile +-1 )
     // if black to move: potential squares are ( 24 + dPPFile +-1 )
     int oppPawnSquare = 32 - (  8 * sideToMove ) + dPPFile;
@@ -825,6 +843,13 @@ int board::gen_legal_moves ( move_t * moves) {
 }
 
 bool board::is_legal( struct move_t move ) {
+    bool _print = 0;
+    if ( _print ) {
+        std::cout << "Checking if ";
+        print_move( move );
+        std::cout << " is a legal move\n";
+    }
+    
     colourPiece movingPiece;
     int from_ind = move.from_sq();
     int to_ind = move.to_sq();
@@ -875,9 +900,11 @@ bool board::is_legal( struct move_t move ) {
                     if ( (j+1)%8 < 4 ) attacker = ( 1ULL << first_set_bit( tmp ) );
                     else               attacker = ( 1ULL <<  last_set_bit( tmp ) );
                     if ( attacker & pieceBoards[(6*otherSide)+3] ) {
+//                        std::cout << "Pinned by bishop\n";
                         return is_bit_set( _ray, to_ind ) | is_bit_set( rays[i][from_ind], to_ind );
                     }
                     if ( attacker & pieceBoards[(6*otherSide)+4] ) {
+//                        std::cout << "Pinned by queen\n";
                         return is_bit_set( _ray, to_ind ) | is_bit_set( rays[i][from_ind], to_ind );
                     }
                 }
@@ -896,9 +923,11 @@ bool board::is_legal( struct move_t move ) {
                     if ( (j+1)%8 < 4 ) attacker = ( 1ULL << first_set_bit( tmp ) );
                     else               attacker = ( 1ULL <<  last_set_bit( tmp ) );
                     if ( attacker & pieceBoards[(6*otherSide)+1] ) {
+//                        std::cout << "Pinned by rook\n";
                         return is_bit_set( _ray, to_ind ) | is_bit_set( rays[i][from_ind], to_ind );
                     }
                     if ( attacker & pieceBoards[(6*otherSide)+4] ) {
+//                        std::cout << "Pinned by queen\n";
                         return is_bit_set( _ray, to_ind ) | is_bit_set( rays[i][from_ind], to_ind );
                     }
                 }
@@ -907,18 +936,25 @@ bool board::is_legal( struct move_t move ) {
     }
     
     if ( move.is_ep_capture() ) {
+//        std::cout << "testing ep capture for legality\n";
         int other_pawn_ind = to_ind + ( ( sideToMove==white ) ? S : N );
         bitboard left_ray  = rays[6][from_ind] & rays[6][other_pawn_ind] & blockers;
         bitboard right_ray = rays[2][from_ind] & rays[2][other_pawn_ind] & blockers;
-        bitboard attacker_left  = ( 1ULL << last_set_bit(left_ray) );
-        bitboard attacker_right = ( 1ULL << first_set_bit(right_ray) );
+        bitboard attacker_left  = ( left_ray  ) ? ( 1ULL << last_set_bit(left_ray) ) : 0;
+        bitboard attacker_right = ( right_ray ) ? ( 1ULL << first_set_bit(right_ray) ) : 0;
         
         if ( ( attacker_left  & pieceBoards[(sideToMove*6)+5] ) &&
              ( attacker_right & ( pieceBoards[(otherSide*6) + 1] |
-                                  pieceBoards[(otherSide*6) + 4] ) ) ) return false;
+                                  pieceBoards[(otherSide*6) + 4] ) ) ) {
+//            std::cout << "revealed check from the right\b";
+            return false;
+        }
         if ( ( attacker_right & pieceBoards[(sideToMove*6)+5] ) &&
              ( attacker_left  & ( pieceBoards[(otherSide*6) + 1] |
-                                  pieceBoards[(otherSide*6) + 4] ) ) ) return false;
+                                  pieceBoards[(otherSide*6) + 4] ) ) ) {
+//            std::cout << "revealed check from the left\n";
+            return false;
+        }
         
     }
     
