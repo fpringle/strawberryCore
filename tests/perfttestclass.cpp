@@ -260,6 +260,98 @@ void perfttestclass::testPosition4() {                                          
     }
 }
 
+void perfttestclass::testPosition5() {                                              //    6
+    init_rays();
+        
+    board _board( "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8" );
+    
+    unsigned int real[6] = { 1, 44, 1486, 62379,
+                             2103487, 89941194  }; // 6
+    
+    unsigned int n_nodes;
+    std::stringstream ss;
+    
+    for ( int i=0; i<6; i++ ) {
+        n_nodes = PERFT_legalcheck_faster( _board, i );
+        ss << "Error checking PERFT result for depth " << i << ". ";
+        ss << "Real answer: " << real[i] << std::endl;
+        ss << "Our answer:  " << n_nodes << std::endl;
+        ss << "(Did you remember to init_rays()?" << std::endl;
+        if ( n_nodes != real[i] ) {
+//            std::cout << std::endl;
+            int j;
+            board child;
+            move_t moves_pseudo[256];
+            move_t moves_legal[256];
+            int n_pseudo = _board.gen_moves( moves_pseudo );
+            int n_legal  = _board.gen_legal_moves(  moves_legal );
+//            std::cout << "Real:\n";
+            for ( j=0; j<n_pseudo; j++ ) {
+                child = doMove( _board, moves_pseudo[j] );
+                if ( child.is_check( white ) ) continue;
+//                std::cout << "   "; 
+//                print_move( moves_pseudo[j] );
+//                std::cout << std::endl;
+            }
+//            std::cout << "Ours:\n";
+//            for ( j=0; j<n_legal; j++ ) {
+//                std::cout << "   ";
+//                print_move( moves_legal[j] );
+//                std::cout << std::endl;
+//            }
+        }
+        CPPUNIT_ASSERT_MESSAGE( ss.str(), n_nodes == real[i] );
+        ss.str("");
+        std::cout << "Completed depth " << i << std::endl;
+    }
+}
+
+void perfttestclass::testPosition6() {                                              //    6
+    init_rays();
+        
+    board _board( "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10 " );
+    
+    unsigned int real[6] = { 1, 46, 2079, 89890,
+                             3894594, 164075551  }; // 6
+    
+    unsigned int n_nodes;
+    std::stringstream ss;
+    
+    for ( int i=0; i<6; i++ ) {
+        n_nodes = PERFT_legalcheck_faster( _board, i );
+        ss << "Error checking PERFT result for depth " << i << ". ";
+        ss << "Real answer: " << real[i] << std::endl;
+        ss << "Our answer:  " << n_nodes << std::endl;
+        ss << "(Did you remember to init_rays()?" << std::endl;
+        if ( n_nodes != real[i] ) {
+//            std::cout << std::endl;
+            int j;
+            board child;
+            move_t moves_pseudo[256];
+            move_t moves_legal[256];
+            int n_pseudo = _board.gen_moves( moves_pseudo );
+            int n_legal  = _board.gen_legal_moves(  moves_legal );
+//            std::cout << "Real:\n";
+            for ( j=0; j<n_pseudo; j++ ) {
+                child = doMove( _board, moves_pseudo[j] );
+                if ( child.is_check( white ) ) continue;
+//                std::cout << "   "; 
+//                print_move( moves_pseudo[j] );
+//                std::cout << std::endl;
+            }
+//            std::cout << "Ours:\n";
+//            for ( j=0; j<n_legal; j++ ) {
+//                std::cout << "   ";
+//                print_move( moves_legal[j] );
+//                std::cout << std::endl;
+//            }
+        }
+        CPPUNIT_ASSERT_MESSAGE( ss.str(), n_nodes == real[i] );
+        ss.str("");
+        std::cout << "Completed depth " << i << std::endl;
+    }
+}
+
 void divide_pseud( board _board, int depth, unsigned int * cache ) {
     bool print_progress = false;
     bool _print_moves = 0;
