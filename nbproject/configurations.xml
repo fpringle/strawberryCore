@@ -97,6 +97,14 @@
         <itemPath>tests/perfttestclass.h</itemPath>
         <itemPath>tests/perfttestrunner.cpp</itemPath>
       </logicalFolder>
+      <logicalFolder name="f9"
+                     displayName="search test"
+                     projectFiles="true"
+                     kind="TEST">
+        <itemPath>tests/searchtestclass.cpp</itemPath>
+        <itemPath>tests/searchtestclass.h</itemPath>
+        <itemPath>tests/searchtestrunner.cpp</itemPath>
+      </logicalFolder>
       <logicalFolder name="f8"
                      displayName="structures test"
                      projectFiles="true"
@@ -120,6 +128,7 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
       <itemPath>TODO.md</itemPath>
+      <itemPath>perft3.txt</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -253,6 +262,14 @@
           <output>${TESTDIR}/TestFiles/f8</output>
         </linkerTool>
       </folder>
+      <folder path="TestFiles/f9">
+        <cTool>
+          <commandLine>`cppunit-config --cflags`</commandLine>
+        </cTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f9</output>
+        </linkerTool>
+      </folder>
       <item path="hash.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="hash.h" ex="false" tool="3" flavor2="0">
@@ -312,6 +329,12 @@
       <item path="tests/perfttestclass.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/perfttestrunner.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/searchtestclass.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/searchtestclass.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/searchtestrunner.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="tests/structurestestclass.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -386,6 +409,11 @@
       </item>
       <item path="exceptions.h" ex="false" tool="3" flavor2="0">
       </item>
+      <folder path="TestFiles">
+        <linkerTool>
+          <commandLine>-I .</commandLine>
+        </linkerTool>
+      </folder>
       <folder path="TestFiles/f1">
         <cTool>
           <commandLine>`cppunit-config --cflags`</commandLine>
@@ -502,6 +530,14 @@
           </linkerLibItems>
         </linkerTool>
       </folder>
+      <folder path="TestFiles/f9">
+        <cTool>
+          <commandLine>`cppunit-config --cflags`</commandLine>
+        </cTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f9</output>
+        </linkerTool>
+      </folder>
       <item path="hash.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="hash.h" ex="false" tool="3" flavor2="0">
@@ -561,6 +597,12 @@
       <item path="tests/perfttestclass.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/perfttestrunner.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/searchtestclass.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/searchtestclass.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="tests/searchtestrunner.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="tests/structurestestclass.cpp" ex="false" tool="1" flavor2="0">
       </item>

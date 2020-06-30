@@ -19,10 +19,10 @@
 class perfttestclass : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(perfttestclass);
     
-//    CPPUNIT_TEST(testStartBoard);
-//    CPPUNIT_TEST(testPosition2);
-//    CPPUNIT_TEST(testPosition3);
-//    CPPUNIT_TEST(testPosition4);
+    CPPUNIT_TEST(testStartBoard);
+    CPPUNIT_TEST(testPosition2);
+    CPPUNIT_TEST(testPosition3);
+    CPPUNIT_TEST(testPosition4);
     CPPUNIT_TEST(testPosition5);
     CPPUNIT_TEST(testPosition6);
 //    CPPUNIT_TEST(testGen_moves);

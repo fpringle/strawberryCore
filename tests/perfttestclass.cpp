@@ -451,7 +451,7 @@ bool divide_legal( board _board, int depth, unsigned int * cache ) {
         }
         else {
 //            std::cout << "                     adding a promotion";
-            int _ind = 4096; + moves[i].to_sq()*4;
+            int _ind = 4096;// + moves[i].to_sq()*4;
             if ( moves[i].to_sq() / 8 == 0 ) {
                 _ind += moves[i].to_sq()*4;
             }

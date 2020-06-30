@@ -182,9 +182,9 @@ void checktestclass::testIs_checkmate() {
     bool castling2[] = { 0,0,0,0 };
     board _board2 ( pb2, castling2, 0, 0, 3, 3, black, 200 );
     
-    if ( _board2.is_checkmate( black ) ) {
-        _board2.print_board();
-    }
+//    if ( _board2.is_checkmate( black ) ) {
+//        _board2.print_board();
+//    }
 //    
 //    move_t c8b8 ( 58, 57, 0, 0, 0, 0 );
 //    
@@ -288,7 +288,7 @@ void checktestclass::testCheck_lastmove() {
     for ( int i=0; i<9; i++ ) {
         pos3 = doMove( pos3, moves[i] );
         pos3.getSide( &side );
-        pos3.print_board();
+//        pos3.print_board();
         if      ( pos3.is_check( side ) & ( ! pos3.was_lastmove_check( moves[i] ) ) ) {
             ss << "False negative at move " << i;
             CPPUNIT_FAIL( ss.str() );
@@ -306,7 +306,7 @@ void checktestclass::testCheck_lastmove() {
 void checktestclass::testCheck_lastmove2() {
     init_rays();
     board _board ( "3k4/8/8/8/8/8/8/R3K3 w KQkq - 0 0" );
-    _board.print_board();
+//    _board.print_board();
     std::stringstream ss;
     
     move_t _castle (  4,  2, 0, 0, 1, 1 );
@@ -315,7 +315,7 @@ void checktestclass::testCheck_lastmove2() {
     
     _board = doMove( _board, _castle );
     _board.getSide( &side );
-    _board.print_board();
+//    _board.print_board();
     if      ( _board.is_check( side ) & ( ! _board.was_lastmove_check( _castle ) ) ) {
         CPPUNIT_FAIL( "False negative" );
     }

@@ -63,6 +63,7 @@ TESTFILES= \
 	${TESTDIR}/TestFiles/f3 \
 	${TESTDIR}/TestFiles/f5 \
 	${TESTDIR}/TestFiles/f7 \
+	${TESTDIR}/TestFiles/f9 \
 	${TESTDIR}/TestFiles/f8 \
 	${TESTDIR}/TestFiles/f4
 
@@ -80,6 +81,8 @@ TESTOBJECTFILES= \
 	${TESTDIR}/tests/movetestrunner.o \
 	${TESTDIR}/tests/perfttestclass.o \
 	${TESTDIR}/tests/perfttestrunner.o \
+	${TESTDIR}/tests/searchtestclass.o \
+	${TESTDIR}/tests/searchtestrunner.o \
 	${TESTDIR}/tests/structurestestclass.o \
 	${TESTDIR}/tests/structurestestrunner.o \
 	${TESTDIR}/tests/twiddletestclass.o \
@@ -220,6 +223,10 @@ ${TESTDIR}/TestFiles/f7: ${TESTDIR}/tests/perfttestclass.o ${TESTDIR}/tests/perf
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc} -o ${TESTDIR}/TestFiles/f7 $^ ${LDLIBSOPTIONS} -lcppunit  
 
+${TESTDIR}/TestFiles/f9: ${TESTDIR}/tests/searchtestclass.o ${TESTDIR}/tests/searchtestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
+	${MKDIR} -p ${TESTDIR}/TestFiles
+	${LINK.cc} -o ${TESTDIR}/TestFiles/f9 $^ ${LDLIBSOPTIONS} -lcppunit  
+
 ${TESTDIR}/TestFiles/f8: ${TESTDIR}/tests/structurestestclass.o ${TESTDIR}/tests/structurestestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc} -o ${TESTDIR}/TestFiles/f8 $^ ${LDLIBSOPTIONS} -lcppunit  
@@ -299,6 +306,18 @@ ${TESTDIR}/tests/perfttestrunner.o: tests/perfttestrunner.cpp
 	${MKDIR} -p ${TESTDIR}/tests
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/perfttestrunner.o tests/perfttestrunner.cpp
+
+
+${TESTDIR}/tests/searchtestclass.o: tests/searchtestclass.cpp 
+	${MKDIR} -p ${TESTDIR}/tests
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/searchtestclass.o tests/searchtestclass.cpp
+
+
+${TESTDIR}/tests/searchtestrunner.o: tests/searchtestrunner.cpp 
+	${MKDIR} -p ${TESTDIR}/tests
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/searchtestrunner.o tests/searchtestrunner.cpp
 
 
 ${TESTDIR}/tests/structurestestclass.o: tests/structurestestclass.cpp 
@@ -543,6 +562,7 @@ ${OBJECTDIR}/util/tree_nomain.o: ${OBJECTDIR}/util/tree.o util/tree.cpp
 	    ${TESTDIR}/TestFiles/f3 || true; \
 	    ${TESTDIR}/TestFiles/f5 || true; \
 	    ${TESTDIR}/TestFiles/f7 || true; \
+	    ${TESTDIR}/TestFiles/f9 || true; \
 	    ${TESTDIR}/TestFiles/f8 || true; \
 	    ${TESTDIR}/TestFiles/f4 || true; \
 	else  \
