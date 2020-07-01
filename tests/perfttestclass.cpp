@@ -500,10 +500,10 @@ void perfttestclass::divideStartboard() {
     init_rays();
     board b;
     
-    move_t c2c3 ( 10, 18, 0, 0, 0, 0 );
+    move_t a2a3 (  8, 16, 0, 0, 0, 0 );
     move_t d7d5 ( 51, 35, 0, 0, 0, 1 );
     move_t d1a4 (  3, 24, 0, 0, 0, 0 );
-//    b = doMove( b, c2c3 );
+    b = doMove( b, a2a3 );
 //    b = doMove( b, d7d5 );
 //    b = doMove( b, d1a4 );
     
@@ -521,8 +521,8 @@ void perfttestclass::divideStartboard() {
         legal_cache[i] = _max;
     }
     
-         divide_pseud( b, 4, pseud_cache );
-    if ( divide_legal( b, 4, legal_cache ) ) {
+         divide_pseud( b, 2, pseud_cache );
+    if ( divide_legal( b, 2, legal_cache ) ) {
 
         std::cout << "move   pseud   legal\n";
 

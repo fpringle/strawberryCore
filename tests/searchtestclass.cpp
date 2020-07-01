@@ -10,6 +10,7 @@
 #include "board.h"
 #include "move.h"
 #include "action.h"
+#include "init.h"
 #include "structures.h"
 #include <iostream>
 #include <string>
@@ -70,32 +71,33 @@ std::string unmap_move( int num ) {
     std::stringstream ss;
     int a = num / 64;
     int b = num % 64;
+//    std::cout << a << " " << b << " " ;
     ss << itos(a) << itos(b);
+//    std::cout << ss.str() << std::endl;
     return ss.str();
 }
 
 std::string unmap_moveset( uint64_t num ) {
     std::stringstream ss;
-    int x = num;
-    int y;
+    uint64_t x = num;
     while ( x>0 ) {
-        ss << unmap_move( x % 4190 ) << " ";
-        x /= 4190;
+//        std::cout << x%4160 << std::endl;
+        ss << unmap_move( int(x % 4160) ) << " ";
+        x /= 4160;
     }
     
     return ss.str();
 }
 
-void search_tree( board b, uint64_t ** dest, int num, int depth, int basedepth=-1, uint64_t moves_so_far=0 ) {
+void search_tree( board b, uint64_t ** dest, int32_t ** score, int depth, uint64_t moves_so_far=0 ) {
     // size of dest == num
-    int _basedepth;
-    if ( basedepth == -1 )   _basedepth = depth;
-    else                     _basedepth = basedepth;
-    
-    
     if ( depth==0 ) {
         **dest = moves_so_far;
         (*dest)++;
+        
+        **score = b.getValue();
+        (*score)++;
+//        std::cout << moves_so_far << ": " << unmap_move(moves_so_far) << std::endl;
     }
     
     else {
@@ -108,23 +110,43 @@ void search_tree( board b, uint64_t ** dest, int num, int depth, int basedepth=-
         for ( int i=0; i<n_moves; i++ ) {
             child = doMove( b, moves[i] );
             new_moveset = moves_so_far + map_move( moves[i] );
-            search_tree( child, dest, num, depth-1, basedepth, new_moveset );
+            search_tree( child, dest, score, depth-1, new_moveset );
         }
     }
 }
 
-void searchtestclass::testSearch_tree() {
-    std::ofstream fil ("perft3.txt");
-    int depth = 3;
-    int num   = 8902;
+void tree_file( board b, int depth, int * expected, std::string suffix ) {
+    init_rays();
+    int num = expected[ depth-1 ];
+    uint64_t * dest  = new uint64_t[num];
+    int32_t * score =  new int32_t[num];
+    std::string filename;
     
-    board b;
-    uint64_t * dest = new uint64_t[num];
-    search_tree( b, &dest, num, depth );
-    dest -= num;
-    for ( int i=0; i<num; i++ ) {
-//        std::cout << dest[i] << "  " << unmap_moveset( dest[i] ) << std::endl;
-        fil       << dest[i] << ": " << unmap_moveset( dest[i] ) << std::endl;
+    for ( int i=1; i<=depth; i++ ) {
+        num = expected[i-1];
+        filename = suffix + "_" + std::to_string( i ) + ".txt";
+        std::ofstream fil ( filename );
+        search_tree( b, &dest, &score, i );
+        dest  -= num;
+        score -= num;
+        for ( int j=0; j<num; j++ ) {
+            fil << unmap_moveset( dest[j] ) << ": ";
+            fil << score[j] << std::endl;
+        }
+        fil.close();
     }
-    fil.close();
+}
+
+void searchtestclass::testSearch_tree() {
+    board b;
+    int exp[] = { 20, 400, 8902, 197281 };
+    std::string suff = "startpos";
+    tree_file( b, 4, exp, suff );
+}
+
+void searchtestclass::testUnmap() {
+    uint64_t x = 1550483193856;
+    std::cout << x << std::endl;
+    std::cout << x % 4160;
+    std::cout << unmap_moveset( x ) << std::endl;
 }

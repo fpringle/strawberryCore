@@ -129,6 +129,7 @@
       <itemPath>Makefile</itemPath>
       <itemPath>TODO.md</itemPath>
       <itemPath>perft3.txt</itemPath>
+      <itemPath>tree.py</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

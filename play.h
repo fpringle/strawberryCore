@@ -7,7 +7,9 @@
 
 move_t input_move( board );
 
-void play(int);
+void play_white(int);
+void play_white(int,board);
+void play_black(int,board);
 
 
 #endif
