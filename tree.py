@@ -179,16 +179,3 @@ if __name__ == '__main__':
     print(negamax(x))
 
 #    for _ in range(5): os.system('play -nq -t alsa synth {} sine {}'.format(duration, freq))
-
-else:
-    r=tree('root',0)
-    r.add_child('a2a4',10)
-    r.add_child('a2a3',5)
-    r[0].add_child('a7a5',0)
-    r[0].add_child('a7a6',5)
-    r[1].add_child('a7a6',0)
-    r[1].add_child('a7a5',-5)
-    print(r)
-    print(r[0])
-    print(r[0,1])
-    print(r.shape())
