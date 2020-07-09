@@ -23,8 +23,6 @@ const bitboard notFileH     = ~ fileH;
 const bitboard notRankOne   = ~ rankOne;
 const bitboard notRankEight = ~ rankEight;
 
-//int main() {print_bb(rankTwo,'x');return 0;}
-
 // general-purpose bit twiddling functions
 int count_bits_set(bitboard v) {
   // thanks Brian Kernighan

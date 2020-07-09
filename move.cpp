@@ -50,6 +50,299 @@ int _stoi( std::string s ) {
   return int(rank-'1')*8 + int(file-'a');
 }
 
+std::string board::SAN_post_move( move_t _move ) {
+    std::string ret;
+    int i;
+    
+    if      ( _move.is_queenCastle() ) ret += "O-O-O";
+    else if  ( _move.is_kingCastle() ) ret += "O-O";
+    
+    else {        
+        int from_sq = _move.from_sq();
+        int to_sq   = _move.to_sq();
+        colourPiece cP;
+        
+        for ( i=0; i<12; i++ ) {
+            if ( is_bit_set(pieceBoards[i], to_sq) ) {
+                cP = i;
+                break;
+            }
+        }
+        
+        char piece_sym = symbols[int(_piece)+6];
+        std::string from_sq_str =  itos( from_sq );
+        std::string to_sq_str   =  itos( to_sq );
+        
+        if ( _piece != 0 ) {
+            ret += piece_sym;
+        }
+        
+        // ambiguity tests
+        colour otherSide = ( sideToMove == white ) ? black : white;
+        bitboard alternates = pieceTargets( to_sq, whiteSquares(), blackSquares(), (cP+6)%12 );
+        alternates &= pieceBoards[cP];
+        
+        if ( alternates ) {
+            int other_ranks[8];
+            int other_files[8];
+            int from_file = from_sq % 8;
+            int from_rank = from_sq / 8;
+            bool unique_file = true;
+            bool unique_rank = true;
+            int count = 0;
+            int tmp;
+
+            while ( alternates ) {
+                tmp = first_set_bit( alterantes );
+                alternates &= ( alternates - 1ULL );
+                other_ranks[count] = tmp / 8;
+                other_files[count] = tmp % 8;
+                count++;
+            }
+            
+            for ( i=0; i<count; i++ ) {
+                if ( other_files[i] == from_file ) {
+                    unique_file = false;
+                }
+                if ( other_ranks[i] == from_rank ) {
+                    unique_rank = false;
+                }
+            }
+            
+            if      ( unique_file ) ret += char('a'+from_file);
+            else if ( unique_rank ) ret += char('1'+from_rank);
+            else                    ret += char('a'+from_file) + char('1'+from_rank);
+        }
+        
+        if ( _move.is_capture() ) {
+            ret += "x";
+        }
+        
+        ret += to_sq_str;
+        
+        if ( _move.is_promotion() ) {
+            ret += "=";
+            ret += symbols[int(_move.which_promotion())];
+        }
+    }
+    
+    if ( is_check(sideToMove) ) {
+        if ( is_checkmate(sideToMove) ) ret += "#";
+        else                ret += "+";
+    }
+    
+    return ret;
+}
+
+std::string board::SAN_pre_move( move_t _move ) {
+    std::string ret;
+    int i;
+    colour otherSide = ( sideToMove == white ) ? black : white;
+    
+    if      ( _move.is_queenCastle() ) ret += "O-O-O";
+    else if  ( _move.is_kingCastle() ) ret += "O-O";
+    
+    else {        
+        int from_sq = _move.from_sq();
+        int to_sq   = _move.to_sq();
+        colourPiece cP;
+        
+        for ( i=0; i<12; i++ ) {
+            if ( is_bit_set(pieceBoards[i], from_sq) ) {
+                cP = i;
+                break;
+            }
+        }
+        
+        char piece_sym = symbols[int(_piece)+6];
+        std::string from_sq_str =  itos( from_sq );
+        std::string to_sq_str   =  itos( to_sq );
+        
+        if ( _piece != 0 ) {
+            ret += piece_sym;
+        }
+        
+        // ambiguity tests
+        bitboard alternates = pieceTargets( to_sq, whiteSquares(), blackSquares(), (cP+6)%12 );
+        alternates &= pieceBoards[cP];
+        
+        int other_ranks[8];
+        int other_files[8];
+        int from_file = from_sq % 8;
+        int from_rank = from_sq / 8;
+        bool unique_file = true;
+        bool unique_rank = true;
+        int count = 0;
+        int tmp;
+        
+        if ( alternates ) {
+            while ( alternates ) {
+                tmp = first_set_bit( alterantes );
+                alternates &= ( alternates - 1ULL );
+                other_ranks[count] = tmp / 8;
+                other_files[count] = tmp % 8;
+                count++;
+            }
+            
+            for ( i=0; i<count; i++ ) {
+                if ( other_files[i] == from_file ) {
+                    unique_file = false;
+                }
+                if ( other_ranks[i] == from_rank ) {
+                    unique_rank = false;
+                }
+            }
+            
+            if      ( unique_file ) ret += char('a'+from_file);
+            else if ( unique_rank ) ret += char('1'+from_rank);
+            else                    ret += char('a'+from_file) + char('1'+from_rank);
+        }
+        
+        if ( _move.is_capture() ) {
+            ret += "x";
+        }
+        
+        ret += to_sqr_str;
+        
+        if ( _move.is_promotion() ) {
+            ret += "=";
+            ret += symbols[int(_move.which_promotion())];
+        }
+    }
+    
+    if ( is_checking_move( _move ) ) {
+        board child = doMove( *this, _move );
+        if ( is_checkmate( otherSide ) ) ret += "#";
+        else                             ret += "+";
+    }
+    
+    return ret;
+}
+
+move_t board::move_from_SAN( std::string san ) {
+    // castling
+    if ( san == "O-O" ) {
+        if ( sideToMove == white ) {
+            return move_t (  4,  6, 0, 0, 1, 0 );
+        }
+        else {
+            return move_t ( 60, 62, 0, 0, 1, 0 );
+        }
+    }
+    else if ( san == "O-O-O" ) {
+        if ( sideToMove == white ) {
+            return move_t (  4,  1, 0, 0, 1, 1 );
+        }
+        else {
+            return move_t ( 60, 58, 0, 0, 1, 1 );
+        }
+    }
+    
+    int len = san.size();
+    int to_sq;
+    bool prom = false;
+    bool s0 = 0;
+    bool s1 = 0;
+    
+    if ( san[len-1] == '#' || san[len-1] == '+' ) {
+        san = san.substr( 0, len-1 );
+        len--;
+    }
+    
+    if ( san[len-2] == '=' ) {
+        prom = true;
+        switch ( san[len-1] ) {
+            case 'R':
+                s0 = 1;
+                s1 = 0;
+                break;
+            case 'N':
+                s0 = 0;
+                s1 = 0;
+                break;
+            case 'B':
+                s0 = 0;
+                s1 = 1;
+                break;
+            case 'Q':
+                s0 = 1;
+                s1 = 1;
+                break;
+        }
+    }
+    
+    to_sq = _stoi( san.substr( len-2, 2 ) );
+    san = san.substr( 0, len-2 );
+    len -= 2;
+    bool cap = false;
+    if ( san[len-1] == 'x' ) {
+        cap = true;
+        san = san.substr( 0, len-1 );
+        l--;
+    }
+    
+    if ( san == "" ) {
+        // pawn move
+        return move_t ( to_sq + ( ( sideToMove == white ) ? S+S : N+N ), to_sq, prom, false, s0, s1 );
+    }
+    
+    int from_file;
+    int to_file;
+    piece mP;
+    
+    switch ( san[0] ) {
+        case 'R':
+            mp = 1;
+            break;
+        case 'N':
+            mp = 2;
+            break;
+        case 'B':
+            mp = 3;
+            break;
+        case 'Q':
+            mp = 4;
+            break;
+        case 'K':
+            mp = 5;
+            break;
+
+        case '1':
+            mp = 0;
+            break;
+        case '2':
+            mp = 0;
+            break;
+        case '3':
+            mp = 0;
+            break;
+        case '4':
+            mp = 0;
+            break;
+        case '5':
+            mp = 0;
+            break;
+        case '6':
+            mp = 0;
+            break;
+        case '7':
+            mp = 0;
+            break;
+        case '8':
+            mp = 0;
+            break;
+
+        case 'a':
+        case 'b':
+        case 'c':
+        case 'd':
+        case 'e':
+        case 'f':
+        case 'g':
+        case 'h':
+    }
+}
+
 // move_t constructors
 // default constructor
 move_t::move_t() {}
