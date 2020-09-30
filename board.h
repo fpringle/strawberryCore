@@ -118,9 +118,9 @@ class board {
     void print_board_indent( std::ostream& cout = std::cout, int indent = 0 );
     void print_all( std::ostream& cout = std::cout );
     std::string FEN( );
-    std::string SAN_post_move( move );
-    std::string SAN_pre_move ( move );
-    move_t move_from_SAN( std::string );
+//    std::string SAN_post_move( move_t );
+//    std::string SAN_pre_move ( move_t );
+//    move_t move_from_SAN( std::string );
     void FEN( std::ostream& );
 
     // set data
