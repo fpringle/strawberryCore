@@ -13,11 +13,14 @@ extern uint64_t upper_mask;
 
 
 // initialise the PRNG
+// defined in hash.cpp
 void init_gen(uint64_t);
 
 // get a number from the PRNG
+// defined in hash.cpp
 uint64_t extract_number();
 
+// defined in hash.cpp
 void twist();
 
 // generate the zobrist keys
@@ -32,8 +35,10 @@ void twist();
 extern uint64_t zobristKeys[781];
 
 // do all of that
+// defined in hash.cpp
 void init_keys();
 // custom seed for reproducability
+// defined in hash.cpp
 void init_keys(uint64_t);
 
 // transposition table

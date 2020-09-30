@@ -9,11 +9,14 @@
 using bitboard = unsigned long long int;
 
 // general-purpose bit twiddling functions
+// defined in twiddle.cpp
 int count_bits_set(bitboard);
 int first_set_bit(bitboard);
 int last_set_bit(bitboard);
 bool is_bit_set(bitboard,int);
 
+// constant masks
+// defined in twiddle.cpp
 extern const bitboard fileA;
 extern const bitboard fileB;
 extern const bitboard fileG;
@@ -30,7 +33,7 @@ extern const bitboard notRankOne;
 extern const bitboard notRankEight;
 
 // basic bitboard moving
-
+// defined in twiddle.cpp
 bitboard oneN(bitboard);
 bitboard oneS(bitboard);
 bitboard oneE(bitboard);

@@ -335,8 +335,8 @@ bool board::operator==( const board& other) {
     return true;
 }
 
-bool board::operator!=( const board&other ) {
-    return ( ! ( this->operator==(other) ) );
+bool board::operator!=( const board& other ) {
+    return ! ( *this == other ) ;
 }
 
 // get data

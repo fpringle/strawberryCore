@@ -8,6 +8,7 @@
 
 
 // search algorithms
+// defined in search.cpp
 int32_t minimax(board,int,colour);
 struct move_t search_minimax(board,int,colour);
 

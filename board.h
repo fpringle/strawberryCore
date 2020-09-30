@@ -25,6 +25,7 @@
 using bitboard = unsigned long long int;
 
 // declare starting bitboards
+// defined in board.cpp
 
 extern bitboard whitePawnStart;
 extern bitboard whiteRookStart;
@@ -40,9 +41,9 @@ extern bitboard blackQueenStart;
 extern bitboard blackKingStart;
 
 // define symbols for string representation
+// defined in board.cpp
 
 extern const char symbols[12];
-
 extern const char colours[2];
 
 
@@ -56,6 +57,7 @@ enum colourPiece {whitePawn,whiteRook,whiteKnight,
                   blackBishop,blackQueen,blackKing};
 
 
+// defined in board.cpp
 void print_bb( bitboard, char c = 'x', std::ostream& cout = std::cout );
 
 // the main event
@@ -86,16 +88,19 @@ class board {
 
   public:
     // constructors
+    // defined in board.cpp
     board();
     board(bitboard*,bool*,bool,int,uint8_t,uint8_t,colour,int32_t,uint64_t hash=0);
     board(board&);
     board(std::string);
     
     // operator overloading
+    // defined in board.cpp
     bool operator==(const board&);
     bool operator!=(const board&);
 
     // get data
+    // defined in board.cpp
     void getBitboards(bitboard*);
     void getCastlingRights(bool*);
     void getEP(bool*);
@@ -107,13 +112,15 @@ class board {
     int num_pieces_left();
 
     // evaluation
+    // defined in eval.cpp
     int16_t evaluate_material();
     int16_t evaluate_pieceSquareTables();
     int32_t getValue();
     int32_t evaluate();
-        //void incrementValue(int16_t);
+    //void incrementValue(int16_t);
     
     // utilities for testing
+    // defined in board.cpp
     void print_board( std::ostream& cout = std::cout );
     void print_board_indent( std::ostream& cout = std::cout, int indent = 0 );
     void print_all( std::ostream& cout = std::cout );
@@ -124,6 +131,7 @@ class board {
     void FEN( std::ostream& );
 
     // set data
+    // defined in board.cpp
     void set_piece(colourPiece,int);
     void set_side(colour);
     void clear_square( int );
@@ -133,6 +141,7 @@ class board {
     void set_hash(uint64_t );
 
     // move generation
+    // defined in move.cpp
     bitboard whiteSquares();
     bitboard blackSquares();
     bitboard takenSquares();// { return (whiteSquares() | blackSquares()); }
@@ -144,9 +153,11 @@ class board {
     int gen_legal_moves( struct move_t* );
 
     // hashing
+    // defined in hash.cpp
     uint64_t zobrist_hash();
 
     // check
+    // defined in check.cpp
     bool is_check(colour);
     bool is_check(colour, piece*, int*, bool*);
     bool is_checkmate(colour);

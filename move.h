@@ -9,6 +9,7 @@
 
 // some constants
 // constants for sliding pieces which moves in straight lines
+// defined in move.cpp
 extern const int N;
 extern const int NE;
 extern const int E;
@@ -19,6 +20,7 @@ extern const int W;
 extern const int NW;
 
 // constants for knights
+// defined in move.cpp
 extern const int NNE;
 extern const int ENE;
 extern const int ESE;
@@ -28,6 +30,8 @@ extern const int WSW;
 extern const int WNW;
 extern const int NNW;
 
+// functions for printing
+// defined in move.cpp
 void itos(int,char*);
 std::string itos(int);
 void itos(int, std::ostream&);
@@ -35,6 +39,7 @@ int _stoi(std::string);
 
 // enumerate directions for ray generation
 enum direction {dirN,dirNE,dirE,dirSE,dirS,dirSW,dirW,dirNW};
+// defined in move.cpp
 extern bitboard rays[8][64];
 void init_rays();
 
@@ -70,10 +75,12 @@ struct move_t {
     uint16_t give();
   };
 
+// defined in move.cpp
 void print_move( struct move_t, std::ostream& cout = std::cout );
 move_t stom( move_t*, int, std::string);
 
 // naive move generation
+// all defined in move.cpp
 // pawns
 bitboard pawnPushNaive        (int,bitboard,colour);
 bitboard pawnAttackNaive      (int,colour);

@@ -7,8 +7,8 @@
 
 
 
+// defined in action.cpp
 board doMove (board, move_t);
-
 board unMove (board, move_t);
 
 
