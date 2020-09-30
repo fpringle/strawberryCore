@@ -210,15 +210,15 @@ bool board::was_lastmove_check( move_t lastmove ) {
         bitboard attacker_left  = ( 1ULL << last_set_bit(left_ray) );
         bitboard attacker_right = ( 1ULL << first_set_bit(right_ray) );
 
-        if ( ( attacker_left  & pieceBoards[(otherSide*6)+5] ) &&
-             ( attacker_right & ( pieceBoards[(sideToMove*6) + 1] |
-                                  pieceBoards[(sideToMove*6) + 4] ) ) ) {
+        if ( ( attacker_left  & pieceBoards[(sideToMove*6)+5] ) &&
+             ( attacker_right & ( pieceBoards[(otherSide*6) + 1] |
+                                  pieceBoards[(otherSide*6) + 4] ) ) ) {
             std::cout << "king left, attacker right\n";
             return true;
         }
-        if ( ( attacker_right & pieceBoards[(otherSide*6)+5] ) &&
-             ( attacker_left  & ( pieceBoards[(sideToMove*6) + 1] |
-                                  pieceBoards[(sideToMove*6) + 4] ) ) ) {
+        if ( ( attacker_right & pieceBoards[(sideToMove*6)+5] ) &&
+             ( attacker_left  & ( pieceBoards[(otherSide*6) + 1] |
+                                  pieceBoards[(otherSide*6) + 4] ) ) ) {
             std::cout << "king right, attacker left\n";
             return true;
         }
@@ -303,4 +303,45 @@ bool board::is_checking_move( move_t move ) {
             }
         }
     }
+
+    // en passant
+    if ( move.is_ep_capture() ) {
+        int other_pawn_ind = to_ind + ( ( sideToMove==white ) ? S : N );
+        bitboard left_ray  = rays[6][from_ind] & rays[6][other_pawn_ind] & blockers;
+        bitboard right_ray = rays[2][from_ind] & rays[2][other_pawn_ind] & blockers;
+        bitboard attacker_left  = ( 1ULL << last_set_bit(left_ray) );
+        bitboard attacker_right = ( 1ULL << first_set_bit(right_ray) );
+
+        if ( ( attacker_left  & pieceBoards[(otherSide*6)+5] ) &&
+             ( attacker_right & ( pieceBoards[(sideToMove*6) + 1] |
+                                  pieceBoards[(sideToMove*6) + 4] ) ) ) {
+            std::cout << "king left, attacker right\n";
+            return true;
+        }
+        if ( ( attacker_right & pieceBoards[(otherSide*6)+5] ) &&
+             ( attacker_left  & ( pieceBoards[(sideToMove*6) + 1] |
+                                  pieceBoards[(sideToMove*6) + 4] ) ) ) {
+            std::cout << "king right, attacker left\n";
+            return true;
+        }
+    }
+
+
+    // castling rook
+    if ( move.is_kingCastle() ) {
+        int rook_ind = to_ind - 1;
+        if ( kingBoard & rookTargets( rook_ind, _white, _black, sideToMove ) ) return true;
+    }
+    else if ( move.is_queenCastle() ) {
+        int rook_ind = to_ind + 1;
+        if ( kingBoard & rookTargets( rook_ind, _white, _black, sideToMove ) ) return true;
+    }
+
+    // promotion
+    if ( move.is_promotion() ) {
+        colourPiece prom_piece = colourPiece( (6*sideToMove) + move.which_promotion() );
+        if ( kingBoard & pieceTargets( to_ind, _white, _black, prom_piece) ) return true;
+    }
+
+    return false;
 }
