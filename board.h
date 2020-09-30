@@ -93,7 +93,7 @@ class board {
     board(bitboard*,bool*,bool,int,uint8_t,uint8_t,colour,int32_t,uint64_t hash=0);
     board(board&);
     board(std::string);
-    
+
     // operator overloading
     // defined in board.cpp
     bool operator==(const board&);
@@ -118,7 +118,7 @@ class board {
     int32_t getValue();
     int32_t evaluate();
     //void incrementValue(int16_t);
-    
+
     // utilities for testing
     // defined in board.cpp
     void print_board( std::ostream& cout = std::cout );

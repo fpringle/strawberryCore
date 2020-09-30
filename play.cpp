@@ -14,12 +14,12 @@ move_t input_move( board b ) {
     move_t ret;
     move_t moves[256];
     int n_moves = b.gen_legal_moves( moves );
-    
+
     std::string inp;
     std::cout << "Enter move as FileRankFileRank (e.g. e2e4): ";
     std::cin >> inp;
     ret = stom( moves, n_moves, inp );
-    
+
     while ( ret.give() == 0 ) {
         std::cout << "Sorry, that's not a valid move.\n";
         std::cout << "Enter move as FileRankFileRank (e.g. e2e4): ";
@@ -45,7 +45,7 @@ void play_white(int plies, board b) {
   struct move_t * p = move_list;
 
   while (true) {
-    
+
     player_move = input_move( b );
 
     b = doMove( b, player_move );
@@ -54,7 +54,7 @@ void play_white(int plies, board b) {
     p++;
 
     b.print_board();
-    
+
     std::cout << "Computer thinking...\n";
 
 //    comp_move = search_negamaxAB( b, plies, black );
@@ -87,7 +87,7 @@ void play_black(int plies) {
     p++;
 
     b.print_board();
-    
+
     player_move = input_move( b );
 
     b = doMove( b, player_move );

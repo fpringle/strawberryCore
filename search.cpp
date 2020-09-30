@@ -12,7 +12,7 @@
 // simple minimax
 int32_t minimax(board b, int depth, colour side) {
   if ( depth == 0 ) return b.getValue();
-  
+
   int32_t score;
   struct move_t moves[256];
   int num_moves = b.gen_legal_moves( moves );

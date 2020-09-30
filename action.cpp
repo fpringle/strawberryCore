@@ -81,7 +81,7 @@ board doMove(board startBoard, move_t move) {
     hash ^= zobristKeys[(1+(6*movingColour))*64 + fromSquare - 4];
     hash ^= zobristKeys[(1+(6*movingColour))*64 + toSquare + 1];
   }
-  
+
   // promotion
   if ( move.is_promotion() ) {
     startingPos[6*movingColour] &= ( ~ ( 1ULL << toSquare ) );
@@ -90,9 +90,9 @@ board doMove(board startBoard, move_t move) {
 //    std::cout << "--- added " << - int(pieceSquareTables[(6*movingColour)][toSquare]);
 //    std::cout << " to value ---\n";
     hash ^= zobristKeys[6*movingColour*64 + toSquare];
-    
+
     colourPiece prom_piece = colourPiece( (6*movingColour) + move.which_promotion() );
-    
+
     startingPos[prom_piece] |= ( 1ULL << toSquare );
     value += pieceSquareTables[prom_piece][toSquare];
     value += pieceValues[prom_piece];
@@ -169,7 +169,7 @@ board doMove(board startBoard, move_t move) {
         break;
     }
   }
-  
+
   if ( rooktaken ) {
     switch ( toSquare ) {
         case 0:
@@ -205,7 +205,7 @@ board doMove(board startBoard, move_t move) {
 
   // increment fullMoveClock
   if ( movingColour == black ) full_clk++;
-  
+
   // change hash for different side to move
   hash ^= zobristKeys[780];
 

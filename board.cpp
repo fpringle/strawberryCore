@@ -34,7 +34,7 @@ bitboard blackKingStart   = 0x1000000000000000;
 
 board::board() {
   // default constructor
-  
+
   // initialise an array of pointers to the piece bitboards
   pieceBoards[0]  = whitePawnStart;
   pieceBoards[1]  = whiteRookStart;
@@ -48,19 +48,19 @@ board::board() {
   pieceBoards[9]  = blackBishopStart;
   pieceBoards[10] = blackQueenStart;
   pieceBoards[11] = blackKingStart;
-  
+
   // both sides start with king- and queen-side castling rights
   castleWhiteKingSide  = true;
   castleWhiteQueenSide = true;
   castleBlackKingSide  = true;
   castleBlackQueenSide = true;
-  
+
   // keeps track of the number of reversible moves in order
   // to enforce the 50-move rule
   // because that always comes into effect.
   halfMoveClock = 0;
   fullMoveClock = 0;
-  
+
   // keep track of whether the previous move was a double
   // pawn push, for en passant pawn capture
   lastMoveDoublePawnPush = false;
@@ -71,7 +71,7 @@ board::board() {
 
   // value starts at 0
   value=0;
-  
+
   // initial hash value
   hash_value = zobrist_hash();
 }
@@ -90,11 +90,11 @@ board::board(bitboard * startPositions, bool * castling, bool ep, int dpp, uint8
   castleWhiteQueenSide = castling[1];
   castleBlackKingSide  = castling[2];
   castleBlackQueenSide = castling[3];
-  
+
   // 50-move rule
   halfMoveClock = clock;
   fullMoveClock = full_clock;
-  
+
   // en passant pawn capture
   lastMoveDoublePawnPush = ep;
   dPPFile = dpp;
@@ -104,7 +104,7 @@ board::board(bitboard * startPositions, bool * castling, bool ep, int dpp, uint8
 
   // value
   value = val;
-  
+
   // hash
   hash_value = hash;
 }
@@ -130,9 +130,9 @@ board::board(board & b1) {
 
   // en passant pawn capture
   lastMoveDoublePawnPush = b1.lastMoveDoublePawnPush;
-  
+
   // double pawn push file
-  
+
   dPPFile = b1.dPPFile;
 
   // side to move
@@ -140,7 +140,7 @@ board::board(board & b1) {
 
   // value
   value = b1.value;
-  
+
   // hash
   hash_value = b1.hash_value;
 }
@@ -149,7 +149,7 @@ board::board( std::string fen ) {
     int j,i=0;
     for ( j=0;j<12;j++ ) pieceBoards[j] = 0;
     int cp;
-    
+
     for ( int count_slash=0; count_slash<8; count_slash++ ) {
         j = 0;
         while ( fen[i] != '/' && fen[i] != ' ' ) {
@@ -168,7 +168,7 @@ board::board( std::string fen ) {
                     i++;
                     cp = -1;
                     break;
-                case 'P':                        
+                case 'P':
                     cp = 0;
                     break;
                 case 'R':
@@ -210,19 +210,19 @@ board::board( std::string fen ) {
                 j++;
                 i++;
             }
-            
+
         }
         i++;
     }
-    
+
     sideToMove = ( fen[i] == 'w' ) ? white : black;
     i += 2;
-    
+
     castleWhiteKingSide  = false;
     castleWhiteQueenSide = false;
     castleBlackKingSide  = false;
     castleBlackQueenSide = false;
-    
+
     if ( fen[i] == '-' ) {
         i += 2;
     }
@@ -246,7 +246,7 @@ board::board( std::string fen ) {
         }
         i++;
     }
-    
+
     if ( fen[i] == '-' ) {
         lastMoveDoublePawnPush = false;
         i += 2;
@@ -256,9 +256,9 @@ board::board( std::string fen ) {
         dPPFile = int( fen[i] - 'a' );
         i += 3;
     }
-    
+
     std::stringstream clock;
-    
+
     while ( fen[i] != ' ' ) {
         clock << fen[i];
         i++;
@@ -266,18 +266,18 @@ board::board( std::string fen ) {
     clock >> halfMoveClock;
     clock.str("");
     i++;
-    
+
     //come back to this
     while ( fen[i] != '\0' ) {
         clock << fen[i];
         i++;
     }
     clock >> fullMoveClock;
-    
-    
+
+
     // value starts at 0
     value = evaluate();
-    
+
     // hash
     hash_value = zobrist_hash();
 }
@@ -286,14 +286,14 @@ board::board( std::string fen ) {
 // operator overloading - do this with hashes instead?
 bool board::operator==( const board& other) {
     int i;
-    
+
     for ( i=0; i<12; i++ ) {
         if ( pieceBoards[i] != other.pieceBoards[i] ) {
             std::cout << "pieceBoard[" << i << "] is wrong\n";
             return false;
         }
     }
-    
+
     if ( castleWhiteKingSide != other.castleWhiteKingSide ||
          castleWhiteQueenSide != other.castleWhiteQueenSide ||
          castleBlackKingSide != other.castleBlackKingSide ||
@@ -301,37 +301,37 @@ bool board::operator==( const board& other) {
         std::cout << "castling rights wrong\n";
         return false;
     }
-    
+
     if ( halfMoveClock != other.halfMoveClock ) {
         std::cout << "half move clock wrong\n";
         return false;
     }
-    
+
     if ( fullMoveClock != other.fullMoveClock ) {
         std::cout << "full move clock clock wrong\n";
         return false;
     }
-    
+
     if ( lastMoveDoublePawnPush != other.lastMoveDoublePawnPush ) {
         std::cout << "ep wrong\n";
         return false;
     }
-    
+
     if ( (lastMoveDoublePawnPush) && (dPPFile != other.dPPFile) ) {
         std::cout << "dPPFile wrong\n";
         return false;
     }
-    
+
     if ( sideToMove != other.sideToMove ) {
         std::cout << "side wrong\n";
         return false;
     }
-    
+
     if ( value != other.value ) {
         std::cout << "value wrong\n";
         return false;
     }
-    
+
     return true;
 }
 
@@ -409,7 +409,7 @@ void board::print_board(std::ostream& cout) {
   bitboard tmp;
   char to_print[64];
   for (i=0;i<64;i++) to_print[i]='.';
-  
+
   for (i=0;i<12;i++) {
     tmp = pieceBoards[i];//pieces[i];
     for (j=0;j<64;j++) {
@@ -420,7 +420,7 @@ void board::print_board(std::ostream& cout) {
       //if (~tmp) break;
     }
   }
-  
+
   cout << "   A B C D E F G H\n\n";
   for (i=7;i>=0;i--) {
     cout << i+1 << " ";
@@ -438,7 +438,7 @@ void board::print_board_indent( std::ostream& cout, int indent ) {
   bitboard tmp;
   char to_print[64];
   for (i=0;i<64;i++) to_print[i]='.';
-  
+
   for (i=0;i<12;i++) {
     tmp = pieceBoards[i];//pieces[i];
     for (j=0;j<64;j++) {
@@ -449,9 +449,9 @@ void board::print_board_indent( std::ostream& cout, int indent ) {
       //if (~tmp) break;
     }
   }
-  
+
   for (i=0;i<indent;i++) cout << " ";
-  
+
   cout << "   A B C D E F G H\n\n";
   for (i=7;i>=0;i--) {
     for (j=0;j<indent;j++) cout << " ";
@@ -468,11 +468,11 @@ void board::print_board_indent( std::ostream& cout, int indent ) {
 
 void board::print_all(std::ostream& cout) {
   print_board(cout);
-  
+
   cout << "\nSide to move:\n";
   if ( sideToMove==white) cout << "  White\n";
   else cout << "  Black\n";
-  
+
   cout << "\nCastling rights:\n";
   cout << "  White can";
   if ( !castleWhiteKingSide ) cout << "not";
@@ -533,11 +533,11 @@ std::string board::FEN() {
       ss << '/';
     }
   }
-  
-  
+
+
   if (sideToMove==white) ss << " w "; else ss << " b ";
 
-  
+
   if ( !( castleWhiteKingSide | castleWhiteQueenSide | castleBlackKingSide | castleBlackQueenSide ) ) {
     ss << "-";
   }
@@ -601,10 +601,10 @@ void board::FEN( std::ostream& ss ) {
       ss << "/";
     }
   }
-  
+
   if (sideToMove==white) ss << " w "; else ss << " b ";
 
-  
+
   if ( !( castleWhiteKingSide | castleWhiteQueenSide | castleBlackKingSide | castleBlackQueenSide ) ) {
     ss << "-";
   }

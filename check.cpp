@@ -38,7 +38,7 @@ bool board::is_check(colour side, piece * checkingPiece,  int * checkingInd, boo
 
   // pawns
   _check = pawnAttackNaive   (kingpos, side) & pieceBoards[(6*otherSide)+0];
-  if ( _check ) { 
+  if ( _check ) {
       *checkingPiece = piece(0);
       *checkingInd = last_set_bit( _check );
       count++;
@@ -106,29 +106,29 @@ bool board::is_checkmate(colour side) {
     child = doMove(cpy,moves[i]);
     if ( ! child.is_check(side) ) return false;
   }
-  
+
 //  for ( int i=0; i<num_moves; i++ ) {
 //    print_move( moves[i] );
 //    std::cout << ": is a check\n";
 //  }
-  
+
 //  move_t c8b8 = moves[ num_moves - 2 ];
 //  print_move( c8b8 );
 //  std::cout << std::endl;
 //  std::cout << c8b8.give();
 //  std::cout << std::endl;
 //  child = doMove( cpy, c8b8 );
-//  
+//
 //  child.print_board();
-//  
+//
 //  std::cout << bool( child == cpy ) << std::endl;
-//  
+//
 //  bitboard pb[12];
-//  
+//
 //  child.getBitboards( pb );
-//  
+//
 //  std::cout << pb[11] << std::endl;
-  
+
   return true;
 }
 
@@ -142,20 +142,20 @@ bool board::was_lastmove_check( move_t lastmove ) {
     bitboard to_square   = ( 1ULL <<   to_ind );
     bitboard kingBoard   = pieceBoards[(sideToMove*6)+5];
     int king_ind         = log2( kingBoard );
-    
+
     for ( i=sideToMove*6; i<(1+sideToMove)*6; i++ ) {
         if ( pieceBoards[i] & to_square ) {
             movingPiece = colourPiece(i);
             break;
         }
     }
-    
+
     colour otherSide = ( sideToMove == white ) ? black : white;  // side that just moved
     bitboard _white   = whiteSquares();
     bitboard _black   = blackSquares();
     bitboard blockers = takenSquares();
-    
-    
+
+
     // direct check
     switch ( movingPiece % 6 ) {
         case 0:
@@ -167,7 +167,7 @@ bool board::was_lastmove_check( move_t lastmove ) {
             if ( kingBoard & pieceTargets( to_ind, _white, _black, movingPiece ) ) return true;
             break;
     }
-    
+
     // discovered check
     bitboard _ray;
     bitboard tmp;
@@ -200,8 +200,8 @@ bool board::was_lastmove_check( move_t lastmove ) {
             }
         }
     }
-    
-    
+
+
     // en passant
     if ( lastmove.is_ep_capture() ) {
         int other_pawn_ind = to_ind + ( ( sideToMove==black ) ? S : N );
@@ -209,7 +209,7 @@ bool board::was_lastmove_check( move_t lastmove ) {
         bitboard right_ray = rays[2][from_ind] & rays[2][other_pawn_ind] & blockers;
         bitboard attacker_left  = ( 1ULL << last_set_bit(left_ray) );
         bitboard attacker_right = ( 1ULL << first_set_bit(right_ray) );
-        
+
         if ( ( attacker_left  & pieceBoards[(otherSide*6)+5] ) &&
              ( attacker_right & ( pieceBoards[(sideToMove*6) + 1] |
                                   pieceBoards[(sideToMove*6) + 4] ) ) ) {
@@ -232,13 +232,13 @@ bool board::was_lastmove_check( move_t lastmove ) {
         int rook_ind = to_ind + 1;
         if ( kingBoard & rookTargets( rook_ind, _white, _black, otherSide ) ) return true;
     }
-    
+
     // promotion
     if ( lastmove.is_promotion() ) {
         colourPiece prom_piece = colourPiece( (6*otherSide) + lastmove.which_promotion() );
         if ( kingBoard & pieceTargets( to_ind, _white, _black, prom_piece) ) return true;
     }
-    
+
     return false;
 }
 
@@ -253,14 +253,14 @@ bool board::is_checking_move( move_t move ) {
     bitboard to_square   = ( 1ULL <<   to_ind );
     bitboard kingBoard   = pieceBoards[((1-sideToMove)*6)+5];       // king under attack
     int king_ind         = log2( kingBoard );
-    
+
     for ( i=sideToMove*6; i<(1+sideToMove)*6; i++ ) {
         if ( pieceBoards[i] & to_square ) {
             movingPiece = colourPiece(i);
             break;
         }
     }
-    
+
     colour otherSide = ( sideToMove == white ) ? black : white;  // side under attack
     bitboard _white   = whiteSquares();
     bitboard _black   = blackSquares();

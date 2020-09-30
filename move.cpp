@@ -53,35 +53,35 @@ int _stoi( std::string s ) {
 //std::string board::SAN_post_move( move_t _move ) {
 //    std::string ret;
 //    int i;
-//    
+//
 //    if      ( _move.is_queenCastle() ) ret += "O-O-O";
 //    else if  ( _move.is_kingCastle() ) ret += "O-O";
-//    
-//    else {        
+//
+//    else {
 //        int from_sq = _move.from_sq();
 //        int to_sq   = _move.to_sq();
 //        colourPiece cP;
-//        
+//
 //        for ( i=0; i<12; i++ ) {
 //            if ( is_bit_set(pieceBoards[i], to_sq) ) {
 //                cP = i;
 //                break;
 //            }
 //        }
-//        
+//
 //        char piece_sym = symbols[int(_piece)+6];
 //        std::string from_sq_str =  itos( from_sq );
 //        std::string to_sq_str   =  itos( to_sq );
-//        
+//
 //        if ( _piece != 0 ) {
 //            ret += piece_sym;
 //        }
-//        
+//
 //        // ambiguity tests
 //        colour otherSide = ( sideToMove == white ) ? black : white;
 //        bitboard alternates = pieceTargets( to_sq, whiteSquares(), blackSquares(), (cP+6)%12 );
 //        alternates &= pieceBoards[cP];
-//        
+//
 //        if ( alternates ) {
 //            int other_ranks[8];
 //            int other_files[8];
@@ -99,7 +99,7 @@ int _stoi( std::string s ) {
 //                other_files[count] = tmp % 8;
 //                count++;
 //            }
-//            
+//
 //            for ( i=0; i<count; i++ ) {
 //                if ( other_files[i] == from_file ) {
 //                    unique_file = false;
@@ -108,29 +108,29 @@ int _stoi( std::string s ) {
 //                    unique_rank = false;
 //                }
 //            }
-//            
+//
 //            if      ( unique_file ) ret += char('a'+from_file);
 //            else if ( unique_rank ) ret += char('1'+from_rank);
 //            else                    ret += char('a'+from_file) + char('1'+from_rank);
 //        }
-//        
+//
 //        if ( _move.is_capture() ) {
 //            ret += "x";
 //        }
-//        
+//
 //        ret += to_sq_str;
-//        
+//
 //        if ( _move.is_promotion() ) {
 //            ret += "=";
 //            ret += symbols[int(_move.which_promotion())];
 //        }
 //    }
-//    
+//
 //    if ( is_check(sideToMove) ) {
 //        if ( is_checkmate(sideToMove) ) ret += "#";
 //        else                ret += "+";
 //    }
-//    
+//
 //    return ret;
 //}
 //
@@ -138,34 +138,34 @@ int _stoi( std::string s ) {
 //    std::string ret;
 //    int i;
 //    colour otherSide = ( sideToMove == white ) ? black : white;
-//    
+//
 //    if      ( _move.is_queenCastle() ) ret += "O-O-O";
 //    else if  ( _move.is_kingCastle() ) ret += "O-O";
-//    
-//    else {        
+//
+//    else {
 //        int from_sq = _move.from_sq();
 //        int to_sq   = _move.to_sq();
 //        colourPiece cP;
-//        
+//
 //        for ( i=0; i<12; i++ ) {
 //            if ( is_bit_set(pieceBoards[i], from_sq) ) {
 //                cP = i;
 //                break;
 //            }
 //        }
-//        
+//
 //        char piece_sym = symbols[int(_piece)+6];
 //        std::string from_sq_str =  itos( from_sq );
 //        std::string to_sq_str   =  itos( to_sq );
-//        
+//
 //        if ( _piece != 0 ) {
 //            ret += piece_sym;
 //        }
-//        
+//
 //        // ambiguity tests
 //        bitboard alternates = pieceTargets( to_sq, whiteSquares(), blackSquares(), (cP+6)%12 );
 //        alternates &= pieceBoards[cP];
-//        
+//
 //        int other_ranks[8];
 //        int other_files[8];
 //        int from_file = from_sq % 8;
@@ -174,7 +174,7 @@ int _stoi( std::string s ) {
 //        bool unique_rank = true;
 //        int count = 0;
 //        int tmp;
-//        
+//
 //        if ( alternates ) {
 //            while ( alternates ) {
 //                tmp = first_set_bit( alterantes );
@@ -183,7 +183,7 @@ int _stoi( std::string s ) {
 //                other_files[count] = tmp % 8;
 //                count++;
 //            }
-//            
+//
 //            for ( i=0; i<count; i++ ) {
 //                if ( other_files[i] == from_file ) {
 //                    unique_file = false;
@@ -192,30 +192,30 @@ int _stoi( std::string s ) {
 //                    unique_rank = false;
 //                }
 //            }
-//            
+//
 //            if      ( unique_file ) ret += char('a'+from_file);
 //            else if ( unique_rank ) ret += char('1'+from_rank);
 //            else                    ret += char('a'+from_file) + char('1'+from_rank);
 //        }
-//        
+//
 //        if ( _move.is_capture() ) {
 //            ret += "x";
 //        }
-//        
+//
 //        ret += to_sqr_str;
-//        
+//
 //        if ( _move.is_promotion() ) {
 //            ret += "=";
 //            ret += symbols[int(_move.which_promotion())];
 //        }
 //    }
-//    
+//
 //    if ( is_checking_move( _move ) ) {
 //        board child = doMove( *this, _move );
 //        if ( is_checkmate( otherSide ) ) ret += "#";
 //        else                             ret += "+";
 //    }
-//    
+//
 //    return ret;
 //}
 //
@@ -237,18 +237,18 @@ int _stoi( std::string s ) {
 //            return move_t ( 60, 58, 0, 0, 1, 1 );
 //        }
 //    }
-//    
+//
 //    int len = san.size();
 //    int to_sq;
 //    bool prom = false;
 //    bool s0 = 0;
 //    bool s1 = 0;
-//    
+//
 //    if ( san[len-1] == '#' || san[len-1] == '+' ) {
 //        san = san.substr( 0, len-1 );
 //        len--;
 //    }
-//    
+//
 //    if ( san[len-2] == '=' ) {
 //        prom = true;
 //        switch ( san[len-1] ) {
@@ -270,7 +270,7 @@ int _stoi( std::string s ) {
 //                break;
 //        }
 //    }
-//    
+//
 //    to_sq = _stoi( san.substr( len-2, 2 ) );
 //    san = san.substr( 0, len-2 );
 //    len -= 2;
@@ -280,16 +280,16 @@ int _stoi( std::string s ) {
 //        san = san.substr( 0, len-1 );
 //        l--;
 //    }
-//    
+//
 //    if ( san == "" ) {
 //        // pawn move
 //        return move_t ( to_sq + ( ( sideToMove == white ) ? S+S : N+N ), to_sq, prom, false, s0, s1 );
 //    }
-//    
+//
 //    int from_file;
 //    int to_file;
 //    piece mP;
-//    
+//
 //    switch ( san[0] ) {
 //        case 'R':
 //            mp = 1;
@@ -400,14 +400,14 @@ void print_move(struct move_t move, std::ostream& cout) {
   //char from_c[2];
   int fromSq = move.from_sq();
   int toSq   = move.to_sq();
-  
+
   //itos( fromSq, from_c );
   //itos(   toSq,   to_c );
-  
+
   itos( fromSq, cout );
   // cout << " to ";
   itos( toSq, cout );
-  
+
   if ( move.is_promotion() ) {
     switch ( move.flags() & 6 ) {
         case 0:
@@ -437,7 +437,7 @@ move_t stom( move_t* moves, int n_moves, std::string s ) {
     int to_ind   = _stoi( to );
 //    std::cout << "Inputted from_ind: " << from_ind << std::endl;
 //    std::cout << "Inputted to_ind:   " << to_ind << std::endl;
-    
+
     for ( int i=0; i<n_moves; i++ ) {
 //        std::cout << "Possible move: ";
 //        print_move( moves[i] );
@@ -447,7 +447,7 @@ move_t stom( move_t* moves, int n_moves, std::string s ) {
                 return moves[i];
         }
     }
-    
+
     return move_t ( 0, 0, 0, 0, 0, 0 );
 }
 
@@ -529,7 +529,7 @@ bitboard kingTargets (int sq, bitboard _white, bitboard _black, colour movingCol
 bitboard bishopPushNaive(int sq, bitboard blockers) {
   bitboard tmp;
   bitboard diagRays = 0ULL;
-  
+
   // NE
   diagRays |= rays[dirNE][sq];
   tmp = blockers & rays[dirNE][sq];
@@ -537,7 +537,7 @@ bitboard bishopPushNaive(int sq, bitboard blockers) {
     diagRays &= ~rays[dirNE][first_set_bit( tmp )];
   }
   //print_bb(diagRays,'1');
-  
+
   // SE
   diagRays |= rays[dirSE][sq];
   tmp = blockers & rays[dirSE][sq];
@@ -545,7 +545,7 @@ bitboard bishopPushNaive(int sq, bitboard blockers) {
     diagRays &= ~rays[dirSE][last_set_bit( tmp )];
   }
   //print_bb(diagRays,'1');
-  
+
   // SW
   diagRays |= rays[dirSW][sq];
   tmp = blockers & rays[dirSW][sq];
@@ -553,7 +553,7 @@ bitboard bishopPushNaive(int sq, bitboard blockers) {
     diagRays &= ~rays[dirSW][last_set_bit( tmp )];
   }
   //print_bb(diagRays,'1');
-  
+
   // NW
   diagRays |= rays[dirNW][sq];
   tmp = blockers & rays[dirNW][sq];
@@ -561,7 +561,7 @@ bitboard bishopPushNaive(int sq, bitboard blockers) {
     diagRays &= ~rays[dirNW][first_set_bit( tmp )];
   }
   //print_bb(diagRays,'1');
-  
+
   return diagRays;
 }
 
@@ -575,15 +575,15 @@ bitboard bishopTargets(int sq, bitboard _white, bitboard _black, colour movingCo
 bitboard rookPushNaive(int sq, bitboard blockers) {
   bitboard tmp;
   bitboard compRays = 0ULL;
-  
+
   // N
-  compRays |= rays[dirN][sq];  
+  compRays |= rays[dirN][sq];
   tmp = blockers & rays[dirN][sq];
   if ( tmp ) {
     compRays &= ~rays[dirN][first_set_bit( tmp )];
   }
   //print_bb(compRays,'1');
-  
+
   // E
   compRays |= rays[dirE][sq];
   tmp = blockers & rays[dirE][sq];
@@ -591,7 +591,7 @@ bitboard rookPushNaive(int sq, bitboard blockers) {
     compRays &= ~rays[dirE][first_set_bit( tmp )];
   }
   //print_bb(compRays,'1');
-  
+
   // S
   compRays |= rays[dirS][sq];
   tmp = blockers & rays[dirS][sq];
@@ -599,7 +599,7 @@ bitboard rookPushNaive(int sq, bitboard blockers) {
     compRays &= ~rays[dirS][last_set_bit( tmp )];
   }
   //print_bb(compRays,'1');
-  
+
   // W
   compRays |= rays[dirW][sq];
   tmp = blockers & rays[dirW][sq];
@@ -607,7 +607,7 @@ bitboard rookPushNaive(int sq, bitboard blockers) {
     compRays &= ~rays[dirW][last_set_bit( tmp )];
   }
   //print_bb(compRays,'1');
-  
+
   return compRays;
 }
 
@@ -843,7 +843,7 @@ int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingIn
 //      print_bb( targets );
       int to_ind ;
 //      targets >>= to_ind;
-      
+
       while ( targets ) {
           to_ind = first_set_bit( targets );
             if ( _other & ( 1ULL << to_ind ) ) {
@@ -864,18 +864,18 @@ int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingIn
             }
           targets &= ( targets - 1ULL );
       }
-      
+
       if ( double_check ) {
           return count;
       }
-      
+
       // take the checking piece
       int from_sq;
       bitboard defender;
 //      std::cout << "Checking index: " << checkingInd << std::endl;
       for ( int i=(6*sideToMove); i<(6*sideToMove)+5; i++ ) {
           defender = pieceTargets( checkingInd, _white, _black, colourPiece((i+6)%12) ) & pieceBoards[i];
-          
+
           while ( defender ) {
               from_sq = first_set_bit( defender );
 //              if ( defender & 1ULL ) {
@@ -910,9 +910,9 @@ int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingIn
       }
       if ( is_bit_set( kingTargets( kingInd, _white, _black, sideToMove ), checkingInd ) ) { /*std::cout << "can't block - kiss\n";*/ return count; }
       if ( checkingPiece%6==0 || checkingPiece%6==2 || checkingPiece%6==5 ) { /*    std::cout << "can't block - attacking piece is " << checkingPiece << "\n"; */return count; }
-        
-      
-      
+
+
+
         // moving into the way
         // first find all the squares in the way?
         int blockingInd;
@@ -921,7 +921,7 @@ int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingIn
         bitboard blockers;
         int defenderInd;
         int _dir;
-        
+
         if ( ind_diff>0 ) {
             if ( ind_diff == 63 || ind_diff%9 == 0 ) _dir = NE;
             else if ( checkingInd/8 == kingInd/8 ) _dir = E;
@@ -936,7 +936,7 @@ int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingIn
             else if ( (-ind_diff)%7 == 0 ) _dir = SE;
             else return count;
         }
-        
+
         for ( blockingInd=kingInd+_dir; blockingInd!=checkingInd; blockingInd+=_dir ) {
             // pawns
             blockers = pieceBoards[sideToMove*6];
@@ -965,8 +965,8 @@ int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingIn
                 }
                 blockers &= ( blockers - 1 );
             }
-            
-            
+
+
             // rooks, bishops, knights, queens
             for ( blockingPiece=(sideToMove*6)+1; blockingPiece<(sideToMove*6)+5; blockingPiece++ ) {
                 blockers = pieceBoards[blockingPiece] & pieceTargets( blockingInd, _white, _black, colourPiece((blockingPiece+6)%12) );
@@ -983,7 +983,7 @@ int board::get_out_of_check( move_t * moves, piece checkingPiece, int checkingIn
                 }
             }
         }
-      
+
       return count;
 }
 
@@ -1000,7 +1000,7 @@ int board::gen_legal_moves ( move_t * moves) {
   bitboard _other = ( ( sideToMove == white ) ? _black : _white );
   colour otherSide = ( ( sideToMove == white ) ? black : white );
   bitboard defender;
-  
+
   // if we're in check we can limit the search
   piece checkingPiece;
   int checkingInd;
@@ -1145,7 +1145,7 @@ bool board::is_legal( struct move_t move ) {
         print_move( move );
         std::cout << " is a legal move\n";
     }
-    
+
     colourPiece movingPiece;
     int from_ind = move.from_sq();
     int to_ind = move.to_sq();
@@ -1156,13 +1156,13 @@ bool board::is_legal( struct move_t move ) {
             break;
         }
     }
-    
+
     colour otherSide = ( sideToMove == white ) ? black : white;
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
     bitboard _other = ( sideToMove == white ) ? _black : _white;
     bitboard _own   = ( sideToMove == white ) ? _white : _black;
-    
+
     // king can't move into check
     if ( movingPiece%6 == 5 ) {
         if ( pawnAttackNaive( to_ind, sideToMove ) & pieceBoards[6*otherSide] ) return false;
@@ -1173,7 +1173,7 @@ bool board::is_legal( struct move_t move ) {
         if ( kingTargets( to_ind, _white&(~from_square), _black&(~from_square), sideToMove ) & pieceBoards[(6*otherSide)+5] ) return false;
         return true;
     }
-    
+
     // can't move pinned pieces
     bitboard _ray;
     bitboard _ray2;
@@ -1181,7 +1181,7 @@ bool board::is_legal( struct move_t move ) {
     bitboard tmp;
     bitboard attacker;
     bitboard first;
-    
+
     for ( int i=0; i<8; i++ ) {
         _ray2 = rays[i][from_ind] & blockers;
         if ( (i+1)%8 < 4 ) _ray2 = ( 1ULL << first_set_bit( _ray2 ) );
@@ -1230,7 +1230,7 @@ bool board::is_legal( struct move_t move ) {
             }
         }
     }
-    
+
     if ( move.is_ep_capture() ) {
 //        std::cout << "testing ep capture for legality\n";
         int other_pawn_ind = to_ind + ( ( sideToMove==white ) ? S : N );
@@ -1238,7 +1238,7 @@ bool board::is_legal( struct move_t move ) {
         bitboard right_ray = rays[2][from_ind] & rays[2][other_pawn_ind] & blockers;
         bitboard attacker_left  = ( left_ray  ) ? ( 1ULL << last_set_bit(left_ray) ) : 0;
         bitboard attacker_right = ( right_ray ) ? ( 1ULL << first_set_bit(right_ray) ) : 0;
-        
+
         if ( ( attacker_left  & pieceBoards[(sideToMove*6)+5] ) &&
              ( attacker_right & ( pieceBoards[(otherSide*6) + 1] |
                                   pieceBoards[(otherSide*6) + 4] ) ) ) {
@@ -1251,8 +1251,8 @@ bool board::is_legal( struct move_t move ) {
 //            std::cout << "revealed check from the left\n";
             return false;
         }
-        
+
     }
-    
+
     return true;
 }
