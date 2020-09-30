@@ -241,3 +241,66 @@ bool board::was_lastmove_check( move_t lastmove ) {
     
     return false;
 }
+
+
+bool board::is_checking_move( move_t move ) {
+    // assume the move is legal
+    int i,j;
+    colourPiece movingPiece;
+    int from_ind = move.from_sq();
+    int to_ind = move.to_sq();
+    bitboard from_square = ( 1ULL << from_ind );
+    bitboard to_square   = ( 1ULL <<   to_ind );
+    bitboard kingBoard   = pieceBoards[((1-sideToMove)*6)+5];       // king under attack
+    int king_ind         = log2( kingBoard );
+    
+    for ( i=sideToMove*6; i<(1+sideToMove)*6; i++ ) {
+        if ( pieceBoards[i] & to_square ) {
+            movingPiece = colourPiece(i);
+            break;
+        }
+    }
+    
+    colour otherSide = ( sideToMove == white ) ? black : white;  // side under attack
+    bitboard _white   = whiteSquares();
+    bitboard _black   = blackSquares();
+    bitboard blockers = takenSquares();
+
+    // direct check
+    if ( pieceTargets(to_ind,_white,_black,movingPiece) & kingBoard ) {
+        return true;
+    }
+
+    // discover check
+    bitboard _ray;
+    bitboard tmp;
+    bitboard attacker;
+    // rooks and queens
+    for ( i=0; i<8; i+=2 ) {
+        if ( kingBoard & rays[i][from_ind] ) {
+            j = (i+4)%8;
+            _ray = rays[j][king_ind];
+            tmp = blockers & _ray;
+            if ( tmp ) {
+                if ( (j+2)%6 < 4 ) attacker = ( 1ULL << first_set_bit( tmp ) );
+                else               attacker = ( 1ULL <<  last_set_bit( tmp ) );
+                if ( attacker & pieceBoards[(6*sideToMove)+1] ) return true;
+                if ( attacker & pieceBoards[(6*sideToMove)+5] ) return true;
+            }
+        }
+    }
+    // bishops and queens
+    for ( i=1; i<8; i+=2 ) {
+        if ( kingBoard & rays[i][from_ind] ) {
+            j = (i+4)%8;
+            _ray = rays[j][king_ind];
+            tmp = blockers & _ray;
+            if ( tmp ) {
+                if ( (j+2)%6 < 4 ) attacker = ( 1ULL << first_set_bit( tmp ) );
+                else               attacker = ( 1ULL <<  last_set_bit( tmp ) );
+                if ( attacker & pieceBoards[(6*sideToMove)+3] ) return true;
+                if ( attacker & pieceBoards[(6*sideToMove)+5] ) return true;
+            }
+        }
+    }
+}
