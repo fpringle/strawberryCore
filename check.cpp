@@ -94,42 +94,39 @@ bool board::is_check(colour side, piece * checkingPiece,  int * checkingInd, boo
 
 bool board::is_checkmate(colour side) {
   if ( ! is_check(side) ) return false;
-  board child;
-  board cpy = * this;
-  cpy.set_side(side);
+  colour pre_side = sideToMove;
+  set_side(side);
   struct move_t moves[256];
-  int num_moves = cpy.gen_moves( moves );
+  int num_moves = gen_legal_moves( moves );
+  set_side(pre_side);
+  return (num_moves == 0);
+}
 
-  for (int i=0; i<num_moves; i++) {
-//      print_move( moves[i] );
-//      std::cout << std::endl;
-    child = doMove(cpy,moves[i]);
-    if ( ! child.is_check(side) ) return false;
+
+int board::is_checkmate() {
+  // return  1  if white is in checkmate,
+  //        -1  if black is in checkmate,
+  //         0  otherwise
+  if ( !(is_check(black) || is_check(white) ) ) return false;
+  colour pre_side = sideToMove;
+  struct move_t moves[256];
+  int num_moves = gen_legal_moves( moves );
+
+  if (num_moves == 0) {
+      return (sideToMove==white) ? 1 : -1;
   }
 
-//  for ( int i=0; i<num_moves; i++ ) {
-//    print_move( moves[i] );
-//    std::cout << ": is a check\n";
-//  }
+  set_side( (sideToMove==white) ? black : white);
 
-//  move_t c8b8 = moves[ num_moves - 2 ];
-//  print_move( c8b8 );
-//  std::cout << std::endl;
-//  std::cout << c8b8.give();
-//  std::cout << std::endl;
-//  child = doMove( cpy, c8b8 );
-//
-//  child.print_board();
-//
-//  std::cout << bool( child == cpy ) << std::endl;
-//
-//  bitboard pb[12];
-//
-//  child.getBitboards( pb );
-//
-//  std::cout << pb[11] << std::endl;
+  num_moves = gen_legal_moves( moves );
 
-  return true;
+  if (num_moves == 0) {
+      set_side( (sideToMove==white) ? black : white);
+      return (sideToMove==white) ? -1 : 1;
+  }
+
+  return 0;
+
 }
 
 

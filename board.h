@@ -171,6 +171,7 @@ class board {
     bool is_check(colour);
     bool is_check(colour, piece*, int*, bool*);
     bool is_checkmate(colour);
+    int is_checkmate();
     bool was_lastmove_check(move_t);
     bool is_checking_move(move_t);
 };
