@@ -139,6 +139,13 @@ class board {
     void set_value(int32_t);
     void update_hash();
     void set_hash(uint64_t );
+    void setBitboards(bitboard*);
+    void setCastlingRights(bool*);
+    void setEP(bool);
+    void setdPPFile(int);
+    void setClock(int);
+    void setFullClock(int);
+    int num_pieces_left();
 
     // move generation
     // defined in move.cpp
@@ -151,6 +158,10 @@ class board {
     bool is_legal( struct move_t );
     int get_out_of_check( struct move_t*, piece, int, int, bool );
     int gen_legal_moves( struct move_t* );
+
+    // in-place action
+    // defined in action.cpp
+    void doMove(move_t);
 
     // hashing
     // defined in hash.cpp

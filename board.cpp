@@ -660,6 +660,34 @@ void board::set_hash( uint64_t _hash ) {
     hash_value = _hash;
 }
 
+void board::setBitboards(bitboard * bb) {
+    for (int i=0; i<12; i++) pieceBoards[i] = bb[i];
+}
+
+void board::setBitboards(bool * castling) {
+    castleWhiteKingSide  = castling[0];
+    castleWhiteQueenSide = castling[1];
+    castleBlackKingSide  = castling[2];
+    castleBlackQueenSide = castling[3];
+}
+
+void board::setEP(bool ep) {
+    lastMoveDoublePawnPush = ep;
+}
+
+void board::setdPPFile(int file) {
+    dPPFile = file;
+}
+
+void board::setClock(int clk) {
+    halfMoveClock = clk;
+}
+
+void board::setFullClock(int clk) {
+    fullMoveClock = clk;
+}
+
+
 bitboard board::whiteSquares() {
   int i;
   bitboard ret = 0;
