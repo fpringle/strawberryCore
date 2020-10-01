@@ -6,3 +6,5 @@
 /tests/perfttest.cpp
 /tests/perft_test.cpp
 /perft3.txt
+*.swp
+__pycache__

@@ -143,17 +143,17 @@ bool board::was_lastmove_check( move_t lastmove ) {
     bitboard kingBoard   = pieceBoards[(sideToMove*6)+5];
     int king_ind         = log2( kingBoard );
 
-    for ( i=sideToMove*6; i<(1+sideToMove)*6; i++ ) {
+    colour otherSide = ( sideToMove == white ) ? black : white;  // side that just moved
+    bitboard _white   = whiteSquares();
+    bitboard _black   = blackSquares();
+    bitboard blockers = takenSquares();
+
+    for ( i=(otherSide)*6; i<(1+otherSide)*6; i++ ) {
         if ( pieceBoards[i] & to_square ) {
             movingPiece = colourPiece(i);
             break;
         }
     }
-
-    colour otherSide = ( sideToMove == white ) ? black : white;  // side that just moved
-    bitboard _white   = whiteSquares();
-    bitboard _black   = blackSquares();
-    bitboard blockers = takenSquares();
 
 
     // direct check
@@ -182,7 +182,7 @@ bool board::was_lastmove_check( move_t lastmove ) {
                 if ( (j+2)%6 < 4 ) attacker = ( 1ULL << first_set_bit( tmp ) );
                 else               attacker = ( 1ULL <<  last_set_bit( tmp ) );
                 if ( attacker & pieceBoards[(6*otherSide)+1] ) return true;
-                if ( attacker & pieceBoards[(6*otherSide)+5] ) return true;
+                if ( attacker & pieceBoards[(6*otherSide)+4] ) return true;
             }
         }
     }
@@ -196,7 +196,7 @@ bool board::was_lastmove_check( move_t lastmove ) {
                 if ( (j+2)%6 < 4 ) attacker = ( 1ULL << first_set_bit( tmp ) );
                 else               attacker = ( 1ULL <<  last_set_bit( tmp ) );
                 if ( attacker & pieceBoards[(6*otherSide)+3] ) return true;
-                if ( attacker & pieceBoards[(6*otherSide)+5] ) return true;
+                if ( attacker & pieceBoards[(6*otherSide)+4] ) return true;
             }
         }
     }
@@ -255,7 +255,7 @@ bool board::is_checking_move( move_t move ) {
     int king_ind         = log2( kingBoard );
 
     for ( i=sideToMove*6; i<(1+sideToMove)*6; i++ ) {
-        if ( pieceBoards[i] & to_square ) {
+        if ( pieceBoards[i] & from_square ) {
             movingPiece = colourPiece(i);
             break;
         }
@@ -285,7 +285,7 @@ bool board::is_checking_move( move_t move ) {
                 if ( (j+2)%6 < 4 ) attacker = ( 1ULL << first_set_bit( tmp ) );
                 else               attacker = ( 1ULL <<  last_set_bit( tmp ) );
                 if ( attacker & pieceBoards[(6*sideToMove)+1] ) return true;
-                if ( attacker & pieceBoards[(6*sideToMove)+5] ) return true;
+                if ( attacker & pieceBoards[(6*sideToMove)+4] ) return true;
             }
         }
     }
@@ -299,7 +299,7 @@ bool board::is_checking_move( move_t move ) {
                 if ( (j+2)%6 < 4 ) attacker = ( 1ULL << first_set_bit( tmp ) );
                 else               attacker = ( 1ULL <<  last_set_bit( tmp ) );
                 if ( attacker & pieceBoards[(6*sideToMove)+3] ) return true;
-                if ( attacker & pieceBoards[(6*sideToMove)+5] ) return true;
+                if ( attacker & pieceBoards[(6*sideToMove)+4] ) return true;
             }
         }
     }
