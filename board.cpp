@@ -664,7 +664,7 @@ void board::setBitboards(bitboard * bb) {
     for (int i=0; i<12; i++) pieceBoards[i] = bb[i];
 }
 
-void board::setBitboards(bool * castling) {
+void board::setCastlingRights(bool * castling) {
     castleWhiteKingSide  = castling[0];
     castleWhiteQueenSide = castling[1];
     castleBlackKingSide  = castling[2];

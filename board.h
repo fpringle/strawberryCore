@@ -145,7 +145,6 @@ class board {
     void setdPPFile(int);
     void setClock(int);
     void setFullClock(int);
-    int num_pieces_left();
 
     // move generation
     // defined in move.cpp
@@ -161,7 +160,7 @@ class board {
 
     // in-place action
     // defined in action.cpp
-    void doMove(move_t);
+    void doMoveInPlace(move_t);
 
     // hashing
     // defined in hash.cpp
