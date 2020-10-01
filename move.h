@@ -51,13 +51,13 @@ struct move_t {
     // bit 13:    special 0
     // bit 14:    special 1
     // bit 15:    promotion
-  private:
+    private:
     uint16_t data;
-  public:
+    public:
     move_t();
     move_t(uint8_t,uint8_t,bool,bool,bool,bool);
-//    move_t(std::initializer_list<move_t>) {};
-//    move_t(<brace-enclosed initializer list>) {};
+    //    move_t(std::initializer_list<move_t>) {};
+    //    move_t(<brace-enclosed initializer list>) {};
     uint16_t from_sq();
     uint16_t to_sq();
     uint16_t flags();
@@ -66,14 +66,14 @@ struct move_t {
     piece which_promotion();
     bool is_capture();
     bool is_ep_capture();
-//    bool special1();
-//    bool special0();
+    //    bool special1();
+    //    bool special0();
     bool is_doublePP();
     bool is_kingCastle();
     bool is_queenCastle();
     bool is_castle();
     uint16_t give();
-  };
+    };
 
 // defined in move.cpp
 void print_move( struct move_t, std::ostream& cout = std::cout );

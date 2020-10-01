@@ -51,12 +51,12 @@ void init_keys(uint64_t);
 // total 128 bits?
 
 struct record_t {
-  uint64_t signature;
-  struct move_t best_ref_move;
-  uint8_t depth;
-  int16_t IBV_score;
-  uint8_t age;
-};
+    uint64_t signature;
+    struct move_t best_ref_move;
+    uint8_t depth;
+    int16_t IBV_score;
+    uint8_t age;
+    };
 
 // 1.3e8 seems to be the max
 extern struct record_t table[130000000];

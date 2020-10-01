@@ -8,9 +8,9 @@
 using namespace std;
 
 class indexException: public exception {
-  virtual const char * what() const throw() {
-    return "Index out of range";
-  }
-} indexex;
+    virtual const char * what() const throw() {
+        return "Index out of range";
+        }
+    } indexex;
 
 #endif

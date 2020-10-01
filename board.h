@@ -1,16 +1,16 @@
 /*
- * A header file to define a "board" class to represent
- * the current state of the chessboard.
- *
- * We are using an unsigned 64-bit integer to represent
- * the positions of each type of piece. e.g. if the 10th
- * bit of whiteKnight is set to 1, there is a white knight
- * at position 10.
- *
- * For the square-mapping we use Little-Endian Rank-File,
- * so 0 = A1, 7 = H1, 56 = A8, 63 = H8
- *
- */
+* A header file to define a "board" class to represent
+* the current state of the chessboard.
+*
+* We are using an unsigned 64-bit integer to represent
+* the positions of each type of piece. e.g. if the 10th
+* bit of whiteKnight is set to 1, there is a white knight
+* at position 10.
+*
+* For the square-mapping we use Little-Endian Rank-File,
+* so 0 = A1, 7 = H1, 56 = A8, 63 = H8
+*
+*/
 
 #ifndef __BOARD_H
 #define __BOARD_H
@@ -52,9 +52,9 @@ extern const char colours[2];
 enum colour {white,black};
 enum piece {pawn,rook,knight,bishop,queen,king};
 enum colourPiece {whitePawn,whiteRook,whiteKnight,
-                  whiteBishop,whiteQueen,whiteKing,
-                  blackPawn,blackRook,blackKnight,
-                  blackBishop,blackQueen,blackKing};
+    whiteBishop,whiteQueen,whiteKing,
+    blackPawn,blackRook,blackKnight,
+    blackBishop,blackQueen,blackKing};
 
 
 // defined in board.cpp
@@ -63,30 +63,30 @@ void print_bb( bitboard, char c = 'x', std::ostream& cout = std::cout );
 // the main event
 class board {
 
-  bitboard pieceBoards[12];
-  
-  bool castleWhiteKingSide;
-  bool castleWhiteQueenSide;
-  bool castleBlackKingSide;
-  bool castleBlackQueenSide;
-  
-  int halfMoveClock;
-  int fullMoveClock;
-  
-  bool lastMoveDoublePawnPush;
-  int dPPFile;        // if lastMoveDoublePawnPush = true, epFile gives the file
-                      // of the pawn that just double moved
-  
-  colour sideToMove;
+    bitboard pieceBoards[12];
 
-  // maintain a running value
-  // int32_t value = 0;
-  int32_t value;
-  
-  // store hash of current state
-  uint64_t hash_value;
+    bool castleWhiteKingSide;
+    bool castleWhiteQueenSide;
+    bool castleBlackKingSide;
+    bool castleBlackQueenSide;
 
-  public:
+    int halfMoveClock;
+    int fullMoveClock;
+
+    bool lastMoveDoublePawnPush;
+    int dPPFile;        // if lastMoveDoublePawnPush = true, epFile gives the file
+    // of the pawn that just double moved
+
+    colour sideToMove;
+
+    // maintain a running value
+    // int32_t value = 0;
+    int32_t value;
+
+    // store hash of current state
+    uint64_t hash_value;
+
+    public:
     // constructors
     // defined in board.cpp
     board();
@@ -125,9 +125,9 @@ class board {
     void print_board_indent( std::ostream& cout = std::cout, int indent = 0 );
     void print_all( std::ostream& cout = std::cout );
     std::string FEN( );
-//    std::string SAN_post_move( move_t );
-//    std::string SAN_pre_move ( move_t );
-//    move_t move_from_SAN( std::string );
+    //    std::string SAN_post_move( move_t );
+    //    std::string SAN_pre_move ( move_t );
+    //    move_t move_from_SAN( std::string );
     void FEN( std::ostream& );
 
     // set data
@@ -174,6 +174,6 @@ class board {
     int is_checkmate();
     bool was_lastmove_check(move_t);
     bool is_checking_move(move_t);
-};
+    };
 
 #endif
