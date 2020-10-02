@@ -365,6 +365,26 @@ uint16_t move_t::to_sq()    { return (data >> 6) & 63; }
 uint16_t move_t::flags()    { return (data >> 12); }
 bool move_t::is_quiet()     { return !flags(); }
 bool move_t::is_promotion() { return (flags() & 8); }
+void move_t::set_promotion(piece pc) {
+    switch (pc) {
+        case queen:
+            data = unset_bit(data,13);
+            data = unset_bit(data,14);
+            break;
+        case rook:
+            data = set_bit(data,13);
+            data = unset_bit(data,14);
+            break;
+        case bishop:
+            data = unset_bit(data,13);
+            data = set_bit(data,14);
+            break;
+        case knight:
+            data = set_bit(data,13);
+            data = set_bit(data,14);
+            break;
+    }
+}
 bool move_t::is_capture()   { return (flags() & 1); }
 bool move_t::is_ep_capture(){ return (flags() == 3); }
 //bool move_t::special1()     { return (flags() & 4); }
@@ -435,6 +455,7 @@ move_t stom( move_t* moves, int n_moves, std::string s ) {
     //    std::cout << "to string:   " << to << std::endl;
     int from_ind = _stoi( from );
     int to_ind   = _stoi( to );
+    move_t cand;
     //    std::cout << "Inputted from_ind: " << from_ind << std::endl;
     //    std::cout << "Inputted to_ind:   " << to_ind << std::endl;
 
@@ -442,14 +463,37 @@ move_t stom( move_t* moves, int n_moves, std::string s ) {
         //        std::cout << "Possible move: ";
         //        print_move( moves[i] );
         //        std::cout << std::endl;
-        if ( ( moves[i].from_sq() == from_ind ) &&
-        (  moves[i].to_sq()  ==  to_ind  ) ) {
-            return moves[i];
+        cand = moves[i];
+        if ( ( cand.from_sq() == from_ind ) && ( cand.to_sq() == to_ind  ) ) {
+            if (cand.is_promotion()) {
+                if (s.size() != 5) return move_t ( 0, 0, 0, 0, 0, 0 );
+                switch (s[4]) {
+                    case 'q':
+                    case 'Q':
+                        cand.set_promotion(queen);
+                        break;
+                    case 'r':
+                    case 'R':
+                        cand.set_promotion(rook);
+                        break;
+                    case 'b':
+                    case 'B':
+                        cand.set_promotion(bishop);
+                        break;
+                    case 'n':
+                    case 'N':
+                        cand.set_promotion(knight);
+                        break;
+                    default:
+                        return move_t ( 0, 0, 0, 0, 0, 0 );
+                }
             }
+            return cand;
         }
+    }
 
     return move_t ( 0, 0, 0, 0, 0, 0 );
-    }
+}
 
 // calculate ray tables for move generation
 // bitboards indexed by direction then square

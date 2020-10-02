@@ -47,6 +47,14 @@ bool is_bit_set(bitboard v, int i) {
     return ( v & ( 1ULL << i ) );
     }
 
+bitboard set_bit(bitboard v, int i) {
+    return v | (1ULL << i);
+}
+
+bitboard unset_bit (bitboard v, int i) {
+    return ~ ( (~v) | (1ULL << i));
+}
+
 // moving functions
 bitboard oneN(bitboard b) { return b << N; }
 bitboard oneS(bitboard b) { return b >> -S; }

@@ -129,6 +129,9 @@ int board::is_checkmate() {
 
     }
 
+bool board::gameover() {
+    return is_checkmate(white) || is_checkmate(black);
+}
 
 bool board::was_lastmove_check( move_t lastmove ) {
     int i,j;
@@ -341,4 +344,4 @@ bool board::is_checking_move( move_t move ) {
         }
 
     return false;
-    }
+}

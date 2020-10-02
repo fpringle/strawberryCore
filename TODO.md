@@ -1,4 +1,4 @@
 # To-do list
 - generate checking moves
-- write test timing gen_moves vs gen_legal_moves
-- write function to undo a move (unMove in action.h)
+- undo a move (unMove in action.h)
+- check for stalemate and 50-move rule
