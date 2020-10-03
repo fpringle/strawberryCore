@@ -107,14 +107,14 @@ int board::is_checkmate() {
     // return  1  if white is in checkmate,
     //        -1  if black is in checkmate,
     //         0  otherwise
-    if ( !(is_check(black) || is_check(white) ) ) return false;
+    if ( !(is_check(black) || is_check(white) ) ) return 0;
     colour pre_side = sideToMove;
     struct move_t moves[256];
     int num_moves = gen_legal_moves( moves );
 
     if (num_moves == 0) {
         return (sideToMove==white) ? 1 : -1;
-        }
+    }
 
     set_side( (sideToMove==white) ? black : white);
 
@@ -129,8 +129,16 @@ int board::is_checkmate() {
 
     }
 
+bool board::is_stalemate() {
+    if (is_check(sideToMove)) return false;
+    move_t moves[256];
+    int num_legal = gen_legal_moves(moves);
+    return num_legal == 0;
+}
+
+
 bool board::gameover() {
-    return is_checkmate(white) || is_checkmate(black);
+    return is_checkmate(white) || is_checkmate(black) || is_stalemate();
 }
 
 bool board::was_lastmove_check( move_t lastmove ) {
