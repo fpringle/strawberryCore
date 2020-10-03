@@ -25,14 +25,14 @@ move_t input_move( board b ) {
         std::cout << "Enter move as FileRankFileRank (e.g. e2e4): ";
         std::cin >> inp;
         ret = stom( moves, n_moves, inp );
-        }
-    return ret;
     }
+    return ret;
+}
 
 void play_white(int plies) {
     board b;
     play_white(plies, b);
-    }
+}
 
 void play_white(int plies, board b) {
     init();
@@ -94,7 +94,7 @@ void play_white(int plies, board b) {
 void play_black(int plies) {
     board b;
     play_black(plies, b);
-    }
+}
 
 void play_black(int plies, board b) {
     init();

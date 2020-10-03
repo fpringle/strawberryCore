@@ -25,9 +25,9 @@ int32_t minimax(board b, int depth, colour side) {
             child = doMove( b, moves[i] );
             score = minimax( child, depth-1, black );
             if ( score > max_score ) max_score = score;
-            }
-        return max_score;
         }
+        return max_score;
+    }
 
     else {
         int32_t min_score = std::numeric_limits<int32_t>::max();
@@ -36,10 +36,10 @@ int32_t minimax(board b, int depth, colour side) {
             child = doMove( b, moves[i] );
             score = minimax( child, depth-1, white );
             if ( score < min_score ) min_score = score;
-            }
-        return min_score;
         }
+        return min_score;
     }
+}
 
 struct move_t search_minimax(board b, int depth, colour side) {
     int32_t score;
@@ -57,10 +57,10 @@ struct move_t search_minimax(board b, int depth, colour side) {
             if ( score > max_score ) {
                 max_score = score;
                 best_move = moves[i];
-                }
             }
-        return best_move;
         }
+        return best_move;
+    }
 
     else {
         int32_t min_score = std::numeric_limits<int32_t>::max();
@@ -71,11 +71,11 @@ struct move_t search_minimax(board b, int depth, colour side) {
             if ( score < min_score ) {
                 min_score = score;
                 best_move = moves[i];
-                }
             }
-        return best_move;
         }
+        return best_move;
     }
+}
 
 
 // negamax
@@ -96,9 +96,9 @@ int32_t negamax(board b, int depth, colour side) {
         child = doMove( b, moves[i] );
         score = - negamax( child, depth-1, otherSide );
         if ( score > max_score ) max_score = score;
-        }
-    return max_score;
     }
+    return max_score;
+}
 
 struct move_t search_negamax(board b, int depth, colour side) {
     int32_t score;
@@ -117,10 +117,10 @@ struct move_t search_negamax(board b, int depth, colour side) {
         if ( score > max_score ) {
             max_score = score;
             best_move = moves[i];
-            }
         }
-    return best_move;
     }
+    return best_move;
+}
 
 
 // negamax with alpha-beta pruning
@@ -144,16 +144,16 @@ int32_t negamaxAB(board b, int depth, colour side, int32_t alpha, int32_t beta) 
         if ( score > max_score ) max_score = score;
         if ( max_score > alpha ) alpha = max_score;
         if ( alpha >= beta ) break;
-        }
-    return max_score;
     }
+    return max_score;
+}
 
 // overloading to set alpha = -inf, beta = +inf
 int32_t negamaxAB(board b, int depth, colour side) {
     int32_t alpha = std::numeric_limits<int32_t>::min();
     int32_t beta  = std::numeric_limits<int32_t>::max();
     return negamaxAB( b, depth, side, alpha, beta );
-    }
+}
 
 struct move_t search_negamaxAB(board b, int depth, colour side) {
     int32_t score;
@@ -172,8 +172,8 @@ struct move_t search_negamaxAB(board b, int depth, colour side) {
         if ( score > max_score ) {
             max_score = score;
             best_move = moves[i];
-            }
         }
-    return best_move;
     }
+    return best_move;
+}
 

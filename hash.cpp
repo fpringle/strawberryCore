@@ -36,14 +36,14 @@ void init_gen(uint64_t seed) {
     MT[0] = seed;
     for (int i=1; i<n; i++) {
         MT[i] = ( ( ( ( MT[i-1] >> (w-1) ) ^ MT[i-1] ) + i) * f ) + i;
-        }
     }
+}
 
 uint64_t extract_number() {
     if (check_index >= n) {
         assert (check_index == n);
         twist();
-        }
+    }
 
     uint64_t y = MT[check_index];
 
@@ -54,7 +54,7 @@ uint64_t extract_number() {
 
     check_index++;
     return y;
-    }
+}
 
 void twist() {
     for (int i=0; i<n; i++) {
@@ -62,9 +62,9 @@ void twist() {
         uint64_t xA = x >> 1;
         if ( x & 1ULL ) xA ^= a;
         MT[i] = ( MT[(i+m)%n] ^ xA );
-        }
-    check_index=0;
     }
+    check_index=0;
+}
 
 // initialise zobrist keys
 void init_keys() {
@@ -72,16 +72,16 @@ void init_keys() {
 
     for (int i=0; i<781; i++) {
         zobristKeys[i] = extract_number();
-        }
     }
+}
 
 void init_keys(uint64_t seed) {
     init_gen(seed);
 
     for (int i=0; i<781; i++) {
         zobristKeys[i] = extract_number();
-        }
     }
+}
 
 // zobrist hash
 
@@ -98,8 +98,8 @@ uint64_t board::zobrist_hash() {
             i = first_set_bit( tmp );
             ret ^= zobristKeys[cP*64 + i];
             tmp &= ( tmp - 1ULL );
-            }
         }
+    }
 
     // castling
     if ( castleWhiteKingSide ) ret ^= zobristKeys[768];
@@ -114,6 +114,6 @@ uint64_t board::zobrist_hash() {
     if ( lastMoveDoublePawnPush ) ret ^= zobristKeys[772 + dPPFile];
 
     return ret;
-    }
+}
 
 

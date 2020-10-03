@@ -27,10 +27,10 @@ int main() {
     board b ( "5k2/1P6/8/6B1/1R6/Q7/8/4K2R w K -" );
 
     play_white( 3, b );
-/*    b.print_all();
+    /*    b.print_all();
     move_t h1h8(7,63,0,0,0,0);
     b = doMove(b,h1h8);
     b.print_all();
-*/
+    */
     return 0;
 }

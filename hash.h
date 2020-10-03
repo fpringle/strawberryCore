@@ -56,7 +56,7 @@ struct record_t {
     uint8_t depth;
     int16_t IBV_score;
     uint8_t age;
-    };
+};
 
 // 1.3e8 seems to be the max
 extern struct record_t table[130000000];

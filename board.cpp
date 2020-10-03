@@ -10,7 +10,7 @@
 
 // initialise constants declared in board.h
 const char symbols[12]  = {'p','r','n','b','q','k',
-    'P','R','N','B','Q','K'};
+'P','R','N','B','Q','K'};
 const char colours[2]   = {'w','b'};
 
 // define starting configuration
@@ -33,7 +33,7 @@ bitboard blackKingStart   = 0x1000000000000000;
 // define class constructors
 
 board::board() {
-    // default constructor
+// default constructor
 
     // initialise an array of pointers to the piece bitboards
     pieceBoards[0]  = whitePawnStart;
@@ -74,7 +74,7 @@ board::board() {
 
     // initial hash value
     hash_value = zobrist_hash();
-    }
+}
 
 board::board(bitboard * startPositions, bool * castling, bool ep, int dpp, uint8_t clock, uint8_t full_clock, colour side, int32_t val, uint64_t hash) {
     // parameterised constructor
@@ -107,7 +107,7 @@ board::board(bitboard * startPositions, bool * castling, bool ep, int dpp, uint8
 
     // hash
     hash_value = hash;
-    }
+}
 
 board::board(board & b1) {
     // copy constructor
@@ -143,7 +143,7 @@ board::board(board & b1) {
 
     // hash
     hash_value = b1.hash_value;
-    }
+}
 
 board::board( std::string fen ) {
     int j,i=0;
@@ -163,57 +163,57 @@ board::board( std::string fen ) {
                 case '6':
                 case '7':
                 case '8':
-                j += int(fen[i]-'0');
-                //                    std::cout << "number " << fen[i] << std::endl;
-                i++;
-                cp = -1;
-                break;
+                    j += int(fen[i]-'0');
+                    //                    std::cout << "number " << fen[i] << std::endl;
+                    i++;
+                    cp = -1;
+                    break;
                 case 'P':
-                cp = 0;
-                break;
+                    cp = 0;
+                    break;
                 case 'R':
-                cp = 1;
-                break;
+                    cp = 1;
+                    break;
                 case 'N':
-                cp = 2;
-                break;
+                    cp = 2;
+                    break;
                 case 'B':
-                cp = 3;
-                break;
+                    cp = 3;
+                    break;
                 case 'Q':
-                cp = 4;
-                break;
+                    cp = 4;
+                    break;
                 case 'K':
-                cp = 5;
-                break;
+                    cp = 5;
+                    break;
                 case 'p':
-                cp = 6;
-                break;
+                    cp = 6;
+                    break;
                 case 'r':
-                cp = 7;
-                break;
+                    cp = 7;
+                    break;
                 case 'n':
-                cp = 8;
-                break;
+                    cp = 8;
+                    break;
                 case 'b':
-                cp = 9;
-                break;
+                    cp = 9;
+                    break;
                 case 'q':
-                cp = 10;
-                break;
+                    cp = 10;
+                    break;
                 case 'k':
-                cp = 11;
-                break;
-                }
+                    cp = 11;
+                    break;
+            }
             if ( cp != -1) {
                 pieceBoards[cp] |= ( 1ULL << ( (7-count_slash)*8 + j ) );
                 j++;
                 i++;
-                }
-
             }
-        i++;
+
         }
+        i++;
+    }
 
     sideToMove = ( fen[i] == 'w' ) ? white : black;
     i += 2;
@@ -225,44 +225,44 @@ board::board( std::string fen ) {
 
     if ( fen[i] == '-' ) {
         i += 2;
-        }
+    }
     else {
         while ( fen[i] != ' ' ) {
             switch ( fen[i] ) {
                 case 'K':
-                castleWhiteKingSide  = true;
-                break;
+                    castleWhiteKingSide  = true;
+                    break;
                 case 'Q':
-                castleWhiteQueenSide = true;
-                break;
+                    castleWhiteQueenSide = true;
+                    break;
                 case 'k':
-                castleBlackKingSide = true;
-                break;
+                    castleBlackKingSide = true;
+                    break;
                 case 'q':
-                castleBlackQueenSide = true;
-                break;
-                }
-            i++;
+                    castleBlackQueenSide = true;
+                    break;
             }
-        i++;
+            i++;
         }
+        i++;
+    }
 
     if ( fen[i] == '-' ) {
         lastMoveDoublePawnPush = false;
         i += 2;
-        }
+    }
     else {
         lastMoveDoublePawnPush = true;
         dPPFile = int( fen[i] - 'a' );
         i += 3;
-        }
+    }
 
     std::stringstream clock;
 
     while ( fen[i] != ' ' ) {
         clock << fen[i];
         i++;
-        }
+    }
     clock >> halfMoveClock;
     clock.str("");
     i++;
@@ -271,7 +271,7 @@ board::board( std::string fen ) {
     while ( fen[i] != '\0' ) {
         clock << fen[i];
         i++;
-        }
+    }
     clock >> fullMoveClock;
 
 
@@ -280,7 +280,7 @@ board::board( std::string fen ) {
 
     // hash
     hash_value = zobrist_hash();
-    }
+}
 
 
 // operator overloading - do this with hashes instead?
@@ -291,8 +291,8 @@ bool board::operator==( const board& other) {
         if ( pieceBoards[i] != other.pieceBoards[i] ) {
             std::cout << "pieceBoard[" << i << "] is wrong\n";
             return false;
-            }
         }
+    }
 
     if ( castleWhiteKingSide != other.castleWhiteKingSide ||
     castleWhiteQueenSide != other.castleWhiteQueenSide ||
@@ -300,411 +300,411 @@ bool board::operator==( const board& other) {
     castleBlackQueenSide != other.castleBlackQueenSide ) {
         std::cout << "castling rights wrong\n";
         return false;
-        }
+    }
 
     if ( halfMoveClock != other.halfMoveClock ) {
         std::cout << "half move clock wrong\n";
         return false;
-        }
+    }
 
     if ( fullMoveClock != other.fullMoveClock ) {
         std::cout << "full move clock clock wrong\n";
         return false;
-        }
+    }
 
     if ( lastMoveDoublePawnPush != other.lastMoveDoublePawnPush ) {
         std::cout << "ep wrong\n";
         return false;
-        }
+    }
 
     if ( (lastMoveDoublePawnPush) && (dPPFile != other.dPPFile) ) {
         std::cout << "dPPFile wrong\n";
         return false;
-        }
+    }
 
     if ( sideToMove != other.sideToMove ) {
         std::cout << "side wrong\n";
         return false;
-        }
+    }
 
     if ( value != other.value ) {
         std::cout << "value wrong\n";
         return false;
-        }
+    }
 
     return true;
-    }
+}
 
 bool board::operator!=( const board& other ) {
     return ! ( *this == other ) ;
-    }
+}
 
 // get data
 void board::getBitboards(bitboard * dest) {
     bitboard * p = pieceBoards;
 
     while (p < pieceBoards + 12) *dest++ = *p++;
-    }
+}
 
 void board::getCastlingRights(bool * dest) {
     dest[0] = castleWhiteKingSide;
     dest[1] = castleWhiteQueenSide;
     dest[2] = castleBlackKingSide;
     dest[3] = castleBlackQueenSide;
-    }
+}
 
 void board::getEP(bool * dest) {
     *dest = lastMoveDoublePawnPush;
-    }
+}
 
 void board::getdPPFile(int * dest) {
     *dest = dPPFile;
-    }
+}
 
 void board::getClock(int * dest) {
     *dest = halfMoveClock;
-    }
+}
 
 void board::getFullClock(int * dest) {
     *dest = fullMoveClock;
-    }
+}
 
 void board::getSide(colour * dest) {
     *dest = sideToMove;
-    }
+}
 
 void board::getHash(uint64_t * dest) {
     *dest = hash_value;
-    }
+}
 
 int board::num_pieces_left() {
     int ret = 0;
     for ( int i=0; i<12; i++ ) {
         ret += count_bits_set( pieceBoards[i] );
-        }
-    return ret;
     }
+    return ret;
+}
 
 void print_bb(bitboard bb, char c, std::ostream& cout) {//  = 'x') {
-        int i,j;
-        char to_print[64];
-        for (i=0;i<64;i++) {
-            if (bb&1ULL) to_print[i]=c;
-            else to_print[i]='.';
-            bb >>= 1;
-            }
-        for (i=7;i>=0;i--) {
-            for (j=0;j<8;j++) {
-                cout << to_print[i*8+j] << ' ';
-                }
-            cout << endl;
-            }
+    int i,j;
+    char to_print[64];
+    for (i=0;i<64;i++) {
+        if (bb&1ULL) to_print[i]=c;
+        else to_print[i]='.';
+        bb >>= 1;
+    }
+    for (i=7;i>=0;i--) {
+        for (j=0;j<8;j++) {
+            cout << to_print[i*8+j] << ' ';
+        }
         cout << endl;
+    }
+    cout << endl;
+}
+
+// display the current state of the board
+void board::print_board(std::ostream& cout) {
+// uppercase = black, lowercase = white
+    int i,j;
+    bitboard tmp;
+    char to_print[64];
+    for (i=0;i<64;i++) to_print[i]='.';
+
+    for (i=0;i<12;i++) {
+        tmp = pieceBoards[i];//pieces[i];
+        for (j=0;j<64;j++) {
+            if (tmp & 1ULL) {
+                to_print[j] = symbols[i];
+            }
+            tmp >>= 1;
+            //if (~tmp) break;
         }
+    }
 
-    // display the current state of the board
-    void board::print_board(std::ostream& cout) {
-        // uppercase = black, lowercase = white
-        int i,j;
-        bitboard tmp;
-        char to_print[64];
-        for (i=0;i<64;i++) to_print[i]='.';
+    cout << "   A B C D E F G H\n\n";
+    for (i=7;i>=0;i--) {
+        cout << i+1 << " ";
+        for (j=0;j<8;j++) {
+            cout << " " << to_print[i*8+j];
+        }
+        cout << "  " << i+1 << endl;
+    }
+    cout << "\n   A B C D E F G H\n";
+}
 
-        for (i=0;i<12;i++) {
-            tmp = pieceBoards[i];//pieces[i];
-            for (j=0;j<64;j++) {
+void board::print_board_indent( std::ostream& cout, int indent ) {
+// uppercase = black, lowercase = white
+    int i,j;
+    bitboard tmp;
+    char to_print[64];
+    for (i=0;i<64;i++) to_print[i]='.';
+
+    for (i=0;i<12;i++) {
+        tmp = pieceBoards[i];//pieces[i];
+        for (j=0;j<64;j++) {
+            if (tmp & 1ULL) {
+                to_print[j] = symbols[i];
+            }
+            tmp >>= 1;
+            //if (~tmp) break;
+        }
+    }
+
+    for (i=0;i<indent;i++) cout << " ";
+
+    cout << "   A B C D E F G H\n\n";
+    for (i=7;i>=0;i--) {
+        for (j=0;j<indent;j++) cout << " ";
+        cout << i+1 << " ";
+        for (j=0;j<8;j++) {
+            cout << " " << to_print[i*8+j];
+        }
+        cout << "  " << i+1 << endl;
+    }
+    cout << std::endl;
+    for (i=0;i<indent;i++) cout << " ";
+    cout << "   A B C D E F G H\n";
+}
+
+void board::print_all(std::ostream& cout) {
+    print_board(cout);
+
+    cout << "\nSide to move:\n";
+    if ( sideToMove==white) cout << "  White\n";
+    else cout << "  Black\n";
+
+    cout << "\nCastling rights:\n";
+    cout << "  White can";
+    if ( !castleWhiteKingSide ) cout << "not";
+    cout << " castle kingside\n";
+    cout << "  White can";
+    if ( !castleWhiteQueenSide ) cout << "not";
+    cout << " castle queenside\n";
+    cout << "  Black can";
+    if ( !castleBlackKingSide ) cout << "not";
+    cout << " castle kingside\n";
+    cout << "  Black can";
+    if ( !castleBlackQueenSide ) cout << "not";
+    cout << " castle queenside\n";
+
+    cout << "\nEn passant:\n";
+    if (lastMoveDoublePawnPush) cout << "  last move was a double pawn push\n";
+    else cout << "  last move was not a double pawn push\n";
+
+    cout << "\nHalfmove Clock:\n";
+    cout << "  " << halfMoveClock;
+    cout << "\nFullmove Clock:\n";
+    cout << "  " << fullMoveClock << "\n";
+}
+
+std::string board::FEN() {
+    int count1;
+    std::stringstream ss;
+    int i,j,k;
+    bitboard tmp;
+    char to_print[64];
+    for (i=0;i<64;i++) to_print[i]='.';
+
+    for (i=0;i<12;i++) {
+        tmp = pieceBoards[i];
+        for (j=0;j<8;j++) {
+            for (k=0;k<8;k++) {
                 if (tmp & 1ULL) {
-                    to_print[j] = symbols[i];
-                    }
+                    to_print[((7-j)*8)+k] = symbols[(i+6)%12];
+                }
                 tmp >>= 1;
-                //if (~tmp) break;
-                }
             }
-
-        cout << "   A B C D E F G H\n\n";
-        for (i=7;i>=0;i--) {
-            cout << i+1 << " ";
-            for (j=0;j<8;j++) {
-                cout << " " << to_print[i*8+j];
-                }
-            cout << "  " << i+1 << endl;
-            }
-        cout << "\n   A B C D E F G H\n";
         }
+    }
 
-    void board::print_board_indent( std::ostream& cout, int indent ) {
-        // uppercase = black, lowercase = white
-        int i,j;
-        bitboard tmp;
-        char to_print[64];
-        for (i=0;i<64;i++) to_print[i]='.';
+    for (i=0; i<8; i++) {
+        for (j=0; j<8; j++) {
+            if (to_print[i*8+j]=='.') {
+                count1 = j;
+                while (to_print[i*8+count1]=='.' && count1<8) count1++;
+                ss << '0'+(count1-j);
+                j=count1-1;
+            }
+            else {
+                ss << to_print[i*8+j];
+            }
+        }
+        if (i!=7) {
+            ss << '/';
+        }
+    }
 
-        for (i=0;i<12;i++) {
-            tmp = pieceBoards[i];//pieces[i];
-            for (j=0;j<64;j++) {
+
+    if (sideToMove==white) ss << " w "; else ss << " b ";
+
+
+    if ( !( castleWhiteKingSide | castleWhiteQueenSide | castleBlackKingSide | castleBlackQueenSide ) ) {
+        ss << "-";
+    }
+
+    else {
+        if ( castleWhiteKingSide )  ss << "K";
+        if ( castleWhiteQueenSide ) ss << "Q";
+        if ( castleBlackKingSide )  ss << "k";
+        if ( castleBlackQueenSide ) ss << "q";
+    }
+
+    if ( lastMoveDoublePawnPush ) {
+        ss << " ";
+        ss << "a"+dPPFile;
+        ss << (sideToMove==white) ? "6" : "3";
+    }
+
+    else {
+        ss << " -";
+    }
+
+    ss << " " << halfMoveClock;
+
+    ss << " " << fullMoveClock;
+
+    return ss.str();
+}
+
+void board::FEN( std::ostream& ss ) {
+    int count1;
+    int i,j,k;
+    bitboard tmp;
+    char to_print[64];
+    for (i=0;i<64;i++) to_print[i]='.';
+
+    for (i=0;i<12;i++) {
+        tmp = pieceBoards[i];
+        for (j=0;j<8;j++) {
+            for (k=0;k<8;k++) {
                 if (tmp & 1ULL) {
-                    to_print[j] = symbols[i];
-                    }
+                    to_print[((7-j)*8)+k] = symbols[(i+6)%12];
+                }
                 tmp >>= 1;
-                //if (~tmp) break;
-                }
             }
+        }
+    }
 
-        for (i=0;i<indent;i++) cout << " ";
-
-        cout << "   A B C D E F G H\n\n";
-        for (i=7;i>=0;i--) {
-            for (j=0;j<indent;j++) cout << " ";
-            cout << i+1 << " ";
-            for (j=0;j<8;j++) {
-                cout << " " << to_print[i*8+j];
-                }
-            cout << "  " << i+1 << endl;
+    for (i=0; i<8; i++) {
+        for (j=0; j<8; j++) {
+            if (to_print[i*8+j]=='.') {
+                count1 = j;
+                while (to_print[i*8+count1]=='.' && count1<8) count1++;
+                ss << char('0'+(count1-j));
+                j=count1-1;
             }
-        cout << std::endl;
-        for (i=0;i<indent;i++) cout << " ";
-        cout << "   A B C D E F G H\n";
-        }
-
-    void board::print_all(std::ostream& cout) {
-        print_board(cout);
-
-        cout << "\nSide to move:\n";
-        if ( sideToMove==white) cout << "  White\n";
-        else cout << "  Black\n";
-
-        cout << "\nCastling rights:\n";
-        cout << "  White can";
-        if ( !castleWhiteKingSide ) cout << "not";
-        cout << " castle kingside\n";
-        cout << "  White can";
-        if ( !castleWhiteQueenSide ) cout << "not";
-        cout << " castle queenside\n";
-        cout << "  Black can";
-        if ( !castleBlackKingSide ) cout << "not";
-        cout << " castle kingside\n";
-        cout << "  Black can";
-        if ( !castleBlackQueenSide ) cout << "not";
-        cout << " castle queenside\n";
-
-        cout << "\nEn passant:\n";
-        if (lastMoveDoublePawnPush) cout << "  last move was a double pawn push\n";
-        else cout << "  last move was not a double pawn push\n";
-
-        cout << "\nHalfmove Clock:\n";
-        cout << "  " << halfMoveClock;
-        cout << "\nFullmove Clock:\n";
-        cout << "  " << fullMoveClock << "\n";
-        }
-
-    std::string board::FEN() {
-        int count1;
-        std::stringstream ss;
-        int i,j,k;
-        bitboard tmp;
-        char to_print[64];
-        for (i=0;i<64;i++) to_print[i]='.';
-
-        for (i=0;i<12;i++) {
-            tmp = pieceBoards[i];
-            for (j=0;j<8;j++) {
-                for (k=0;k<8;k++) {
-                    if (tmp & 1ULL) {
-                        to_print[((7-j)*8)+k] = symbols[(i+6)%12];
-                        }
-                    tmp >>= 1;
-                    }
-                }
+            else {
+                ss << to_print[i*8+j];
             }
-
-        for (i=0; i<8; i++) {
-            for (j=0; j<8; j++) {
-                if (to_print[i*8+j]=='.') {
-                    count1 = j;
-                    while (to_print[i*8+count1]=='.' && count1<8) count1++;
-                    ss << '0'+(count1-j);
-                    j=count1-1;
-                    }
-                else {
-                    ss << to_print[i*8+j];
-                    }
-                }
-            if (i!=7) {
-                ss << '/';
-                }
-            }
-
-
-        if (sideToMove==white) ss << " w "; else ss << " b ";
-
-
-        if ( !( castleWhiteKingSide | castleWhiteQueenSide | castleBlackKingSide | castleBlackQueenSide ) ) {
-            ss << "-";
-            }
-
-        else {
-            if ( castleWhiteKingSide )  ss << "K";
-            if ( castleWhiteQueenSide ) ss << "Q";
-            if ( castleBlackKingSide )  ss << "k";
-            if ( castleBlackQueenSide ) ss << "q";
-            }
-
-        if ( lastMoveDoublePawnPush ) {
-            ss << " ";
-            ss << "a"+dPPFile;
-            ss << (sideToMove==white) ? "6" : "3";
-            }
-
-        else {
-            ss << " -";
-            }
-
-        ss << " " << halfMoveClock;
-
-        ss << " " << fullMoveClock;
-
-        return ss.str();
         }
-
-    void board::FEN( std::ostream& ss ) {
-        int count1;
-        int i,j,k;
-        bitboard tmp;
-        char to_print[64];
-        for (i=0;i<64;i++) to_print[i]='.';
-
-        for (i=0;i<12;i++) {
-            tmp = pieceBoards[i];
-            for (j=0;j<8;j++) {
-                for (k=0;k<8;k++) {
-                    if (tmp & 1ULL) {
-                        to_print[((7-j)*8)+k] = symbols[(i+6)%12];
-                        }
-                    tmp >>= 1;
-                    }
-                }
-            }
-
-        for (i=0; i<8; i++) {
-            for (j=0; j<8; j++) {
-                if (to_print[i*8+j]=='.') {
-                    count1 = j;
-                    while (to_print[i*8+count1]=='.' && count1<8) count1++;
-                    ss << char('0'+(count1-j));
-                    j=count1-1;
-                    }
-                else {
-                    ss << to_print[i*8+j];
-                    }
-                }
-            if (i!=7) {
-                ss << "/";
-                }
-            }
-
-        if (sideToMove==white) ss << " w "; else ss << " b ";
-
-
-        if ( !( castleWhiteKingSide | castleWhiteQueenSide | castleBlackKingSide | castleBlackQueenSide ) ) {
-            ss << "-";
-            }
-
-        else {
-            if ( castleWhiteKingSide )  ss << "K";
-            if ( castleWhiteQueenSide ) ss << "Q";
-            if ( castleBlackKingSide )  ss << "k";
-            if ( castleBlackQueenSide ) ss << "q";
-            }
-
-        if ( lastMoveDoublePawnPush ) {
-            ss << " ";
-            ss << "a"+dPPFile;
-            ss << (sideToMove==white) ? "6" : "3";
-            }
-
-        else {
-            ss << " -";
-            }
-
-        ss << " " << halfMoveClock;
-        ss << " " << fullMoveClock;
+        if (i!=7) {
+            ss << "/";
         }
+    }
+
+    if (sideToMove==white) ss << " w "; else ss << " b ";
 
 
-    void board::set_piece(colourPiece cP,int pos) {
-        pieceBoards[cP] |= (1ULL << pos);
-        }
+    if ( !( castleWhiteKingSide | castleWhiteQueenSide | castleBlackKingSide | castleBlackQueenSide ) ) {
+        ss << "-";
+    }
 
-    void board::set_side(colour side) {
-        sideToMove = side;
-        }
+    else {
+        if ( castleWhiteKingSide )  ss << "K";
+        if ( castleWhiteQueenSide ) ss << "Q";
+        if ( castleBlackKingSide )  ss << "k";
+        if ( castleBlackQueenSide ) ss << "q";
+    }
 
-    void board::clear_square( int ind ) {
-        bitboard b = ~ ( 1ULL << ind );
-        for ( int i=0; i<12; i++ ) pieceBoards[i] &= b;
-        }
+    if ( lastMoveDoublePawnPush ) {
+        ss << " ";
+        ss << "a"+dPPFile;
+        ss << (sideToMove==white) ? "6" : "3";
+    }
 
-    void board::update_value() {
-        value = evaluate();
-        }
+    else {
+        ss << " -";
+    }
 
-    void board::set_value( int32_t _value ) {
-        value = _value;
-        }
-
-    void board::update_hash() {
-        hash_value = zobrist_hash();
-        }
-
-    void board::set_hash( uint64_t _hash ) {
-        hash_value = _hash;
-        }
-
-    void board::setBitboards(bitboard * bb) {
-        for (int i=0; i<12; i++) pieceBoards[i] = bb[i];
-        }
-
-    void board::setCastlingRights(bool * castling) {
-        castleWhiteKingSide  = castling[0];
-        castleWhiteQueenSide = castling[1];
-        castleBlackKingSide  = castling[2];
-        castleBlackQueenSide = castling[3];
-        }
-
-    void board::setEP(bool ep) {
-        lastMoveDoublePawnPush = ep;
-        }
-
-    void board::setdPPFile(int file) {
-        dPPFile = file;
-        }
-
-    void board::setClock(int clk) {
-        halfMoveClock = clk;
-        }
-
-    void board::setFullClock(int clk) {
-        fullMoveClock = clk;
-        }
+    ss << " " << halfMoveClock;
+    ss << " " << fullMoveClock;
+}
 
 
-    bitboard board::whiteSquares() {
-        int i;
-        bitboard ret = 0;
+void board::set_piece(colourPiece cP,int pos) {
+    pieceBoards[cP] |= (1ULL << pos);
+}
 
-        for (i=0;i<6;i++) ret |= pieceBoards[i];
-        return ret;
-        }
-    bitboard board::blackSquares() {
-        int i;
-        bitboard ret = 0;
+void board::set_side(colour side) {
+    sideToMove = side;
+}
 
-        for (i=6;i<12;i++) ret |= pieceBoards[i];
-        return ret;
-        }
-    bitboard board::takenSquares() {
-        return (whiteSquares() | blackSquares());
-        }
-    bitboard board::emptySquares() {
-        return ( ~ takenSquares());
-        }
+void board::clear_square( int ind ) {
+    bitboard b = ~ ( 1ULL << ind );
+    for ( int i=0; i<12; i++ ) pieceBoards[i] &= b;
+}
+
+void board::update_value() {
+    value = evaluate();
+}
+
+void board::set_value( int32_t _value ) {
+    value = _value;
+}
+
+void board::update_hash() {
+    hash_value = zobrist_hash();
+}
+
+void board::set_hash( uint64_t _hash ) {
+    hash_value = _hash;
+}
+
+void board::setBitboards(bitboard * bb) {
+    for (int i=0; i<12; i++) pieceBoards[i] = bb[i];
+}
+
+void board::setCastlingRights(bool * castling) {
+    castleWhiteKingSide  = castling[0];
+    castleWhiteQueenSide = castling[1];
+    castleBlackKingSide  = castling[2];
+    castleBlackQueenSide = castling[3];
+}
+
+void board::setEP(bool ep) {
+    lastMoveDoublePawnPush = ep;
+}
+
+void board::setdPPFile(int file) {
+    dPPFile = file;
+}
+
+void board::setClock(int clk) {
+    halfMoveClock = clk;
+}
+
+void board::setFullClock(int clk) {
+    fullMoveClock = clk;
+}
+
+
+bitboard board::whiteSquares() {
+    int i;
+    bitboard ret = 0;
+
+    for (i=0;i<6;i++) ret |= pieceBoards[i];
+    return ret;
+}
+bitboard board::blackSquares() {
+    int i;
+    bitboard ret = 0;
+
+    for (i=6;i<12;i++) ret |= pieceBoards[i];
+    return ret;
+}
+bitboard board::takenSquares() {
+    return (whiteSquares() | blackSquares());
+}
+bitboard board::emptySquares() {
+    return ( ~ takenSquares());
+}

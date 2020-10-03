@@ -16,7 +16,7 @@ void init() {
 
     // initialise zobrist keys
     init_keys();
-    }
+}
 
 
 void init(uint64_t seed) {
@@ -25,4 +25,4 @@ void init(uint64_t seed) {
 
     // initialise zobrist keys
     init_keys(seed);
-    }
+}

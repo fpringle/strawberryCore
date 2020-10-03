@@ -24,7 +24,7 @@ bool board::is_check(colour side) {
     if ( queenTargets  (kingpos, _white, _black, side) & pieceBoards[(6*otherSide)+4] ) return true;
 
     return false;
-    }
+}
 
 
 bool board::is_check(colour side, piece * checkingPiece,  int * checkingInd, bool * doubleCheck ) {
@@ -42,7 +42,7 @@ bool board::is_check(colour side, piece * checkingPiece,  int * checkingInd, boo
         *checkingPiece = piece(0);
         *checkingInd = last_set_bit( _check );
         count++;
-        }
+    }
     // rooks
     _check = rookTargets   (kingpos, _white, _black, side) & pieceBoards[(6*otherSide)+1];
     if ( _check ) {
@@ -52,8 +52,8 @@ bool board::is_check(colour side, piece * checkingPiece,  int * checkingInd, boo
         if ( count==2 ) {
             * doubleCheck = true;
             return true;
-            }
         }
+    }
     // knights
     _check = knightTargets   (kingpos, _white, _black, side) & pieceBoards[(6*otherSide)+2];
     if ( _check ) {
@@ -63,8 +63,8 @@ bool board::is_check(colour side, piece * checkingPiece,  int * checkingInd, boo
         if ( count==2 ) {
             * doubleCheck = true;
             return true;
-            }
         }
+    }
     // bishops
     _check = bishopTargets   (kingpos, _white, _black, side) & pieceBoards[(6*otherSide)+3];
     if ( _check ) {
@@ -74,8 +74,8 @@ bool board::is_check(colour side, piece * checkingPiece,  int * checkingInd, boo
         if ( count==2 ) {
             * doubleCheck = true;
             return true;
-            }
         }
+    }
     // queens
     _check = queenTargets   (kingpos, _white, _black, side) & pieceBoards[(6*otherSide)+4];
     if ( _check ) {
@@ -85,11 +85,11 @@ bool board::is_check(colour side, piece * checkingPiece,  int * checkingInd, boo
         if ( count==2 ) {
             * doubleCheck = true;
             return true;
-            }
         }
+    }
 
     return ( count>0 );
-    }
+}
 
 
 bool board::is_checkmate(colour side) {
@@ -100,7 +100,7 @@ bool board::is_checkmate(colour side) {
     int num_moves = gen_legal_moves( moves );
     set_side(pre_side);
     return (num_moves == 0);
-    }
+}
 
 
 int board::is_checkmate() {
@@ -123,11 +123,11 @@ int board::is_checkmate() {
     if (num_moves == 0) {
         set_side( (sideToMove==white) ? black : white);
         return (sideToMove==white) ? -1 : 1;
-        }
+    }
 
     return 0;
 
-    }
+}
 
 bool board::is_stalemate() {
     if (is_check(sideToMove)) return false;
@@ -160,21 +160,21 @@ bool board::was_lastmove_check( move_t lastmove ) {
         if ( pieceBoards[i] & to_square ) {
             movingPiece = colourPiece(i);
             break;
-            }
         }
+    }
 
 
     // direct check
     switch ( movingPiece % 6 ) {
         case 0:
-        if ( kingBoard & pawnAttacks( to_ind, _white, _black, otherSide ) ) return true;
-        break;
+            if ( kingBoard & pawnAttacks( to_ind, _white, _black, otherSide ) ) return true;
+            break;
         case 5:
-        break;
+            break;
         default:
-        if ( kingBoard & pieceTargets( to_ind, _white, _black, movingPiece ) ) return true;
-        break;
-        }
+            if ( kingBoard & pieceTargets( to_ind, _white, _black, movingPiece ) ) return true;
+            break;
+    }
 
     // discovered check
     bitboard _ray;
@@ -191,9 +191,9 @@ bool board::was_lastmove_check( move_t lastmove ) {
                 else               attacker = ( 1ULL <<  last_set_bit( tmp ) );
                 if ( attacker & pieceBoards[(6*otherSide)+1] ) return true;
                 if ( attacker & pieceBoards[(6*otherSide)+4] ) return true;
-                }
             }
         }
+    }
     // bishops and queens
     for ( i=1; i<8; i+=2 ) {
         if ( kingBoard & rays[i][from_ind] ) {
@@ -205,9 +205,9 @@ bool board::was_lastmove_check( move_t lastmove ) {
                 else               attacker = ( 1ULL <<  last_set_bit( tmp ) );
                 if ( attacker & pieceBoards[(6*otherSide)+3] ) return true;
                 if ( attacker & pieceBoards[(6*otherSide)+4] ) return true;
-                }
             }
         }
+    }
 
 
     // en passant
@@ -223,32 +223,32 @@ bool board::was_lastmove_check( move_t lastmove ) {
         pieceBoards[(otherSide*6) + 4] ) ) ) {
             std::cout << "king left, attacker right\n";
             return true;
-            }
+        }
         if ( ( attacker_right & pieceBoards[(sideToMove*6)+5] ) &&
         ( attacker_left  & ( pieceBoards[(otherSide*6) + 1] |
         pieceBoards[(otherSide*6) + 4] ) ) ) {
             std::cout << "king right, attacker left\n";
             return true;
-            }
         }
+    }
     // castling rook
     if ( lastmove.is_kingCastle() ) {
         int rook_ind = to_ind - 1;
         if ( kingBoard & rookTargets( rook_ind, _white, _black, otherSide ) ) return true;
-        }
+    }
     else if ( lastmove.is_queenCastle() ) {
         int rook_ind = to_ind + 1;
         if ( kingBoard & rookTargets( rook_ind, _white, _black, otherSide ) ) return true;
-        }
+    }
 
     // promotion
     if ( lastmove.is_promotion() ) {
         colourPiece prom_piece = colourPiece( (6*otherSide) + lastmove.which_promotion() );
         if ( kingBoard & pieceTargets( to_ind, _white, _black, prom_piece) ) return true;
-        }
+    }
 
     return false;
-    }
+}
 
 
 bool board::is_checking_move( move_t move ) {
@@ -266,8 +266,8 @@ bool board::is_checking_move( move_t move ) {
         if ( pieceBoards[i] & from_square ) {
             movingPiece = colourPiece(i);
             break;
-            }
         }
+    }
 
     colour otherSide = ( sideToMove == white ) ? black : white;  // side under attack
     bitboard _white   = whiteSquares();
@@ -277,7 +277,7 @@ bool board::is_checking_move( move_t move ) {
     // direct check
     if ( pieceTargets(to_ind,_white,_black,movingPiece) & kingBoard ) {
         return true;
-        }
+    }
 
     // discover check
     bitboard _ray;
@@ -294,9 +294,9 @@ bool board::is_checking_move( move_t move ) {
                 else               attacker = ( 1ULL <<  last_set_bit( tmp ) );
                 if ( attacker & pieceBoards[(6*sideToMove)+1] ) return true;
                 if ( attacker & pieceBoards[(6*sideToMove)+4] ) return true;
-                }
             }
         }
+    }
     // bishops and queens
     for ( i=1; i<8; i+=2 ) {
         if ( kingBoard & rays[i][from_ind] ) {
@@ -308,9 +308,9 @@ bool board::is_checking_move( move_t move ) {
                 else               attacker = ( 1ULL <<  last_set_bit( tmp ) );
                 if ( attacker & pieceBoards[(6*sideToMove)+3] ) return true;
                 if ( attacker & pieceBoards[(6*sideToMove)+4] ) return true;
-                }
             }
         }
+    }
 
     // en passant
     if ( move.is_ep_capture() ) {
@@ -325,31 +325,31 @@ bool board::is_checking_move( move_t move ) {
         pieceBoards[(sideToMove*6) + 4] ) ) ) {
             std::cout << "king left, attacker right\n";
             return true;
-            }
+        }
         if ( ( attacker_right & pieceBoards[(otherSide*6)+5] ) &&
         ( attacker_left  & ( pieceBoards[(sideToMove*6) + 1] |
         pieceBoards[(sideToMove*6) + 4] ) ) ) {
             std::cout << "king right, attacker left\n";
             return true;
-            }
         }
+    }
 
 
     // castling rook
     if ( move.is_kingCastle() ) {
         int rook_ind = to_ind - 1;
         if ( kingBoard & rookTargets( rook_ind, _white, _black, sideToMove ) ) return true;
-        }
+    }
     else if ( move.is_queenCastle() ) {
         int rook_ind = to_ind + 1;
         if ( kingBoard & rookTargets( rook_ind, _white, _black, sideToMove ) ) return true;
-        }
+    }
 
     // promotion
     if ( move.is_promotion() ) {
         colourPiece prom_piece = colourPiece( (6*sideToMove) + move.which_promotion() );
         if ( kingBoard & pieceTargets( to_ind, _white, _black, prom_piece) ) return true;
-        }
+    }
 
     return false;
 }

@@ -29,23 +29,23 @@ int count_bits_set(bitboard v) {
     int c;
     for (c=0;v;c++) {
         v &= v-1;
-        }
-    return c;
     }
+    return c;
+}
 
 int first_set_bit(bitboard v) {
     //returns the position of the rightmost set bit
     return log2(v & -v);
-    }
+}
 
 int last_set_bit(bitboard v) {
     //returns the position of the leftmost set bit
     return log2(v);
-    }
+}
 
 bool is_bit_set(bitboard v, int i) {
     return ( v & ( 1ULL << i ) );
-    }
+}
 
 bitboard set_bit(bitboard v, int i) {
     return v | (1ULL << i);
@@ -69,34 +69,34 @@ bitboard oneNW(bitboard b) { return (b << NW) & notFileH; }
 bitboard oneGeneral8(bitboard b, int d) {
     switch (d) {
         case 0:
-        return oneN(b);
-        break;
+            return oneN(b);
+            break;
         case 1:
-        return oneNE(b);
-        break;
+            return oneNE(b);
+            break;
         case 2:
-        return oneE(b);
-        break;
+            return oneE(b);
+            break;
         case 3:
-        return oneSE(b);
-        break;
+            return oneSE(b);
+            break;
         case 4:
-        return oneS(b);
-        break;
+            return oneS(b);
+            break;
         case 5:
-        return oneSW(b);
-        break;
+            return oneSW(b);
+            break;
         case 6:
-        return oneW(b);
-        break;
+            return oneW(b);
+            break;
         case 7:
-        return oneNW(b);
-        break;
+            return oneNW(b);
+            break;
         default:
-        return b;
-        break;
-        }
+            return b;
+            break;
     }
+}
 
 bitboard twoN(bitboard b) { return b << 2*N; }
 bitboard twoS(bitboard b) { return b >> -2*S; }

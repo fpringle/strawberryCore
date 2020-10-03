@@ -54,7 +54,7 @@ enum piece {pawn,rook,knight,bishop,queen,king};
 enum colourPiece {whitePawn,whiteRook,whiteKnight,
     whiteBishop,whiteQueen,whiteKing,
     blackPawn,blackRook,blackKnight,
-    blackBishop,blackQueen,blackKing};
+blackBishop,blackQueen,blackKing};
 
 
 // defined in board.cpp
@@ -86,7 +86,7 @@ class board {
     // store hash of current state
     uint64_t hash_value;
 
-    public:
+public:
     // constructors
     // defined in board.cpp
     board();
@@ -176,6 +176,6 @@ class board {
     bool gameover();
     bool was_lastmove_check(move_t);
     bool is_checking_move(move_t);
-    };
+};
 
 #endif

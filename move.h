@@ -51,9 +51,9 @@ struct move_t {
     // bit 13:    special 0
     // bit 14:    special 1
     // bit 15:    promotion
-    private:
+private:
     uint16_t data;
-    public:
+public:
     move_t();
     move_t(uint8_t,uint8_t,bool,bool,bool,bool);
     //    move_t(std::initializer_list<move_t>) {};
@@ -74,7 +74,7 @@ struct move_t {
     bool is_queenCastle();
     bool is_castle();
     uint16_t give();
-    };
+};
 
 // defined in move.cpp
 void print_move( struct move_t, std::ostream& cout = std::cout );
