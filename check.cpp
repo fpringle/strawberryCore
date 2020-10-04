@@ -130,6 +130,7 @@ int board::is_checkmate() {
 }
 
 bool board::is_stalemate() {
+    if (halfMoveClock >= 50) return true;
     if (is_check(sideToMove)) return false;
     move_t moves[256];
     int num_legal = gen_legal_moves(moves);
