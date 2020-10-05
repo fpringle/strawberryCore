@@ -35,10 +35,12 @@ void analyse( board b , int depth, std::vector<int32_t> * vec, int base_depth=-1
 
     for ( i=0; i<n_moves; i++ ) {
         index = parent_index*BASE + i;
-//        for (j=0; j<=base_depth-depth; j++) std::cout << "-";
-//        std::cout << index << std::endl;
         child = doMove( b, movelist[i] );
         (*vec)[index] = child.getValue();
+        for (j=0; j<=base_depth-depth; j++) std::cout << "-";
+        std::cout << " " << index << "  " << (*vec)[index];
+        print_move(movelist[i]);
+        std::cout << std::endl;
         analyse( child, depth-1, vec, base_depth, index );
     }
 }
@@ -46,12 +48,14 @@ void analyse( board b , int depth, std::vector<int32_t> * vec, int base_depth=-1
 
 int main() {
     init();
-    board b;
+//    board b;
+    board b( "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1 " );
+    b.print_board();
     int depth = 1;
     std::vector<int32_t> vec(pow(BASE,depth+1),0);
     analyse(b,depth,&vec);
 //    for (int i=0; i<vec.size(); i++) {
-    for (int i=0; i<256; i++) {
+    for (int i=256; i<270; i++) {
         std::cout << "vec[" << i << "]: " << vec[i] << std::endl;
     }
     return 0;
