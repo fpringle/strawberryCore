@@ -6,7 +6,7 @@
 #include <iostream>
 #include "tree.h"
 #include <string>
-
+#include "ntree.h"
 
 template <class T>
 queue<T>::queue ( ) {
@@ -47,9 +47,15 @@ void queue<T>::print( ) {
   lst.print( );
 }
 
+template <class T>
+int queue<T>::len( ) {
+    return lst.len();
+}
+
 template class queue<int>;
 template class queue<char>;
 template class queue<std::string>;
 template class queue<treenode<int>*>;
 template class queue<treenode<char>*>;
 template class queue<treenode<std::string>*>;
+template class queue<ntreeNode<int>*>;

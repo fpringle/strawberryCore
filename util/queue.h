@@ -8,6 +8,7 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
+#include "doublylinkedlist.h"
 
 template <class T>
 class queue {
@@ -24,8 +25,10 @@ class queue {
     T peek( );
     // check if empty
     bool is_empty( );
-    //print
+    // print
     void print( );
+    // length
+    int len( );
 };
 
 #endif /* QUEUE_H */

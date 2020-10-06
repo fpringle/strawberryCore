@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "ntree.h"
-
+#include <queue>
 
 
 template <class T>
@@ -84,12 +84,49 @@ void get_leaves( ntreeNode<T> * root, std::vector<T> * vec ) {
 }
 
 template <class T>
-void print_tree( ntreeNode<T> * root, std::ostream& cout=std::cout, int depth=0 ) {
-    for ( int i=0; i<depth; i++ ) cout << '-';
-    cout << " " << root->data << std::endl;
+int num_nodes( ntreeNode<T> * root ) {
+    if (root==NULL) return 0;
+    int ret = 1;
     ntreeNode<T> * child = root->firstChild;
     while (child != NULL) {
-        print_tree( child, cout, depth+1 );
+        ret += num_nodes(child);
+        child = child->sibling;
+    }
+    return ret;
+}
+
+template <class T>
+void num_nodes_per_level( ntreeNode<T> * root ) {
+    int level = 0;
+    std::queue<ntreeNode<T>*> Q;
+    Q.push(root);
+    int qlen,i;
+    ntreeNode<T> * child, * v, * p;
+
+    while (!Q.empty()) {
+        qlen = Q.size();
+        std::cout << qlen << " nodes at depth " << level << std::endl;
+        for (i=0;i<qlen;i++) {
+            v = Q.front();
+            Q.pop();
+            p = v->firstChild;
+            while (p != NULL) {
+                Q.push(p);
+                p = p->sibling;
+            }
+        }
+        level++;
+    }
+}
+
+template <class T>
+void print_tree( ntreeNode<T> * root, int max_depth=-1, std::ostream& cout=std::cout, int depth=0 ) {
+    for ( int i=0; i<depth; i++ ) cout << '-';
+    cout << " " << root->data << std::endl;
+    if (depth==max_depth) return;
+    ntreeNode<T> * child = root->firstChild;
+    while (child != NULL) {
+        print_tree( child, max_depth, cout, depth+1 );
         child = child->sibling;
     }
 }

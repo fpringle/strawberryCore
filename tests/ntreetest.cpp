@@ -1,4 +1,4 @@
-#include "ntree2.h"
+#include "ntree.h"
 #include <iostream>
 
 
@@ -24,6 +24,14 @@ int main() {
     add_child(p, 11);
     add_child(p, 12);
 
+    p = p->firstChild->sibling;
+    add_child(p,13);
+
     print_tree(root);
+
+    std::cout << "\n\n\n";
+
+    num_nodes_per_level(root);
+
     return 0;
 }
