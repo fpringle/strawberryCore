@@ -8,3 +8,4 @@
 /perft3.txt
 *.swp
 __pycache__
+*.exe

@@ -108,9 +108,10 @@ ntreeNode<tree_record> * analyse_tree( board b, int depth, std::string lastmv = 
 
 int main() {
     init();
-    board b( "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1 " );
+//    board b( "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1 " );
+    board b;
 //    b.print_board();
-    ntreeNode<tree_record> * valuetree = analyse_tree(b,2);
+    ntreeNode<tree_record> * valuetree = analyse_tree(b,5);
 
     print_tree(valuetree);
 //    num_nodes_per_level(valuetree);

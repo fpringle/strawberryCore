@@ -16,6 +16,7 @@ int32_t minimax(board b, int depth, colour side) {
     int32_t score;
     struct move_t moves[256];
     int num_moves = b.gen_legal_moves( moves );
+    if (num_moves==0) return b.getValue();
     board child;
 
     if ( side == white ) {
@@ -46,6 +47,7 @@ struct move_t search_minimax(board b, int depth, colour side) {
     board child;
     struct move_t moves[256];
     int num_moves = b.gen_legal_moves( moves );
+    if (num_moves==0 || depth==0) return move_t(0,0,0,0,0,0);
     struct move_t best_move;
 
     if ( side == white ) {
@@ -59,6 +61,7 @@ struct move_t search_minimax(board b, int depth, colour side) {
                 best_move = moves[i];
             }
         }
+        std::cout << "Top score: " << max_score << "\n";
         return best_move;
     }
 

@@ -2,7 +2,7 @@
 
 import sys
 from pprint import pprint
-
+from math import inf
 
 def parse_line(line):
     fields = line.strip().split(' ')
@@ -50,6 +50,39 @@ def _parse_tree(lines,lo):
 def parse_tree(lines):
     return _parse_tree(lines,0)[0]
 
+def _minimax(node, depth, player):
+    (heuristic,_),children = list(node.items())[0]
+    if depth==0 or children==[]:
+        return heuristic
+    if player==1:
+        value = -inf
+        for child in children:
+            score = _minimax(child,depth-1,-player)
+            value = max(value,score)
+        return value
+    else:
+        value = +inf
+        for child in children:
+            score = _minimax(child,depth-1,-player)
+            value = min(value,score)
+        return value
+
+def minimax(node,depth=-1):
+    (heuristic,_),children = list(node.items())[0]
+    if depth==0 or children==[]:
+        return heuristic
+
+    best_score = -inf
+    for child in children:
+        move = list(child.keys())[0][1]
+        score = _minimax(child,depth-1,-1)
+        if score > best_score:
+            best_score = score
+            best_move = move
+
+    print("Top:",best_score)
+    return best_move
+
 def test():
     with open("test_tree.txt",'r') as f:
         lines = f.read().strip().split('\n')
@@ -60,4 +93,6 @@ if __name__ == '__main__':
     lines = sys.stdin.read()
     lines = lines.strip().split('\n')
     tree = parse_tree(lines)
-    pprint(tree)
+#    pprint(tree)
+    best_move = minimax(tree)
+    print(best_move)
