@@ -1,6 +1,6 @@
 #include "ntree.h"
 #include <iostream>
-
+#include <string>
 
 int main() {
     ntreeNode<int32_t> * root = new ntreeNode<int32_t>(0);
@@ -26,6 +26,36 @@ int main() {
 
     p = p->firstChild->sibling;
     add_child(p,13);
+
+    p = root->firstChild->firstChild->sibling;
+
+    add_sibling(p,14);
+    add_child(p,15);
+    add_child(p,16);
+
+    print_tree(root);
+
+    std::cout << "\n\n\n";
+
+    num_nodes_per_level(root);
+
+    std::cout << "\n\n\n";
+
+    p = root->firstChild->sibling->sibling;
+
+    root = choose_child(root, p);
+
+    print_tree(root);
+
+    std::cout << "\n\n\n";
+
+    num_nodes_per_level(root);
+
+    std::cout << "\n\n\n";
+
+    p = root->firstChild->sibling;
+
+    root = choose_child(root, p);
 
     print_tree(root);
 

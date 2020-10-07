@@ -18,8 +18,66 @@ struct ntreeNode {
         sibling = NULL;
         firstChild = NULL;
     }
+    ~ntreeNode<T>();
 };
 
+template <class T>
+ntreeNode<T>::~ntreeNode() {
+    ntreeNode<T> * child, * next;
+    child = firstChild;
+    while (child != NULL) {
+        next = child->sibling;
+        delete child;
+        child = next;
+    }
+}
+
+template <class T>
+void delete_child( ntreeNode<T> * parent, ntreeNode<T> * child ) {
+    if (parent == NULL || child == NULL) return;
+    ntreeNode<T> * p, * prev;
+    p = parent->firstChild;
+    if (p==child) {
+        parent->firstChild = child->sibling;
+    }
+    else {
+        bool found = false;
+        while (p != NULL) {
+            prev = p;
+            p = p->sibling;
+            if (p==child) {
+                found = true;
+                prev->sibling = p->sibling;
+                break;
+            }
+        }
+        if (!found) throw "ValueError: arg 2 is not a child of arg 1";
+    }
+    delete child;
+}
+
+template <class T>
+ntreeNode<T> * choose_child( ntreeNode<T> * parent, ntreeNode<T> * child ) {
+    if (parent == NULL || child == NULL) return parent;
+    ntreeNode<T> * p = parent->firstChild, ret;
+    bool found = false;
+    while (p != NULL) {
+        if (p == child) {
+            found = true;
+            break;
+        }
+        p = p->sibling;
+    }
+    if (!found) throw "ValueError: arg 2 is not a child of arg 1";
+    p = parent->firstChild;
+    ntreeNode<T> * next;
+    while (p != NULL) {
+        next = p->sibling;
+        if (p != child) delete p;
+        p = next;
+    }
+    return child;
+}
 
 template <class T>
 void add_child( ntreeNode<T> * parent, ntreeNode<T> * child ) {
@@ -130,8 +188,20 @@ void print_tree( ntreeNode<T> * root, int max_depth=-1, std::ostream& cout=std::
         child = child->sibling;
     }
 }
-
-template class ntreeNode<int32_t>;
+/*
+template <class T>
+void delete_node( ntreeNode<T> ** node ) {
+    ntreeNode<T> * current = (*node)->firstChild, * next;
+    while (current != NULL) {
+        next = current->sibling;
+        delete_node(&current);
+        current = next;
+    }
+   *node = NULL;
+    delete *node;
+}
+*/
+//template class ntreeNode<int32_t>;
 
 
 #endif
