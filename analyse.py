@@ -80,19 +80,28 @@ def minimax(node,depth=-1):
             best_score = score
             best_move = move
 
-    print("Top:",best_score)
-    return best_move
+    return best_move,best_score
 
-def test():
-    with open("test_tree.txt",'r') as f:
-        lines = f.read().strip().split('\n')
+def compare(input,depth):
+    lines = input.strip().split('\n')
+    best_move_line  = lines.pop()
+    best_score_line = lines.pop()
+    best_move_cpp  = best_move_line.split(' ')[-1]
+    best_score_cpp = int(best_score_line.split(' ')[-1])
     tree = parse_tree(lines)
-    return tree
+    best_move_py, best_score_py = minimax(tree,depth)
+    if best_move_py == best_move_cpp:
+        print(f"Python and C++ agree that the best move is {best_move_py} with a score of {best_score_py}")
+        return True
+    else:
+        print(f"Python thinks the best move is {best_move_py} with a score of {best_score_py}")
+        print(f"C++    thinks the best move is {best_move_cpp} with a score of {best_score_cpp}")
+        return False
 
 if __name__ == '__main__':
-    lines = sys.stdin.read()
-    lines = lines.strip().split('\n')
-    tree = parse_tree(lines)
-#    pprint(tree)
-    best_move = minimax(tree)
-    print(best_move)
+    try:
+        depth = int(sys.argv[1])
+    except:
+        depth = -1
+    input = sys.stdin.read()
+    sys.exit(0 if compare(input,depth) else 1)
