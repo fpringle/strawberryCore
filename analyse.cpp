@@ -66,12 +66,15 @@ int main(int argc, char ** argv) {
 
     if (board_string != "default") b = board(board_string);
 
-    ntreeNode<tree_record> * valuetree = analyse_tree(b,depth);
-    print_tree(valuetree);
+    b.print_board();
 
-    move_t best_move = search_minimax(b,depth,white);
+    ntreeNode<tree_record> * valuetree = analyse_tree(b,depth);
+    // print_tree(valuetree);
+
+    move_t best_move = NegamaxAB::search(b,depth,white);
     std::cout << "Best move: ";
     print_move(best_move);
+    std::cout << std::endl;
 
     return 0;
 }

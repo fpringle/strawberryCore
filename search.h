@@ -7,19 +7,32 @@
 
 
 
-// search algorithms
-// defined in search.cpp
-int32_t minimax(board,int,colour);
-struct move_t search_minimax(board,int,colour);
+class Searcher {
+public:
+    static int32_t algorithm(board b, int depth, colour side);
+    static int32_t algorithm(board b, int depth, colour side,
+                             int32_t alpha, int32_t beta);
+    static move_t search(board b, int depth, colour side);
+};
 
-int32_t negamax(board,int,colour);
-struct move_t search_negamax(board,int,colour);
 
-int32_t negamaxAB(board,int,colour,int32_t,int32_t);
-int32_t negamaxAB(board,int,colour);
+class Minimax : Searcher {
+public:
+    static int32_t algorithm(board b, int depth, colour side);
+    static move_t search(board b, int depth, colour side);
+};
 
-struct move_t search_negamaxAB(board,int,colour);
+class Negamax : Searcher {;
+public:
+    static int32_t algorithm(board b, int depth, colour side);
+    static move_t search(board b, int depth, colour side);
+};
 
-int16_t F2(board,struct node*,uint8_t,colour,int16_t,int16_t);
-struct move_t search_F2(board,uint8_t depth,colour);
+class NegamaxAB : Searcher {;
+public:
+    static int32_t algorithm(board b, int depth, colour side,
+                             int32_t alpha, int32_t beta);
+    static move_t search(board b, int depth, colour side);
+};
+
 #endif

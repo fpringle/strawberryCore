@@ -60,7 +60,7 @@ void play_white(int plies, board b) {
                 break;
             case black:
                 std::cout << "Computer thinking...\n";
-                comp_move = search_negamax( b, plies, black );
+                comp_move = Negamax::search( b, plies, black );
                 b = doMove( b, comp_move );
                 *p++ = comp_move;
                 break;
@@ -120,7 +120,7 @@ void play_black(int plies, board b) {
                 break;
             case white:
                 std::cout << "Computer thinking...\n";
-                comp_move = search_negamax( b, plies, white );
+                comp_move = Negamax::search( b, plies, white );
                 b = doMove( b, comp_move );
                 *p++ = comp_move;
                 break;
