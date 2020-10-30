@@ -7,6 +7,7 @@
       <logicalFolder name="f1" displayName="util" projectFiles="true">
         <itemPath>util/doublylinkedlist.h</itemPath>
         <itemPath>util/linkedlist.h</itemPath>
+        <itemPath>util/ntree.h</itemPath>
         <itemPath>util/queue.h</itemPath>
         <itemPath>util/stack.h</itemPath>
         <itemPath>util/tree.h</itemPath>
@@ -127,9 +128,11 @@
                    projectFiles="false"
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
+      <itemPath>nbproject/Makefile-Debug.mk</itemPath>
+      <itemPath>nbproject/Makefile-Release.mk</itemPath>
+      <itemPath>nbproject/Makefile-impl.mk</itemPath>
+      <itemPath>nbproject/Makefile-variables.mk</itemPath>
       <itemPath>TODO.md</itemPath>
-      <itemPath>perft3.txt</itemPath>
-      <itemPath>tree.py</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -166,6 +169,20 @@
       </item>
       <item path="exceptions.h" ex="false" tool="3" flavor2="0">
       </item>
+      <folder path="HeaderFiles">
+        <ccTool>
+          <incDir>
+            <pElem>util</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <folder path="SourceFiles">
+        <ccTool>
+          <incDir>
+            <pElem>util</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
       <folder path="TestFiles">
         <linkerTool>
           <commandLine>-lcppunit</commandLine>
@@ -360,6 +377,8 @@
       <item path="util/linkedlist.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="util/linkedlist.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="util/ntree.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="util/queue.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -628,6 +647,8 @@
       <item path="util/linkedlist.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="util/linkedlist.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="util/ntree.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="util/queue.cpp" ex="false" tool="1" flavor2="0">
       </item>

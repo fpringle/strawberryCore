@@ -1,5 +1,6 @@
 #include "doublylinkedlist.h"
 #include "tree.h"
+#include "ntree.h"
 #include <cstddef>
 #include <limits>
 #include <iostream>
@@ -374,3 +375,4 @@ template class doublylinkedlist<std::string>;
 template class doublylinkedlist<treenode<int>*>;
 template class doublylinkedlist<treenode<char>*>;
 template class doublylinkedlist<treenode<std::string>*>;
+template class doublylinkedlist<ntreeNode<int>*>;

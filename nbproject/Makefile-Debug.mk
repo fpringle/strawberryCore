@@ -115,82 +115,82 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/chess_net: ${OBJECTFILES}
 ${OBJECTDIR}/action.o: action.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/action.o action.cpp
+	$(COMPILE.cc) -g -I. -Iutil -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/action.o action.cpp
 
 ${OBJECTDIR}/board.o: board.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/board.o board.cpp
+	$(COMPILE.cc) -g -I. -Iutil -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/board.o board.cpp
 
 ${OBJECTDIR}/check.o: check.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/check.o check.cpp
+	$(COMPILE.cc) -g -I. -Iutil -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/check.o check.cpp
 
 ${OBJECTDIR}/eval.o: eval.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/eval.o eval.cpp
+	$(COMPILE.cc) -g -I. -Iutil -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/eval.o eval.cpp
 
 ${OBJECTDIR}/hash.o: hash.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/hash.o hash.cpp
+	$(COMPILE.cc) -g -I. -Iutil -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/hash.o hash.cpp
 
 ${OBJECTDIR}/init.o: init.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/init.o init.cpp
+	$(COMPILE.cc) -g -I. -Iutil -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/init.o init.cpp
 
 ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -g -I. -Iutil -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 ${OBJECTDIR}/move.o: move.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/move.o move.cpp
+	$(COMPILE.cc) -g -I. -Iutil -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/move.o move.cpp
 
 ${OBJECTDIR}/play.o: play.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/play.o play.cpp
+	$(COMPILE.cc) -g -I. -Iutil -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/play.o play.cpp
 
 ${OBJECTDIR}/search.o: search.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/search.o search.cpp
+	$(COMPILE.cc) -g -I. -Iutil -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/search.o search.cpp
 
 ${OBJECTDIR}/twiddle.o: twiddle.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/twiddle.o twiddle.cpp
+	$(COMPILE.cc) -g -I. -Iutil -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/twiddle.o twiddle.cpp
 
 ${OBJECTDIR}/util/doublylinkedlist.o: util/doublylinkedlist.cpp
 	${MKDIR} -p ${OBJECTDIR}/util
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/doublylinkedlist.o util/doublylinkedlist.cpp
+	$(COMPILE.cc) -g -I. -Iutil -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/doublylinkedlist.o util/doublylinkedlist.cpp
 
 ${OBJECTDIR}/util/linkedlist.o: util/linkedlist.cpp
 	${MKDIR} -p ${OBJECTDIR}/util
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/linkedlist.o util/linkedlist.cpp
+	$(COMPILE.cc) -g -I. -Iutil -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/linkedlist.o util/linkedlist.cpp
 
 ${OBJECTDIR}/util/queue.o: util/queue.cpp
 	${MKDIR} -p ${OBJECTDIR}/util
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/queue.o util/queue.cpp
+	$(COMPILE.cc) -g -I. -Iutil -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/queue.o util/queue.cpp
 
 ${OBJECTDIR}/util/stack.o: util/stack.cpp
 	${MKDIR} -p ${OBJECTDIR}/util
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/stack.o util/stack.cpp
+	$(COMPILE.cc) -g -I. -Iutil -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/stack.o util/stack.cpp
 
 ${OBJECTDIR}/util/tree.o: util/tree.cpp
 	${MKDIR} -p ${OBJECTDIR}/util
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I. -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/tree.o util/tree.cpp
+	$(COMPILE.cc) -g -I. -Iutil -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/tree.o util/tree.cpp
 
 # Subprojects
 .build-subprojects:
@@ -352,7 +352,7 @@ ${OBJECTDIR}/action_nomain.o: ${OBJECTDIR}/action.o action.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/action_nomain.o action.cpp;\
+	    $(COMPILE.cc) -g -I. -Iutil -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/action_nomain.o action.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/action.o ${OBJECTDIR}/action_nomain.o;\
 	fi
@@ -365,7 +365,7 @@ ${OBJECTDIR}/board_nomain.o: ${OBJECTDIR}/board.o board.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/board_nomain.o board.cpp;\
+	    $(COMPILE.cc) -g -I. -Iutil -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/board_nomain.o board.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/board.o ${OBJECTDIR}/board_nomain.o;\
 	fi
@@ -378,7 +378,7 @@ ${OBJECTDIR}/check_nomain.o: ${OBJECTDIR}/check.o check.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/check_nomain.o check.cpp;\
+	    $(COMPILE.cc) -g -I. -Iutil -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/check_nomain.o check.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/check.o ${OBJECTDIR}/check_nomain.o;\
 	fi
@@ -391,7 +391,7 @@ ${OBJECTDIR}/eval_nomain.o: ${OBJECTDIR}/eval.o eval.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/eval_nomain.o eval.cpp;\
+	    $(COMPILE.cc) -g -I. -Iutil -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/eval_nomain.o eval.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/eval.o ${OBJECTDIR}/eval_nomain.o;\
 	fi
@@ -404,7 +404,7 @@ ${OBJECTDIR}/hash_nomain.o: ${OBJECTDIR}/hash.o hash.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/hash_nomain.o hash.cpp;\
+	    $(COMPILE.cc) -g -I. -Iutil -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/hash_nomain.o hash.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/hash.o ${OBJECTDIR}/hash_nomain.o;\
 	fi
@@ -417,7 +417,7 @@ ${OBJECTDIR}/init_nomain.o: ${OBJECTDIR}/init.o init.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/init_nomain.o init.cpp;\
+	    $(COMPILE.cc) -g -I. -Iutil -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/init_nomain.o init.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/init.o ${OBJECTDIR}/init_nomain.o;\
 	fi
@@ -430,7 +430,7 @@ ${OBJECTDIR}/main_nomain.o: ${OBJECTDIR}/main.o main.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main_nomain.o main.cpp;\
+	    $(COMPILE.cc) -g -I. -Iutil -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main_nomain.o main.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/main.o ${OBJECTDIR}/main_nomain.o;\
 	fi
@@ -443,7 +443,7 @@ ${OBJECTDIR}/move_nomain.o: ${OBJECTDIR}/move.o move.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/move_nomain.o move.cpp;\
+	    $(COMPILE.cc) -g -I. -Iutil -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/move_nomain.o move.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/move.o ${OBJECTDIR}/move_nomain.o;\
 	fi
@@ -456,7 +456,7 @@ ${OBJECTDIR}/play_nomain.o: ${OBJECTDIR}/play.o play.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/play_nomain.o play.cpp;\
+	    $(COMPILE.cc) -g -I. -Iutil -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/play_nomain.o play.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/play.o ${OBJECTDIR}/play_nomain.o;\
 	fi
@@ -469,7 +469,7 @@ ${OBJECTDIR}/search_nomain.o: ${OBJECTDIR}/search.o search.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/search_nomain.o search.cpp;\
+	    $(COMPILE.cc) -g -I. -Iutil -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/search_nomain.o search.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/search.o ${OBJECTDIR}/search_nomain.o;\
 	fi
@@ -482,7 +482,7 @@ ${OBJECTDIR}/twiddle_nomain.o: ${OBJECTDIR}/twiddle.o twiddle.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/twiddle_nomain.o twiddle.cpp;\
+	    $(COMPILE.cc) -g -I. -Iutil -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/twiddle_nomain.o twiddle.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/twiddle.o ${OBJECTDIR}/twiddle_nomain.o;\
 	fi
@@ -495,7 +495,7 @@ ${OBJECTDIR}/util/doublylinkedlist_nomain.o: ${OBJECTDIR}/util/doublylinkedlist.
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/doublylinkedlist_nomain.o util/doublylinkedlist.cpp;\
+	    $(COMPILE.cc) -g -I. -Iutil -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/doublylinkedlist_nomain.o util/doublylinkedlist.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/util/doublylinkedlist.o ${OBJECTDIR}/util/doublylinkedlist_nomain.o;\
 	fi
@@ -508,7 +508,7 @@ ${OBJECTDIR}/util/linkedlist_nomain.o: ${OBJECTDIR}/util/linkedlist.o util/linke
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/linkedlist_nomain.o util/linkedlist.cpp;\
+	    $(COMPILE.cc) -g -I. -Iutil -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/linkedlist_nomain.o util/linkedlist.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/util/linkedlist.o ${OBJECTDIR}/util/linkedlist_nomain.o;\
 	fi
@@ -521,7 +521,7 @@ ${OBJECTDIR}/util/queue_nomain.o: ${OBJECTDIR}/util/queue.o util/queue.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/queue_nomain.o util/queue.cpp;\
+	    $(COMPILE.cc) -g -I. -Iutil -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/queue_nomain.o util/queue.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/util/queue.o ${OBJECTDIR}/util/queue_nomain.o;\
 	fi
@@ -534,7 +534,7 @@ ${OBJECTDIR}/util/stack_nomain.o: ${OBJECTDIR}/util/stack.o util/stack.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/stack_nomain.o util/stack.cpp;\
+	    $(COMPILE.cc) -g -I. -Iutil -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/stack_nomain.o util/stack.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/util/stack.o ${OBJECTDIR}/util/stack_nomain.o;\
 	fi
@@ -547,7 +547,7 @@ ${OBJECTDIR}/util/tree_nomain.o: ${OBJECTDIR}/util/tree.o util/tree.cpp
 	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
 	then  \
 	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -g -I. -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/tree_nomain.o util/tree.cpp;\
+	    $(COMPILE.cc) -g -I. -Iutil -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/tree_nomain.o util/tree.cpp;\
 	else  \
 	    ${CP} ${OBJECTDIR}/util/tree.o ${OBJECTDIR}/util/tree_nomain.o;\
 	fi
