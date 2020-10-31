@@ -25,13 +25,13 @@ int main() {
     add_child(p, 12);
 
     p = p->firstChild->sibling;
-    add_child(p,13);
+    add_child(p, 13);
 
     p = root->firstChild->firstChild->sibling;
 
-    add_sibling(p,14);
-    add_child(p,15);
-    add_child(p,16);
+    add_sibling(p, 14);
+    add_child(p, 15);
+    add_child(p, 16);
 
     print_tree(root);
 

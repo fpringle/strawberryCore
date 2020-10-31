@@ -18,7 +18,6 @@
 #include <limits>
 #include "ntree.h"
 
-
 struct tree_record {
     int32_t val;
     std::string lastmove;
@@ -30,12 +29,12 @@ std::ostream& operator<<(std::ostream &out, const tree_record &tr) {
     return out;
 }
 
-ntreeNode<tree_record> * analyse_tree( board b, int depth, std::string lastmv = "" ) {
+ntreeNode<tree_record> * analyse_tree(board b, int depth, std::string lastmv = "") {
     ntreeNode<tree_record> * root = new ntreeNode<tree_record>;
     root->data = {b.getValue(), lastmv};
-    if (depth==0) return root;
+    if (depth == 0) return root;
 
-    int num_moves,i;
+    int num_moves, i;
     move_t movelist[256];
     board child;
     num_moves = b.gen_legal_moves(movelist);
@@ -43,18 +42,16 @@ ntreeNode<tree_record> * analyse_tree( board b, int depth, std::string lastmv = 
     std::stringstream new_move;
     ntreeNode<tree_record> * child_tree;
 
-    for (i=0;i<num_moves;i++) {
+    for (i = 0; i < num_moves; i++) {
         move = movelist[i];
-        child = doMove(b,move);
+        child = doMove(b, move);
         print_move(move, new_move);
-        child_tree = analyse_tree(child,depth-1,new_move.str());
+        child_tree = analyse_tree(child, depth - 1, new_move.str());
         new_move.str("");
-        add_child(root,child_tree);
+        add_child(root, child_tree);
     }
     return root;
 }
-
-
 
 int main(int argc, char ** argv) {
     init();
@@ -68,10 +65,10 @@ int main(int argc, char ** argv) {
 
     b.print_board();
 
-    ntreeNode<tree_record> * valuetree = analyse_tree(b,depth);
+    ntreeNode<tree_record> * valuetree = analyse_tree(b, depth);
     // print_tree(valuetree);
 
-    move_t best_move = NegamaxAB::search(b,depth,white);
+    move_t best_move = NegamaxAB::search(b, depth, white);
     std::cout << "Best move: ";
     print_move(best_move);
     std::cout << std::endl;

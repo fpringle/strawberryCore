@@ -9,22 +9,21 @@
 #include <string>
 #include <iostream>
 
-
-move_t input_move( board b ) {
+move_t input_move(board b) {
     move_t ret;
     move_t moves[256];
-    int n_moves = b.gen_legal_moves( moves );
+    int n_moves = b.gen_legal_moves(moves);
 
     std::string inp;
     std::cout << "Enter move as FileRankFileRank (e.g. e2e4): ";
     std::cin >> inp;
-    ret = stom( moves, n_moves, inp );
+    ret = stom(moves, n_moves, inp);
 
-    while ( ret.give() == 0 ) {
+    while (ret.give() == 0) {
         std::cout << "Sorry, that's not a valid move.\n";
         std::cout << "Enter move as FileRankFileRank (e.g. e2e4): ";
         std::cin >> inp;
-        ret = stom( moves, n_moves, inp );
+        ret = stom(moves, n_moves, inp);
     }
     return ret;
 }
@@ -50,18 +49,18 @@ void play_white(int plies, board b) {
 
     while (!b.gameover()) {
         b.print_board();
-        b.getSide( &side );
-        switch ( side ) {
+        b.getSide(&side);
+        switch (side) {
             case white:
-                player_move = input_move( b );
+                player_move = input_move(b);
                 print_move(player_move);
-                b = doMove( b, player_move );
+                b = doMove(b, player_move);
                 *p++ = player_move;
                 break;
             case black:
                 std::cout << "Computer thinking...\n";
-                comp_move = Negamax::search( b, plies, black );
-                b = doMove( b, comp_move );
+                comp_move = Negamax::search(b, plies, black);
+                b = doMove(b, comp_move);
                 *p++ = comp_move;
                 break;
             default:
@@ -71,7 +70,7 @@ void play_white(int plies, board b) {
     }
 
     b.print_board();
-    for (int i=0; i<num_moves; i++) {
+    for (int i = 0; i < num_moves; i++) {
         print_move(history[i]);
         std::cout << std::endl;
     }
@@ -89,7 +88,6 @@ void play_white(int plies, board b) {
     }
 
 }
-
 
 void play_black(int plies) {
     board b;
@@ -111,17 +109,17 @@ void play_black(int plies, board b) {
 
     while (!b.gameover()) {
         b.print_board();
-        b.getSide( &side );
-        switch ( side ) {
+        b.getSide(&side);
+        switch (side) {
             case black:
-                player_move = input_move( b );
-                b = doMove( b, player_move );
+                player_move = input_move(b);
+                b = doMove(b, player_move);
                 *p++ = player_move;
                 break;
             case white:
                 std::cout << "Computer thinking...\n";
-                comp_move = Negamax::search( b, plies, white );
-                b = doMove( b, comp_move );
+                comp_move = Negamax::search(b, plies, white);
+                b = doMove(b, comp_move);
                 *p++ = comp_move;
                 break;
             default:
@@ -145,13 +143,12 @@ void play_black(int plies, board b) {
 
 }
 
-
 void play(int plies, colour side) {
-    if (side==white) play_white(plies);
-    else             play_black(plies);
+    if (side == white) play_white(plies);
+    else play_black(plies);
 }
 
 void play(int plies, board b, colour side) {
-    if (side==white) play_white(plies,b);
-    else             play_black(plies,b);
+    if (side == white) play_white(plies, b);
+    else play_black(plies, b);
 }

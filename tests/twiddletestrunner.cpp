@@ -19,15 +19,13 @@
 #include <cppunit/TestFailure.h>
 #include <cppunit/portability/Stream.h>
 
-class ProgressListener : public CPPUNIT_NS::TestListener {
+class ProgressListener: public CPPUNIT_NS::TestListener {
 public:
 
     ProgressListener()
-    : m_lastTestFailed(false) {
-    }
+    : m_lastTestFailed(false) { }
 
-    ~ProgressListener() {
-    }
+    ~ProgressListener() { }
 
     void startTest(CPPUNIT_NS::Test *test) {
         CPPUNIT_NS::stdCOut() << test->getName();

@@ -13,14 +13,10 @@
 
 CPPUNIT_TEST_SUITE_REGISTRATION(structurestestclass);
 
-structurestestclass::structurestestclass() {
-}
+structurestestclass::structurestestclass() { }
 
-structurestestclass::~structurestestclass() {
-}
+structurestestclass::~structurestestclass() { }
 
-void structurestestclass::setUp() {
-}
+void structurestestclass::setUp() { }
 
-void structurestestclass::tearDown() {
-}
+void structurestestclass::tearDown() { }

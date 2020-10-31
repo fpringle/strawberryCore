@@ -9,46 +9,46 @@
 #include "ntree.h"
 
 template <class T>
-queue<T>::queue ( ) {
-  doublylinkedlist <T> lst;
+queue<T>::queue() {
+    doublylinkedlist <T> lst;
 }
 
 template <class T>
-void queue<T>::enqueue( T data ) {
-  lst.append( data );
+void queue<T>::enqueue(T data) {
+    lst.append(data);
 }
 
 template <class T>
-void queue<T>::dequeue( T * target ) {
-  *target = lst.get_item( 0 );
-  lst.deleteIndex( 0 );
+void queue<T>::dequeue(T * target) {
+    *target = lst.get_item(0);
+    lst.deleteIndex(0);
 }
 
 template <class T>
-T queue<T>::dequeue( ) {
-  T ret = lst.get_item( 0 );
-  lst.deleteIndex( 0 );
-  return ret;
+T queue<T>::dequeue() {
+    T ret = lst.get_item(0);
+    lst.deleteIndex(0);
+    return ret;
 }
 
 template <class T>
-T queue<T>::peek( ) {
-  T ret = lst.get_item( 0 );
-  return ret;
+T queue<T>::peek() {
+    T ret = lst.get_item(0);
+    return ret;
 }
 
 template <class T>
-bool queue<T>::is_empty( ) {
-  return lst.is_empty();
+bool queue<T>::is_empty() {
+    return lst.is_empty();
 }
 
 template <class T>
-void queue<T>::print( ) {
-  lst.print( );
+void queue<T>::print() {
+    lst.print();
 }
 
 template <class T>
-int queue<T>::len( ) {
+int queue<T>::len() {
     return lst.len();
 }
 
