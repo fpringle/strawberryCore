@@ -3,5 +3,4 @@
 - undo a move (unMove in action.h)
 - Function comments to explain parameters
 - Remove unnecessary std::couts for multi-line printing
-- Fix indentation 
-- get rid of exceptions.h
+- Fix indentation

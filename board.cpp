@@ -1,6 +1,5 @@
 #include "board.h"
 #include "twiddle.h"
-#include "exceptions.h"
 
 #include <assert.h>
 #include <iostream>

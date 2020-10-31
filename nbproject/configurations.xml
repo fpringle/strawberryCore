@@ -15,7 +15,6 @@
       <itemPath>action.h</itemPath>
       <itemPath>board.h</itemPath>
       <itemPath>eval.h</itemPath>
-      <itemPath>exceptions.h</itemPath>
       <itemPath>hash.h</itemPath>
       <itemPath>init.h</itemPath>
       <itemPath>move.h</itemPath>
@@ -166,8 +165,6 @@
       <item path="eval.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="eval.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="exceptions.h" ex="false" tool="3" flavor2="0">
       </item>
       <folder path="HeaderFiles">
         <ccTool>
@@ -426,8 +423,6 @@
       <item path="eval.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="eval.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="exceptions.h" ex="false" tool="3" flavor2="0">
       </item>
       <folder path="TestFiles">
         <linkerTool>
