@@ -19,6 +19,8 @@ class movetestclass : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(testStoi);
     
     CPPUNIT_TEST(testMove_t);
+
+    CPPUNIT_TEST(testOperatorPrint);
     
     CPPUNIT_TEST(testInit_rays);
     
@@ -47,6 +49,8 @@ private:
     void testStoi();
     
     void testMove_t();
+
+    void testOperatorPrint();
     
     void testInit_rays();
     

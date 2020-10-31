@@ -74,6 +74,7 @@ public:
     bool is_queenCastle();
     bool is_castle();
     uint16_t give();
+    friend std::ostream& operator<<(std::ostream &out, const move_t &move);
 };
 
 // defined in move.cpp

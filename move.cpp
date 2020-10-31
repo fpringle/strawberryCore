@@ -414,6 +414,12 @@ int _stoi( std::string s ) {
             }
         }
 
+        std::ostream& operator<<(std::ostream &out, const move_t &move) {
+            print_move(move, out);
+            return out;
+        }
+        
+        
 
         void print_move(struct move_t move, std::ostream& cout) {
             //char   to_c[2];
@@ -504,17 +510,15 @@ int _stoi( std::string s ) {
         void init_rays() {
             int sq;
             int dir;
-            bitboard ray_bb,tmp;
+            bitboard tmp;
 
             for (dir=0;dir<8;dir++) {
                 for (sq=0;sq<64;sq++) {
-                    ray_bb = 0;
                     tmp = (1ULL << sq);
                     while ( tmp ) {
                         tmp = oneGeneral8(tmp,dir);
-                        ray_bb |= tmp;
+                        rays[dir][sq] |= tmp;
                     }
-                    rays[dir][sq] = ray_bb;
                 }
             }
         }

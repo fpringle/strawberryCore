@@ -102,7 +102,7 @@ public:
 
     // get data
     // defined in board.cpp
-    void getBitboards(bitboard*);
+    void getBitboards(bitboard*) const;
     void getCastlingRights(bool*);
     void getEP(bool*);
     void getdPPFile(int*);
@@ -125,6 +125,7 @@ public:
     void print_board( std::ostream& cout = std::cout );
     void print_board_indent( std::ostream& cout = std::cout, int indent = 0 );
     void print_all( std::ostream& cout = std::cout );
+    friend std::ostream& operator<<(std::ostream &out, const board &brd);
     std::string FEN( );
     //    std::string SAN_post_move( move_t );
     //    std::string SAN_pre_move ( move_t );

@@ -116,6 +116,22 @@ void movetestclass::testMove_t() {
     CPPUNIT_ASSERT( test_move(50, 34, false, false, false,  true) );
 }
 
+void movetestclass::testOperatorPrint() {
+    move_t move1(10, 19, false,  true, false, false);
+    move_t move2(15,  7,  true, false, false, false);
+    move_t move3( 4,  6, false, false,  true, false);
+    move_t move4(60, 57, false, false,  true,  true);
+    move_t move5(38, 45, false,  true, false,  true);
+    move_t move6(50, 34, false, false, false,  true);
+    
+    std::cout << move1 << std::endl
+              << move2 << std::endl
+              << move3 << std::endl
+              << move4 << std::endl
+              << move5 << std::endl
+              << move6 << std::endl;
+}
+
 void movetestclass::testInit_rays() {
     init_rays();
     

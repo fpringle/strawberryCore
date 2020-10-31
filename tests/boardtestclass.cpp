@@ -400,6 +400,27 @@ void boardtestclass::testPrint_board() {
     CPPUNIT_ASSERT_MESSAGE( "error printing initial board", ss.str() == real );
 }
 
+void boardtestclass::testPrint_board_operator() {
+    board _board;
+    std::stringstream ss;
+    ss << _board;
+    
+    std::string real = "   A B C D E F G H\n\n"
+            
+                       "8  R N B Q K B N R  8\n"
+                       "7  P P P P P P P P  7\n"
+                       "6  . . . . . . . .  6\n"
+                       "5  . . . . . . . .  5\n"
+                       "4  . . . . . . . .  4\n"
+                       "3  . . . . . . . .  3\n"
+                       "2  p p p p p p p p  2\n"
+                       "1  r n b q k b n r  1\n\n"
+            
+                       "   A B C D E F G H\n";
+    
+    CPPUNIT_ASSERT_MESSAGE( "error printing initial board", ss.str() == real );
+}
+
 
 void boardtestclass::testPrint_all() {
     board _board;
@@ -448,11 +469,6 @@ void boardtestclass::testFEN() {
     
     std::string s = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0";
     _board.FEN( ss );
-    
-    if ( ss.str() != s ) {
-        std::cout << ss.str() << std::endl;
-        std::cout << s << std::endl;
-    }
     
     if ( ss.str() != s ) {
         std::cout << ss.str() << std::endl;

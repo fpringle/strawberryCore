@@ -340,8 +340,8 @@ bool board::operator!=( const board& other ) {
 }
 
 // get data
-void board::getBitboards(bitboard * dest) {
-    bitboard * p = pieceBoards;
+void board::getBitboards(bitboard * dest) const {
+    const bitboard * p = pieceBoards;
 
     while (p < pieceBoards + 12) *dest++ = *p++;
 }
@@ -497,6 +497,38 @@ void board::print_all(std::ostream& cout) {
     cout << "  " << fullMoveClock << "\n";
 }
 
+std::ostream& operator<<(std::ostream &out, const board &brd) {
+    // uppercase = black, lowercase = white
+    int i,j;
+    bitboard pieceBoards[12];
+    brd.getBitboards(pieceBoards);
+    char to_print[64];
+    for (i=0;i<64;i++) to_print[i]='.';
+
+    for (i=0;i<12;i++) {
+        //tmp = pieceBoards[i];//pieces[i];
+        for (j=0;j<64;j++) {
+            if (pieceBoards[i] & 1ULL) {
+                to_print[j] = symbols[i];
+            }
+            pieceBoards[i] >>= 1;
+            //if (~tmp) break;
+        }
+    }
+
+    out << "   A B C D E F G H\n\n";
+    for (i=7;i>=0;i--) {
+        out << i+1 << " ";
+        for (j=0;j<8;j++) {
+            out << " " << to_print[i*8+j];
+        }
+        out << "  " << i+1 << endl;
+    }
+    out << "\n   A B C D E F G H\n";
+    
+    return out;
+}
+    
 std::string board::FEN() {
     int count1;
     std::stringstream ss;
