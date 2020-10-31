@@ -3,10 +3,9 @@
 #ifndef __TWIDDLE_H
 #define __TWIDDLE_H
 
-//#include "board.h"
-//#include "move.h"
+#include <cstdint>
 
-using bitboard = unsigned long long int;
+using bitboard = uint64_t;
 
 // general-purpose bit twiddling functions
 // defined in twiddle.cpp

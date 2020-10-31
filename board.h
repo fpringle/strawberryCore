@@ -22,7 +22,8 @@
 
 // define 64-bit integer
 
-using bitboard = unsigned long long int;
+using bitboard = uint64_t;
+//using bitboard = unsigned long long int;
 
 // declare starting bitboards
 // defined in board.cpp
