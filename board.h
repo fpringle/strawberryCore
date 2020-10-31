@@ -53,9 +53,10 @@ extern const char colours[2];
 enum colour {white,black};
 enum piece {pawn,rook,knight,bishop,queen,king};
 enum colourPiece {whitePawn,whiteRook,whiteKnight,
-    whiteBishop,whiteQueen,whiteKing,
-    blackPawn,blackRook,blackKnight,
-blackBishop,blackQueen,blackKing};
+                  whiteBishop,whiteQueen,whiteKing,
+                  blackPawn,blackRook,blackKnight,
+                  blackBishop,blackQueen,blackKing
+                 };
 
 
 // defined in board.cpp

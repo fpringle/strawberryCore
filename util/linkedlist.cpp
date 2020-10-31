@@ -325,7 +325,6 @@ void linkedlist<T>::insertionSort() {
             p = p->next;
             prev = prev->next;
             //print();
-            //std::cout << "head: " << head->data << ", p: " << p->data << ", prev: " << prev->data << ", next: " << p->next->data << ", prev->next: " << prev->next->data << "\n\n";
             continue;
         }
         if (p->data <= head->data) {
@@ -357,7 +356,6 @@ void linkedlist<T>::insertionSort() {
             prev->next = p;
         }
         //print();
-        //std::cout << "head: " << head->data << ", p: " << p->data << ", prev: " << prev->data << ", next: " << p->next->data << ", prev->next: " << prev->next->data << "\n\n";
     }
 }
 

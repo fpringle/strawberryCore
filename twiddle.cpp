@@ -92,33 +92,33 @@ bitboard oneNW(bitboard b) {
 
 bitboard oneGeneral8(bitboard b, int d) {
     switch (d) {
-        case 0:
-            return oneN(b);
-            break;
-        case 1:
-            return oneNE(b);
-            break;
-        case 2:
-            return oneE(b);
-            break;
-        case 3:
-            return oneSE(b);
-            break;
-        case 4:
-            return oneS(b);
-            break;
-        case 5:
-            return oneSW(b);
-            break;
-        case 6:
-            return oneW(b);
-            break;
-        case 7:
-            return oneNW(b);
-            break;
-        default:
-            return b;
-            break;
+    case 0:
+        return oneN(b);
+        break;
+    case 1:
+        return oneNE(b);
+        break;
+    case 2:
+        return oneE(b);
+        break;
+    case 3:
+        return oneSE(b);
+        break;
+    case 4:
+        return oneS(b);
+        break;
+    case 5:
+        return oneSW(b);
+        break;
+    case 6:
+        return oneW(b);
+        break;
+    case 7:
+        return oneNW(b);
+        break;
+    default:
+        return b;
+        break;
     }
 }
 

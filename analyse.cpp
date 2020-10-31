@@ -5,7 +5,6 @@
 #include "hash.h"
 #include "eval.h"
 #include "twiddle.h"
-//#include "structures.h"
 #include "search.h"
 #include <iostream>
 #include <fstream>
@@ -29,7 +28,8 @@ std::ostream& operator<<(std::ostream &out, const tree_record &tr) {
     return out;
 }
 
-ntreeNode<tree_record> * analyse_tree(board b, int depth, std::string lastmv = "") {
+ntreeNode<tree_record> * analyse_tree(board b, int depth,
+                                      std::string lastmv = "") {
     ntreeNode<tree_record> * root = new ntreeNode<tree_record>;
     root->data = {b.getValue(), lastmv};
     if (depth == 0) return root;

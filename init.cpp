@@ -1,8 +1,5 @@
 #include "board.h"
 #include "move.h"
-//#include "eval.h"
-//#include "exceptions.h"
-//#include "twiddle.h"
 #include "init.h"
 #include "hash.h"
 

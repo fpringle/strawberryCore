@@ -9,7 +9,8 @@
 
 // initialise constants declared in board.h
 const char symbols[12] = {'p', 'r', 'n', 'b', 'q', 'k',
-    'P', 'R', 'N', 'B', 'Q', 'K'};
+                          'P', 'R', 'N', 'B', 'Q', 'K'
+                         };
 const char colours[2] = {'w', 'b'};
 
 // define starting configuration
@@ -75,7 +76,8 @@ board::board() {
     hash_value = zobrist_hash();
 }
 
-board::board(bitboard * startPositions, bool * castling, bool ep, int dpp, uint8_t clock, uint8_t full_clock, colour side, int32_t val, uint64_t hash) {
+board::board(bitboard * startPositions, bool * castling, bool ep, int dpp,
+             uint8_t clock, uint8_t full_clock, colour side, int32_t val, uint64_t hash) {
     // parameterised constructor
 
     // initialise an array of pointers to the piece bitboards
@@ -152,57 +154,55 @@ board::board(std::string fen) {
     for (int count_slash = 0; count_slash < 8; count_slash++) {
         j = 0;
         while (fen[i] != '/' && fen[i] != ' ') {
-            //            std::cout << fen[i];
             switch (fen[i]) {
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                    j += int(fen[i] - '0');
-                    //                    std::cout << "number " << fen[i] << std::endl;
-                    i++;
-                    cp = -1;
-                    break;
-                case 'P':
-                    cp = 0;
-                    break;
-                case 'R':
-                    cp = 1;
-                    break;
-                case 'N':
-                    cp = 2;
-                    break;
-                case 'B':
-                    cp = 3;
-                    break;
-                case 'Q':
-                    cp = 4;
-                    break;
-                case 'K':
-                    cp = 5;
-                    break;
-                case 'p':
-                    cp = 6;
-                    break;
-                case 'r':
-                    cp = 7;
-                    break;
-                case 'n':
-                    cp = 8;
-                    break;
-                case 'b':
-                    cp = 9;
-                    break;
-                case 'q':
-                    cp = 10;
-                    break;
-                case 'k':
-                    cp = 11;
-                    break;
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+                j += int(fen[i] - '0');
+                i++;
+                cp = -1;
+                break;
+            case 'P':
+                cp = 0;
+                break;
+            case 'R':
+                cp = 1;
+                break;
+            case 'N':
+                cp = 2;
+                break;
+            case 'B':
+                cp = 3;
+                break;
+            case 'Q':
+                cp = 4;
+                break;
+            case 'K':
+                cp = 5;
+                break;
+            case 'p':
+                cp = 6;
+                break;
+            case 'r':
+                cp = 7;
+                break;
+            case 'n':
+                cp = 8;
+                break;
+            case 'b':
+                cp = 9;
+                break;
+            case 'q':
+                cp = 10;
+                break;
+            case 'k':
+                cp = 11;
+                break;
             }
             if (cp != -1) {
                 pieceBoards[cp] |= (1ULL << ((7 - count_slash)*8 + j));
@@ -228,18 +228,18 @@ board::board(std::string fen) {
     else {
         while (fen[i] != ' ') {
             switch (fen[i]) {
-                case 'K':
-                    castleWhiteKingSide = true;
-                    break;
-                case 'Q':
-                    castleWhiteQueenSide = true;
-                    break;
-                case 'k':
-                    castleBlackKingSide = true;
-                    break;
-                case 'q':
-                    castleBlackQueenSide = true;
-                    break;
+            case 'K':
+                castleWhiteKingSide = true;
+                break;
+            case 'Q':
+                castleWhiteQueenSide = true;
+                break;
+            case 'k':
+                castleBlackKingSide = true;
+                break;
+            case 'q':
+                castleBlackQueenSide = true;
+                break;
             }
             i++;
         }
@@ -386,7 +386,7 @@ int board::num_pieces_left() {
     return ret;
 }
 
-void print_bb(bitboard bb, char c, std::ostream& cout) {//  = 'x') {
+void print_bb(bitboard bb, char c, std::ostream& cout) {
     int i, j;
     char to_print[64];
     for (i = 0; i < 64; i++) {
@@ -398,9 +398,9 @@ void print_bb(bitboard bb, char c, std::ostream& cout) {//  = 'x') {
         for (j = 0; j < 8; j++) {
             cout << to_print[i * 8 + j] << ' ';
         }
-        cout << endl;
+        cout << std::endl;
     }
-    cout << endl;
+    cout << std::endl;
 }
 
 // display the current state of the board
@@ -429,7 +429,7 @@ void board::print_board(std::ostream& cout) {
         for (j = 0; j < 8; j++) {
             cout << " " << to_print[i * 8 + j];
         }
-        cout << "  " << i + 1 << endl;
+        cout << "  " << i + 1 << std::endl;
     }
     cout << "\n   A B C D E F G H\n";
 }
@@ -461,7 +461,7 @@ void board::print_board_indent(std::ostream& cout, int indent) {
         for (j = 0; j < 8; j++) {
             cout << " " << to_print[i * 8 + j];
         }
-        cout << "  " << i + 1 << endl;
+        cout << "  " << i + 1 << std::endl;
     }
     cout << std::endl;
     for (i = 0; i < indent; i++) cout << " ";
@@ -524,7 +524,7 @@ std::ostream& operator<<(std::ostream &out, const board &brd) {
         for (j = 0; j < 8; j++) {
             out << " " << to_print[i * 8 + j];
         }
-        out << "  " << i + 1 << endl;
+        out << "  " << i + 1 << std::endl;
     }
     out << "\n   A B C D E F G H\n";
 
@@ -573,7 +573,8 @@ std::string board::FEN() {
     else ss << " b ";
 
 
-    if (!(castleWhiteKingSide | castleWhiteQueenSide | castleBlackKingSide | castleBlackQueenSide)) {
+    if (!(castleWhiteKingSide | castleWhiteQueenSide | castleBlackKingSide |
+            castleBlackQueenSide)) {
         ss << "-";
     }
 
@@ -641,7 +642,8 @@ void board::FEN(std::ostream& ss) {
     else ss << " b ";
 
 
-    if (!(castleWhiteKingSide | castleWhiteQueenSide | castleBlackKingSide | castleBlackQueenSide)) {
+    if (!(castleWhiteKingSide | castleWhiteQueenSide | castleBlackKingSide |
+            castleBlackQueenSide)) {
         ss << "-";
     }
 

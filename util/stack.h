@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   stack.h
  * Author: pi
  *
@@ -11,9 +11,9 @@
 
 template <class T>
 class stack {
-  doublylinkedlist <T> lst;
-  
-  public:
+    doublylinkedlist <T> lst;
+
+public:
     stack( );
     void enstack( T );
     // pop to target

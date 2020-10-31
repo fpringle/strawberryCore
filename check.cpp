@@ -12,20 +12,26 @@ bool board::is_check(colour side) {
     colour otherSide = (side == white) ? black : white;
 
     // pawns
-    if (pawnAttackNaive(kingpos, side) & pieceBoards[(6 * otherSide) + 0]) return true;
+    if (pawnAttackNaive(kingpos,
+                        side) & pieceBoards[(6 * otherSide) + 0]) return true;
     // rooks
-    if (rookTargets(kingpos, _white, _black, side) & pieceBoards[(6 * otherSide) + 1]) return true;
+    if (rookTargets(kingpos, _white, _black,
+                    side) & pieceBoards[(6 * otherSide) + 1]) return true;
     // knights
-    if (knightTargets(kingpos, _white, _black, side) & pieceBoards[(6 * otherSide) + 2]) return true;
+    if (knightTargets(kingpos, _white, _black,
+                      side) & pieceBoards[(6 * otherSide) + 2]) return true;
     // bishops
-    if (bishopTargets(kingpos, _white, _black, side) & pieceBoards[(6 * otherSide) + 3]) return true;
+    if (bishopTargets(kingpos, _white, _black,
+                      side) & pieceBoards[(6 * otherSide) + 3]) return true;
     // queens
-    if (queenTargets(kingpos, _white, _black, side) & pieceBoards[(6 * otherSide) + 4]) return true;
+    if (queenTargets(kingpos, _white, _black,
+                     side) & pieceBoards[(6 * otherSide) + 4]) return true;
 
     return false;
 }
 
-bool board::is_check(colour side, piece * checkingPiece, int * checkingInd, bool * doubleCheck) {
+bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
+                     bool * doubleCheck) {
     // on-the-fly check detection
     int kingpos = log2(pieceBoards[ (6 * side) + 5 ]);
     bitboard _white = whiteSquares();
@@ -42,7 +48,8 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd, bool
         count++;
     }
     // rooks
-    _check = rookTargets(kingpos, _white, _black, side) & pieceBoards[(6 * otherSide) + 1];
+    _check = rookTargets(kingpos, _white, _black,
+                         side) & pieceBoards[(6 * otherSide) + 1];
     if (_check) {
         *checkingPiece = piece(1);
         *checkingInd = last_set_bit(_check);
@@ -53,7 +60,8 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd, bool
         }
     }
     // knights
-    _check = knightTargets(kingpos, _white, _black, side) & pieceBoards[(6 * otherSide) + 2];
+    _check = knightTargets(kingpos, _white, _black,
+                           side) & pieceBoards[(6 * otherSide) + 2];
     if (_check) {
         *checkingPiece = piece(2);
         *checkingInd = last_set_bit(_check);
@@ -64,7 +72,8 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd, bool
         }
     }
     // bishops
-    _check = bishopTargets(kingpos, _white, _black, side) & pieceBoards[(6 * otherSide) + 3];
+    _check = bishopTargets(kingpos, _white, _black,
+                           side) & pieceBoards[(6 * otherSide) + 3];
     if (_check) {
         *checkingPiece = piece(3);
         *checkingInd = last_set_bit(_check);
@@ -75,7 +84,8 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd, bool
         }
     }
     // queens
-    _check = queenTargets(kingpos, _white, _black, side) & pieceBoards[(6 * otherSide) + 4];
+    _check = queenTargets(kingpos, _white, _black,
+                          side) & pieceBoards[(6 * otherSide) + 4];
     if (_check) {
         *checkingPiece = piece(4);
         *checkingInd = last_set_bit(_check);
@@ -147,7 +157,8 @@ bool board::was_lastmove_check(move_t lastmove) {
     bitboard kingBoard = pieceBoards[(sideToMove * 6) + 5];
     int king_ind = log2(kingBoard);
 
-    colour otherSide = (sideToMove == white) ? black : white; // side that just moved
+    colour otherSide = (sideToMove == white) ? black :
+                       white; // side that just moved
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
     bitboard blockers = takenSquares();
@@ -162,14 +173,14 @@ bool board::was_lastmove_check(move_t lastmove) {
 
     // direct check
     switch (movingPiece % 6) {
-        case 0:
-            if (kingBoard & pawnAttacks(to_ind, _white, _black, otherSide)) return true;
-            break;
-        case 5:
-            break;
-        default:
-            if (kingBoard & pieceTargets(to_ind, _white, _black, movingPiece)) return true;
-            break;
+    case 0:
+        if (kingBoard & pawnAttacks(to_ind, _white, _black, otherSide)) return true;
+        break;
+    case 5:
+        break;
+    default:
+        if (kingBoard & pieceTargets(to_ind, _white, _black, movingPiece)) return true;
+        break;
     }
 
     // discovered check
@@ -216,13 +227,13 @@ bool board::was_lastmove_check(move_t lastmove) {
 
         if ((attacker_left & pieceBoards[(sideToMove * 6) + 5]) &&
                 (attacker_right & (pieceBoards[(otherSide * 6) + 1] |
-                pieceBoards[(otherSide * 6) + 4]))) {
+                                   pieceBoards[(otherSide * 6) + 4]))) {
             std::cout << "king left, attacker right\n";
             return true;
         }
         if ((attacker_right & pieceBoards[(sideToMove * 6) + 5]) &&
                 (attacker_left & (pieceBoards[(otherSide * 6) + 1] |
-                pieceBoards[(otherSide * 6) + 4]))) {
+                                  pieceBoards[(otherSide * 6) + 4]))) {
             std::cout << "king right, attacker left\n";
             return true;
         }
@@ -239,7 +250,8 @@ bool board::was_lastmove_check(move_t lastmove) {
 
     // promotion
     if (lastmove.is_promotion()) {
-        colourPiece prom_piece = colourPiece((6 * otherSide) + lastmove.which_promotion());
+        colourPiece prom_piece = colourPiece((6 * otherSide) +
+                                             lastmove.which_promotion());
         if (kingBoard & pieceTargets(to_ind, _white, _black, prom_piece)) return true;
     }
 
@@ -317,13 +329,13 @@ bool board::is_checking_move(move_t move) {
 
         if ((attacker_left & pieceBoards[(otherSide * 6) + 5]) &&
                 (attacker_right & (pieceBoards[(sideToMove * 6) + 1] |
-                pieceBoards[(sideToMove * 6) + 4]))) {
+                                   pieceBoards[(sideToMove * 6) + 4]))) {
             std::cout << "king left, attacker right\n";
             return true;
         }
         if ((attacker_right & pieceBoards[(otherSide * 6) + 5]) &&
                 (attacker_left & (pieceBoards[(sideToMove * 6) + 1] |
-                pieceBoards[(sideToMove * 6) + 4]))) {
+                                  pieceBoards[(sideToMove * 6) + 4]))) {
             std::cout << "king right, attacker left\n";
             return true;
         }

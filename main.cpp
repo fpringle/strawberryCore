@@ -10,13 +10,11 @@
 #include "action.h"
 #include "board.h"
 #include "eval.h"
-//#include "exceptions.h"
 #include "hash.h"
 #include "init.h"
 #include "move.h"
 #include "play.h"
 #include "search.h"
-//#include "structures.h"
 #include "twiddle.h"
 
 int main() {

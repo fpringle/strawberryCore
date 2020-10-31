@@ -15,7 +15,6 @@
 #include "board.h"
 #include "move.h"
 #include "action.h"
-#include "structures.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -31,12 +30,6 @@ perfttestclass::~perfttestclass() { }
 void perfttestclass::setUp() { }
 
 void perfttestclass::tearDown() { }
-
-tree<std::string> pop_perft_tree(board) {
-    std::string s = "";
-    tree<std::string> root("");
-    return root;
-}
 
 unsigned int PERFT_simple(board b, int depth, bool print_progress = false) {
     move_t movelist[256];

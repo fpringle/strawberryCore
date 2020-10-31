@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   tree.h
  * Author: pi
  *
@@ -12,8 +12,8 @@
 
 template <class T>
 struct treenode {
-  T data;
-  struct treenode <T> *left, *right;
+    T data;
+    struct treenode <T> *left, *right;
 };
 
 template <class T>
@@ -37,15 +37,15 @@ void get_leaves( treenode <T> *, linkedlist <T> * );
 
 template <class T>
 class tree {
-  public:
-  struct treenode <T> * root;
-  
-  //public:
+public:
+    struct treenode <T> * root;
+
+    //public:
     tree( );
     tree( T );
-    
+
     void insert( T );
-    
+
     void print_leaves( );
 };
 

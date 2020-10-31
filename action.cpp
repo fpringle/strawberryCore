@@ -66,16 +66,18 @@ board doMove(board startBoard, move_t move) {
     }
 
     if (move.is_kingCastle()) {
-        startingPos[1 + (6 * movingColour)] = (startingPos[1 + (6 * movingColour)] & ~(1ULL << (fromSquare + 3)))
-                | (1ULL << (toSquare - 1));
+        startingPos[1 + (6 * movingColour)] = (startingPos[1 + (6 * movingColour)] & ~
+                                               (1ULL << (fromSquare + 3)))
+                                              | (1ULL << (toSquare - 1));
         value -= pieceSquareTables[1 + (6 * movingColour)][fromSquare + 3];
         value += pieceSquareTables[1 + (6 * movingColour)][toSquare - 1];
         hash ^= zobristKeys[(1 + (6 * movingColour))*64 + fromSquare + 3];
         hash ^= zobristKeys[(1 + (6 * movingColour))*64 + toSquare - 1];
     }
     else if (move.is_queenCastle()) {
-        startingPos[1 + (6 * movingColour)] = (startingPos[1 + (6 * movingColour)] & ~(1ULL << (fromSquare - 4)))
-                | (1ULL << (toSquare + 1));
+        startingPos[1 + (6 * movingColour)] = (startingPos[1 + (6 * movingColour)] & ~
+                                               (1ULL << (fromSquare - 4)))
+                                              | (1ULL << (toSquare + 1));
         value -= pieceSquareTables[1 + (6 * movingColour)][fromSquare - 4];
         value += pieceSquareTables[1 + (6 * movingColour)][toSquare + 1];
         hash ^= zobristKeys[(1 + (6 * movingColour))*64 + fromSquare - 4];
@@ -87,17 +89,14 @@ board doMove(board startBoard, move_t move) {
         startingPos[6 * movingColour] &= (~(1ULL << toSquare));
         value -= pieceSquareTables[6 * movingColour][toSquare];
         value -= pieceValues[6 * movingColour];
-        //    std::cout << "--- added " << - int(pieceSquareTables[(6*movingColour)][toSquare]);
-        //    std::cout << " to value ---\n";
         hash ^= zobristKeys[6 * movingColour * 64 + toSquare];
 
-        colourPiece prom_piece = colourPiece((6 * movingColour) + move.which_promotion());
+        colourPiece prom_piece = colourPiece((6 * movingColour) +
+                                             move.which_promotion());
 
         startingPos[prom_piece] |= (1ULL << toSquare);
         value += pieceSquareTables[prom_piece][toSquare];
         value += pieceValues[prom_piece];
-        //            std::cout << "--- added " << int(pieceSquareTables[prom_piece][toSquare]);
-        //            std::cout << " to value ---\n";
         hash ^= zobristKeys[prom_piece * 64 + toSquare];
     }
 
@@ -119,83 +118,83 @@ board doMove(board startBoard, move_t move) {
     // check for changes to castling rights
     if (movingPiece % 6 == 1) {
         switch (fromSquare) {
-            case 0:
-                if (castling[1]) {
-                    hash ^= zobristKeys[769];
-                    castling[1] = false;
-                }
-                break;
-            case 7:
-                if (castling[0]) {
-                    hash ^= zobristKeys[768];
-                    castling[0] = false;
-                }
-                break;
-            case 56:
-                if (castling[3]) {
-                    hash ^= zobristKeys[771];
-                    castling[3] = false;
-                }
-                break;
-            case 63:
-                if (castling[2]) {
-                    hash ^= zobristKeys[770];
-                    castling[2] = false;
-                }
-                break;
+        case 0:
+            if (castling[1]) {
+                hash ^= zobristKeys[769];
+                castling[1] = false;
+            }
+            break;
+        case 7:
+            if (castling[0]) {
+                hash ^= zobristKeys[768];
+                castling[0] = false;
+            }
+            break;
+        case 56:
+            if (castling[3]) {
+                hash ^= zobristKeys[771];
+                castling[3] = false;
+            }
+            break;
+        case 63:
+            if (castling[2]) {
+                hash ^= zobristKeys[770];
+                castling[2] = false;
+            }
+            break;
         }
     }
     else if (movingPiece % 6 == 5) {
         switch (movingColour) {
-            case white:
-                if (castling[1]) {
-                    hash ^= zobristKeys[769];
-                    castling[1] = false;
-                }
-                if (castling[0]) {
-                    hash ^= zobristKeys[768];
-                    castling[0] = false;
-                }
-                break;
-            case black:
-                if (castling[3]) {
-                    hash ^= zobristKeys[771];
-                    castling[3] = false;
-                }
-                if (castling[2]) {
-                    hash ^= zobristKeys[770];
-                    castling[2] = false;
-                }
-                break;
+        case white:
+            if (castling[1]) {
+                hash ^= zobristKeys[769];
+                castling[1] = false;
+            }
+            if (castling[0]) {
+                hash ^= zobristKeys[768];
+                castling[0] = false;
+            }
+            break;
+        case black:
+            if (castling[3]) {
+                hash ^= zobristKeys[771];
+                castling[3] = false;
+            }
+            if (castling[2]) {
+                hash ^= zobristKeys[770];
+                castling[2] = false;
+            }
+            break;
         }
     }
 
     if (rooktaken) {
         switch (toSquare) {
-            case 0:
-                if (castling[1]) {
-                    hash ^= zobristKeys[769];
-                    castling[1] = false;
-                }
-                break;
-            case 7:
-                if (castling[0]) {
-                    hash ^= zobristKeys[768];
-                    castling[0] = false;
-                }
-                break;
-            case 56:
-                if (castling[3]) {
-                    hash ^= zobristKeys[771];
-                    castling[3] = false;
-                }
-                break;
-            case 63:
-                if (castling[2]) {
-                    hash ^= zobristKeys[770];
-                    castling[2] = false;
-                }
-                break;
+        case 0:
+            if (castling[1]) {
+                hash ^= zobristKeys[769];
+                castling[1] = false;
+            }
+            break;
+        case 7:
+            if (castling[0]) {
+                hash ^= zobristKeys[768];
+                castling[0] = false;
+            }
+            break;
+        case 56:
+            if (castling[3]) {
+                hash ^= zobristKeys[771];
+                castling[3] = false;
+            }
+            break;
+        case 63:
+            if (castling[2]) {
+                hash ^= zobristKeys[770];
+                castling[2] = false;
+            }
+            break;
         }
     }
 
@@ -209,7 +208,8 @@ board doMove(board startBoard, move_t move) {
     // change hash for different side to move
     hash ^= zobristKeys[780];
 
-    board endBoard(startingPos, castling, ep, dpp, clk, full_clk, otherColour, value, hash);
+    board endBoard(startingPos, castling, ep, dpp, clk, full_clk, otherColour,
+                   value, hash);
 
     return endBoard;
 }
@@ -260,16 +260,18 @@ void board::doMoveInPlace(move_t move) {
     }
 
     if (move.is_kingCastle()) {
-        pieceBoards[1 + (6 * sideToMove)] = (pieceBoards[1 + (6 * sideToMove)] & ~(1ULL << (fromSquare + 3)))
-                | (1ULL << (toSquare - 1));
+        pieceBoards[1 + (6 * sideToMove)] = (pieceBoards[1 + (6 * sideToMove)] & ~
+                                             (1ULL << (fromSquare + 3)))
+                                            | (1ULL << (toSquare - 1));
         value -= pieceSquareTables[1 + (6 * sideToMove)][fromSquare + 3];
         value += pieceSquareTables[1 + (6 * sideToMove)][toSquare - 1];
         hash_value ^= zobristKeys[(1 + (6 * sideToMove))*64 + fromSquare + 3];
         hash_value ^= zobristKeys[(1 + (6 * sideToMove))*64 + toSquare - 1];
     }
     else if (move.is_queenCastle()) {
-        pieceBoards[1 + (6 * sideToMove)] = (pieceBoards[1 + (6 * sideToMove)] & ~(1ULL << (fromSquare - 4)))
-                | (1ULL << (toSquare + 1));
+        pieceBoards[1 + (6 * sideToMove)] = (pieceBoards[1 + (6 * sideToMove)] & ~
+                                             (1ULL << (fromSquare - 4)))
+                                            | (1ULL << (toSquare + 1));
         value -= pieceSquareTables[1 + (6 * sideToMove)][fromSquare - 4];
         value += pieceSquareTables[1 + (6 * sideToMove)][toSquare + 1];
         hash_value ^= zobristKeys[(1 + (6 * sideToMove))*64 + fromSquare - 4];
@@ -281,8 +283,6 @@ void board::doMoveInPlace(move_t move) {
         pieceBoards[6 * sideToMove] &= (~(1ULL << toSquare));
         value -= pieceSquareTables[6 * sideToMove][toSquare];
         value -= pieceValues[6 * sideToMove];
-        //    std::cout << "--- added " << - int(pieceSquareTables[(6*sideToMove)][toSquare]);
-        //    std::cout << " to value ---\n";
         hash_value ^= zobristKeys[6 * sideToMove * 64 + toSquare];
 
         colourPiece prom_piece = colourPiece((6 * sideToMove) + move.which_promotion());
@@ -290,8 +290,6 @@ void board::doMoveInPlace(move_t move) {
         pieceBoards[prom_piece] |= (1ULL << toSquare);
         value += pieceSquareTables[prom_piece][toSquare];
         value += pieceValues[prom_piece];
-        //            std::cout << "--- added " << int(pieceSquareTables[prom_piece][toSquare]);
-        //            std::cout << " to value ---\n";
         hash_value ^= zobristKeys[prom_piece * 64 + toSquare];
     }
 
@@ -310,83 +308,83 @@ void board::doMoveInPlace(move_t move) {
     // check for changes to castling rights
     if (movingPiece % 6 == 1) {
         switch (fromSquare) {
-            case 0:
-                if (castleWhiteQueenSide) {
-                    hash_value ^= zobristKeys[769];
-                    castleWhiteQueenSide = false;
-                }
-                break;
-            case 7:
-                if (castleWhiteKingSide) {
-                    hash_value ^= zobristKeys[768];
-                    castleWhiteKingSide = false;
-                }
-                break;
-            case 56:
-                if (castleBlackQueenSide) {
-                    hash_value ^= zobristKeys[771];
-                    castleBlackQueenSide = false;
-                }
-                break;
-            case 63:
-                if (castleBlackKingSide) {
-                    hash_value ^= zobristKeys[770];
-                    castleBlackKingSide = false;
-                }
-                break;
+        case 0:
+            if (castleWhiteQueenSide) {
+                hash_value ^= zobristKeys[769];
+                castleWhiteQueenSide = false;
+            }
+            break;
+        case 7:
+            if (castleWhiteKingSide) {
+                hash_value ^= zobristKeys[768];
+                castleWhiteKingSide = false;
+            }
+            break;
+        case 56:
+            if (castleBlackQueenSide) {
+                hash_value ^= zobristKeys[771];
+                castleBlackQueenSide = false;
+            }
+            break;
+        case 63:
+            if (castleBlackKingSide) {
+                hash_value ^= zobristKeys[770];
+                castleBlackKingSide = false;
+            }
+            break;
         }
     }
     else if (movingPiece % 6 == 5) {
         switch (sideToMove) {
-            case white:
-                if (castleWhiteQueenSide) {
-                    hash_value ^= zobristKeys[769];
-                    castleWhiteQueenSide = false;
-                }
-                if (castleWhiteKingSide) {
-                    hash_value ^= zobristKeys[768];
-                    castleWhiteKingSide = false;
-                }
-                break;
-            case black:
-                if (castleBlackQueenSide) {
-                    hash_value ^= zobristKeys[771];
-                    castleBlackQueenSide = false;
-                }
-                if (castleBlackKingSide) {
-                    hash_value ^= zobristKeys[770];
-                    castleBlackKingSide = false;
-                }
-                break;
+        case white:
+            if (castleWhiteQueenSide) {
+                hash_value ^= zobristKeys[769];
+                castleWhiteQueenSide = false;
+            }
+            if (castleWhiteKingSide) {
+                hash_value ^= zobristKeys[768];
+                castleWhiteKingSide = false;
+            }
+            break;
+        case black:
+            if (castleBlackQueenSide) {
+                hash_value ^= zobristKeys[771];
+                castleBlackQueenSide = false;
+            }
+            if (castleBlackKingSide) {
+                hash_value ^= zobristKeys[770];
+                castleBlackKingSide = false;
+            }
+            break;
         }
     }
 
     if (rooktaken) {
         switch (toSquare) {
-            case 0:
-                if (castleWhiteQueenSide) {
-                    hash_value ^= zobristKeys[769];
-                    castleWhiteQueenSide = false;
-                }
-                break;
-            case 7:
-                if (castleWhiteKingSide) {
-                    hash_value ^= zobristKeys[768];
-                    castleWhiteKingSide = false;
-                }
-                break;
-            case 56:
-                if (castleBlackQueenSide) {
-                    hash_value ^= zobristKeys[771];
-                    castleBlackQueenSide = false;
-                }
-                break;
-            case 63:
-                if (castleBlackKingSide) {
-                    hash_value ^= zobristKeys[770];
-                    castleBlackKingSide = false;
-                }
-                break;
+        case 0:
+            if (castleWhiteQueenSide) {
+                hash_value ^= zobristKeys[769];
+                castleWhiteQueenSide = false;
+            }
+            break;
+        case 7:
+            if (castleWhiteKingSide) {
+                hash_value ^= zobristKeys[768];
+                castleWhiteKingSide = false;
+            }
+            break;
+        case 56:
+            if (castleBlackQueenSide) {
+                hash_value ^= zobristKeys[771];
+                castleBlackQueenSide = false;
+            }
+            break;
+        case 63:
+            if (castleBlackKingSide) {
+                hash_value ^= zobristKeys[770];
+                castleBlackKingSide = false;
+            }
+            break;
         }
     }
 

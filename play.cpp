@@ -51,20 +51,20 @@ void play_white(int plies, board b) {
         b.print_board();
         b.getSide(&side);
         switch (side) {
-            case white:
-                player_move = input_move(b);
-                print_move(player_move);
-                b = doMove(b, player_move);
-                *p++ = player_move;
-                break;
-            case black:
-                std::cout << "Computer thinking...\n";
-                comp_move = Negamax::search(b, plies, black);
-                b = doMove(b, comp_move);
-                *p++ = comp_move;
-                break;
-            default:
-                break;
+        case white:
+            player_move = input_move(b);
+            print_move(player_move);
+            b = doMove(b, player_move);
+            *p++ = player_move;
+            break;
+        case black:
+            std::cout << "Computer thinking...\n";
+            comp_move = Negamax::search(b, plies, black);
+            b = doMove(b, comp_move);
+            *p++ = comp_move;
+            break;
+        default:
+            break;
         }
         num_moves++;
     }
@@ -76,15 +76,15 @@ void play_white(int plies, board b) {
     }
 
     switch (b.is_checkmate()) {
-        case 1:
-            std::cout << "Computer wins" << std::endl;
-            break;
-        case -1:
-            std::cout << "Player wins" << std::endl;
-            break;
-        case 0:
-            std::cout << "Draw" << std::endl;
-            break;
+    case 1:
+        std::cout << "Computer wins" << std::endl;
+        break;
+    case -1:
+        std::cout << "Player wins" << std::endl;
+        break;
+    case 0:
+        std::cout << "Draw" << std::endl;
+        break;
     }
 
 }
@@ -111,34 +111,34 @@ void play_black(int plies, board b) {
         b.print_board();
         b.getSide(&side);
         switch (side) {
-            case black:
-                player_move = input_move(b);
-                b = doMove(b, player_move);
-                *p++ = player_move;
-                break;
-            case white:
-                std::cout << "Computer thinking...\n";
-                comp_move = Negamax::search(b, plies, white);
-                b = doMove(b, comp_move);
-                *p++ = comp_move;
-                break;
-            default:
-                break;
+        case black:
+            player_move = input_move(b);
+            b = doMove(b, player_move);
+            *p++ = player_move;
+            break;
+        case white:
+            std::cout << "Computer thinking...\n";
+            comp_move = Negamax::search(b, plies, white);
+            b = doMove(b, comp_move);
+            *p++ = comp_move;
+            break;
+        default:
+            break;
         }
     }
 
     b.print_all();
 
     switch (b.is_checkmate()) {
-        case -1:
-            std::cout << "Computer wins" << std::endl;
-            break;
-        case 1:
-            std::cout << "Player wins" << std::endl;
-            break;
-        case 0:
-            std::cout << "Draw" << std::endl;
-            break;
+    case -1:
+        std::cout << "Computer wins" << std::endl;
+        break;
+    case 1:
+        std::cout << "Player wins" << std::endl;
+        break;
+    case 0:
+        std::cout << "Draw" << std::endl;
+        break;
     }
 
 }

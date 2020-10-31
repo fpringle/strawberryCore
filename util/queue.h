@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   queue.h
  * Author: pi
  *
@@ -12,9 +12,9 @@
 
 template <class T>
 class queue {
-  doublylinkedlist <T> lst;
-  
-  public:
+    doublylinkedlist <T> lst;
+
+public:
     queue( );
     void enqueue( T );
     // pop to target

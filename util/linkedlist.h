@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   linkedlist.h
  * Author: pi
  *
@@ -10,8 +10,8 @@
 
 template <class T>
 struct node {
-  T data;
-  struct node <T> * next;
+    T data;
+    struct node <T> * next;
 };
 
 template <class T>
@@ -20,10 +20,10 @@ struct node <T> * newNode( );
 
 template <class T>
 class linkedlist {
-  struct node <T> * head;
-  struct node <T> * get_tail( );
+    struct node <T> * head;
+    struct node <T> * get_tail( );
 
-  public:
+public:
     // constructors
     linkedlist( );
     // adding values

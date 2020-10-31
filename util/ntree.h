@@ -164,7 +164,7 @@ void num_nodes_per_level( ntreeNode<T> * root ) {
     while (!Q.empty()) {
         qlen = Q.size();
         std::cout << qlen << " nodes at depth " << level << std::endl;
-        for (i=0;i<qlen;i++) {
+        for (i=0; i<qlen; i++) {
             v = Q.front();
             Q.pop();
             p = v->firstChild;
@@ -178,7 +178,8 @@ void num_nodes_per_level( ntreeNode<T> * root ) {
 }
 
 template <class T>
-void print_tree( ntreeNode<T> * root, int max_depth=-1, std::ostream& cout=std::cout, int depth=0 ) {
+void print_tree( ntreeNode<T> * root, int max_depth=-1,
+                 std::ostream& cout=std::cout, int depth=0 ) {
     for ( int i=0; i<depth; i++ ) cout << '-';
     cout << " " << root->data << std::endl;
     if (depth==max_depth) return;

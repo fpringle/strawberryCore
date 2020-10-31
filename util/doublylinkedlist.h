@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   doublylinkedlist.h
  * Author: pi
  *
@@ -10,9 +10,9 @@
 
 template <class T>
 struct binode {
-  T data;
-  struct binode <T> * next;
-  struct binode <T> * prev;
+    T data;
+    struct binode <T> * next;
+    struct binode <T> * prev;
 };
 
 template <class T>
@@ -21,10 +21,10 @@ struct binode <T> * newBiNode( );
 
 template <class T>
 class doublylinkedlist {
-  struct binode <T> * head;
-  struct binode <T>* tail;
+    struct binode <T> * head;
+    struct binode <T>* tail;
 
-  public:
+public:
     // constructors
     doublylinkedlist( );
     // adding values

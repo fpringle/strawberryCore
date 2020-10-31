@@ -11,7 +11,6 @@
 #include "move.h"
 #include "action.h"
 #include "init.h"
-#include "structures.h"
 #include <iostream>
 #include <string>
 #include <sstream>

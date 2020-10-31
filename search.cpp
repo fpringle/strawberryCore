@@ -121,7 +121,7 @@ move_t Negamax::search(board b, int depth, colour side) {
 }
 
 int32_t NegamaxAB::algorithm(board b, int depth, colour side,
-        int32_t alpha, int32_t beta) {
+                             int32_t alpha, int32_t beta) {
     if (depth == 0) return b.evaluate() * ((side == white) ? 1 : -1);
 
     colour otherSide = (side == white) ? black : white;
@@ -163,7 +163,6 @@ move_t NegamaxAB::search(board b, int depth, colour side) {
         child = doMove(b, moves[i]);
         score = -NegamaxAB::algorithm(child, depth - 1, otherSide, alpha, beta);
         //        print_move( moves[i] );
-        //        std::cout << ": " << score << std::endl;
         if (score > max_score) {
             max_score = score;
             best_move = moves[i];

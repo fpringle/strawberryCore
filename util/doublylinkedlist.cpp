@@ -364,7 +364,10 @@ void doublylinkedlist<T>::print() {
 
 template <class T>
 void doublylinkedlist<T>::headtail() {
-    if (head != NULL && tail != NULL) std::cout << "head: " << head->data << ", tail: " << tail->data << "\n";
+    if (head != NULL && tail != NULL) {
+        std::cout << "head: " << head->data << ", "
+                  << "tail: " << tail->data << "\n";
+    }
 }
 
 
