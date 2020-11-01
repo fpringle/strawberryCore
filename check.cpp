@@ -1,12 +1,12 @@
 #include "board.h"
 #include "move.h"
-#include "action.h"
+#include "twiddle.h"
+
 #include <math.h>
-#include <iostream>
 
 bool board::is_check(colour side) {
     // on-the-fly check detection
-    int kingpos = log2(pieceBoards[ (6 * side) + 5 ]);
+    int kingpos = last_set_bit(pieceBoards[ (6 * side) + 5 ]);
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
     colour otherSide = (side == white) ? black : white;
@@ -33,7 +33,7 @@ bool board::is_check(colour side) {
 bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
                      bool * doubleCheck) {
     // on-the-fly check detection
-    int kingpos = log2(pieceBoards[ (6 * side) + 5 ]);
+    int kingpos = last_set_bit(pieceBoards[ (6 * side) + 5 ]);
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
     colour otherSide = (side == white) ? black : white;
@@ -155,7 +155,7 @@ bool board::was_lastmove_check(move_t lastmove) {
     bitboard from_square = (1ULL << from_ind);
     bitboard to_square = (1ULL << to_ind);
     bitboard kingBoard = pieceBoards[(sideToMove * 6) + 5];
-    int king_ind = log2(kingBoard);
+    int king_ind = last_set_bit(kingBoard);
 
     colour otherSide = (sideToMove == white) ? black :
                        white; // side that just moved
@@ -228,13 +228,11 @@ bool board::was_lastmove_check(move_t lastmove) {
         if ((attacker_left & pieceBoards[(sideToMove * 6) + 5]) &&
                 (attacker_right & (pieceBoards[(otherSide * 6) + 1] |
                                    pieceBoards[(otherSide * 6) + 4]))) {
-            std::cout << "king left, attacker right\n";
             return true;
         }
         if ((attacker_right & pieceBoards[(sideToMove * 6) + 5]) &&
                 (attacker_left & (pieceBoards[(otherSide * 6) + 1] |
                                   pieceBoards[(otherSide * 6) + 4]))) {
-            std::cout << "king right, attacker left\n";
             return true;
         }
     }
@@ -267,7 +265,7 @@ bool board::is_checking_move(move_t move) {
     bitboard from_square = (1ULL << from_ind);
     bitboard to_square = (1ULL << to_ind);
     bitboard kingBoard = pieceBoards[((1 - sideToMove)*6) + 5]; // king under attack
-    int king_ind = log2(kingBoard);
+    int king_ind = last_set_bit(kingBoard);
 
     for (i = sideToMove * 6; i < (1 + sideToMove)*6; i++) {
         if (pieceBoards[i] & from_square) {
@@ -330,13 +328,11 @@ bool board::is_checking_move(move_t move) {
         if ((attacker_left & pieceBoards[(otherSide * 6) + 5]) &&
                 (attacker_right & (pieceBoards[(sideToMove * 6) + 1] |
                                    pieceBoards[(sideToMove * 6) + 4]))) {
-            std::cout << "king left, attacker right\n";
             return true;
         }
         if ((attacker_right & pieceBoards[(otherSide * 6) + 5]) &&
                 (attacker_left & (pieceBoards[(sideToMove * 6) + 1] |
                                   pieceBoards[(sideToMove * 6) + 4]))) {
-            std::cout << "king right, attacker left\n";
             return true;
         }
     }

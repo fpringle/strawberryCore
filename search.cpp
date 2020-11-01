@@ -1,9 +1,8 @@
 #include "board.h"
 #include "action.h"
 #include "move.h"
-#include "hash.h"
 #include "search.h"
-#include "init.h"
+
 #include <limits>
 #include <cstdint>
 

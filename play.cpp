@@ -3,7 +3,6 @@
 #include "play.h"
 #include "action.h"
 #include "search.h"
-#include "eval.h"
 #include "init.h"
 
 #include <string>

@@ -1,12 +1,3 @@
-
-/*
- * File:   main.cpp
- * Author: freddy
- *
- * Created on 08 June 2020, 13:36
- */
-
-#include <cstdlib>
 #include "action.h"
 #include "board.h"
 #include "eval.h"
@@ -16,6 +7,9 @@
 #include "play.h"
 #include "search.h"
 #include "twiddle.h"
+
+#include <cstdlib>
+
 
 int main() {
     init();

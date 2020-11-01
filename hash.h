@@ -2,7 +2,6 @@
 #define __HASH_H
 
 #include <cstdint>
-#include "move.h"
 
 // n=312, w=64
 

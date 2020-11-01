@@ -32,13 +32,13 @@ extern const int NNW;
 
 // functions for printing
 // defined in move.cpp
-void itos(int,char*);
+void itos(int, char*);
 std::string itos(int);
 void itos(int, std::ostream&);
 int _stoi(std::string);
 
 // enumerate directions for ray generation
-enum direction {dirN,dirNE,dirE,dirSE,dirS,dirSW,dirW,dirNW};
+enum direction {dirN, dirNE, dirE, dirSE, dirS, dirSW, dirW, dirNW};
 // defined in move.cpp
 extern bitboard rays[8][64];
 void init_rays();
@@ -55,9 +55,7 @@ private:
     uint16_t data;
 public:
     move_t();
-    move_t(uint8_t,uint8_t,bool,bool,bool,bool);
-    //    move_t(std::initializer_list<move_t>) {};
-    //    move_t(<brace-enclosed initializer list>) {};
+    move_t(uint8_t, uint8_t, bool, bool, bool, bool);
     uint16_t from_sq();
     uint16_t to_sq();
     uint16_t flags();
@@ -67,8 +65,6 @@ public:
     void set_promotion(piece);
     bool is_capture();
     bool is_ep_capture();
-    //    bool special1();
-    //    bool special0();
     bool is_doublePP();
     bool is_kingCastle();
     bool is_queenCastle();
@@ -84,33 +80,33 @@ move_t stom( move_t*, int, std::string);
 // naive move generation
 // all defined in move.cpp
 // pawns
-bitboard pawnPushNaive        (int,bitboard,colour);
-bitboard pawnAttackNaive      (int,colour);
-bitboard pawnAttacks          (int,bitboard,bitboard,colour);
-bitboard pawnTargets          (int,bitboard,bitboard,colour);
+bitboard pawnPushNaive        (int, bitboard, colour);
+bitboard pawnAttackNaive      (int, colour);
+bitboard pawnAttacks          (int, bitboard, bitboard, colour);
+bitboard pawnTargets          (int, bitboard, bitboard, colour);
 
 // knights
 bitboard knightPushNaive      (int);
-bitboard knightTargets        (int,bitboard,bitboard,colour);
+bitboard knightTargets        (int, bitboard, bitboard, colour);
 
 // kings
 bitboard kingPushNaive        (int);
-bitboard kingTargets          (int,bitboard,bitboard,colour);
+bitboard kingTargets          (int, bitboard, bitboard, colour);
 
 // sliding piece generation
 // bishops
-bitboard bishopPushNaive      (int,bitboard);
-bitboard bishopTargets        (int,bitboard,bitboard,colour);
+bitboard bishopPushNaive      (int, bitboard);
+bitboard bishopTargets        (int, bitboard, bitboard, colour);
 
 // rooks
-bitboard rookPushNaive        (int,bitboard);
-bitboard rookTargets          (int,bitboard,bitboard,colour);
+bitboard rookPushNaive        (int, bitboard);
+bitboard rookTargets          (int, bitboard, bitboard, colour);
 
 // queens
-bitboard queenPushNaive       (int,bitboard);
-bitboard queenTargets         (int,bitboard,bitboard,colour);
+bitboard queenPushNaive       (int, bitboard);
+bitboard queenTargets         (int, bitboard, bitboard, colour);
 
 // general piece
-bitboard pieceTargets         (int,bitboard,bitboard,colourPiece);
+bitboard pieceTargets         (int, bitboard, bitboard, colourPiece);
 
 #endif

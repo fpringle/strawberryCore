@@ -2,6 +2,7 @@
 #include "twiddle.h"
 #include "eval.h"
 #include "hash.h"
+
 #include <cstdint>
 
 board doMove(board startBoard, move_t move) {

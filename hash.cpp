@@ -1,9 +1,10 @@
 #include "board.h"
 #include "move.h"
 #include "hash.h"
+#include "twiddle.h"
+
 #include <assert.h>
 #include <time.h>
-#include "twiddle.h"
 
 
 // transposition table

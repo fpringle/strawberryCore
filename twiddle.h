@@ -12,9 +12,9 @@ using bitboard = uint64_t;
 int count_bits_set(bitboard);
 int first_set_bit(bitboard);
 int last_set_bit(bitboard);
-bool is_bit_set(bitboard,int);
-bitboard set_bit(bitboard,int);
-bitboard unset_bit(bitboard,int);
+bool is_bit_set(bitboard, int);
+bitboard set_bit(bitboard, int);
+bitboard unset_bit(bitboard, int);
 
 // constant masks
 // defined in twiddle.cpp
@@ -45,7 +45,7 @@ bitboard oneSE(bitboard);
 bitboard oneSW(bitboard);
 bitboard oneNW(bitboard);
 
-bitboard oneGeneral8(bitboard,int);
+bitboard oneGeneral8(bitboard, int);
 
 bitboard twoN(bitboard);
 bitboard twoS(bitboard);

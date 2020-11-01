@@ -1,4 +1,3 @@
-#include "board.h"
 #include "move.h"
 #include "twiddle.h"
 

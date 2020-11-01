@@ -15,7 +15,6 @@
 #ifndef __BOARD_H
 #define __BOARD_H
 
-//#include "move.h"
 #include <cstdint>
 #include <iostream>
 #include <string>
@@ -23,7 +22,6 @@
 // define 64-bit integer
 
 using bitboard = uint64_t;
-//using bitboard = unsigned long long int;
 
 // declare starting bitboards
 // defined in board.cpp
@@ -60,7 +58,7 @@ enum colourPiece {whitePawn,whiteRook,whiteKnight,
 
 
 // defined in board.cpp
-void print_bb( bitboard, char c = 'x', std::ostream& cout = std::cout );
+void print_bb(bitboard, char c = 'x', std::ostream& cout = std::cout);
 
 // the main event
 class board {
@@ -76,13 +74,12 @@ class board {
     int fullMoveClock;
 
     bool lastMoveDoublePawnPush;
-    int dPPFile;        // if lastMoveDoublePawnPush = true, epFile gives the file
+    int dPPFile;        // if lastMoveDoublePawnPush = true, dPPFile gives the file
     // of the pawn that just double moved
 
     colour sideToMove;
 
     // maintain a running value
-    // int32_t value = 0;
     int32_t value;
 
     // store hash of current state
@@ -92,7 +89,8 @@ public:
     // constructors
     // defined in board.cpp
     board();
-    board(bitboard*,bool*,bool,int,uint8_t,uint8_t,colour,int32_t,uint64_t hash=0);
+    board(bitboard*, bool*, bool, int, uint8_t, uint8_t,
+          colour, int32_t, uint64_t hash=0);
     board(board&);
     board(std::string);
 
@@ -100,6 +98,7 @@ public:
     // defined in board.cpp
     bool operator==(const board&);
     bool operator!=(const board&);
+    friend std::ostream& operator<<(std::ostream &out, const board &brd);
 
     // get data
     // defined in board.cpp
@@ -123,25 +122,24 @@ public:
 
     // utilities for testing
     // defined in board.cpp
-    void print_board( std::ostream& cout = std::cout );
-    void print_board_indent( std::ostream& cout = std::cout, int indent = 0 );
-    void print_all( std::ostream& cout = std::cout );
-    friend std::ostream& operator<<(std::ostream &out, const board &brd);
-    std::string FEN( );
-    //    std::string SAN_post_move( move_t );
-    //    std::string SAN_pre_move ( move_t );
-    //    move_t move_from_SAN( std::string );
-    void FEN( std::ostream& );
+    void print_board(std::ostream& cout = std::cout);
+    void print_board_indent(std::ostream& cout = std::cout, int indent = 0);
+    void print_all(std::ostream& cout = std::cout);
+    std::string FEN();
+    //    std::string SAN_post_move(move_t);
+    //    std::string SAN_pre_move (move_t);
+    //    move_t move_from_SAN(std::string);
+    void FEN(std::ostream&);
 
     // set data
     // defined in board.cpp
-    void set_piece(colourPiece,int);
+    void set_piece(colourPiece, int);
     void set_side(colour);
-    void clear_square( int );
+    void clear_square(int);
     void update_value();
     void set_value(int32_t);
     void update_hash();
-    void set_hash(uint64_t );
+    void set_hash(uint64_t);
     void setBitboards(bitboard*);
     void setCastlingRights(bool*);
     void setEP(bool);
@@ -153,13 +151,13 @@ public:
     // defined in move.cpp
     bitboard whiteSquares();
     bitboard blackSquares();
-    bitboard takenSquares();// { return (whiteSquares() | blackSquares()); }
-    bitboard emptySquares();// { return ( ~ takenSquares()); }
-    bool add_moves( struct move_t**, struct move_t, bool );
-    int gen_moves( struct move_t* );
-    bool is_legal( struct move_t );
-    int get_out_of_check( struct move_t*, piece, int, int, bool );
-    int gen_legal_moves( struct move_t* );
+    bitboard takenSquares();
+    bitboard emptySquares();
+    bool add_moves(struct move_t**, struct move_t, bool);
+    int gen_moves(struct move_t*);
+    bool is_legal(struct move_t);
+    int get_out_of_check(struct move_t*, piece, int, int, bool);
+    int gen_legal_moves(struct move_t*);
 
     // in-place action
     // defined in action.cpp

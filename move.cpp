@@ -1,12 +1,11 @@
 #include "board.h"
 #include "move.h"
+#include "twiddle.h"
+
 #include <cstdint>
 #include <iostream>
-#include <stdlib.h>
-#include "twiddle.h"
-#include <bitset>
+#include <stdlib.h>     // for abs
 #include <string>
-#include <math.h>
 
 // initialise constants declared in move.h
 const int N = +8;
@@ -1105,7 +1104,7 @@ int board::gen_legal_moves(move_t * moves) {
     bool double_check = false;
     if (is_check(sideToMove, &checkingPiece, &checkingInd, &double_check)) {
         return get_out_of_check(moves, checkingPiece, checkingInd,
-                                log2(pieceBoards[(6 * sideToMove) + 5]), double_check);
+                                last_set_bit(pieceBoards[(6 * sideToMove) + 5]), double_check);
     }
 
     for (_piece = sideToMove * 6; _piece < (1 + sideToMove)*6; _piece++) {
