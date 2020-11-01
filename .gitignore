@@ -10,3 +10,5 @@
 __pycache__
 *.exe
 *.o
+*.o.d
+/scripts/obj
