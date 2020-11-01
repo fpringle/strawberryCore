@@ -4,14 +4,6 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <logicalFolder name="f1" displayName="util" projectFiles="true">
-        <itemPath>util/doublylinkedlist.h</itemPath>
-        <itemPath>util/linkedlist.h</itemPath>
-        <itemPath>util/ntree.h</itemPath>
-        <itemPath>util/queue.h</itemPath>
-        <itemPath>util/stack.h</itemPath>
-        <itemPath>util/tree.h</itemPath>
-      </logicalFolder>
       <itemPath>action.h</itemPath>
       <itemPath>board.h</itemPath>
       <itemPath>eval.h</itemPath>
@@ -20,19 +12,17 @@
       <itemPath>move.h</itemPath>
       <itemPath>play.h</itemPath>
       <itemPath>search.h</itemPath>
-      <itemPath>structures.h</itemPath>
+      <itemPath>tree.h</itemPath>
       <itemPath>twiddle.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="f1" displayName="Scripts" projectFiles="true" kind="ROOT">
+      <itemPath>scripts/analyse.cpp</itemPath>
+      <itemPath>scripts/py_analyse.py</itemPath>
+      <itemPath>scripts/run_analysis.sh</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <logicalFolder name="f1" displayName="util" projectFiles="true">
-        <itemPath>util/doublylinkedlist.cpp</itemPath>
-        <itemPath>util/linkedlist.cpp</itemPath>
-        <itemPath>util/queue.cpp</itemPath>
-        <itemPath>util/stack.cpp</itemPath>
-        <itemPath>util/tree.cpp</itemPath>
-      </logicalFolder>
       <itemPath>action.cpp</itemPath>
       <itemPath>board.cpp</itemPath>
       <itemPath>check.cpp</itemPath>
@@ -105,14 +95,6 @@
         <itemPath>tests/searchtestclass.h</itemPath>
         <itemPath>tests/searchtestrunner.cpp</itemPath>
       </logicalFolder>
-      <logicalFolder name="f8"
-                     displayName="structures test"
-                     projectFiles="true"
-                     kind="TEST">
-        <itemPath>tests/structurestestclass.cpp</itemPath>
-        <itemPath>tests/structurestestclass.h</itemPath>
-        <itemPath>tests/structurestestrunner.cpp</itemPath>
-      </logicalFolder>
       <logicalFolder name="f4"
                      displayName="twiddle test"
                      projectFiles="true"
@@ -166,20 +148,6 @@
       </item>
       <item path="eval.h" ex="false" tool="3" flavor2="0">
       </item>
-      <folder path="HeaderFiles">
-        <ccTool>
-          <incDir>
-            <pElem>util</pElem>
-          </incDir>
-        </ccTool>
-      </folder>
-      <folder path="SourceFiles">
-        <ccTool>
-          <incDir>
-            <pElem>util</pElem>
-          </incDir>
-        </ccTool>
-      </folder>
       <folder path="TestFiles">
         <linkerTool>
           <commandLine>-lcppunit</commandLine>
@@ -269,14 +237,6 @@
           <output>${TESTDIR}/TestFiles/f7</output>
         </linkerTool>
       </folder>
-      <folder path="TestFiles/f8">
-        <cTool>
-          <commandLine>`cppunit-config --cflags`</commandLine>
-        </cTool>
-        <linkerTool>
-          <output>${TESTDIR}/TestFiles/f8</output>
-        </linkerTool>
-      </folder>
       <folder path="TestFiles/f9">
         <cTool>
           <commandLine>`cppunit-config --cflags`</commandLine>
@@ -303,11 +263,13 @@
       </item>
       <item path="play.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="scripts/py_analyse.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="scripts/run_analysis.sh" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="search.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="search.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="structures.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/boardtestclass.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -351,43 +313,17 @@
       </item>
       <item path="tests/searchtestrunner.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="tests/structurestestclass.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="tests/structurestestclass.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="tests/structurestestrunner.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="tests/twiddletestclass.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="tests/twiddletestclass.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/twiddletestrunner.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="tree.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="twiddle.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="twiddle.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="util/doublylinkedlist.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="util/doublylinkedlist.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="util/linkedlist.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="util/linkedlist.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="util/ntree.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="util/queue.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="util/queue.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="util/stack.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="util/stack.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="util/tree.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="util/tree.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -531,20 +467,6 @@
           </linkerLibItems>
         </linkerTool>
       </folder>
-      <folder path="TestFiles/f8">
-        <cTool>
-          <commandLine>`cppunit-config --cflags`</commandLine>
-        </cTool>
-        <ccTool>
-          <commandLine>`cppunit-config --cflags`</commandLine>
-        </ccTool>
-        <linkerTool>
-          <output>${TESTDIR}/TestFiles/f8</output>
-          <linkerLibItems>
-            <linkerOptionItem>`cppunit-config --libs`</linkerOptionItem>
-          </linkerLibItems>
-        </linkerTool>
-      </folder>
       <folder path="TestFiles/f9">
         <cTool>
           <commandLine>`cppunit-config --cflags`</commandLine>
@@ -571,11 +493,15 @@
       </item>
       <item path="play.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="scripts/analyse.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="scripts/py_analyse.py" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="scripts/run_analysis.sh" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="search.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="search.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="structures.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/boardtestclass.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -619,43 +545,17 @@
       </item>
       <item path="tests/searchtestrunner.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="tests/structurestestclass.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="tests/structurestestclass.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="tests/structurestestrunner.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="tests/twiddletestclass.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="tests/twiddletestclass.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="tests/twiddletestrunner.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="tree.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="twiddle.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="twiddle.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="util/doublylinkedlist.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="util/doublylinkedlist.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="util/linkedlist.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="util/linkedlist.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="util/ntree.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="util/queue.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="util/queue.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="util/stack.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="util/stack.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="util/tree.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="util/tree.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

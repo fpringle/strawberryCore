@@ -44,13 +44,9 @@ OBJECTFILES= \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/move.o \
 	${OBJECTDIR}/play.o \
+	${OBJECTDIR}/scripts/analyse.o \
 	${OBJECTDIR}/search.o \
-	${OBJECTDIR}/twiddle.o \
-	${OBJECTDIR}/util/doublylinkedlist.o \
-	${OBJECTDIR}/util/linkedlist.o \
-	${OBJECTDIR}/util/queue.o \
-	${OBJECTDIR}/util/stack.o \
-	${OBJECTDIR}/util/tree.o
+	${OBJECTDIR}/twiddle.o
 
 # Test Directory
 TESTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tests
@@ -64,7 +60,6 @@ TESTFILES= \
 	${TESTDIR}/TestFiles/f5 \
 	${TESTDIR}/TestFiles/f7 \
 	${TESTDIR}/TestFiles/f9 \
-	${TESTDIR}/TestFiles/f8 \
 	${TESTDIR}/TestFiles/f4
 
 # Test Object Files
@@ -83,8 +78,6 @@ TESTOBJECTFILES= \
 	${TESTDIR}/tests/perfttestrunner.o \
 	${TESTDIR}/tests/searchtestclass.o \
 	${TESTDIR}/tests/searchtestrunner.o \
-	${TESTDIR}/tests/structurestestclass.o \
-	${TESTDIR}/tests/structurestestrunner.o \
 	${TESTDIR}/tests/twiddletestclass.o \
 	${TESTDIR}/tests/twiddletestrunner.o
 
@@ -157,6 +150,11 @@ ${OBJECTDIR}/play.o: play.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/play.o play.cpp
 
+${OBJECTDIR}/scripts/analyse.o: scripts/analyse.cpp
+	${MKDIR} -p ${OBJECTDIR}/scripts
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/scripts/analyse.o scripts/analyse.cpp
+
 ${OBJECTDIR}/search.o: search.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
@@ -166,31 +164,6 @@ ${OBJECTDIR}/twiddle.o: twiddle.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/twiddle.o twiddle.cpp
-
-${OBJECTDIR}/util/doublylinkedlist.o: util/doublylinkedlist.cpp
-	${MKDIR} -p ${OBJECTDIR}/util
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/doublylinkedlist.o util/doublylinkedlist.cpp
-
-${OBJECTDIR}/util/linkedlist.o: util/linkedlist.cpp
-	${MKDIR} -p ${OBJECTDIR}/util
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/linkedlist.o util/linkedlist.cpp
-
-${OBJECTDIR}/util/queue.o: util/queue.cpp
-	${MKDIR} -p ${OBJECTDIR}/util
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/queue.o util/queue.cpp
-
-${OBJECTDIR}/util/stack.o: util/stack.cpp
-	${MKDIR} -p ${OBJECTDIR}/util
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/stack.o util/stack.cpp
-
-${OBJECTDIR}/util/tree.o: util/tree.cpp
-	${MKDIR} -p ${OBJECTDIR}/util
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/tree.o util/tree.cpp
 
 # Subprojects
 .build-subprojects:
@@ -226,10 +199,6 @@ ${TESTDIR}/TestFiles/f7: ${TESTDIR}/tests/perfttestclass.o ${TESTDIR}/tests/perf
 ${TESTDIR}/TestFiles/f9: ${TESTDIR}/tests/searchtestclass.o ${TESTDIR}/tests/searchtestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
 	${MKDIR} -p ${TESTDIR}/TestFiles
 	${LINK.cc} -o ${TESTDIR}/TestFiles/f9 $^ ${LDLIBSOPTIONS} -I .  
-
-${TESTDIR}/TestFiles/f8: ${TESTDIR}/tests/structurestestclass.o ${TESTDIR}/tests/structurestestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
-	${MKDIR} -p ${TESTDIR}/TestFiles
-	${LINK.cc} -o ${TESTDIR}/TestFiles/f8 $^ ${LDLIBSOPTIONS} -I .  `cppunit-config --libs`   
 
 ${TESTDIR}/TestFiles/f4: ${TESTDIR}/tests/twiddletestclass.o ${TESTDIR}/tests/twiddletestrunner.o ${OBJECTFILES:%.o=%_nomain.o}
 	${MKDIR} -p ${TESTDIR}/TestFiles
@@ -318,18 +287,6 @@ ${TESTDIR}/tests/searchtestrunner.o: tests/searchtestrunner.cpp
 	${MKDIR} -p ${TESTDIR}/tests
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/searchtestrunner.o tests/searchtestrunner.cpp
-
-
-${TESTDIR}/tests/structurestestclass.o: tests/structurestestclass.cpp 
-	${MKDIR} -p ${TESTDIR}/tests
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 `cppunit-config --cflags` -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/structurestestclass.o tests/structurestestclass.cpp
-
-
-${TESTDIR}/tests/structurestestrunner.o: tests/structurestestrunner.cpp 
-	${MKDIR} -p ${TESTDIR}/tests
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 `cppunit-config --cflags` -MMD -MP -MF "$@.d" -o ${TESTDIR}/tests/structurestestrunner.o tests/structurestestrunner.cpp
 
 
 ${TESTDIR}/tests/twiddletestclass.o: tests/twiddletestclass.cpp 
@@ -461,6 +418,19 @@ ${OBJECTDIR}/play_nomain.o: ${OBJECTDIR}/play.o play.cpp
 	    ${CP} ${OBJECTDIR}/play.o ${OBJECTDIR}/play_nomain.o;\
 	fi
 
+${OBJECTDIR}/scripts/analyse_nomain.o: ${OBJECTDIR}/scripts/analyse.o scripts/analyse.cpp 
+	${MKDIR} -p ${OBJECTDIR}/scripts
+	@NMOUTPUT=`${NM} ${OBJECTDIR}/scripts/analyse.o`; \
+	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
+	then  \
+	    ${RM} "$@.d";\
+	    $(COMPILE.cc) -O2 -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/scripts/analyse_nomain.o scripts/analyse.cpp;\
+	else  \
+	    ${CP} ${OBJECTDIR}/scripts/analyse.o ${OBJECTDIR}/scripts/analyse_nomain.o;\
+	fi
+
 ${OBJECTDIR}/search_nomain.o: ${OBJECTDIR}/search.o search.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	@NMOUTPUT=`${NM} ${OBJECTDIR}/search.o`; \
@@ -487,71 +457,6 @@ ${OBJECTDIR}/twiddle_nomain.o: ${OBJECTDIR}/twiddle.o twiddle.cpp
 	    ${CP} ${OBJECTDIR}/twiddle.o ${OBJECTDIR}/twiddle_nomain.o;\
 	fi
 
-${OBJECTDIR}/util/doublylinkedlist_nomain.o: ${OBJECTDIR}/util/doublylinkedlist.o util/doublylinkedlist.cpp 
-	${MKDIR} -p ${OBJECTDIR}/util
-	@NMOUTPUT=`${NM} ${OBJECTDIR}/util/doublylinkedlist.o`; \
-	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
-	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
-	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
-	then  \
-	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -O2 -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/doublylinkedlist_nomain.o util/doublylinkedlist.cpp;\
-	else  \
-	    ${CP} ${OBJECTDIR}/util/doublylinkedlist.o ${OBJECTDIR}/util/doublylinkedlist_nomain.o;\
-	fi
-
-${OBJECTDIR}/util/linkedlist_nomain.o: ${OBJECTDIR}/util/linkedlist.o util/linkedlist.cpp 
-	${MKDIR} -p ${OBJECTDIR}/util
-	@NMOUTPUT=`${NM} ${OBJECTDIR}/util/linkedlist.o`; \
-	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
-	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
-	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
-	then  \
-	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -O2 -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/linkedlist_nomain.o util/linkedlist.cpp;\
-	else  \
-	    ${CP} ${OBJECTDIR}/util/linkedlist.o ${OBJECTDIR}/util/linkedlist_nomain.o;\
-	fi
-
-${OBJECTDIR}/util/queue_nomain.o: ${OBJECTDIR}/util/queue.o util/queue.cpp 
-	${MKDIR} -p ${OBJECTDIR}/util
-	@NMOUTPUT=`${NM} ${OBJECTDIR}/util/queue.o`; \
-	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
-	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
-	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
-	then  \
-	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -O2 -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/queue_nomain.o util/queue.cpp;\
-	else  \
-	    ${CP} ${OBJECTDIR}/util/queue.o ${OBJECTDIR}/util/queue_nomain.o;\
-	fi
-
-${OBJECTDIR}/util/stack_nomain.o: ${OBJECTDIR}/util/stack.o util/stack.cpp 
-	${MKDIR} -p ${OBJECTDIR}/util
-	@NMOUTPUT=`${NM} ${OBJECTDIR}/util/stack.o`; \
-	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
-	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
-	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
-	then  \
-	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -O2 -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/stack_nomain.o util/stack.cpp;\
-	else  \
-	    ${CP} ${OBJECTDIR}/util/stack.o ${OBJECTDIR}/util/stack_nomain.o;\
-	fi
-
-${OBJECTDIR}/util/tree_nomain.o: ${OBJECTDIR}/util/tree.o util/tree.cpp 
-	${MKDIR} -p ${OBJECTDIR}/util
-	@NMOUTPUT=`${NM} ${OBJECTDIR}/util/tree.o`; \
-	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
-	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
-	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
-	then  \
-	    ${RM} "$@.d";\
-	    $(COMPILE.cc) -O2 -Dmain=__nomain -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/util/tree_nomain.o util/tree.cpp;\
-	else  \
-	    ${CP} ${OBJECTDIR}/util/tree.o ${OBJECTDIR}/util/tree_nomain.o;\
-	fi
-
 # Run Test Targets
 .test-conf:
 	@if [ "${TEST}" = "" ]; \
@@ -563,7 +468,6 @@ ${OBJECTDIR}/util/tree_nomain.o: ${OBJECTDIR}/util/tree.o util/tree.cpp
 	    ${TESTDIR}/TestFiles/f5 || true; \
 	    ${TESTDIR}/TestFiles/f7 || true; \
 	    ${TESTDIR}/TestFiles/f9 || true; \
-	    ${TESTDIR}/TestFiles/f8 || true; \
 	    ${TESTDIR}/TestFiles/f4 || true; \
 	else  \
 	    ./${TEST} || true; \
