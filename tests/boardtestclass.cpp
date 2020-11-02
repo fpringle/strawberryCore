@@ -469,7 +469,7 @@ void boardtestclass::testFEN() {
         std::cout << s << std::endl;
     }
 
-    CPPUNIT_ASSERT_MESSAGE("FEN output test failed", ss.str() == s);
+    CPPUNIT_ASSERT_MESSAGE("FEN output test 1 failed", ss.str() == s);
 
     ss.str("");
     board _board2(s);
@@ -483,7 +483,7 @@ void boardtestclass::testFEN() {
         std::cout << ss2.str() << std::endl;
     }
 
-    CPPUNIT_ASSERT_MESSAGE("FEN input test failed", ss.str() == ss2.str());
+    CPPUNIT_ASSERT_MESSAGE("FEN input test 2 failed", ss.str() == ss2.str());
 }
 
 void boardtestclass::testSet_piece() {

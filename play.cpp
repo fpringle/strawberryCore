@@ -8,6 +8,9 @@
 #include <string>
 #include <iostream>
 
+#define SEARCHER PVS
+
+
 move_t input_move(board b) {
     move_t ret;
     move_t moves[256];
@@ -58,7 +61,7 @@ void play_white(int plies, board b) {
             break;
         case black:
             std::cout << "Computer thinking...\n";
-            comp_move = Negamax::search(b, plies, black);
+            comp_move = SEARCHER::search(b, plies);
             b = doMove(b, comp_move);
             *p++ = comp_move;
             break;
@@ -117,7 +120,7 @@ void play_black(int plies, board b) {
             break;
         case white:
             std::cout << "Computer thinking...\n";
-            comp_move = Negamax::search(b, plies, white);
+            comp_move = SEARCHER::search(b, plies);
             b = doMove(b, comp_move);
             *p++ = comp_move;
             break;

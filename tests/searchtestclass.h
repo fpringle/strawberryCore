@@ -14,7 +14,7 @@
 class searchtestclass : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST_SUITE(searchtestclass);
     
-    CPPUNIT_TEST(testSearch_tree);
+//    CPPUNIT_TEST(testSearch_tree);
 //    CPPUNIT_TEST(testUnmap);
 
     CPPUNIT_TEST_SUITE_END();

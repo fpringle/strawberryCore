@@ -9,3 +9,6 @@
 - wrapper search class around board
 - move typedefs to separate file
 - get rid of unused data structures in util/
+- quiescence search
+- check leaf nodes(checkmate) in search
+- generate captures for quiescence search

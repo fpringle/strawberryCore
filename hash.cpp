@@ -8,7 +8,7 @@
 
 
 // transposition table
-struct record_t table[130000000];
+//struct record_t table[130000000];
 
 // Mersenne_Twister pseudorandom number generator
 

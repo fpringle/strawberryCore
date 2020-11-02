@@ -113,6 +113,8 @@ void movetestclass::testMove_t() {
 }
 
 void movetestclass::testOperatorPrint() {
+    std::stringstream ss1, ss2;
+    
     move_t move1(10, 19, false, true, false, false);
     move_t move2(15, 7, true, false, false, false);
     move_t move3(4, 6, false, false, true, false);
@@ -120,12 +122,21 @@ void movetestclass::testOperatorPrint() {
     move_t move5(38, 45, false, true, false, true);
     move_t move6(50, 34, false, false, false, true);
 
-    std::cout << move1 << std::endl
+    ss1     << move1 << std::endl
             << move2 << std::endl
             << move3 << std::endl
             << move4 << std::endl
             << move5 << std::endl
             << move6 << std::endl;
+    
+    ss2 << "c2d3\n"
+        << "h2h1Q\n"
+        << "e1g1\n"
+        << "e8b8\n"
+        << "g5f6\n"
+        << "c7c5\n";
+    
+    CPPUNIT_ASSERT(ss1.str() == ss2.str());
 }
 
 void movetestclass::testInit_rays() {

@@ -71,7 +71,7 @@ def _minimax(node, depth, player):
         return value
 
 
-def minimax(node, depth=-1):
+def minimax(node, player, depth=-1):
     (heuristic, _), children = list(node.items())[0]
     if depth == 0 or children == []:
         return heuristic
@@ -84,29 +84,125 @@ def minimax(node, depth=-1):
             best_score = score
             best_move = move
 
-    return best_move #, best_score
+    return best_move
+
+
+def _negamax(node, depth, player):
+    (heuristic, _), children = list(node.items())[0]
+    if depth == 0 or children == []:
+        return heuristic * player
+
+    value = -inf
+    for child in children:
+        score = -_negamax(child, depth - 1, -player)
+        value = max(value, score)
+    return value
+
+
+def negamax(node, player, depth=-1):
+    (heuristic, _), children = list(node.items())[0]
+    if depth == 0 or children == []:
+        return heuristic * player
+
+    best_score = -inf
+    for child in children:
+        move = list(child.keys())[0][1]
+        score = -_negamax(child, depth - 1, -player)
+        if score > best_score:
+            best_score = score
+            best_move = move
+
+    return best_move
+
+
+def _negamaxAB(node, depth, player, alpha, beta):
+    (heuristic, _), children = list(node.items())[0]
+    if depth == 0 or children == []:
+        return heuristic * player
+
+    value = -inf
+    for child in children:
+        score = -_negamaxAB(child, depth - 1, -player, -beta, -alpha)
+        value = max(value, score)
+        alpha = max(alpha, value)
+        if alpha >= beta:
+            break
+    return value
+
+
+def negamaxAB(node, player, depth=-1):
+    (heuristic, _), children = list(node.items())[0]
+    if depth == 0 or children == []:
+        return heuristic * player
+
+    best_score = -inf
+    alpha = -inf
+    beta = inf
+    for child in children:
+        move = list(child.keys())[0][1]
+        score = -_negamaxAB(child, depth - 1, -player, -beta, -alpha)
+        if score > best_score:
+            best_score = score
+            best_move = move
+
+    return best_move
+
+
+def _negascout(node, depth, player, alpha, beta):
+    (heuristic, _), children = list(node.items())[0]
+    if depth == 0 or children == []:
+        return heuristic * player
+
+    a = alpha
+    b = beta
+    for i,child in enumerate(children):
+        score = -_negascout(child, depth - 1, -player, -b, -a)
+        if a < score < beta and i > 0:
+            a = -_negascout(child, depth-1, -player, -beta, -score)
+
+        a = max(a,score)
+        if a >= beta:
+            return a
+        b = a + 1
+    return a
+
+
+def negascout(node, player, depth=-1):
+    (heuristic, _), children = list(node.items())[0]
+    if depth == 0 or children == []:
+        return heuristic * player
+
+    best_score = -inf
+    alpha = -inf
+    beta = inf
+    for child in children:
+        move = list(child.keys())[0][1]
+        score = -_negascout(child, depth - 1, -player, -beta, -alpha)
+        if score > best_score:
+            best_score = score
+            best_move = move
+
+    return best_move
 
 
 def compare(input, depth):
     lines = input.strip().split("\n")
+    player = 1 if lines.pop(0).lower() == "white" else -1
     best_move_line = lines.pop()
-#    best_score_line = lines.pop()
     best_move_cpp = best_move_line.split(" ")[-1]
-#    best_score_cpp = int(best_score_line.split(" ")[-1])
     tree = parse_tree(lines)
-#    best_move_py, best_score_py = minimax(tree, depth)
-    best_move_py = minimax(tree, depth)
+    best_move_py = negascout(tree, player, depth)
     if best_move_py == best_move_cpp:
         print(
-            f"Python and C++ agree that the best move is {best_move_py} "
+            f"Python and C++ agree that the best move is {best_move_py}"
         )
         return True
     else:
         print(
-            f"Python thinks the best move is {best_move_py} "
+            f"Python thinks the best move is {best_move_py}"
         )
         print(
-            f"C++    thinks the best move is {best_move_cpp} "
+            f"C++    thinks the best move is {best_move_cpp}"
         )
         return False
 

@@ -266,12 +266,22 @@ board::board(std::string fen) {
     clock.str("");
     i++;
 
-    //come back to this
-    while (fen[i] != '\0') {
-        clock << fen[i];
-        i++;
+    if (fen.substr(i).size()) {
+        fullMoveClock = std::stoi(fen.substr(i));
     }
-    clock >> fullMoveClock;
+    else {
+        fullMoveClock = 0;
+    }
+
+    // fucking YIKES
+    //come back to this
+//    while (fen[i] != '\0') {
+//        clock << fen[i];
+//        i++;
+//    }
+//    clock << fen.substr(i);
+//    
+//    clock >> fullMoveClock;
 
 
     // value starts at 0

@@ -65,6 +65,11 @@ int main(int argc, char ** argv) {
 
     int depth = std::stoi(argv[2]);
     std::string board_string = argv[1];
+    bool quiet = false;
+
+    if (argc > 3) {
+        quiet = true;
+    }
 
     board b;
 
@@ -73,10 +78,16 @@ int main(int argc, char ** argv) {
 
 //    b.print_board();
 
-    treeNode<tree_record> * valuetree = analyse_tree(b, depth);
-    print_tree(valuetree);
+    colour side;
+    b.getSide(&side);
 
-    move_t best_move = NegamaxAB::search(b, depth, white);
+    if (! quiet) {
+        std::cout << (side == white ? "white" : "black") << std::endl;
+        treeNode<tree_record> * valuetree = analyse_tree(b, depth);
+        print_tree(valuetree);
+    }
+
+    move_t best_move = PVS::search(b, depth);
     std::cout << "Best move: ";
     print_move(best_move);
     std::cout << std::endl;

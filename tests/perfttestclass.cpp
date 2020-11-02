@@ -474,17 +474,6 @@ bool divide_legal(board _board, int depth, unsigned int * cache) {
     return true;
 }
 
-void perfttestclass::testGen_moves() {
-    board _board("rnbqkbnr/pppppppp/8/8/8/P7/1PPPPPPP/RNBQKBNR b KQkq - 0 1");
-    //    _board.print_board();
-    move_t moves[256];
-    int n_moves = _board.gen_legal_moves(moves);
-    //    for ( int i=0; i<n_moves; i++ ) {
-    //        print_move( moves[i] );
-    //        std::cout << std::endl;
-    //    }
-}
-
 void perfttestclass::divideStartboard() {
     init_rays();
     board b;

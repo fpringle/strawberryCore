@@ -33,7 +33,9 @@ do
 done
 
 
-make analyse
+make analyse &&
+./analyse.exe "$BOARD" "$DEPTH" > tmpfile &&
+cat tmpfile | ./py_analyse.py
 
-./analyse.exe "$BOARD" "$DEPTH" | ./py_analyse.py
+rm -f tmpfile
 
