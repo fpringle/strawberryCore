@@ -4,11 +4,8 @@
 - Function comments to explain parameters
 - Remove unnecessary std::couts for multi-line printing
 - better variable names
-- why does parameterised constructor have default hash=0?
-- FEN output and constructors
-- wrapper search class around board
+- Fix FEN output and constructors
 - move typedefs to separate file
-- get rid of unused data structures in util/
-- quiescence search
 - check leaf nodes(checkmate) in search
 - generate captures for quiescence search
+- endgame - computer doesn't try to checkmate

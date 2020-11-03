@@ -90,7 +90,7 @@ public:
     // defined in board.cpp
     board();
     board(bitboard*, bool*, bool, int, uint8_t, uint8_t,
-          colour, int32_t, uint64_t hash=0);
+          colour, int32_t, uint64_t hash = 0);
     board(board&);
     board(std::string);
 
@@ -110,6 +110,7 @@ public:
     void getFullClock(int*);
     void getSide(colour*);
     void getHash(uint64_t*);
+    int num_pieces_left(colourPiece);
     int num_pieces_left();
 
     // evaluation
@@ -118,6 +119,7 @@ public:
     int16_t evaluate_pieceSquareTables();
     int32_t getValue();
     int32_t evaluate();
+    int getPhase();
     //void incrementValue(int16_t);
 
     // utilities for testing

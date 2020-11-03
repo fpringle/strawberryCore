@@ -10,6 +10,7 @@
 #include "board.h"
 #include "move.h"
 #include "eval.h"
+#include "init.h"
 #include "action.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(evaltestclass);
@@ -24,7 +25,15 @@ void evaltestclass::tearDown() { }
 
 void _testPERFTeval(board _board, int depth, int basedepth) {
 
-    CPPUNIT_ASSERT(_board.getValue() == _board.evaluate());
+    std::stringstream ss;
+    ss << "Incremental evaluation wrong at depth " << basedepth - depth
+       << std::endl;
+    _board.print_board(ss);
+    ss << "\nReal value:        " << _board.evaluate()
+       << "\nIncremental value: " << _board.getValue();
+
+    CPPUNIT_ASSERT_MESSAGE(ss.str(), _board.getValue() == _board.evaluate());
+
     if (depth == 0) return;
     move_t moves[256];
     int n_moves = _board.gen_legal_moves(moves);
@@ -37,7 +46,7 @@ void _testPERFTeval(board _board, int depth, int basedepth) {
 }
 
 void testPERFTeval(board _board, int depth) {
-    init_rays();
+    init();
     _board.update_value();
     _testPERFTeval(_board, depth, depth);
 }

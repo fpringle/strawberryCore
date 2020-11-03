@@ -388,10 +388,14 @@ void board::getHash(uint64_t * dest) {
     *dest = hash_value;
 }
 
+int board::num_pieces_left(colourPiece cp) {
+    return count_bits_set(pieceBoards[cp]);
+}
+
 int board::num_pieces_left() {
     int ret = 0;
     for (int i = 0; i < 12; i++) {
-        ret += count_bits_set(pieceBoards[i]);
+        ret += num_pieces_left(colourPiece(i));
     }
     return ret;
 }

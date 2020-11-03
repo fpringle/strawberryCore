@@ -2,6 +2,7 @@
 #include "twiddle.h"
 #include "eval.h"
 #include "hash.h"
+#include "play.h"
 
 #include <cstdint>
 
@@ -27,7 +28,6 @@ board doMove(board startBoard, move_t move) {
     bool rooktaken = false;
 
     bitboard startingPos[12];
-
     startBoard.getBitboards(startingPos);
 
     for (i = (movingColour * 6); i < (1 + movingColour)*6; i++) {
@@ -399,5 +399,17 @@ void board::doMoveInPlace(move_t move) {
     // change hash for different side to move
     hash_value ^= zobristKeys[780];
 
+    // change side to move
+    sideToMove = otherColour;
 }
 
+
+void Player::doMoveInPlace(move_t move) {
+    board::doMoveInPlace(move);
+    move_history.push_back(move);
+}
+
+void Player::makeChild(board* child, move_t move) {
+    *child = *this;
+    child->doMoveInPlace(move);
+}

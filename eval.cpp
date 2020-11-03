@@ -188,3 +188,36 @@ int32_t board::evaluate() {
 int32_t board::getValue() {
     return value;
 }
+
+int board::getPhase() {
+    int pawnPhase = 0;
+    int knightPhase = 1;
+    int bishopPhase = 1;
+    int rookPhase = 2;
+    int queenPhase = 4;
+    int totalPhase = pawnPhase*16 + knightPhase*4 + bishopPhase*4
+                   + rookPhase*4 + queenPhase*2;
+
+    int phase = totalPhase;
+
+    phase -= pawnPhase * num_pieces_left(whitePawn);
+    phase -= knightPhase * num_pieces_left(whiteKnight);
+    phase -= bishopPhase * num_pieces_left(whiteBishop);
+    phase -= rookPhase * num_pieces_left(whiteRook);
+    phase -= queenPhase * num_pieces_left(whiteQueen);
+
+    phase -= pawnPhase * num_pieces_left(blackPawn);
+    phase -= knightPhase * num_pieces_left(blackKnight);
+    phase -= bishopPhase * num_pieces_left(blackBishop);
+    phase -= rookPhase * num_pieces_left(blackRook);
+    phase -= queenPhase * num_pieces_left(blackQueen);
+
+    phase = (phase * 256 + (totalPhase / 2)) / totalPhase;
+
+    return phase;
+}
+
+
+
+
+
