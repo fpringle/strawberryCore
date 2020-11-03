@@ -101,8 +101,10 @@ void boardtestclass::testBoard2() {
     int full_clk_real;
     colour side = black;
     colour side_real;
-    uint32_t value = -251;
-    uint32_t value_real;
+    uint32_t open_value = -251;
+    uint32_t end_value = -200;
+    uint32_t open_value_real;
+    uint32_t end_value_real;
 
     int i;
 
@@ -136,7 +138,7 @@ void boardtestclass::testBoard2() {
     pb[10] = blackQueenStart;
     pb[11] = blackKingStart;
 
-    board _board(pb, castling, ep, dPPFile, clk, full_clk, side, value);
+    board _board(pb, castling, ep, dPPFile, clk, full_clk, side, open_value, end_value);
 
     _board.getBitboards(pb_real);
     _board.getCastlingRights(castling_real);
@@ -144,7 +146,8 @@ void boardtestclass::testBoard2() {
     _board.getClock(&clk_real);
     _board.getFullClock(&full_clk_real);
     _board.getSide(&side_real);
-    value_real = _board.getValue();
+    open_value_real = _board.getOpeningValue();
+    end_value_real = _board.getEndgameValue();
 
     std::stringstream ss;
 
@@ -163,7 +166,8 @@ void boardtestclass::testBoard2() {
     CPPUNIT_ASSERT_MESSAGE("ep wrong", ep == ep_real);
     CPPUNIT_ASSERT_MESSAGE("half move clock wrong", clk == clk_real);
     CPPUNIT_ASSERT_MESSAGE("full move clock wrong", full_clk == full_clk_real);
-    CPPUNIT_ASSERT_MESSAGE("value wrong", value == value_real);
+    CPPUNIT_ASSERT_MESSAGE("opening value wrong", open_value == open_value_real);
+    CPPUNIT_ASSERT_MESSAGE("endgame value wrong", end_value == end_value_real);
     CPPUNIT_ASSERT_MESSAGE("side wrong", side == side_real);
 }
 
@@ -181,8 +185,10 @@ void boardtestclass::testBoard3() {
     int full_clk_real;
     colour side = black;
     colour side_real;
-    uint32_t value = -251;
-    uint32_t value_real;
+    uint32_t open_value = -251;
+    uint32_t end_value = -200;
+    uint32_t open_value_real;
+    uint32_t end_value_real;
 
     int i;
 
@@ -216,7 +222,7 @@ void boardtestclass::testBoard3() {
     pb[10] = blackQueenStart;
     pb[11] = blackKingStart;
 
-    board _board2(pb, castling, ep, dPPFile, clk, full_clk, side, value);
+    board _board2(pb, castling, ep, dPPFile, clk, full_clk, side, open_value, end_value);
     board _board = _board2;
 
     CPPUNIT_ASSERT_MESSAGE("_board1, _board2 not equal", _board == _board2);
@@ -227,7 +233,8 @@ void boardtestclass::testBoard3() {
     _board.getClock(&clk_real);
     _board.getFullClock(&full_clk_real);
     _board.getSide(&side_real);
-    value_real = _board.getValue();
+    open_value_real = _board.getOpeningValue();
+    end_value_real = _board.getEndgameValue();
 
     std::stringstream ss;
 
@@ -246,7 +253,8 @@ void boardtestclass::testBoard3() {
     CPPUNIT_ASSERT_MESSAGE("ep wrong", ep == ep_real);
     CPPUNIT_ASSERT_MESSAGE("half move clock wrong", clk == clk_real);
     CPPUNIT_ASSERT_MESSAGE("full move clock wrong", full_clk == full_clk_real);
-    CPPUNIT_ASSERT_MESSAGE("value wrong", value == value_real);
+    CPPUNIT_ASSERT_MESSAGE("opening value wrong", open_value == open_value_real);
+    CPPUNIT_ASSERT_MESSAGE("endgame value wrong", end_value == end_value_real);
     CPPUNIT_ASSERT_MESSAGE("side wrong", side == side_real);
 }
 
@@ -505,7 +513,7 @@ void boardtestclass::testSet_piece() {
     bool castling[] = {1, 1, 1, 1};
 
     board _board1;
-    board _board2(bb, castling, 0, 0, 0, 0, white, 0);
+    board _board2(bb, castling, 0, 0, 0, 0, white, 0, 0);
 
     _board1.set_piece(whitePawn, 16);
     _board1.set_piece(whiteKing, 60);
@@ -531,8 +539,8 @@ void boardtestclass::testSet_side() {
 
     bool castling[] = {1, 1, 1, 1};
 
-    board _board1(bb, castling, 0, 0, 0, 0, black, 0);
-    board _board2(bb, castling, 0, 0, 0, 0, white, 0);
+    board _board1(bb, castling, 0, 0, 0, 0, black, 0, 0);
+    board _board2(bb, castling, 0, 0, 0, 0, white, 0, 0);
 
     _board1.set_side(white);
 

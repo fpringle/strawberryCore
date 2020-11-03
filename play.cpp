@@ -240,9 +240,9 @@ void Player::play(colour side, int plies) {
             doMoveInPlace(player_move);
         }
         else {
-            std::cout << "Computer thinking...    ";
+            std::cout << "Computer thinking...    " << std::endl;
             comp_move = search(plies);
-            std::cout << comp_move << std::endl;
+            std::cout << "Computer move: " << comp_move << std::endl;
             doMoveInPlace(comp_move);
         }
         num_moves++;

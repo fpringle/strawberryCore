@@ -19,10 +19,10 @@ board doMove(board startBoard, move_t move) {
     int full_clk;
     uint64_t hash;
     startBoard.getHash(&hash);
-    int32_t value = startBoard.getValue();
+    int32_t opening_value = startBoard.getOpeningValue();
+    int32_t endgame_value = startBoard.getEndgameValue();
     colour movingColour;
     startBoard.getSide(& movingColour);
-    //  int plus_minus = ( movingColour == white ) ? 1 : -1;
     colour otherColour = (movingColour == white) ? black : white;
     colourPiece movingPiece;
     bool rooktaken = false;
@@ -34,8 +34,10 @@ board doMove(board startBoard, move_t move) {
         if (is_bit_set(startingPos[i], fromSquare)) {
             movingPiece = colourPiece(i);
             startingPos[i] = (startingPos[i] & ~(1ULL << fromSquare)) | (1ULL << toSquare);
-            value -= pieceSquareTables[i][fromSquare];
-            value += pieceSquareTables[i][toSquare];
+            opening_value -= pieceSquareTables[0][i][fromSquare];
+            endgame_value -= pieceSquareTables[1][i][fromSquare];
+            opening_value += pieceSquareTables[0][i][toSquare];
+            endgame_value += pieceSquareTables[1][i][toSquare];
             hash ^= zobristKeys[i * 64 + fromSquare];
             hash ^= zobristKeys[i * 64 + toSquare];
             break;
@@ -49,8 +51,10 @@ board doMove(board startBoard, move_t move) {
                 if (is_bit_set(startingPos[i], toSquare)) {
                     if (i % 6 == 1) rooktaken = true;
                     startingPos[i] = (startingPos[i] & ~(1ULL << toSquare));
-                    value -= pieceSquareTables[i][toSquare];
-                    value -= pieceValues[i];
+                    opening_value -= pieceSquareTables[0][i][toSquare];
+                    endgame_value -= pieceSquareTables[1][i][toSquare];
+                    opening_value -= pieceValues[0][i];
+                    endgame_value -= pieceValues[1][i];
                     hash ^= zobristKeys[i * 64 + toSquare];
                     break;
                 }
@@ -60,8 +64,11 @@ board doMove(board startBoard, move_t move) {
         else {
             int _dir = (movingColour == white) ? S : N;
             startingPos[(1 - movingColour)*6] &= ~(1ULL << (toSquare + _dir));
-            value -= pieceSquareTables[(1 - movingColour)*6][toSquare + _dir];
-            value -= pieceValues[(1 - movingColour)*6];
+            opening_value -= pieceSquareTables[0][(1 - movingColour)*6][toSquare + _dir];
+            endgame_value -= pieceSquareTables[1][(1 - movingColour)*6][toSquare + _dir];
+            opening_value -= pieceValues[0][(1 - movingColour)*6];
+            endgame_value -= pieceValues[1][(1 - movingColour)*6];
+            hash ^= zobristKeys[(1 - movingColour)*6 * 64 + toSquare + _dir];
             hash ^= zobristKeys[(1 - movingColour)*6 * 64 + toSquare + _dir];
         }
     }
@@ -70,8 +77,10 @@ board doMove(board startBoard, move_t move) {
         startingPos[1 + (6 * movingColour)] = (startingPos[1 + (6 * movingColour)] & ~
                                                (1ULL << (fromSquare + 3)))
                                               | (1ULL << (toSquare - 1));
-        value -= pieceSquareTables[1 + (6 * movingColour)][fromSquare + 3];
-        value += pieceSquareTables[1 + (6 * movingColour)][toSquare - 1];
+        opening_value -= pieceSquareTables[0][1 + (6 * movingColour)][fromSquare + 3];
+        endgame_value -= pieceSquareTables[1][1 + (6 * movingColour)][fromSquare + 3];
+        opening_value += pieceSquareTables[0][1 + (6 * movingColour)][toSquare - 1];
+        endgame_value += pieceSquareTables[1][1 + (6 * movingColour)][toSquare - 1];
         hash ^= zobristKeys[(1 + (6 * movingColour))*64 + fromSquare + 3];
         hash ^= zobristKeys[(1 + (6 * movingColour))*64 + toSquare - 1];
     }
@@ -79,8 +88,10 @@ board doMove(board startBoard, move_t move) {
         startingPos[1 + (6 * movingColour)] = (startingPos[1 + (6 * movingColour)] & ~
                                                (1ULL << (fromSquare - 4)))
                                               | (1ULL << (toSquare + 1));
-        value -= pieceSquareTables[1 + (6 * movingColour)][fromSquare - 4];
-        value += pieceSquareTables[1 + (6 * movingColour)][toSquare + 1];
+        opening_value -= pieceSquareTables[0][1 + (6 * movingColour)][fromSquare - 4];
+        endgame_value -= pieceSquareTables[1][1 + (6 * movingColour)][fromSquare - 4];
+        opening_value += pieceSquareTables[0][1 + (6 * movingColour)][toSquare + 1];
+        endgame_value += pieceSquareTables[1][1 + (6 * movingColour)][toSquare + 1];
         hash ^= zobristKeys[(1 + (6 * movingColour))*64 + fromSquare - 4];
         hash ^= zobristKeys[(1 + (6 * movingColour))*64 + toSquare + 1];
     }
@@ -88,16 +99,20 @@ board doMove(board startBoard, move_t move) {
     // promotion
     if (move.is_promotion()) {
         startingPos[6 * movingColour] &= (~(1ULL << toSquare));
-        value -= pieceSquareTables[6 * movingColour][toSquare];
-        value -= pieceValues[6 * movingColour];
+        opening_value -= pieceSquareTables[0][6 * movingColour][toSquare];
+        endgame_value -= pieceSquareTables[1][6 * movingColour][toSquare];
+        opening_value -= pieceValues[0][6 * movingColour];
+        endgame_value -= pieceValues[1][6 * movingColour];
         hash ^= zobristKeys[6 * movingColour * 64 + toSquare];
 
         colourPiece prom_piece = colourPiece((6 * movingColour) +
                                              move.which_promotion());
 
         startingPos[prom_piece] |= (1ULL << toSquare);
-        value += pieceSquareTables[prom_piece][toSquare];
-        value += pieceValues[prom_piece];
+        opening_value += pieceSquareTables[0][prom_piece][toSquare];
+        endgame_value += pieceSquareTables[1][prom_piece][toSquare];
+        opening_value += pieceValues[0][prom_piece];
+        endgame_value += pieceValues[1][prom_piece];
         hash ^= zobristKeys[prom_piece * 64 + toSquare];
     }
 
@@ -210,7 +225,7 @@ board doMove(board startBoard, move_t move) {
     hash ^= zobristKeys[780];
 
     board endBoard(startingPos, castling, ep, dpp, clk, full_clk, otherColour,
-                   value, hash);
+                   opening_value, endgame_value, hash);
 
     return endBoard;
 }
@@ -228,8 +243,10 @@ void board::doMoveInPlace(move_t move) {
         if (is_bit_set(pieceBoards[i], fromSquare)) {
             movingPiece = colourPiece(i);
             pieceBoards[i] = (pieceBoards[i] & ~(1ULL << fromSquare)) | (1ULL << toSquare);
-            value -= pieceSquareTables[i][fromSquare];
-            value += pieceSquareTables[i][toSquare];
+            opening_value -= pieceSquareTables[0][i][fromSquare];
+            endgame_value -= pieceSquareTables[1][i][fromSquare];
+            opening_value += pieceSquareTables[0][i][toSquare];
+            endgame_value += pieceSquareTables[1][i][toSquare];
             hash_value ^= zobristKeys[i * 64 + fromSquare];
             hash_value ^= zobristKeys[i * 64 + toSquare];
             break;
@@ -243,8 +260,10 @@ void board::doMoveInPlace(move_t move) {
                 if (is_bit_set(pieceBoards[i], toSquare)) {
                     if (i % 6 == 1) rooktaken = true;
                     pieceBoards[i] = (pieceBoards[i] & ~(1ULL << toSquare));
-                    value -= pieceSquareTables[i][toSquare];
-                    value -= pieceValues[i];
+                    opening_value -= pieceSquareTables[0][i][toSquare];
+                    endgame_value -= pieceSquareTables[1][i][toSquare];
+                    opening_value -= pieceValues[0][i];
+                    endgame_value -= pieceValues[1][i];
                     hash_value ^= zobristKeys[i * 64 + toSquare];
                     break;
                 }
@@ -254,8 +273,10 @@ void board::doMoveInPlace(move_t move) {
         else {
             int _dir = (sideToMove == white) ? S : N;
             pieceBoards[(1 - sideToMove)*6] &= ~(1ULL << (toSquare + _dir));
-            value -= pieceSquareTables[(1 - sideToMove)*6][toSquare + _dir];
-            value -= pieceValues[(1 - sideToMove)*6];
+            opening_value -= pieceSquareTables[0][(1 - sideToMove)*6][toSquare + _dir];
+            endgame_value -= pieceSquareTables[1][(1 - sideToMove)*6][toSquare + _dir];
+            opening_value -= pieceValues[0][(1 - sideToMove)*6];
+            endgame_value -= pieceValues[1][(1 - sideToMove)*6];
             hash_value ^= zobristKeys[(1 - sideToMove)*6 * 64 + toSquare + _dir];
         }
     }
@@ -264,8 +285,10 @@ void board::doMoveInPlace(move_t move) {
         pieceBoards[1 + (6 * sideToMove)] = (pieceBoards[1 + (6 * sideToMove)] & ~
                                              (1ULL << (fromSquare + 3)))
                                             | (1ULL << (toSquare - 1));
-        value -= pieceSquareTables[1 + (6 * sideToMove)][fromSquare + 3];
-        value += pieceSquareTables[1 + (6 * sideToMove)][toSquare - 1];
+        opening_value -= pieceSquareTables[0][1 + (6 * sideToMove)][fromSquare + 3];
+        endgame_value -= pieceSquareTables[1][1 + (6 * sideToMove)][fromSquare + 3];
+        opening_value += pieceSquareTables[0][1 + (6 * sideToMove)][toSquare - 1];
+        endgame_value += pieceSquareTables[1][1 + (6 * sideToMove)][toSquare - 1];
         hash_value ^= zobristKeys[(1 + (6 * sideToMove))*64 + fromSquare + 3];
         hash_value ^= zobristKeys[(1 + (6 * sideToMove))*64 + toSquare - 1];
     }
@@ -273,8 +296,10 @@ void board::doMoveInPlace(move_t move) {
         pieceBoards[1 + (6 * sideToMove)] = (pieceBoards[1 + (6 * sideToMove)] & ~
                                              (1ULL << (fromSquare - 4)))
                                             | (1ULL << (toSquare + 1));
-        value -= pieceSquareTables[1 + (6 * sideToMove)][fromSquare - 4];
-        value += pieceSquareTables[1 + (6 * sideToMove)][toSquare + 1];
+        opening_value -= pieceSquareTables[0][1 + (6 * sideToMove)][fromSquare - 4];
+        endgame_value -= pieceSquareTables[1][1 + (6 * sideToMove)][fromSquare - 4];
+        opening_value += pieceSquareTables[0][1 + (6 * sideToMove)][toSquare + 1];
+        endgame_value += pieceSquareTables[1][1 + (6 * sideToMove)][toSquare + 1];
         hash_value ^= zobristKeys[(1 + (6 * sideToMove))*64 + fromSquare - 4];
         hash_value ^= zobristKeys[(1 + (6 * sideToMove))*64 + toSquare + 1];
     }
@@ -282,15 +307,19 @@ void board::doMoveInPlace(move_t move) {
     // promotion
     if (move.is_promotion()) {
         pieceBoards[6 * sideToMove] &= (~(1ULL << toSquare));
-        value -= pieceSquareTables[6 * sideToMove][toSquare];
-        value -= pieceValues[6 * sideToMove];
+        opening_value -= pieceSquareTables[0][6 * sideToMove][toSquare];
+        endgame_value -= pieceSquareTables[1][6 * sideToMove][toSquare];
+        opening_value -= pieceValues[0][6 * sideToMove];
+        endgame_value -= pieceValues[1][6 * sideToMove];
         hash_value ^= zobristKeys[6 * sideToMove * 64 + toSquare];
 
         colourPiece prom_piece = colourPiece((6 * sideToMove) + move.which_promotion());
 
         pieceBoards[prom_piece] |= (1ULL << toSquare);
-        value += pieceSquareTables[prom_piece][toSquare];
-        value += pieceValues[prom_piece];
+        opening_value += pieceSquareTables[0][prom_piece][toSquare];
+        endgame_value += pieceSquareTables[1][prom_piece][toSquare];
+        opening_value += pieceValues[0][prom_piece];
+        endgame_value += pieceValues[1][prom_piece];
         hash_value ^= zobristKeys[prom_piece * 64 + toSquare];
     }
 

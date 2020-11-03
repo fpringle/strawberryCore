@@ -11,6 +11,10 @@
 const char symbols[12] = {'p', 'r', 'n', 'b', 'q', 'k',
                           'P', 'R', 'N', 'B', 'Q', 'K'
                          };
+//const char symbols[12] = {'\u2659', '\u2656', '\u2658', '\u2657', '\u2655', '\u2654',
+//                          '\u265F', '\u265C', '\u265E', '\u265D', '\u265B', '\u265A'
+//                         };
+//const char symbols[12] = {'♙','♘','♗','♖','♕','♔','♟','♞','♝','♜','♛','♚'};
 const char colours[2] = {'w', 'b'};
 
 // define starting configuration
@@ -70,14 +74,16 @@ board::board() {
     sideToMove = white;
 
     // value starts at 0
-    value = 0;
+    opening_value = 0;
+    endgame_value = 0;
 
     // initial hash value
     hash_value = zobrist_hash();
 }
 
 board::board(bitboard * startPositions, bool * castling, bool ep, int dpp,
-             uint8_t clock, uint8_t full_clock, colour side, int32_t val, uint64_t hash) {
+             uint8_t clock, uint8_t full_clock, colour side,
+             int32_t open_val, int32_t end_val, uint64_t hash) {
     // parameterised constructor
 
     // initialise an array of pointers to the piece bitboards
@@ -104,7 +110,8 @@ board::board(bitboard * startPositions, bool * castling, bool ep, int dpp,
     sideToMove = side;
 
     // value
-    value = val;
+    opening_value = open_val;
+    endgame_value = end_val;
 
     // hash
     hash_value = hash;
@@ -140,7 +147,8 @@ board::board(board & b1) {
     sideToMove = b1.sideToMove;
 
     // value
-    value = b1.value;
+    opening_value = b1.opening_value;
+    endgame_value = b1.endgame_value;
 
     // hash
     hash_value = b1.hash_value;
@@ -285,7 +293,8 @@ board::board(std::string fen) {
 
 
     // value starts at 0
-    value = evaluate();
+    opening_value = evaluateOpening();
+    opening_value = evaluateEndgame();
 
     // hash
     hash_value = zobrist_hash();
@@ -337,8 +346,13 @@ bool board::operator==(const board& other) {
         return false;
     }
 
-    if (value != other.value) {
-        std::cout << "value wrong\n";
+    if (opening_value != other.opening_value) {
+        std::cout << "opening value wrong\n";
+        return false;
+    }
+
+    if (endgame_value != other.endgame_value) {
+        std::cout << "endgame value wrong\n";
         return false;
     }
 
@@ -696,11 +710,8 @@ void board::clear_square(int ind) {
 }
 
 void board::update_value() {
-    value = evaluate();
-}
-
-void board::set_value(int32_t _value) {
-    value = _value;
+    opening_value = evaluateOpening();
+    endgame_value = evaluateEndgame();
 }
 
 void board::update_hash() {

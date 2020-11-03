@@ -80,7 +80,8 @@ class board {
     colour sideToMove;
 
     // maintain a running value
-    int32_t value;
+    int32_t opening_value;
+    int32_t endgame_value;
 
     // store hash of current state
     uint64_t hash_value;
@@ -90,7 +91,7 @@ public:
     // defined in board.cpp
     board();
     board(bitboard*, bool*, bool, int, uint8_t, uint8_t,
-          colour, int32_t, uint64_t hash = 0);
+          colour, int32_t, int32_t, uint64_t hash = 0);
     board(board&);
     board(std::string);
 
@@ -115,10 +116,15 @@ public:
 
     // evaluation
     // defined in eval.cpp
-    int16_t evaluate_material();
-    int16_t evaluate_pieceSquareTables();
+    int16_t evaluate_material(int);
+    int16_t evaluate_pieceSquareTables(int);
     int32_t getValue();
+    int32_t getOpeningValue();
+    int32_t getEndgameValue();
     int32_t evaluate();
+    int32_t evaluateOpening();
+    int32_t evaluateEndgame();
+
     int getPhase();
     //void incrementValue(int16_t);
 
@@ -139,7 +145,6 @@ public:
     void set_side(colour);
     void clear_square(int);
     void update_value();
-    void set_value(int32_t);
     void update_hash();
     void set_hash(uint64_t);
     void setBitboards(bitboard*);

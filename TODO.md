@@ -9,3 +9,6 @@
 - check leaf nodes(checkmate) in search
 - generate captures for quiescence search
 - endgame - computer doesn't try to checkmate
+- iterative deepening with timeout
+- move ordering
+- add a x when displaying a checking move
