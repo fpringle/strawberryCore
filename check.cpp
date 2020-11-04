@@ -2,8 +2,6 @@
 #include "move.h"
 #include "twiddle.h"
 
-#include <math.h>
-
 bool board::is_check(colour side) {
     // on-the-fly check detection
     int kingpos = last_set_bit(pieceBoards[ (6 * side) + 5 ]);

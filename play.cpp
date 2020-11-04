@@ -233,7 +233,8 @@ void Player::play(colour side, int plies) {
     }
 
     while (! gameover()) {
-        print_board();
+        if (side == black) print_board();
+        else print_board_flipped();
         getSide(&movingSide);
         if (movingSide != side) {
             player_move = input_move();
@@ -248,7 +249,8 @@ void Player::play(colour side, int plies) {
         num_moves++;
     }
 
-    print_board();
+    if (side == black) print_board();
+    else print_board_flipped();
     print_history();
 
     switch (is_checkmate()) {

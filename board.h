@@ -131,6 +131,7 @@ public:
     // utilities for testing
     // defined in board.cpp
     void print_board(std::ostream& cout = std::cout);
+    void print_board_flipped(std::ostream& cout = std::cout);
     void print_board_indent(std::ostream& cout = std::cout, int indent = 0);
     void print_all(std::ostream& cout = std::cout);
     std::string FEN();

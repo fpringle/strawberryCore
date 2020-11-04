@@ -15,11 +15,15 @@ int32_t Minimax::algorithm(board b, int depth, colour side) {
     int32_t score;
     struct move_t moves[256];
     int num_moves = b.gen_legal_moves(moves);
-    if (num_moves == 0) return b.getValue();
     board child;
 
     if (side == white) {
-        int32_t max_score = std::numeric_limits<int32_t>::min();
+        int32_t max_score = std::numeric_limits<int32_t>::max();
+        if (num_moves == 0) {
+            if (b.is_check(black)) {
+                return max_score + 10;
+            }
+        }
 
         for (int i = 0; i < num_moves; i++) {
             child = doMove(b, moves[i]);
@@ -31,6 +35,11 @@ int32_t Minimax::algorithm(board b, int depth, colour side) {
 
     else {
         int32_t min_score = std::numeric_limits<int32_t>::max();
+        if (num_moves == 0) {
+            if (b.is_check(black)) {
+                return min_score - 10;
+            }
+        }
 
         for (int i = 0; i < num_moves; i++) {
             child = doMove(b, moves[i]);
@@ -62,7 +71,6 @@ move_t Minimax::search(board b, int depth) {
                 best_move = moves[i];
             }
         }
-        std::cout << "Top score: " << max_score << "\n";
         return best_move;
     }
 
@@ -91,9 +99,8 @@ int32_t Negamax::algorithm(board b, int depth, colour side) {
 
     struct move_t moves[256];
     int num_moves = b.gen_legal_moves(moves);
-    if (num_moves == 0) return b.getValue() * ((side == white) ? 1 : -1);
-
     int32_t max_score = std::numeric_limits<int32_t>::min();
+    if (num_moves == 0) return (max_score + 10) * ((side == white) ? 1 : -1);
 
     for (int i = 0; i < num_moves; i++) {
         child = doMove(b, moves[i]);
@@ -138,9 +145,8 @@ int32_t NegamaxAB::algorithm(board b, int depth, colour side,
 
     struct move_t moves[256];
     int num_moves = b.gen_legal_moves(moves);
-    if (num_moves == 0) return b.getValue() * ((side == white) ? 1 : -1);
-
     int32_t max_score = std::numeric_limits<int32_t>::min();
+    if (num_moves == 0) return (max_score + 10) * ((side == white) ? 1 : -1);
     //  int32_t max_score = alpha;
 
     for (int i = 0; i < num_moves; i++) {
@@ -192,7 +198,10 @@ int32_t NegaScoutOriginal::algorithm(board b, int depth, colour side,
 
     struct move_t moves[256];
     int num_moves = b.gen_legal_moves(moves);
-    if (num_moves == 0) return b.getValue() * ((side == white) ? 1 : -1);
+    if (num_moves == 0) {
+        int32_t minusinf = (std::numeric_limits<int32_t>::min() + 10);
+        return minusinf * ((side == white) ? 1 : -1);
+    }
 
     for (int i = 0; i < num_moves; i++) {
         child = doMove(b, moves[i]);
@@ -248,7 +257,10 @@ int32_t NegaScoutAlternative::algorithm(board b, int depth, colour side,
 
     struct move_t moves[256];
     int num_moves = b.gen_legal_moves(moves);
-    if (num_moves == 0) return b.getValue() * ((side == white) ? 1 : -1);
+    if (num_moves == 0) {
+        int32_t minusinf = (std::numeric_limits<int32_t>::min() + 10);
+        return minusinf * ((side == white) ? 1 : -1);
+    }
 
     for (int i = 0; i < num_moves; i++) {
         child = doMove(b, moves[i]);
@@ -304,7 +316,10 @@ int32_t PVS::algorithm(board b, int depth, colour side,
     int32_t score;
 
     int num_moves = b.gen_legal_moves(moves);
-    if (num_moves == 0) return b.getValue() * ((side == white) ? 1 : -1);
+    if (num_moves == 0) {
+        int32_t minusinf = (std::numeric_limits<int32_t>::min() + 10);
+        return minusinf * ((side == white) ? 1 : -1);
+    }
 
     for (int i = 0; i < num_moves; i++) {
         child = doMove(b, moves[i]);

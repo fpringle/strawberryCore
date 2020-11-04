@@ -878,7 +878,6 @@ int board::gen_moves(move_t * moves) {
             if (!copy.is_check(white)) {
                 count += add_moves(&moves, move_t(4, 6, 0, 0, 1, 0), false);
             }
-            //copy.print_board(std::cout);
         }
         if (castleWhiteQueenSide && (!((_white | _black) & 0x000000000000000e))) {
             board copy = *this;
@@ -887,7 +886,6 @@ int board::gen_moves(move_t * moves) {
             if (!copy.is_check(white)) {
                 count += add_moves(&moves, move_t(4, 2, 0, 0, 1, 1), false);
             }
-            //copy.print_board(std::cout);
         }
     }
     else if (sideToMove == black && !is_check(black)) {
@@ -898,7 +896,6 @@ int board::gen_moves(move_t * moves) {
             if (!copy.is_check(black)) {
                 count += add_moves(&moves, move_t(60, 62, 0, 0, 1, 0), false);
             }
-            //copy.print_board(std::cout);
         }
         if (castleBlackQueenSide && (!((_white | _black) & 0x0e00000000000000))) {
             board copy = *this;
@@ -907,7 +904,6 @@ int board::gen_moves(move_t * moves) {
             if (!copy.is_check(black)) {
                 count += add_moves(&moves, move_t(60, 58, 0, 0, 1, 1), false);
             }
-            //copy.print_board(std::cout);
         }
     }
 
@@ -934,17 +930,13 @@ int board::get_out_of_check(move_t * moves, piece checkingPiece,
         to_ind = first_set_bit(targets);
         if (_other & (1ULL << to_ind)) {
             if (print_method) {
-                std::cout << "take ";
                 print_move(move_t(king_ind, to_ind, 0, 1, 0, 0));
-                std::cout << std::endl;
             }
             count += add_moves(&moves, move_t(king_ind, to_ind, 0, 1, 0, 0), true);
         }
         else {
             if (print_method) {
-                std::cout << "avoid ";
                 print_move(move_t(king_ind, to_ind, 0, 0, 0, 0));
-                std::cout << std::endl;
             }
             count += add_moves(&moves, move_t(king_ind, to_ind, 0, 0, 0, 0), true);
         }
@@ -966,9 +958,7 @@ int board::get_out_of_check(move_t * moves, piece checkingPiece,
             from_sq = first_set_bit(defender);
             //              if ( defender & 1ULL ) {
             if (print_method) {
-                std::cout << "take ";
                 print_move(move_t(from_sq, checkingInd, 0, 0, 0, 0));
-                std::cout << std::endl;
             }
             if (i == (6 * sideToMove) && (checkingInd / 8 == 0 || checkingInd / 8 == 7)) {
                 move_t prom_queen(from_sq, checkingInd, 1, 1, 0, 0);
@@ -995,12 +985,11 @@ int board::get_out_of_check(move_t * moves, piece checkingPiece,
                     move_t(checkingInd - 1, to_ind, 0, 1, 0, 1), true);
     }
     if (is_bit_set(kingTargets(kingInd, _white, _black, sideToMove), checkingInd)) {
-        /*std::cout << "can't block - kiss\n";*/ return count;
+        return count;
     }
     if (checkingPiece % 6 == 0 || checkingPiece % 6 == 2 ||
             checkingPiece % 6 == 5) {
-        /*    std::cout << "can't block - attacking piece is " << checkingPiece << "\n"; */return
-            count;
+        return count;
     }
 
 
@@ -1040,18 +1029,14 @@ int board::get_out_of_check(move_t * moves, piece checkingPiece,
                 switch (abs(defenderInd - blockingInd)) {
                 case 8:
                     if (print_method) {
-                        std::cout << "block ";
                         print_move(move_t(defenderInd, blockingInd, 0, 0, 0, 0));
-                        std::cout << std::endl;
                     }
                     count += add_moves(&moves, move_t(defenderInd, blockingInd, 0, 0, 0, 0), true);
                     break;
                 case 16:
                     if ((_black | _white) & (1ULL << ((defenderInd + blockingInd) / 2))) break;
                     if (print_method) {
-                        std::cout << "block ";
                         print_move(move_t(defenderInd, blockingInd, 0, 0, 0, 0));
-                        std::cout << std::endl;
                     }
                     count += add_moves(&moves, move_t(defenderInd, blockingInd, 0, 0, 0, 1), true);
                     break;
@@ -1070,9 +1055,7 @@ int board::get_out_of_check(move_t * moves, piece checkingPiece,
             while (blockers) {
                 defenderInd = first_set_bit(blockers);
                 if (print_method) {
-                    std::cout << "block ";
                     print_move(move_t(defenderInd, blockingInd, 0, 0, 0, 0));
-                    std::cout << std::endl;
                 }
                 count += add_moves(&moves, move_t(defenderInd, blockingInd, 0, 0, 0, 0), true);
                 blockers &= (blockers - 1ULL);
@@ -1194,7 +1177,6 @@ int board::gen_legal_moves(move_t * moves) {
             if (!copy.is_check(white)) {
                 count += add_moves(&moves, move_t(4, 6, 0, 0, 1, 0), true);
             }
-            //copy.print_board(std::cout);
         }
         if (castleWhiteQueenSide && (!((_white | _black) & 0x000000000000000e))) {
             board copy = *this;
@@ -1203,7 +1185,6 @@ int board::gen_legal_moves(move_t * moves) {
             if (!copy.is_check(white)) {
                 count += add_moves(&moves, move_t(4, 2, 0, 0, 1, 1), true);
             }
-            //copy.print_board(std::cout);
         }
     }
     else if (sideToMove == black && !is_check(black)) {
@@ -1214,7 +1195,6 @@ int board::gen_legal_moves(move_t * moves) {
             if (!copy.is_check(black)) {
                 count += add_moves(&moves, move_t(60, 62, 0, 0, 1, 0), true);
             }
-            //copy.print_board(std::cout);
         }
         if (castleBlackQueenSide && (!((_white | _black) & 0x0e00000000000000))) {
             board copy = *this;
@@ -1223,7 +1203,6 @@ int board::gen_legal_moves(move_t * moves) {
             if (!copy.is_check(black)) {
                 count += add_moves(&moves, move_t(60, 58, 0, 0, 1, 1), true);
             }
-            //copy.print_board(std::cout);
         }
     }
 
@@ -1233,9 +1212,7 @@ int board::gen_legal_moves(move_t * moves) {
 bool board::is_legal(struct move_t move) {
     bool _print = 0;
     if (_print) {
-        std::cout << "Checking if ";
         print_move(move);
-        std::cout << " is a legal move\n";
     }
 
     colourPiece movingPiece;

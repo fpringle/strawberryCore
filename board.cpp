@@ -1,7 +1,6 @@
 #include "board.h"
 #include "twiddle.h"
 
-#include <assert.h>
 #include <iostream>
 #include <math.h>
 #include <string>
@@ -264,6 +263,20 @@ board::board(std::string fen) {
         i += 3;
     }
 
+    // value starts at 0
+    opening_value = evaluateOpening();
+    opening_value = evaluateEndgame();
+
+    // hash
+    hash_value = zobrist_hash();
+
+
+    if (i >= fen.size()) {
+        halfMoveClock = 0;
+        fullMoveClock = 0;
+        return;
+    }
+
     std::stringstream clock;
 
     while (fen[i] != ' ') {
@@ -274,30 +287,12 @@ board::board(std::string fen) {
     clock.str("");
     i++;
 
-    if (fen.substr(i).size()) {
-        fullMoveClock = std::stoi(fen.substr(i));
-    }
-    else {
+    if (i >= fen.size()) {
         fullMoveClock = 0;
+        return;
     }
 
-    // fucking YIKES
-    //come back to this
-//    while (fen[i] != '\0') {
-//        clock << fen[i];
-//        i++;
-//    }
-//    clock << fen.substr(i);
-//    
-//    clock >> fullMoveClock;
-
-
-    // value starts at 0
-    opening_value = evaluateOpening();
-    opening_value = evaluateEndgame();
-
-    // hash
-    hash_value = zobrist_hash();
+    fullMoveClock = std::stoi(fen.substr(i));
 }
 
 
@@ -308,7 +303,6 @@ bool board::operator==(const board& other) {
 
     for (i = 0; i < 12; i++) {
         if (pieceBoards[i] != other.pieceBoards[i]) {
-            std::cout << "pieceBoard[" << i << "] is wrong\n";
             return false;
         }
     }
@@ -317,42 +311,34 @@ bool board::operator==(const board& other) {
             castleWhiteQueenSide != other.castleWhiteQueenSide ||
             castleBlackKingSide != other.castleBlackKingSide ||
             castleBlackQueenSide != other.castleBlackQueenSide) {
-        std::cout << "castling rights wrong\n";
         return false;
     }
 
     if (halfMoveClock != other.halfMoveClock) {
-        std::cout << "half move clock wrong\n";
         return false;
     }
 
     if (fullMoveClock != other.fullMoveClock) {
-        std::cout << "full move clock clock wrong\n";
         return false;
     }
 
     if (lastMoveDoublePawnPush != other.lastMoveDoublePawnPush) {
-        std::cout << "ep wrong\n";
         return false;
     }
 
     if ((lastMoveDoublePawnPush) && (dPPFile != other.dPPFile)) {
-        std::cout << "dPPFile wrong\n";
         return false;
     }
 
     if (sideToMove != other.sideToMove) {
-        std::cout << "side wrong\n";
         return false;
     }
 
     if (opening_value != other.opening_value) {
-        std::cout << "opening value wrong\n";
         return false;
     }
 
     if (endgame_value != other.endgame_value) {
-        std::cout << "endgame value wrong\n";
         return false;
     }
 
@@ -462,6 +448,35 @@ void board::print_board(std::ostream& cout) {
     cout << "\n   A B C D E F G H\n";
 }
 
+void board::print_board_flipped(std::ostream& cout) {
+    // uppercase = black, lowercase = white
+    int i, j;
+    bitboard tmp;
+    char to_print[64];
+    for (i = 0; i < 64; i++) to_print[i] = '.';
+
+    for (i = 0; i < 12; i++) {
+        tmp = pieceBoards[i]; //pieces[i];
+        for (j = 0; j < 64; j++) {
+            if (tmp & 1ULL) {
+                to_print[j] = symbols[i];
+            }
+            tmp >>= 1;
+            //if (~tmp) break;
+        }
+    }
+
+    cout << "   H G F E D C B A\n\n";
+    for (i = 0; i < 8; i++) {
+        cout << i + 1 << " ";
+        for (j = 7; j >= 0; j--) {
+            cout << " " << to_print[i * 8 + j];
+        }
+        cout << "  " << i + 1 << std::endl;
+    }
+    cout << "\n   H G F E D C B A\n";
+}
+
 void board::print_board_indent(std::ostream& cout, int indent) {
     // uppercase = black, lowercase = white
     int i, j;
@@ -536,13 +551,11 @@ std::ostream& operator<<(std::ostream &out, const board &brd) {
     for (i = 0; i < 64; i++) to_print[i] = '.';
 
     for (i = 0; i < 12; i++) {
-        //tmp = pieceBoards[i];//pieces[i];
         for (j = 0; j < 64; j++) {
             if (pieceBoards[i] & 1ULL) {
                 to_print[j] = symbols[i];
             }
             pieceBoards[i] >>= 1;
-            //if (~tmp) break;
         }
     }
 
@@ -560,7 +573,7 @@ std::ostream& operator<<(std::ostream &out, const board &brd) {
 }
 
 std::string board::FEN() {
-    int count1;
+    int count;
     std::stringstream ss;
     int i, j, k;
     bitboard tmp;
@@ -582,16 +595,16 @@ std::string board::FEN() {
     for (i = 0; i < 8; i++) {
         for (j = 0; j < 8; j++) {
             if (to_print[i * 8 + j] == '.') {
-                count1 = j;
-                while (to_print[i * 8 + count1] == '.' && count1 < 8) count1++;
-                ss << '0' + (count1 - j);
-                j = count1 - 1;
+                count = j;
+                while (to_print[i * 8 + count] == '.' && count < 8) count++;
+                ss << char('0' + (count - j));
+                j = count - 1;
             }
             else {
                 ss << to_print[i * 8 + j];
             }
         }
-        if (i != 7) {
+        if (i != 7 ) {
             ss << '/';
         }
     }
@@ -613,14 +626,15 @@ std::string board::FEN() {
         if (castleBlackQueenSide) ss << "q";
     }
 
+    ss << " ";
+
     if (lastMoveDoublePawnPush) {
-        ss << " ";
         ss << "a" + dPPFile;
         ss << (sideToMove == white) ? "6" : "3";
     }
 
     else {
-        ss << " -";
+        ss << "-";
     }
 
     ss << " " << halfMoveClock;
@@ -631,7 +645,7 @@ std::string board::FEN() {
 }
 
 void board::FEN(std::ostream& ss) {
-    int count1;
+    int count;
     int i, j, k;
     bitboard tmp;
     char to_print[64];
@@ -652,10 +666,10 @@ void board::FEN(std::ostream& ss) {
     for (i = 0; i < 8; i++) {
         for (j = 0; j < 8; j++) {
             if (to_print[i * 8 + j] == '.') {
-                count1 = j;
-                while (to_print[i * 8 + count1] == '.' && count1 < 8) count1++;
-                ss << char('0' + (count1 - j));
-                j = count1 - 1;
+                count = j;
+                while (to_print[i * 8 + count] == '.' && count < 8) count++;
+                ss << char('0' + (count - j));
+                j = count - 1;
             }
             else {
                 ss << to_print[i * 8 + j];
