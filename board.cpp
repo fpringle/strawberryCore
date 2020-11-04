@@ -629,17 +629,16 @@ std::string board::FEN() {
     ss << " ";
 
     if (lastMoveDoublePawnPush) {
-        ss << "a" + dPPFile;
-        ss << (sideToMove == white) ? "6" : "3";
+        ss << "a" + dPPFile
+           << (sideToMove == white) ? "6" : "3";
     }
 
     else {
         ss << "-";
     }
 
-    ss << " " << halfMoveClock;
-
-    ss << " " << fullMoveClock;
+    ss << " " << halfMoveClock
+       << " " << fullMoveClock;
 
     return ss.str();
 }

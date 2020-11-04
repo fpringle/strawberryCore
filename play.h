@@ -10,15 +10,6 @@
 #include <cstdint>
 #include <vector>
 
-// defined in play.cpp
-move_t input_move( board );
-void play_white(int);
-void play_black(int);
-void play_white(int, board);
-void play_black(int, board);
-void play(int, colour);
-void play(int, board, colour);
-
 // transposition table
 // "signature" = zobrist hash (64 bits)
 // "index"     = singature % table size (32 bits)
