@@ -460,8 +460,11 @@ std::ostream& operator<<(std::ostream &out, const move_t &move) {
 }
 
 void print_move(struct move_t move, std::ostream& cout) {
-    //char   to_c[2];
-    //char from_c[2];
+    if (move.give() == 0) {
+        cout << "NULL";
+        return;
+    }
+
     int fromSq = move.from_sq();
     int toSq = move.to_sq();
 

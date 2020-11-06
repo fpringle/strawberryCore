@@ -70,8 +70,8 @@ class board {
     bool castleBlackKingSide;
     bool castleBlackQueenSide;
 
-    int halfMoveClock;
-    int fullMoveClock;
+    uint8_t halfMoveClock;
+    uint8_t fullMoveClock;
 
     bool lastMoveDoublePawnPush;
     int dPPFile;        // if lastMoveDoublePawnPush = true, dPPFile gives the file
@@ -107,8 +107,8 @@ public:
     void getCastlingRights(bool*);
     void getEP(bool*);
     void getdPPFile(int*);
-    void getClock(int*);
-    void getFullClock(int*);
+    void getClock(uint8_t*);
+    void getFullClock(uint8_t*);
     void getSide(colour*);
     void getHash(uint64_t*);
     int num_pieces_left(colourPiece);
@@ -152,8 +152,8 @@ public:
     void setCastlingRights(bool*);
     void setEP(bool);
     void setdPPFile(int);
-    void setClock(int);
-    void setFullClock(int);
+    void setClock(uint8_t);
+    void setFullClock(uint8_t);
 
     // move generation
     // defined in move.cpp

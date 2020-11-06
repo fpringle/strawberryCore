@@ -15,8 +15,8 @@ board doMove(board startBoard, move_t move) {
     startBoard.getEP(&ep);
     int dpp;
     startBoard.getdPPFile(&dpp);
-    int clk;
-    int full_clk;
+    uint8_t clk;
+    uint8_t full_clk;
     uint64_t hash;
     startBoard.getHash(&hash);
     int32_t opening_value = startBoard.getOpeningValue();

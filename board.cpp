@@ -372,11 +372,11 @@ void board::getdPPFile(int * dest) {
     *dest = dPPFile;
 }
 
-void board::getClock(int * dest) {
+void board::getClock(uint8_t * dest) {
     *dest = halfMoveClock;
 }
 
-void board::getFullClock(int * dest) {
+void board::getFullClock(uint8_t * dest) {
     *dest = fullMoveClock;
 }
 
@@ -754,11 +754,11 @@ void board::setdPPFile(int file) {
     dPPFile = file;
 }
 
-void board::setClock(int clk) {
+void board::setClock(uint8_t clk) {
     halfMoveClock = clk;
 }
 
-void board::setFullClock(int clk) {
+void board::setFullClock(uint8_t clk) {
     fullMoveClock = clk;
 }
 

@@ -7,7 +7,7 @@
 #include <limits>
 #include <cstdint>
 
-
+#define USE_TABLE
 
 int32_t Minimax::algorithm(board b, int depth, colour side) {
     if (depth == 0) return b.getValue();
@@ -317,8 +317,9 @@ int32_t PVS::algorithm(board b, int depth, colour side,
 
     int num_moves = b.gen_legal_moves(moves);
     if (num_moves == 0) {
-        int32_t minusinf = (std::numeric_limits<int32_t>::min() + 10);
-        return minusinf * ((side == white) ? 1 : -1);
+        int32_t ret = (std::numeric_limits<int32_t>::min() + 10);
+        ret *= ((side == white) ? 1 : -1);
+        return ret;
     }
 
     for (int i = 0; i < num_moves; i++) {
@@ -375,7 +376,7 @@ move_t PVS::search(board b, int depth) {
 int32_t quiesce(board b, colour side, int32_t alpha, int32_t beta) {
     int32_t stand_pat = b.getValue() * ((side == white) ? 1 : -1);
 
-    return stand_pat;
+//    return stand_pat;
     if (stand_pat >= beta) return beta;
     if (stand_pat > alpha) alpha = stand_pat;
 
@@ -401,12 +402,111 @@ int32_t quiesce(board b, colour side, int32_t alpha, int32_t beta) {
 
 
 
-int32_t Player::search_algorithm(board b, colour side, int depth,
+int32_t Player::search_algorithm(board b, colour side, uint8_t depth,
                                  int32_t alpha, int32_t beta) {
-    return PVS::algorithm(b, depth, side, alpha, beta);
+
+    int32_t ret;
+
+#ifdef USE_TABLE
+    uint64_t sig;
+    uint32_t ind;
+    move_t bestRef(0,0,0,0,0,0);
+    uint8_t depth_searched;
+    int32_t ibv;
+    uint8_t age;
+    b.getHash(&sig);
+    ind = (uint32_t)sig;
+    getFullClock(&age);
+    depth_searched = depth;
+    record_t record;
+    bool found_in_table = false;
+
+    std::map<uint32_t, record_t>::iterator it = trans_table.find(ind);
+    if (it != trans_table.end()) {
+        record = it->second;
+        if (record.signature == sig) {
+            // match
+            found_in_table = true;
+            if (record.depth >= depth && record.IBV_score % 4 < 2) {
+//                std::cout << "HIT! Depth: " << + record.depth
+//                          << " / " << + depth << "\n" << b;
+//                return (record.IBV_score) / 4;
+            }
+        }
+    }
+
+#endif
+
+    if (depth == 0) {
+        ret = quiesce(b, side, alpha, beta);
+        return ret;
+    }
+
+    colour otherSide = (side == white) ? black : white;
+    bool bSearchPv = true;
+    board child;
+    struct move_t moves[256];
+    int32_t score;
+
+    int num_moves = b.gen_legal_moves(moves);
+    if (num_moves == 0) {
+        ret = (std::numeric_limits<int32_t>::min() + 10);
+        ret *= ((side == white) ? 1 : -1);
+#ifdef USE_TABLE
+        ibv = 4 * ret;
+        record = {sig, bestRef, depth_searched, ibv, age};
+        trans_table[ind] = record;
+#endif
+        return ret;
+    }
+
+    for (int i = 0; i < num_moves; i++) {
+        child = doMove(b, moves[i]);
+        if (bSearchPv) {
+            score = - search_algorithm(child, otherSide, depth - 1, -beta, -alpha);
+        }
+        else {
+            score = - search_algorithm(child, otherSide, depth - 1, -alpha - 1, -alpha);
+            if (score > alpha) {
+                score = - search_algorithm(child, otherSide, depth - 1, -beta, -alpha);
+            }
+        }
+
+        if (score >= beta) {
+            // lower bound
+#ifdef USE_TABLE
+            ibv = 4 * beta + 1;
+            bestRef = moves[i];
+            record = {sig, bestRef, depth_searched, ibv, age};
+            trans_table[ind] = record;
+#endif
+            return beta;
+        }
+        if (score > alpha) {
+            // upper bound
+            alpha = score;
+            bSearchPv = false;
+#ifdef USE_TABLE
+            bestRef = moves[i];
+#endif
+        }
+    }
+#ifdef USE_TABLE
+    if (bSearchPv) {
+        // exact
+        ibv = 4 * alpha - 1;
+    }
+    else {
+        ibv = 4 * alpha;
+        // upper bound
+    }
+    record = {sig, bestRef, depth_searched, ibv, age};
+    trans_table[ind] = record;
+#endif
+    return alpha;
 }
 
-move_t Player::search(int depth) {
+move_t Player::search(uint8_t depth) {
     int32_t score;
     board child;
     colour side;

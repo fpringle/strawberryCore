@@ -9,6 +9,37 @@
 #include <iostream>
 
 
+std::ostream& operator<<(std::ostream &out, const record_t &rec) {
+    int32_t val;
+
+    out << "Best/refutation move:     " << rec.best_ref_move << std::endl
+        << "Depth searched:           " << +rec.depth << std::endl
+        << "Clock when last searched: " << +rec.age << std::endl
+        << "Bound flag:               ";
+
+    switch (rec.IBV_score % 4) {
+        case -1:
+        case 3:
+            out << "Upper" << std::endl;
+            val = (rec.IBV_score + 1) / 4;
+            break;
+        case 1:
+        case -3:
+            out << "Lower" << std::endl;
+            val = (rec.IBV_score - 1) / 4;
+            break;
+        case 0:
+        case -4:
+        default:
+            out << "Exact" << std::endl;
+            val = rec.IBV_score / 4;
+            break;
+    }
+
+    out << "Value:                    " << val << std::endl;
+    return out;
+}
+
 Player::Player() : board::board() {
 }
 
@@ -51,6 +82,13 @@ void Player::print_history() {
     }
 }
 
+void Player::print_table() {
+    std::map<uint32_t, record_t>::iterator it;
+    for (it = trans_table.begin(); it != trans_table.end(); it++) {
+        std::cout << it->first << ":" << std::endl
+                  << it->second << std:: endl;
+    }
+}
 
 
 move_t Player::input_move() {
