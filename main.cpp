@@ -16,6 +16,8 @@ int main() {
 
     Player p;
 
+    p.print_all();
+
     p.play(black, 5);
 
     return 0;

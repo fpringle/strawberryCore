@@ -509,7 +509,6 @@ move_t stom(move_t* moves, int n_moves, std::string s) {
     move_t cand;
 
     for (int i = 0; i < n_moves; i++) {
-        //        print_move( moves[i] );
         cand = moves[i];
         if ((cand.from_sq() == from_ind) && (cand.to_sq() == to_ind)) {
             if (cand.is_promotion()) {
@@ -640,7 +639,6 @@ bitboard bishopPushNaive(int sq, bitboard blockers) {
     if (tmp) {
         diagRays &= ~rays[dirNE][first_set_bit(tmp)];
     }
-    //print_bb(diagRays,'1');
 
     // SE
     diagRays |= rays[dirSE][sq];
@@ -648,7 +646,6 @@ bitboard bishopPushNaive(int sq, bitboard blockers) {
     if (tmp) {
         diagRays &= ~rays[dirSE][last_set_bit(tmp)];
     }
-    //print_bb(diagRays,'1');
 
     // SW
     diagRays |= rays[dirSW][sq];
@@ -656,7 +653,6 @@ bitboard bishopPushNaive(int sq, bitboard blockers) {
     if (tmp) {
         diagRays &= ~rays[dirSW][last_set_bit(tmp)];
     }
-    //print_bb(diagRays,'1');
 
     // NW
     diagRays |= rays[dirNW][sq];
@@ -664,7 +660,6 @@ bitboard bishopPushNaive(int sq, bitboard blockers) {
     if (tmp) {
         diagRays &= ~rays[dirNW][first_set_bit(tmp)];
     }
-    //print_bb(diagRays,'1');
 
     return diagRays;
 }
@@ -688,7 +683,6 @@ bitboard rookPushNaive(int sq, bitboard blockers) {
     if (tmp) {
         compRays &= ~rays[dirN][first_set_bit(tmp)];
     }
-    //print_bb(compRays,'1');
 
     // E
     compRays |= rays[dirE][sq];
@@ -696,7 +690,6 @@ bitboard rookPushNaive(int sq, bitboard blockers) {
     if (tmp) {
         compRays &= ~rays[dirE][first_set_bit(tmp)];
     }
-    //print_bb(compRays,'1');
 
     // S
     compRays |= rays[dirS][sq];
@@ -704,7 +697,6 @@ bitboard rookPushNaive(int sq, bitboard blockers) {
     if (tmp) {
         compRays &= ~rays[dirS][last_set_bit(tmp)];
     }
-    //print_bb(compRays,'1');
 
     // W
     compRays |= rays[dirW][sq];
@@ -712,7 +704,6 @@ bitboard rookPushNaive(int sq, bitboard blockers) {
     if (tmp) {
         compRays &= ~rays[dirW][last_set_bit(tmp)];
     }
-    //print_bb(compRays,'1');
 
     return compRays;
 }
@@ -777,7 +768,6 @@ bool board::add_moves(move_t ** dest, move_t move, bool check_legal) {
             return 1;
         }
         else {
-            //            print_move( move );
             return 0;
         }
     }
@@ -804,7 +794,6 @@ int board::gen_moves(move_t * moves) {
         for (from_sq = 0; from_sq < 64; from_sq++) {
             if (pieceBoards[piece] & (1ULL << from_sq)) {
                 targets = pieceTargets(from_sq, _white, _black, colourPiece(piece));
-                //        print_bb(targets,'x');
 
                 while (targets) {
                     to_sq = first_set_bit(targets);
@@ -844,13 +833,9 @@ int board::gen_moves(move_t * moves) {
                             }
                             else {
                                 count += add_moves(&moves, move_t(from_sq, to_sq, 0, 0, 0, 0), false);
-                                //                    print_move( moves[count-1] );
                             }
                         }
                     }
-                    //            moves++;
-                    //            count++;
-                    //          }
                     targets &= (targets - 1ULL);
                 }
             }
@@ -923,7 +908,6 @@ int board::gen_moves(move_t * moves) {
 
 int board::get_out_of_check(move_t * moves, piece checkingPiece,
                             int checkingInd, int kingInd, bool double_check) {
-    bool print_method = false;
     int count = 0;
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
@@ -940,15 +924,9 @@ int board::get_out_of_check(move_t * moves, piece checkingPiece,
     while (targets) {
         to_ind = first_set_bit(targets);
         if (_other & (1ULL << to_ind)) {
-            if (print_method) {
-                print_move(move_t(king_ind, to_ind, 0, 1, 0, 0));
-            }
             count += add_moves(&moves, move_t(king_ind, to_ind, 0, 1, 0, 0), true);
         }
         else {
-            if (print_method) {
-                print_move(move_t(king_ind, to_ind, 0, 0, 0, 0));
-            }
             count += add_moves(&moves, move_t(king_ind, to_ind, 0, 0, 0, 0), true);
         }
         targets &= (targets - 1ULL);
@@ -968,9 +946,6 @@ int board::get_out_of_check(move_t * moves, piece checkingPiece,
         while (defender) {
             from_sq = first_set_bit(defender);
             //              if ( defender & 1ULL ) {
-            if (print_method) {
-                print_move(move_t(from_sq, checkingInd, 0, 0, 0, 0));
-            }
             if (i == (6 * sideToMove) && (checkingInd / 8 == 0 || checkingInd / 8 == 7)) {
                 move_t prom_queen(from_sq, checkingInd, 1, 1, 0, 0);
                 if (!is_legal(prom_queen)) continue;
@@ -1038,16 +1013,10 @@ int board::get_out_of_check(move_t * moves, piece checkingPiece,
                                         colourPiece(sideToMove * 6)), blockingInd)) {
                 switch (abs(defenderInd - blockingInd)) {
                 case 8:
-                    if (print_method) {
-                        print_move(move_t(defenderInd, blockingInd, 0, 0, 0, 0));
-                    }
                     count += add_moves(&moves, move_t(defenderInd, blockingInd, 0, 0, 0, 0), true);
                     break;
                 case 16:
                     if ((_black | _white) & (1ULL << ((defenderInd + blockingInd) / 2))) break;
-                    if (print_method) {
-                        print_move(move_t(defenderInd, blockingInd, 0, 0, 0, 0));
-                    }
                     count += add_moves(&moves, move_t(defenderInd, blockingInd, 0, 0, 0, 1), true);
                     break;
                 }
@@ -1061,12 +1030,8 @@ int board::get_out_of_check(move_t * moves, piece checkingPiece,
                 blockingPiece++) {
             blockers = pieceBoards[blockingPiece] & pieceTargets(blockingInd, _white,
                        _black, colourPiece((blockingPiece + 6) % 12));
-            //                print_bb( blockers );
             while (blockers) {
                 defenderInd = first_set_bit(blockers);
-                if (print_method) {
-                    print_move(move_t(defenderInd, blockingInd, 0, 0, 0, 0));
-                }
                 count += add_moves(&moves, move_t(defenderInd, blockingInd, 0, 0, 0, 0), true);
                 blockers &= (blockers - 1ULL);
             }

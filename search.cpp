@@ -179,7 +179,6 @@ move_t NegamaxAB::search(board b, int depth) {
     for (int i = 0; i < num_moves; i++) {
         child = doMove(b, moves[i]);
         score = -NegamaxAB::algorithm(child, depth - 1, otherSide, - beta, - alpha);
-        //        print_move( moves[i] );
         if (score > max_score) {
             max_score = score;
             best_move = moves[i];
@@ -238,7 +237,6 @@ move_t NegaScoutOriginal::search(board b, int depth) {
     for (int i = 0; i < num_moves; i++) {
         child = doMove(b, moves[i]);
         score = -NegaScoutOriginal::algorithm(child, depth - 1, otherSide, - beta, - alpha);
-        //        print_move( moves[i] );
         if (score > max_score) {
             max_score = score;
             best_move = moves[i];
@@ -297,7 +295,6 @@ move_t NegaScoutAlternative::search(board b, int depth) {
     for (int i = 0; i < num_moves; i++) {
         child = doMove(b, moves[i]);
         score = -NegaScoutAlternative::algorithm(child, depth - 1, otherSide, - beta, - alpha);
-        //        print_move( moves[i] );
         if (score > max_score) {
             max_score = score;
             best_move = moves[i];

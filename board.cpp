@@ -537,9 +537,9 @@ void board::print_all(std::ostream& cout) {
     else cout << "  last move was not a double pawn push\n";
 
     cout << "\nHalfmove Clock:\n";
-    cout << "  " << halfMoveClock;
+    cout << "  " << + halfMoveClock;
     cout << "\nFullmove Clock:\n";
-    cout << "  " << fullMoveClock << "\n";
+    cout << "  " << + fullMoveClock << "\n";
 }
 
 std::ostream& operator<<(std::ostream &out, const board &brd) {
@@ -637,8 +637,8 @@ std::string board::FEN() {
         ss << "-";
     }
 
-    ss << " " << halfMoveClock
-       << " " << fullMoveClock;
+    ss << " " << + halfMoveClock
+       << " " << + fullMoveClock;
 
     return ss.str();
 }
@@ -705,8 +705,8 @@ void board::FEN(std::ostream& ss) {
         ss << " -";
     }
 
-    ss << " " << halfMoveClock;
-    ss << " " << fullMoveClock;
+    ss << " " << + halfMoveClock;
+    ss << " " << + fullMoveClock;
 }
 
 void board::set_piece(colourPiece cP, int pos) {
