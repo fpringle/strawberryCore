@@ -6,3 +6,4 @@
 - move typedefs to separate file
 - test suite with check-in-x challenges etc
 - SAN output
+- value types could be 16-bit instead of 32-bit

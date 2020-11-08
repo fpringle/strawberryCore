@@ -265,7 +265,7 @@ board::board(std::string fen) {
 
     // value starts at 0
     opening_value = evaluateOpening();
-    opening_value = evaluateEndgame();
+    endgame_value = evaluateEndgame();
 
     // hash
     hash_value = zobrist_hash();
