@@ -6,6 +6,7 @@
 
 #include <limits>
 #include <cstdint>
+#include <time.h>
 
 #define USE_TABLE
 
@@ -400,9 +401,18 @@ int32_t quiesce(board b, colour side, int32_t alpha, int32_t beta) {
 }
 
 
+void reorder_moves(move_t * moves, int num_moves, move_t best_move) {
+    for (int i=0; i<num_moves; i++) {
+        if (moves[i] == best_move) {
+            moves[i] = moves[0];
+            moves[0] = best_move;
+            break;
+        }
+    }
+}
 
 
-int32_t Player::search_algorithm(board b, colour side, uint8_t depth,
+int32_t Player::principal_variation(board b, colour side, uint8_t depth,
                                  int32_t alpha, int32_t beta) {
 
     int32_t ret;
@@ -410,27 +420,47 @@ int32_t Player::search_algorithm(board b, colour side, uint8_t depth,
 #ifdef USE_TABLE
     uint64_t sig;
     uint32_t ind;
-    move_t bestRef(0,0,0,0,0,0);
-    uint8_t depth_searched;
+    move_t bestMove(0,0,0,0,0,0);
     int32_t ibv;
     uint8_t age;
     b.getHash(&sig);
     ind = (uint32_t)sig;
     getFullClock(&age);
-    depth_searched = depth;
     record_t record;
     bool found_in_table = false;
 
+    // lookup
     std::map<uint32_t, record_t>::iterator it = trans_table.find(ind);
     if (it != trans_table.end()) {
         record = it->second;
         if (record.signature == sig) {
             // match
             found_in_table = true;
-            if (record.depth >= depth && record.IBV_score % 4 < 2) {
-//                std::cout << "HIT! Depth: " << + record.depth
-//                          << " / " << + depth << "\n" << b;
-//                return (record.IBV_score) / 4;
+            bestMove = record.best_ref_move;
+            if (record.depth >= depth) {
+                switch (record.IBV_score % 4) {
+                    case -1:
+                    case 3:
+                        // upper bound
+                        if (beta > (record.IBV_score + 1) / 4) {
+                            beta = (record.IBV_score + 1) / 4;
+                        }
+                        break;
+                    case 1:
+                    case -3:
+                        // lower bound
+                        if (alpha < (record.IBV_score - 1) / 4) {
+                            alpha = (record.IBV_score - 1) / 4;
+                        }
+                        break;
+                    case 0:
+                    case -4:
+                        // exact
+                        return record.IBV_score / 4;
+                }
+                if (alpha >= beta) {
+                    return (record.IBV_score + 1) / 4;
+                }
             }
         }
     }
@@ -450,25 +480,31 @@ int32_t Player::search_algorithm(board b, colour side, uint8_t depth,
 
     int num_moves = b.gen_legal_moves(moves);
     if (num_moves == 0) {
-        ret = (std::numeric_limits<int32_t>::min() + 10);
+        ret = (std::numeric_limits<int32_t>::min() / 10) * is_checkmate();
         ret *= ((side == white) ? 1 : -1);
 #ifdef USE_TABLE
         ibv = 4 * ret;
-        record = {sig, bestRef, depth_searched, ibv, age};
+        record = {sig, bestMove, depth, ibv, age};
         trans_table[ind] = record;
 #endif
         return ret;
     }
 
+#ifdef USE_TABLE
+    if (bestMove.give()) {
+        reorder_moves(moves, num_moves, bestMove);
+    }
+#endif
+
     for (int i = 0; i < num_moves; i++) {
         child = doMove(b, moves[i]);
         if (bSearchPv) {
-            score = - search_algorithm(child, otherSide, depth - 1, -beta, -alpha);
+            score = - principal_variation(child, otherSide, depth - 1, -beta, -alpha);
         }
         else {
-            score = - search_algorithm(child, otherSide, depth - 1, -alpha - 1, -alpha);
+            score = - principal_variation(child, otherSide, depth - 1, -alpha - 1, -alpha);
             if (score > alpha) {
-                score = - search_algorithm(child, otherSide, depth - 1, -beta, -alpha);
+                score = - principal_variation(child, otherSide, depth - 1, -beta, -alpha);
             }
         }
 
@@ -476,8 +512,8 @@ int32_t Player::search_algorithm(board b, colour side, uint8_t depth,
             // lower bound
 #ifdef USE_TABLE
             ibv = 4 * beta + 1;
-            bestRef = moves[i];
-            record = {sig, bestRef, depth_searched, ibv, age};
+            bestMove = moves[i];
+            record = {sig, bestMove, depth, ibv, age};
             trans_table[ind] = record;
 #endif
             return beta;
@@ -487,7 +523,7 @@ int32_t Player::search_algorithm(board b, colour side, uint8_t depth,
             alpha = score;
             bSearchPv = false;
 #ifdef USE_TABLE
-            bestRef = moves[i];
+            bestMove = moves[i];
 #endif
         }
     }
@@ -500,13 +536,185 @@ int32_t Player::search_algorithm(board b, colour side, uint8_t depth,
         ibv = 4 * alpha;
         // upper bound
     }
-    record = {sig, bestRef, depth_searched, ibv, age};
+    record = {sig, bestMove, depth, ibv, age};
     trans_table[ind] = record;
 #endif
     return alpha;
 }
 
-move_t Player::search(uint8_t depth) {
+
+int32_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
+                                 int32_t alpha, int32_t beta) {
+
+    int32_t ret;
+    int32_t alphaOrig = alpha;
+
+#ifdef USE_TABLE
+    uint64_t sig;
+    uint32_t ind;
+    move_t bestMove(0,0,0,0,0,0);
+    int32_t ibv;
+    uint8_t age;
+    b.getHash(&sig);
+    ind = (uint32_t)sig;
+    getFullClock(&age);
+    record_t record;
+    bool found_in_table = false;
+
+    // lookup
+    std::map<uint32_t, record_t>::iterator it = trans_table.find(ind);
+    if (it != trans_table.end()) {
+        record = it->second;
+        if (record.signature == sig) {
+            // match
+            found_in_table = true;
+            bestMove = record.best_ref_move;
+            if (record.depth >= depth) {
+                switch (record.IBV_score % 4) {
+                    case -1:
+                    case 3:
+                        // upper bound
+                        if (beta > (record.IBV_score + 1) / 4) {
+                            beta = (record.IBV_score + 1) / 4;
+                        }
+                        break;
+                    case 1:
+                    case -3:
+                        // lower bound
+                        if (alpha < (record.IBV_score - 1) / 4) {
+                            alpha = (record.IBV_score - 1) / 4;
+                        }
+                        break;
+                    case 0:
+                    case -4:
+                        // exact
+                        return record.IBV_score / 4;
+                }
+                if (alpha >= beta) {
+                    return (record.IBV_score + 1) / 4;
+                }
+            }
+        }
+    }
+
+#endif
+
+    if (depth == 0) {
+        ret = quiesce(b, side, alpha, beta);
+        return ret;
+    }
+
+    colour otherSide = (side == white) ? black : white;
+    board child;
+    struct move_t moves[256];
+    int32_t score, value = std::numeric_limits<int32_t>::min() + 10;
+
+    int num_moves = b.gen_legal_moves(moves);
+    if (num_moves == 0) {
+        ret = (std::numeric_limits<int32_t>::min() / 10) * is_checkmate();
+        ret *= ((side == white) ? 1 : -1);
+#ifdef USE_TABLE
+        ibv = 4 * ret;
+        record = {sig, bestMove, depth, ibv, age};
+        trans_table[ind] = record;
+#endif
+        return ret;
+    }
+
+#ifdef USE_TABLE
+    if (bestMove.give()) {
+        reorder_moves(moves, num_moves, bestMove);
+    }
+#endif
+
+    for (int i = 0; i < num_moves; i++) {
+        child = doMove(b, moves[i]);
+        score = - principal_variation(child, otherSide, depth - 1, -beta, -alpha);
+        if (value < score) {
+#ifdef USE_TABLE
+            bestMove = moves[i];
+#endif
+            value = score;
+        }
+        if (alpha < value) {
+            alpha = value;
+        }
+        if (alpha >= beta) break;
+
+    }
+#ifdef USE_TABLE
+    if (value <= alphaOrig) {
+        ibv = 4 * value - 1;
+    }
+    else if (value >= beta) {
+        ibv = 4 * value + 1;
+    }
+    else {
+        ibv = 4 * value;
+    }
+    record = {sig, bestMove, depth, ibv, age};
+    trans_table[ind] = record;
+#endif
+    return value;
+}
+
+move_t Player::search_negamax_alphabeta(uint8_t depth) {
+
+    int32_t max_score = std::numeric_limits<int32_t>::min();
+    int32_t alpha = std::numeric_limits<int32_t>::min() / 10;
+    int32_t beta = std::numeric_limits<int32_t>::max() / 10;
+
+#ifdef USE_TABLE
+    uint64_t sig;
+    uint32_t ind;
+    move_t bestMove(0,0,0,0,0,0);
+    int32_t ibv;
+    uint8_t age;
+    getHash(&sig);
+    ind = (uint32_t)sig;
+    getFullClock(&age);
+    record_t record;
+    bool found_in_table = false;
+
+    // lookup
+    std::map<uint32_t, record_t>::iterator it = trans_table.find(ind);
+    if (it != trans_table.end()) {
+        record = it->second;
+        if (record.signature == sig) {
+            // match
+            found_in_table = true;
+            bestMove = record.best_ref_move;
+            if (record.depth >= depth) {
+                switch (record.IBV_score % 4) {
+                    case -1:
+                    case 3:
+                        // upper bound
+                        if (beta > (record.IBV_score + 1) / 4) {
+                            beta = (record.IBV_score + 1) / 4;
+                        }
+                        break;
+                    case 1:
+                    case -3:
+                        // lower bound
+                        if (alpha < (record.IBV_score - 1) / 4) {
+                            alpha = (record.IBV_score - 1) / 4;
+                        }
+                        break;
+                    case 0:
+                    case -4:
+                        // exact
+                        //return record.IBV_score / 4;
+                        return bestMove;
+                }
+                if (alpha >= beta) {
+                    //return (record.IBV_score + 1) / 4;
+                }
+            }
+        }
+    }
+
+#endif
+
     int32_t score;
     board child;
     colour side;
@@ -517,18 +725,272 @@ move_t Player::search(uint8_t depth) {
     int num_moves = gen_legal_moves(moves);
     struct move_t best_move;
 
-    int32_t max_score = std::numeric_limits<int32_t>::min();
-    int32_t alpha = std::numeric_limits<int32_t>::min() + 1;
-    int32_t beta = std::numeric_limits<int32_t>::max() - 1;
+#ifdef USE_TABLE
+    if (bestMove.give()) {
+        reorder_moves(moves, num_moves, bestMove);
+    }
+#endif
 
     for (int i = 0; i < num_moves; i++) {
         makeChild(&child, moves[i]);
-        score = - search_algorithm(child, otherSide, depth - 1, alpha, beta);
+        score = - negamax_alphabeta(child, otherSide, depth - 1, alpha, beta);
         if (score > max_score) {
             max_score = score;
             best_move = moves[i];
         }
+        if (alpha < score) {
+            alpha = score;
+        }
+        if (alpha >= beta) break;
     }
+#ifdef USE_TABLE
+    if (max_score <= alpha) {
+        ibv = 4 * max_score - 1;
+    }
+    else if (max_score >= beta) {
+        ibv = 4 * max_score + 1;
+    }
+    else {
+        ibv = 4 * max_score;
+    }
+    record = {sig, best_move, depth, ibv, age};
+    trans_table[ind] = record;
+#endif
     return best_move;
 }
 
+move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move) {
+
+    int32_t max_score = std::numeric_limits<int32_t>::min();
+    int32_t alpha = std::numeric_limits<int32_t>::min() / 10;
+    int32_t beta = std::numeric_limits<int32_t>::max() / 10;
+
+#ifdef USE_TABLE
+    uint64_t sig;
+    uint32_t ind;
+    move_t bestMove(0,0,0,0,0,0);
+    int32_t ibv;
+    uint8_t age;
+    getHash(&sig);
+    ind = (uint32_t)sig;
+    getFullClock(&age);
+    record_t record;
+    bool found_in_table = false;
+
+    // lookup
+    std::map<uint32_t, record_t>::iterator it = trans_table.find(ind);
+    if (it != trans_table.end()) {
+        record = it->second;
+        if (record.signature == sig) {
+            // match
+            found_in_table = true;
+            bestMove = record.best_ref_move;
+            if (record.depth >= depth) {
+                switch (record.IBV_score % 4) {
+                    case -1:
+                    case 3:
+                        // upper bound
+                        if (beta > (record.IBV_score + 1) / 4) {
+                            beta = (record.IBV_score + 1) / 4;
+                        }
+                        break;
+                    case 1:
+                    case -3:
+                        // lower bound
+                        if (alpha < (record.IBV_score - 1) / 4) {
+                            alpha = (record.IBV_score - 1) / 4;
+                        }
+                        break;
+                    case 0:
+                    case -4:
+                        // exact
+                        //return record.IBV_score / 4;
+                        return bestMove;
+                }
+                if (alpha >= beta) {
+                    //return (record.IBV_score + 1) / 4;
+                }
+            }
+        }
+    }
+
+#endif
+
+    int32_t score;
+    board child;
+    colour side;
+    getSide(&side);
+    colour otherSide = (side == white) ? black : white;
+
+    struct move_t moves[256];
+    int num_moves = gen_legal_moves(moves);
+    struct move_t best_move;
+
+    if (first_move.give()) {
+        reorder_moves(moves, num_moves, first_move);
+    }
+
+#ifdef USE_TABLE
+    if (bestMove.give()) {
+        reorder_moves(moves, num_moves, bestMove);
+    }
+#endif
+
+    for (int i = 0; i < num_moves; i++) {
+        makeChild(&child, moves[i]);
+        if (child.is_checkmate(otherSide)) {
+            return moves[i];
+        }
+        score = - negamax_alphabeta(child, otherSide, depth - 1, alpha, beta);
+        if (score > max_score) {
+            max_score = score;
+            best_move = moves[i];
+        }
+        if (alpha < score) {
+            alpha = score;
+        }
+        if (alpha >= beta) break;
+    }
+#ifdef USE_TABLE
+    if (max_score <= alpha) {
+        ibv = 4 * max_score - 1;
+    }
+    else if (max_score >= beta) {
+        ibv = 4 * max_score + 1;
+    }
+    else {
+        ibv = 4 * max_score;
+    }
+    record = {sig, best_move, depth, ibv, age};
+    trans_table[ind] = record;
+#endif
+    return best_move;
+}
+
+move_t Player::search_principal_variation(uint8_t depth) {
+
+    int32_t max_score = std::numeric_limits<int32_t>::min();
+    int32_t alpha = std::numeric_limits<int32_t>::min() / 10;
+    int32_t beta = std::numeric_limits<int32_t>::max() / 10;
+
+#ifdef USE_TABLE
+    uint64_t sig;
+    uint32_t ind;
+    move_t bestMove(0,0,0,0,0,0);
+    int32_t ibv;
+    uint8_t age;
+    getHash(&sig);
+    ind = (uint32_t)sig;
+    getFullClock(&age);
+    record_t record;
+    bool found_in_table = false;
+
+    // lookup
+    std::map<uint32_t, record_t>::iterator it = trans_table.find(ind);
+    if (it != trans_table.end()) {
+        record = it->second;
+        if (record.signature == sig) {
+            // match
+            found_in_table = true;
+            bestMove = record.best_ref_move;
+            if (record.depth >= depth) {
+                switch (record.IBV_score % 4) {
+                    case -1:
+                    case 3:
+                        // upper bound
+                        if (beta > (record.IBV_score + 1) / 4) {
+                            beta = (record.IBV_score + 1) / 4;
+                        }
+                        break;
+                    case 1:
+                    case -3:
+                        // lower bound
+                        if (alpha < (record.IBV_score - 1) / 4) {
+                            alpha = (record.IBV_score - 1) / 4;
+                        }
+                        break;
+                    case 0:
+                    case -4:
+                        // exact
+                        //return record.IBV_score / 4;
+                        return bestMove;
+                }
+                if (alpha >= beta) {
+                    //return (record.IBV_score + 1) / 4;
+                }
+            }
+        }
+    }
+
+#endif
+
+    int32_t score;
+    board child;
+    colour side;
+    getSide(&side);
+    colour otherSide = (side == white) ? black : white;
+
+    struct move_t moves[256];
+    int num_moves = gen_legal_moves(moves);
+    struct move_t best_move;
+
+#ifdef USE_TABLE
+    if (bestMove.give()) {
+        reorder_moves(moves, num_moves, bestMove);
+    }
+#endif
+
+    for (int i = 0; i < num_moves; i++) {
+        makeChild(&child, moves[i]);
+        score = - negamax_alphabeta(child, otherSide, depth - 1, alpha, beta);
+        if (score > max_score) {
+            max_score = score;
+            best_move = moves[i];
+        }
+        if (alpha < score) {
+            alpha = score;
+        }
+        if (alpha >= beta) break;
+    }
+#ifdef USE_TABLE
+    if (max_score <= alpha) {
+        ibv = 4 * max_score - 1;
+    }
+    else if (max_score >= beta) {
+        ibv = 4 * max_score + 1;
+    }
+    else {
+        ibv = 4 * max_score;
+    }
+    record = {sig, best_move, depth, ibv, age};
+    trans_table[ind] = record;
+#endif
+    return best_move;
+}
+
+move_t Player::iterative_deepening(int timeout, uint8_t max_depth) {
+    clock_t start_time = clock();
+    double time_taken = 0.0;
+    uint8_t depth = 1;
+    move_t best_move(0,0,0,0,0,0);
+    int32_t alpha = std::numeric_limits<int32_t>::min() / 10;
+    int32_t beta = std::numeric_limits<int32_t>::max() / 10;
+
+    while (time_taken < timeout && depth <= max_depth) {
+        best_move = search_negamax_alphabeta(depth, best_move);
+        depth++;
+        time_taken = double(clock() - start_time) / double(CLOCKS_PER_SEC);
+        std::cout << "Depth searched: " << depth - 1 << "   ("
+                  << time_taken
+                  << " seconds total)"
+                  << "  (best move so far: "
+                  << best_move << ")" << std::endl;
+    }
+
+    return best_move;
+}
+
+move_t Player::search(uint8_t depth) {
+    return iterative_deepening(10);
+    return search_negamax_alphabeta(depth);
+}

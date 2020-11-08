@@ -125,6 +125,7 @@ void Player::play(colour side, int plies) {
     while (! gameover()) {
         if (side == black) print_board();
         else print_board_flipped();
+        std::cout << FEN() << std::endl;
         getSide(&movingSide);
         if (movingSide != side) {
             player_move = input_move();

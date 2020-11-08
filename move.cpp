@@ -459,6 +459,10 @@ std::ostream& operator<<(std::ostream &out, const move_t &move) {
     return out;
 }
 
+bool operator==(const move_t &self, const move_t &other) {
+    return self.data == other.data;
+}
+
 void print_move(struct move_t move, std::ostream& cout) {
     if (move.give() == 0) {
         cout << "NULL";

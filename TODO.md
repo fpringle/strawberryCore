@@ -5,6 +5,3 @@
 - better variable names
 - move typedefs to separate file
 - generate captures for quiescence search
-- iterative deepening with timeout
-- move ordering
-- add a x when displaying a checking move

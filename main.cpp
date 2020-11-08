@@ -14,11 +14,9 @@
 int main() {
     init();
 
-    Player p;
+    Player p("4kb1r/5ppp/1nr1p3/1N3b2/8/R7/5PPP/6K1 b k - 0 0");
 
-    std::cout << p.search(5) << std::endl;
-
-    p.print_table();
+    p.play(black, 5);
 
     return 0;
 }

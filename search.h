@@ -64,4 +64,6 @@ int32_t quiesce(board b, colour side, int32_t alpha, int32_t beta);
 ////////////////////////////////////////
 
 
+void reorder_moves(move_t * moves, int num_moves, move_t best_move);
+
 #endif
