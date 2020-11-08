@@ -12,6 +12,10 @@
 #include "twiddle.h"
 #include <string>
 #include <sstream>
+#include "action.h"
+#include <vector>
+#include <algorithm>
+
 
 CPPUNIT_TEST_SUITE_REGISTRATION(movetestclass);
 
@@ -283,4 +287,86 @@ void movetestclass::testBishopTargets() {
             (1ULL << 26) | (1ULL << 12);
 
     CPPUNIT_ASSERT(bishopTargets(sq, _white, _black, mc) == bb_real);
+}
+
+bool testGen(board b) {
+    move_t all_moves[256];
+    move_t cap_moves[256];
+    int num_all = b.gen_legal_moves(all_moves);
+    int num_cap = b.gen_captures(cap_moves);
+    int j=0, i;
+
+/*
+    for (i=0; i<num_all; i++) std::cout << all_moves[i] << std::endl;
+    std::cout << "\n";
+    for (i=0; i<num_cap; i++) {
+        std::cout << cap_moves[i]
+                  << " " << b.is_legal(cap_moves[i]) << std::endl;
+    }
+*/
+
+    std::vector<uint16_t> all_vec;
+    std::vector<uint16_t> cap_vec;
+
+    for (i=0; i<num_all; i++) {
+        if (all_moves[i].is_capture()) {
+            all_vec.push_back(all_moves[i].give());
+        }
+    }
+    for (i=0; i<num_cap; i++) cap_vec.push_back(cap_moves[i].give());
+
+    if (all_vec.size() != cap_vec.size()) return false;
+
+    std::sort(all_vec.begin(), all_vec.end());
+    std::sort(cap_vec.begin(), cap_vec.end());
+
+    return all_vec == cap_vec;
+}
+
+bool testGenPerft(board b, int depth) {
+    if (! testGen(b)) {
+        std::cout << b << b.FEN() << std::endl;
+        return false;
+    }
+    if (depth == 0) return true;
+    board child;
+    move_t moves[256];
+    int num_moves = b.gen_legal_moves(moves);
+    for (int i=0; i<num_moves; i++) {
+        child = doMove(b, moves[i]);
+        if (! testGenPerft(child, depth-1)) {
+            //std::cout << b << moves[i] << std::endl;
+            return false;
+        }
+    }
+    return true;
+}
+
+void movetestclass::testGenCaptures() {
+/*
+    board b("r3k2r/p1ppqpb1/bn2pnp1/3PN3/4P3/p1N2Q2/1PPBBPpP/R4K1R w kq - 0 0");
+    std::cout << b;
+    std::cout << testGen(b) << std::endl;
+    return;
+*/
+    board b1;
+    board b2("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 1 0");
+    board b3("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1");
+    board b4("r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1");
+    board b5("rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8");
+    board b6("r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10");
+
+    CPPUNIT_ASSERT(testGenPerft(b1, 4));
+    std::cout << "Checked board 1 to depth 4, good\n";
+    CPPUNIT_ASSERT(testGenPerft(b2, 3));
+    std::cout << "Checked board 2 to depth 3, good\n";
+    CPPUNIT_ASSERT(testGenPerft(b3, 4));
+    std::cout << "Checked board 3 to depth 4, good\n";
+    CPPUNIT_ASSERT(testGenPerft(b4, 4));
+    std::cout << "Checked board 4 to depth 4, good\n";
+    CPPUNIT_ASSERT(testGenPerft(b5, 3));
+    std::cout << "Checked board 5 to depth 3, good\n";
+    CPPUNIT_ASSERT(testGenPerft(b6, 3));
+    std::cout << "Checked board 6 to depth 3, good\n";
+
 }

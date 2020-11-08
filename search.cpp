@@ -383,18 +383,16 @@ int32_t quiesce(board b, colour side, int32_t alpha, int32_t beta) {
 
 
     colour otherSide = (side == white) ? black : white;
-    move_t moves[256];
-    int num_moves = b.gen_legal_moves(moves);
+    move_t captures[256];
+    int num_captures = b.gen_captures(captures);
     board child;
     int32_t score;
 
-    for (int i=0; i<num_moves; i++) {
-        if (moves[i].is_capture()) {
-            child = doMove(b, moves[i]);
-            score = - quiesce(child, otherSide, -beta, -alpha);
-            if (score >= beta) return beta;
-            if (score > alpha) alpha = score;
-        }
+    for (int i=0; i<num_captures; i++) {
+        child = doMove(b, captures[i]);
+        score = - quiesce(child, otherSide, -beta, -alpha);
+        if (score >= beta) return beta;
+        if (score > alpha) alpha = score;
     }
 
     return alpha;
@@ -759,11 +757,13 @@ move_t Player::search_negamax_alphabeta(uint8_t depth) {
     return best_move;
 }
 
-move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move) {
+move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move, double time_remaining) {
 
     int32_t max_score = std::numeric_limits<int32_t>::min();
     int32_t alpha = std::numeric_limits<int32_t>::min() / 10;
     int32_t beta = std::numeric_limits<int32_t>::max() / 10;
+
+    clock_t start_time = clock();
 
 #ifdef USE_TABLE
     uint64_t sig;
@@ -840,6 +840,9 @@ move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move) {
         makeChild(&child, moves[i]);
         if (child.is_checkmate(otherSide)) {
             return moves[i];
+        }
+        if (double(clock() - start_time) / double(CLOCKS_PER_SEC) > time_remaining) {
+            return {0,0,0,0,0,0};
         }
         score = - negamax_alphabeta(child, otherSide, depth - 1, alpha, beta);
         if (score > max_score) {
@@ -973,12 +976,14 @@ move_t Player::iterative_deepening(int timeout, uint8_t max_depth) {
     double time_taken = 0.0;
     uint8_t depth = 1;
     move_t best_move(0,0,0,0,0,0);
+    move_t new_move;
     int32_t alpha = std::numeric_limits<int32_t>::min() / 10;
     int32_t beta = std::numeric_limits<int32_t>::max() / 10;
 
     while (time_taken < timeout && depth <= max_depth) {
-        best_move = search_negamax_alphabeta(depth, best_move);
+        new_move = search_negamax_alphabeta(depth, best_move, timeout - time_taken);
         depth++;
+        if (new_move.give()) best_move = new_move;
         time_taken = double(clock() - start_time) / double(CLOCKS_PER_SEC);
         std::cout << "Depth searched: " << depth - 1 << "   ("
                   << time_taken
@@ -991,6 +996,6 @@ move_t Player::iterative_deepening(int timeout, uint8_t max_depth) {
 }
 
 move_t Player::search(uint8_t depth) {
-    return iterative_deepening(10);
+    return iterative_deepening(60);
     return search_negamax_alphabeta(depth);
 }

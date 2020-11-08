@@ -463,6 +463,10 @@ bool operator==(const move_t &self, const move_t &other) {
     return self.data == other.data;
 }
 
+bool operator!=(const move_t &self, const move_t &other) {
+    return self.data != other.data;
+}
+
 void print_move(struct move_t move, std::ostream& cout) {
     if (move.give() == 0) {
         cout << "NULL";
@@ -925,13 +929,13 @@ int board::get_out_of_check(move_t * moves, piece checkingPiece,
     bitboard _black = blackSquares();
     bitboard _other = (sideToMove == white) ? _black : _white;
     colour otherSide = (sideToMove == white) ? black : white;
+
+
     // king moves out of check
     int king_ind = last_set_bit(pieceBoards[(sideToMove * 6) + 5]);
     bitboard targets = pieceTargets(king_ind, _white, _black,
                                     colourPiece((sideToMove * 6) + 5));
-    //      print_bb( targets );
     int to_ind;
-    //      targets >>= to_ind;
 
     while (targets) {
         to_ind = first_set_bit(targets);
@@ -1002,7 +1006,6 @@ int board::get_out_of_check(move_t * moves, piece checkingPiece,
 
 
     // moving into the way
-    // first find all the squares in the way?
     int blockingInd;
     int blockingPiece;
     int ind_diff = checkingInd - kingInd;
@@ -1073,6 +1076,68 @@ int board::get_out_of_check(move_t * moves, piece checkingPiece,
     return count;
 }
 
+// generate captures
+// returns the number of captures
+int board::gen_captures(move_t * moves) {
+    int _piece;
+    int from_sq;
+    int to_sq;
+    int count = 0;
+    bitboard targets;
+    bitboard _white = whiteSquares();
+    bitboard _black = blackSquares();
+    bitboard _other = ((sideToMove == white) ? _black : _white);
+    colour otherSide = ((sideToMove == white) ? black : white);
+    for (_piece = sideToMove * 6; _piece < (1 + sideToMove)*6; _piece++) {
+        for (from_sq = 0; from_sq < 64; from_sq++) {
+            if (pieceBoards[_piece] & (1ULL << from_sq)) {
+                targets = pieceTargets(from_sq, _white, _black, colourPiece(_piece));
+
+                while (targets) {
+                    to_sq = first_set_bit(targets);
+                    if ((1ULL << to_sq) & _other) {
+                        // capture
+                        if (_piece % 6 == 0 && ((rankOne | rankEight)&(1ULL << to_sq))) {
+                            // promotion
+                            count += add_moves(&moves, move_t(from_sq, to_sq, 1, 1, 0, 0), true);
+                            count += add_moves(&moves, move_t(from_sq, to_sq, 1, 1, 0, 1), true);
+                            count += add_moves(&moves, move_t(from_sq, to_sq, 1, 1, 1, 0), true);
+                            count += add_moves(&moves, move_t(from_sq, to_sq, 1, 1, 1, 1), true);
+                        }
+                        else {
+                            count += add_moves(&moves, move_t(from_sq, to_sq, 0, 1, 0, 0), true);
+                        }
+                    }
+                    targets &= (targets - 1ULL);
+                }
+            }
+        }
+    }
+
+    // ep capture
+    if (lastMoveDoublePawnPush) {
+        // if white to move: potential squares are ( 32 + dPPFile +-1 )
+        // if black to move: potential squares are ( 24 + dPPFile +-1 )
+        int oppPawnSquare = 32 - (8 * sideToMove) + dPPFile;
+        bitboard oppPawn = (1ULL << oppPawnSquare);
+        bitboard left = oneW(oppPawn);
+        bitboard right = oneE(oppPawn);
+        int captureSquare = 40 - (24 * sideToMove) + dPPFile;
+        if (left & (pieceBoards[ 6 * sideToMove ])) {
+            int leftSquare = last_set_bit(left);
+            count += add_moves(&moves, move_t(leftSquare, captureSquare, 0, 1, 0, 1), true);
+        }
+        if (right & (pieceBoards[ 6 * sideToMove ])) {
+            int rightSquare = last_set_bit(right);
+            count += add_moves(&moves, move_t(rightSquare, captureSquare, 0, 1, 0, 1),
+                               true);
+        }
+    }
+    return count;
+}
+
+
+
 // generate pseudo-legal moves (without checking for checks)
 // returns the number of moves
 
@@ -1086,7 +1151,6 @@ int board::gen_legal_moves(move_t * moves) {
     bitboard _black = blackSquares();
     bitboard _other = ((sideToMove == white) ? _black : _white);
     colour otherSide = ((sideToMove == white) ? black : white);
-    bitboard defender;
 
     // if we're in check we can limit the search
     piece checkingPiece;
@@ -1101,11 +1165,9 @@ int board::gen_legal_moves(move_t * moves) {
         for (from_sq = 0; from_sq < 64; from_sq++) {
             if (pieceBoards[_piece] & (1ULL << from_sq)) {
                 targets = pieceTargets(from_sq, _white, _black, colourPiece(_piece));
-                //        print_bb(targets,'x');
 
                 while (targets) {
                     to_sq = first_set_bit(targets);
-                    //          if (targets & 1ULL) {
                     // found a move!
                     if ((1ULL << to_sq) & _other) {
                         // capture
@@ -1144,9 +1206,6 @@ int board::gen_legal_moves(move_t * moves) {
                             }
                         }
                     }
-                    //            moves++;
-                    //            count++;
-                    //          }
                     targets &= (targets - 1ULL);
                 }
             }
@@ -1217,11 +1276,6 @@ int board::gen_legal_moves(move_t * moves) {
 }
 
 bool board::is_legal(struct move_t move) {
-    bool _print = 0;
-    if (_print) {
-        print_move(move);
-    }
-
     colourPiece movingPiece;
     int from_ind = move.from_sq();
     int to_ind = move.to_sq();
@@ -1238,6 +1292,7 @@ bool board::is_legal(struct move_t move) {
     bitboard _black = blackSquares();
     bitboard _other = (sideToMove == white) ? _black : _white;
     bitboard _own = (sideToMove == white) ? _white : _black;
+
 
     // king can't move into check
     if (movingPiece % 6 == 5) {
@@ -1277,11 +1332,9 @@ bool board::is_legal(struct move_t move) {
                 if (tmp) {
                     if ((j + 1) % 8 < 4) attacker = (1ULL << first_set_bit(tmp));
                     else attacker = (1ULL << last_set_bit(tmp));
-                    if (attacker & pieceBoards[(6 * otherSide) + 3]) {
-                        return is_bit_set(_ray, to_ind) | is_bit_set(rays[i][from_ind], to_ind);
-                    }
-                    if (attacker & pieceBoards[(6 * otherSide) + 4]) {
-                        return is_bit_set(_ray, to_ind) | is_bit_set(rays[i][from_ind], to_ind);
+                    if ((attacker & pieceBoards[(6 * otherSide) + 3]) || (attacker & pieceBoards[(6 * otherSide) + 4])) {
+//                        return is_bit_set(_ray, to_ind) | is_bit_set(rays[i][from_ind], to_ind);
+                        if(!(is_bit_set(_ray, to_ind) | is_bit_set(rays[i][from_ind], to_ind))) return false;
                     }
                 }
             }
@@ -1289,19 +1342,11 @@ bool board::is_legal(struct move_t move) {
                 // rooks and queens
                 _ray = rays[j][from_ind];
                 tmp = blockers & _ray;
-                //                if ( from_ind==29 && to_ind==21 ) {
-                //                    print_bb(_ray2);
-                //                    print_bb(_ray);
-                //                    print_bb(tmp);
-                //                }
                 if (tmp) {
                     if ((j + 1) % 8 < 4) attacker = (1ULL << first_set_bit(tmp));
                     else attacker = (1ULL << last_set_bit(tmp));
-                    if (attacker & pieceBoards[(6 * otherSide) + 1]) {
-                        return is_bit_set(_ray, to_ind) | is_bit_set(rays[i][from_ind], to_ind);
-                    }
-                    if (attacker & pieceBoards[(6 * otherSide) + 4]) {
-                        return is_bit_set(_ray, to_ind) | is_bit_set(rays[i][from_ind], to_ind);
+                    if ((attacker & pieceBoards[(6 * otherSide) + 1]) || (attacker & pieceBoards[(6 * otherSide) + 4])) {
+                        if (!(is_bit_set(_ray, to_ind) | is_bit_set(rays[i][from_ind], to_ind))) return false;
                     }
                 }
             }
@@ -1326,6 +1371,49 @@ bool board::is_legal(struct move_t move) {
             return false;
         }
 
+    }
+
+    // if we're in check already
+
+    piece checkingPiece;
+    int checkingInd;
+    bool double_check = false;
+
+    if (is_check(sideToMove, &checkingPiece, &checkingInd, &double_check)) {
+        if (double_check) return false;
+
+        if (to_ind == checkingInd) {
+            return true;
+        }
+
+        int kingInd = last_set_bit(pieceBoards[(sideToMove * 6) + 5]);
+        int blockingInd;
+        int blockingPiece;
+        int ind_diff = checkingInd - kingInd;
+        bitboard blockers;
+        int defenderInd;
+        int _dir;
+
+        if (ind_diff > 0) {
+            if (ind_diff == 63 || ind_diff % 9 == 0) _dir = NE;
+            else if (checkingInd / 8 == kingInd / 8) _dir = E;
+            else if (ind_diff % 8 == 0) _dir = N;
+            else if (ind_diff % 7 == 0) _dir = NW;
+            else return false;
+        }
+        else {
+            if (ind_diff == -63 || (-ind_diff) % 9 == 0) _dir = SW;
+            else if (checkingInd / 8 == kingInd / 8) _dir = W;
+            else if ((-ind_diff) % 8 == 0) _dir = S;
+            else if ((-ind_diff) % 7 == 0) _dir = SE;
+            else return false;
+        }
+
+        for (blockingInd = kingInd + _dir; blockingInd != checkingInd;
+                blockingInd += _dir) {
+            if (blockingInd == to_ind) return true;
+        }
+        return false;
     }
 
     return true;

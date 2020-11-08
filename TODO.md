@@ -4,4 +4,4 @@
 - Function comments to explain parameters
 - better variable names
 - move typedefs to separate file
-- generate captures for quiescence search
+- test suite with check-in-x challenges etc

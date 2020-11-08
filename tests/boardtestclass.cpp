@@ -10,6 +10,7 @@
 #include "board.h"
 #include <sstream>
 #include <string>
+#include <cstdint>
 
 CPPUNIT_TEST_SUITE_REGISTRATION(boardtestclass);
 
@@ -26,7 +27,7 @@ void boardtestclass::testBoard() {
     bitboard pb_real[12];
     bool castling[4];
     bool ep;
-    int clk;
+    uint8_t clk;
     colour side;
     uint32_t value;
 
@@ -95,10 +96,10 @@ void boardtestclass::testBoard2() {
     bool ep_real;
     int dPPFile = 3;
     int dPPFile_real;
-    int clk = 12;
-    int clk_real;
-    int full_clk = 30;
-    int full_clk_real;
+    uint8_t clk = 12;
+    uint8_t clk_real;
+    uint8_t full_clk = 30;
+    uint8_t full_clk_real;
     colour side = black;
     colour side_real;
     uint32_t open_value = -251;
@@ -179,10 +180,10 @@ void boardtestclass::testBoard3() {
     bool ep_real;
     int dPPFile = 3;
     int dPPFile_real;
-    int clk = 12;
-    int clk_real;
-    int full_clk = 30;
-    int full_clk_real;
+    uint8_t clk = 12;
+    uint8_t clk_real;
+    uint8_t full_clk = 30;
+    uint8_t full_clk_real;
     colour side = black;
     colour side_real;
     uint32_t open_value = -251;

@@ -72,6 +72,7 @@ public:
     uint16_t give();
     friend std::ostream& operator<<(std::ostream &out, const move_t &move);
     friend bool operator==(const move_t &self, const move_t &other);
+    friend bool operator!=(const move_t &self, const move_t &other);
 };
 
 // defined in move.cpp
