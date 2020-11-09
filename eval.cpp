@@ -1,14 +1,15 @@
 #include "board.h"
 #include "eval.h"
 #include "twiddle.h"
+#include "typedefs.h"
 
 // initialise constants declared in eval.h
 // indexed by phase(0=opening, 1=endgame), then colourPiece
-const int16_t pieceValues[2][12] = {{100, 500, 320, 330, 900, 20000, -100, -500, -320, -330, -900, -20000},
+const value_t pieceValues[2][12] = {{100, 500, 320, 330, 900, 20000, -100, -500, -320, -330, -900, -20000},
                                     {100, 500, 320, 330, 900, 20000, -100, -500, -320, -330, -900, -20000}};
 
 // indexed by phase(0=opening, 1=endgame), then colourPiece, then square
-const int8_t pieceSquareTables[2][12][64] = {
+const value_t pieceSquareTables[2][12][64] = {
     {
         // white pawn
         {
@@ -304,21 +305,21 @@ const int8_t pieceSquareTables[2][12][64] = {
 
 // evaluation functions
 
-int16_t board::evaluate_material(int phase) {
+value_t board::evaluate_material(int phase) {
     // a rudimentary evaluation function based on material
     // white is positive, black is negative
 
-    int16_t ret = 0;
+    value_t ret = 0;
     for (int i = 0; i < 12; i++) {
         ret += count_bits_set(pieceBoards[i]) * pieceValues[phase][i];
     }
     return ret;
 }
 
-int16_t board::evaluate_pieceSquareTables(int phase) {
+value_t board::evaluate_pieceSquareTables(int phase) {
     int i, j;
     bitboard tmp;
-    int16_t ret = 0;
+    value_t ret = 0;
 
     for (i = 0; i < 12; i++) {
         tmp = pieceBoards[i];
@@ -330,32 +331,32 @@ int16_t board::evaluate_pieceSquareTables(int phase) {
     return ret;
 }
 
-int32_t board::evaluate() {
+value_t board::evaluate() {
     int phase = getPhase();
-    int32_t open = evaluateOpening();
-    int32_t end = evaluateEndgame();
+    value_t open = evaluateOpening();
+    value_t end = evaluateEndgame();
     return (open * (256 - phase) + end * phase) / 256;
 //    return evaluate_material() + evaluate_pieceSquareTables();
 }
 
-int32_t board::evaluateOpening() {
+value_t board::evaluateOpening() {
     return evaluate_material(0) + evaluate_pieceSquareTables(0);
 }
 
-int32_t board::evaluateEndgame() {
+value_t board::evaluateEndgame() {
     return evaluate_material(1) + evaluate_pieceSquareTables(1);
 }
 
-int32_t board::getValue() {
+value_t board::getValue() {
     int phase = getPhase();
     return (opening_value * (256 - phase) + endgame_value * phase) / 256;
 }
 
-int32_t board::getOpeningValue() {
+value_t board::getOpeningValue() {
     return opening_value;
 }
 
-int32_t board::getEndgameValue() {
+value_t board::getEndgameValue() {
     return endgame_value;
 }
 

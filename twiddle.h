@@ -3,9 +3,7 @@
 #ifndef __TWIDDLE_H
 #define __TWIDDLE_H
 
-#include <cstdint>
-
-using bitboard = uint64_t;
+#include "typedefs.h"
 
 // general-purpose bit twiddling functions
 // defined in twiddle.cpp

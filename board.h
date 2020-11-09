@@ -15,13 +15,11 @@
 #ifndef __BOARD_H
 #define __BOARD_H
 
+#include "typedefs.h"
+
 #include <cstdint>
 #include <iostream>
 #include <string>
-
-// define 64-bit integer
-
-using bitboard = uint64_t;
 
 // declare starting bitboards
 // defined in board.cpp
@@ -80,8 +78,8 @@ class board {
     colour sideToMove;
 
     // maintain a running value
-    int32_t opening_value;
-    int32_t endgame_value;
+    value_t opening_value;
+    value_t endgame_value;
 
     // store hash of current state
     uint64_t hash_value;
@@ -91,7 +89,7 @@ public:
     // defined in board.cpp
     board();
     board(bitboard*, bool*, bool, int, uint8_t, uint8_t,
-          colour, int32_t, int32_t, uint64_t hash = 0);
+          colour, value_t, value_t, uint64_t hash = 0);
     board(board&);
     board(std::string);
 
@@ -116,17 +114,15 @@ public:
 
     // evaluation
     // defined in eval.cpp
-    int16_t evaluate_material(int);
-    int16_t evaluate_pieceSquareTables(int);
-    int32_t getValue();
-    int32_t getOpeningValue();
-    int32_t getEndgameValue();
-    int32_t evaluate();
-    int32_t evaluateOpening();
-    int32_t evaluateEndgame();
-
+    value_t evaluate_material(int);
+    value_t evaluate_pieceSquareTables(int);
+    value_t getValue();
+    value_t getOpeningValue();
+    value_t getEndgameValue();
+    value_t evaluate();
+    value_t evaluateOpening();
+    value_t evaluateEndgame();
     int getPhase();
-    //void incrementValue(int16_t);
 
     // utilities for testing
     // defined in board.cpp

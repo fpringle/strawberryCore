@@ -1,6 +1,8 @@
 #include "board.h"
 #include "move.h"
 #include "twiddle.h"
+#include "typedefs.h"
+
 
 bool board::is_check(colour side) {
     // on-the-fly check detection
@@ -43,7 +45,7 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
     if (_check) {
         *checkingPiece = piece(0);
         *checkingInd = last_set_bit(_check);
-        count++;
+        count += count_bits_set(_check);
     }
     // rooks
     _check = rookTargets(kingpos, _white, _black,
@@ -51,7 +53,7 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
     if (_check) {
         *checkingPiece = piece(1);
         *checkingInd = last_set_bit(_check);
-        count++;
+        count += count_bits_set(_check);
         if (count == 2) {
             * doubleCheck = true;
             return true;
@@ -63,7 +65,7 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
     if (_check) {
         *checkingPiece = piece(2);
         *checkingInd = last_set_bit(_check);
-        count++;
+        count += count_bits_set(_check);
         if (count == 2) {
             * doubleCheck = true;
             return true;
@@ -75,7 +77,7 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
     if (_check) {
         *checkingPiece = piece(3);
         *checkingInd = last_set_bit(_check);
-        count++;
+        count += count_bits_set(_check);
         if (count == 2) {
             * doubleCheck = true;
             return true;
@@ -87,7 +89,7 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
     if (_check) {
         *checkingPiece = piece(4);
         *checkingInd = last_set_bit(_check);
-        count++;
+        count += count_bits_set(_check);
         if (count == 2) {
             * doubleCheck = true;
             return true;

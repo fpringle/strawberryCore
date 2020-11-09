@@ -1,9 +1,8 @@
 #include "move.h"
 #include "twiddle.h"
+#include "typedefs.h"
 
 #include <math.h>
-
-
 
 
 // initialise constants declared in twiddle.h

@@ -1,6 +1,8 @@
 #include "board.h"
 #include "twiddle.h"
+#include "typedefs.h"
 
+#include <cstdint>
 #include <iostream>
 #include <math.h>
 #include <string>
@@ -82,7 +84,7 @@ board::board() {
 
 board::board(bitboard * startPositions, bool * castling, bool ep, int dpp,
              uint8_t clock, uint8_t full_clock, colour side,
-             int32_t open_val, int32_t end_val, uint64_t hash) {
+             value_t open_val, value_t end_val, uint64_t hash) {
     // parameterised constructor
 
     // initialise an array of pointers to the piece bitboards
@@ -154,9 +156,12 @@ board::board(board & b1) {
 }
 
 board::board(std::string fen) {
+    //std::cout << fen << std::endl;
     int j, i = 0;
     for (j = 0; j < 12; j++) pieceBoards[j] = 0;
     int cp;
+
+    while (fen[i] == ' ') i++;
 
     for (int count_slash = 0; count_slash < 8; count_slash++) {
         j = 0;
@@ -222,17 +227,16 @@ board::board(std::string fen) {
     }
 
     sideToMove = (fen[i] == 'w') ? white : black;
-    i += 2;
+    do {
+        i++;
+    } while (fen[i] == ' ');
 
     castleWhiteKingSide = false;
     castleWhiteQueenSide = false;
     castleBlackKingSide = false;
     castleBlackQueenSide = false;
 
-    if (fen[i] == '-') {
-        i += 2;
-    }
-    else {
+    if (fen[i] != '-') {
         while (fen[i] != ' ') {
             switch (fen[i]) {
             case 'K':
@@ -250,17 +254,19 @@ board::board(std::string fen) {
             }
             i++;
         }
-        i++;
     }
+
+    do {
+        i++;
+    } while (fen[i] == ' ');
 
     if (fen[i] == '-') {
         lastMoveDoublePawnPush = false;
-        i += 2;
     }
     else {
         lastMoveDoublePawnPush = true;
         dPPFile = int( fen[i] - 'a');
-        i += 3;
+        i++;
     }
 
     // value starts at 0
@@ -270,10 +276,14 @@ board::board(std::string fen) {
     // hash
     hash_value = zobrist_hash();
 
+    do {
+        i++;
+    } while (fen[i] == ' ');
+
+    halfMoveClock = 0;
+    fullMoveClock = 0;
 
     if (i >= fen.size()) {
-        halfMoveClock = 0;
-        fullMoveClock = 0;
         return;
     }
 
@@ -283,9 +293,13 @@ board::board(std::string fen) {
         clock << fen[i];
         i++;
     }
-    clock >> halfMoveClock;
+    halfMoveClock = stoi(clock.str());
+    clock.clear();
     clock.str("");
-    i++;
+
+    do {
+        i++;
+    } while (fen[i] == ' ');
 
     if (i >= fen.size()) {
         fullMoveClock = 0;
@@ -533,7 +547,8 @@ void board::print_all(std::ostream& cout) {
     cout << " castle queenside\n";
 
     cout << "\nEn passant:\n";
-    if (lastMoveDoublePawnPush) cout << "  last move was a double pawn push\n";
+    if (lastMoveDoublePawnPush) cout << "  last move was a double pawn push (file "
+        << char('a' + dPPFile) << ")\n";
     else cout << "  last move was not a double pawn push\n";
 
     cout << "\nHalfmove Clock:\n";
@@ -629,8 +644,8 @@ std::string board::FEN() {
     ss << " ";
 
     if (lastMoveDoublePawnPush) {
-        ss << "a" + dPPFile
-           << (sideToMove == white) ? "6" : "3";
+        ss << char('a' + dPPFile)
+           << ((sideToMove == white) ? "6" : "3");
     }
 
     else {
@@ -695,10 +710,11 @@ void board::FEN(std::ostream& ss) {
         if (castleBlackQueenSide) ss << "q";
     }
 
+    ss << " ";
+
     if (lastMoveDoublePawnPush) {
-        ss << " ";
-        ss << "a" + dPPFile;
-        ss << (sideToMove == white) ? "6" : "3";
+        ss << char('a' + dPPFile);
+        ss << ((sideToMove == white) ? "6" : "3");
     }
 
     else {

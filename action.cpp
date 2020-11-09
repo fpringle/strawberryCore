@@ -3,6 +3,7 @@
 #include "eval.h"
 #include "hash.h"
 #include "play.h"
+#include "typedefs.h"
 
 #include <cstdint>
 
@@ -19,8 +20,8 @@ board doMove(board startBoard, move_t move) {
     uint8_t full_clk;
     uint64_t hash;
     startBoard.getHash(&hash);
-    int32_t opening_value = startBoard.getOpeningValue();
-    int32_t endgame_value = startBoard.getEndgameValue();
+    value_t opening_value = startBoard.getOpeningValue();
+    value_t endgame_value = startBoard.getEndgameValue();
     colour movingColour;
     startBoard.getSide(& movingColour);
     colour otherColour = (movingColour == white) ? black : white;

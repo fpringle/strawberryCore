@@ -1,6 +1,7 @@
 #include "board.h"
 #include "move.h"
 #include "twiddle.h"
+#include "typedefs.h"
 
 #include <cstdint>
 #include <iostream>
@@ -354,6 +355,10 @@ move_t::move_t(uint8_t from, uint8_t to, bool promotion,
                bool capture, bool spec1, bool spec0) {
     data = (from) | (to << 6) | (promotion << 15) | (capture << 12) |
            (spec1 << 14) | (spec0 << 13);
+}
+
+move_t::move_t(uint16_t cons_data) {
+    data = cons_data;
 }
 
 // bits 0-5:  from square

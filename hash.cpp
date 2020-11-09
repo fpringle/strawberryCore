@@ -2,7 +2,9 @@
 #include "move.h"
 #include "hash.h"
 #include "twiddle.h"
+#include "typedefs.h"
 
+#include <cstdint>
 #include <assert.h>
 #include <time.h>
 

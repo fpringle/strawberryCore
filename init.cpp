@@ -3,6 +3,8 @@
 #include "init.h"
 #include "hash.h"
 
+#include <cstdint>
+
 void init() {
     // initialise rays for sliding piece move generation
     init_rays();

@@ -1,10 +1,12 @@
 #ifndef __MOVE_H
 #define __MOVE_H
 
+#include "board.h"
+#include "typedefs.h"
+
 #include <cstdint>
 #include <string>
 #include <iostream>
-#include "board.h"
 
 
 // some constants
@@ -56,6 +58,7 @@ private:
 public:
     move_t();
     move_t(uint8_t, uint8_t, bool, bool, bool, bool);
+    move_t(uint16_t);
     uint16_t from_sq();
     uint16_t to_sq();
     uint16_t flags();

@@ -4,6 +4,7 @@
 #include "board.h"
 #include "move.h"
 #include "tree.h"
+#include "typedefs.h"
 
 #include <iostream>
 #include <string>
@@ -24,7 +25,7 @@ struct record_t {
     uint64_t signature;
     move_t best_ref_move;
     uint8_t depth;
-    int32_t IBV_score;
+    value_t IBV_score;
     uint8_t age;
 };
 
@@ -39,7 +40,7 @@ public:
     // defined in play.cpp
     Player();
     Player(bitboard*, bool*, bool, int, uint8_t, uint8_t,
-           colour, int32_t, uint64_t);
+           colour, value_t, value_t, uint64_t);
     Player(Player&);
     Player(std::string);
 
@@ -50,6 +51,8 @@ public:
     std::map<uint32_t, record_t> getTable();
     void print_history();
     void print_table();
+    void save_state(std::string);
+    void load_state(std::string);
 
     // make move
     // defined in action.cpp
@@ -58,9 +61,9 @@ public:
 
     // searching
     // defined in search.cpp
-    int32_t principal_variation(board b, colour side, uint8_t depth,
-                             int32_t alpha, int32_t beta);
-    int32_t negamax_alphabeta(board b, colour side, uint8_t depth, int32_t alpha, int32_t beta);
+    value_t principal_variation(board b, colour side, uint8_t depth,
+                             value_t alpha, value_t beta);
+    value_t negamax_alphabeta(board b, colour side, uint8_t depth, value_t alpha, value_t beta);
     move_t iterative_deepening(int timeout, uint8_t max_depth = 100);
     move_t search_negamax_alphabeta(uint8_t depth);
     move_t search_negamax_alphabeta(uint8_t depth, move_t first_move, double time_remaining);

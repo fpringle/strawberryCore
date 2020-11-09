@@ -3,6 +3,7 @@
 #include "move.h"
 #include "search.h"
 #include "play.h"
+#include "typedefs.h"
 
 #include <limits>
 #include <cstdint>
@@ -10,16 +11,16 @@
 
 #define USE_TABLE
 
-int32_t Minimax::algorithm(board b, int depth, colour side) {
+value_t Minimax::algorithm(board b, int depth, colour side) {
     if (depth == 0) return b.getValue();
 
-    int32_t score;
+    value_t score;
     struct move_t moves[256];
     int num_moves = b.gen_legal_moves(moves);
     board child;
 
     if (side == white) {
-        int32_t max_score = std::numeric_limits<int32_t>::max();
+        value_t max_score = std::numeric_limits<value_t>::max();
         if (num_moves == 0) {
             if (b.is_check(black)) {
                 return max_score + 10;
@@ -35,7 +36,7 @@ int32_t Minimax::algorithm(board b, int depth, colour side) {
     }
 
     else {
-        int32_t min_score = std::numeric_limits<int32_t>::max();
+        value_t min_score = std::numeric_limits<value_t>::max();
         if (num_moves == 0) {
             if (b.is_check(black)) {
                 return min_score - 10;
@@ -52,7 +53,7 @@ int32_t Minimax::algorithm(board b, int depth, colour side) {
 }
 
 move_t Minimax::search(board b, int depth) {
-    int32_t score;
+    value_t score;
     board child;
     colour side;
     b.getSide(&side);
@@ -62,7 +63,7 @@ move_t Minimax::search(board b, int depth) {
     struct move_t best_move;
 
     if (side == white) {
-        int32_t max_score = std::numeric_limits<int32_t>::min();
+        value_t max_score = std::numeric_limits<value_t>::min();
 
         for (int i = 0; i < num_moves; i++) {
             child = doMove(b, moves[i]);
@@ -76,7 +77,7 @@ move_t Minimax::search(board b, int depth) {
     }
 
     else {
-        int32_t min_score = std::numeric_limits<int32_t>::max();
+        value_t min_score = std::numeric_limits<value_t>::max();
 
         for (int i = 0; i < num_moves; i++) {
             child = doMove(b, moves[i]);
@@ -90,17 +91,17 @@ move_t Minimax::search(board b, int depth) {
     }
 }
 
-int32_t Negamax::algorithm(board b, int depth, colour side) {
+value_t Negamax::algorithm(board b, int depth, colour side) {
     if (depth == 0) return b.getValue() * ((side == white) ? 1 : -1);
 
     colour otherSide = (side == white) ? black : white;
 
-    int32_t score;
+    value_t score;
     board child;
 
     struct move_t moves[256];
     int num_moves = b.gen_legal_moves(moves);
-    int32_t max_score = std::numeric_limits<int32_t>::min();
+    value_t max_score = std::numeric_limits<value_t>::min();
     if (num_moves == 0) return (max_score + 10) * ((side == white) ? 1 : -1);
 
     for (int i = 0; i < num_moves; i++) {
@@ -112,7 +113,7 @@ int32_t Negamax::algorithm(board b, int depth, colour side) {
 }
 
 move_t Negamax::search(board b, int depth) {
-    int32_t score;
+    value_t score;
     board child;
     colour side;
     b.getSide(&side);
@@ -123,7 +124,7 @@ move_t Negamax::search(board b, int depth) {
     int num_moves = b.gen_legal_moves(moves);
     struct move_t best_move;
 
-    int32_t max_score = std::numeric_limits<int32_t>::min();
+    value_t max_score = std::numeric_limits<value_t>::min();
     for (int i = 0; i < num_moves; i++) {
         child = doMove(b, moves[i]);
         score = -Negamax::algorithm(child, depth - 1, otherSide);
@@ -135,20 +136,20 @@ move_t Negamax::search(board b, int depth) {
     return best_move;
 }
 
-int32_t NegamaxAB::algorithm(board b, int depth, colour side,
-                             int32_t alpha, int32_t beta) {
+value_t NegamaxAB::algorithm(board b, int depth, colour side,
+                             value_t alpha, value_t beta) {
     if (depth == 0) return b.getValue() * ((side == white) ? 1 : -1);
 
     colour otherSide = (side == white) ? black : white;
 
-    int32_t score;
+    value_t score;
     board child;
 
     struct move_t moves[256];
     int num_moves = b.gen_legal_moves(moves);
-    int32_t max_score = std::numeric_limits<int32_t>::min();
+    value_t max_score = std::numeric_limits<value_t>::min();
     if (num_moves == 0) return (max_score + 10) * ((side == white) ? 1 : -1);
-    //  int32_t max_score = alpha;
+    //  value_t max_score = alpha;
 
     for (int i = 0; i < num_moves; i++) {
         child = doMove(b, moves[i]);
@@ -161,7 +162,7 @@ int32_t NegamaxAB::algorithm(board b, int depth, colour side,
 }
 
 move_t NegamaxAB::search(board b, int depth) {
-    int32_t score;
+    value_t score;
     board child;
     colour side;
     b.getSide(&side);
@@ -172,10 +173,10 @@ move_t NegamaxAB::search(board b, int depth) {
     int num_moves = b.gen_legal_moves(moves);
     struct move_t best_move;
 
-    int32_t alpha = std::numeric_limits<int32_t>::min() + 1;
-    int32_t beta = std::numeric_limits<int32_t>::max() - 1;
+    value_t alpha = std::numeric_limits<value_t>::min() + 1;
+    value_t beta = std::numeric_limits<value_t>::max() - 1;
 
-    int32_t max_score = std::numeric_limits<int32_t>::min();
+    value_t max_score = std::numeric_limits<value_t>::min();
     for (int i = 0; i < num_moves; i++) {
         child = doMove(b, moves[i]);
         score = -NegamaxAB::algorithm(child, depth - 1, otherSide, - beta, - alpha);
@@ -187,19 +188,19 @@ move_t NegamaxAB::search(board b, int depth) {
     return best_move;
 }
 
-int32_t NegaScoutOriginal::algorithm(board b, int depth, colour side,
-                             int32_t alpha, int32_t beta) {
+value_t NegaScoutOriginal::algorithm(board b, int depth, colour side,
+                             value_t alpha, value_t beta) {
     if (depth == 0) return b.getValue() * ((side == white) ? 1 : -1);
 
     colour otherSide = (side == white) ? black : white;
 
-    int32_t score, a = alpha, _b = beta;
+    value_t score, a = alpha, _b = beta;
     board child;
 
     struct move_t moves[256];
     int num_moves = b.gen_legal_moves(moves);
     if (num_moves == 0) {
-        int32_t minusinf = (std::numeric_limits<int32_t>::min() + 10);
+        value_t minusinf = (std::numeric_limits<value_t>::min() + 10);
         return minusinf * ((side == white) ? 1 : -1);
     }
 
@@ -219,7 +220,7 @@ int32_t NegaScoutOriginal::algorithm(board b, int depth, colour side,
 }
 
 move_t NegaScoutOriginal::search(board b, int depth) {
-    int32_t score;
+    value_t score;
     board child;
     colour side;
     b.getSide(&side);
@@ -230,10 +231,10 @@ move_t NegaScoutOriginal::search(board b, int depth) {
     int num_moves = b.gen_legal_moves(moves);
     struct move_t best_move;
 
-    int32_t alpha = std::numeric_limits<int32_t>::min() + 1;
-    int32_t beta = std::numeric_limits<int32_t>::max() - 1;
+    value_t alpha = std::numeric_limits<value_t>::min() + 1;
+    value_t beta = std::numeric_limits<value_t>::max() - 1;
 
-    int32_t max_score = std::numeric_limits<int32_t>::min();
+    value_t max_score = std::numeric_limits<value_t>::min();
     for (int i = 0; i < num_moves; i++) {
         child = doMove(b, moves[i]);
         score = -NegaScoutOriginal::algorithm(child, depth - 1, otherSide, - beta, - alpha);
@@ -245,19 +246,19 @@ move_t NegaScoutOriginal::search(board b, int depth) {
     return best_move;
 }
 
-int32_t NegaScoutAlternative::algorithm(board b, int depth, colour side,
-                             int32_t alpha, int32_t beta) {
+value_t NegaScoutAlternative::algorithm(board b, int depth, colour side,
+                             value_t alpha, value_t beta) {
     if (depth == 0) return b.getValue() * ((side == white) ? 1 : -1);
 
     colour otherSide = (side == white) ? black : white;
 
-    int32_t _a, _b = beta;
+    value_t _a, _b = beta;
     board child;
 
     struct move_t moves[256];
     int num_moves = b.gen_legal_moves(moves);
     if (num_moves == 0) {
-        int32_t minusinf = (std::numeric_limits<int32_t>::min() + 10);
+        value_t minusinf = (std::numeric_limits<value_t>::min() + 10);
         return minusinf * ((side == white) ? 1 : -1);
     }
 
@@ -277,7 +278,7 @@ int32_t NegaScoutAlternative::algorithm(board b, int depth, colour side,
 }
 
 move_t NegaScoutAlternative::search(board b, int depth) {
-    int32_t score;
+    value_t score;
     board child;
     colour side;
     b.getSide(&side);
@@ -288,10 +289,10 @@ move_t NegaScoutAlternative::search(board b, int depth) {
     int num_moves = b.gen_legal_moves(moves);
     struct move_t best_move;
 
-    int32_t alpha = std::numeric_limits<int32_t>::min() + 1;
-    int32_t beta = std::numeric_limits<int32_t>::max() - 1;
+    value_t alpha = std::numeric_limits<value_t>::min() + 1;
+    value_t beta = std::numeric_limits<value_t>::max() - 1;
 
-    int32_t max_score = std::numeric_limits<int32_t>::min();
+    value_t max_score = std::numeric_limits<value_t>::min();
     for (int i = 0; i < num_moves; i++) {
         child = doMove(b, moves[i]);
         score = -NegaScoutAlternative::algorithm(child, depth - 1, otherSide, - beta, - alpha);
@@ -303,19 +304,19 @@ move_t NegaScoutAlternative::search(board b, int depth) {
     return best_move;
 }
 
-int32_t PVS::algorithm(board b, int depth, colour side,
-                       int32_t alpha, int32_t beta) {
+value_t PVS::algorithm(board b, int depth, colour side,
+                       value_t alpha, value_t beta) {
     if (depth == 0) return quiesce(b, side, alpha, beta);
 
     colour otherSide = (side == white) ? black : white;
     bool bSearchPv = true;
     board child;
     struct move_t moves[256];
-    int32_t score;
+    value_t score;
 
     int num_moves = b.gen_legal_moves(moves);
     if (num_moves == 0) {
-        int32_t ret = (std::numeric_limits<int32_t>::min() + 10);
+        value_t ret = (std::numeric_limits<value_t>::min() + 10);
         ret *= ((side == white) ? 1 : -1);
         return ret;
     }
@@ -344,7 +345,7 @@ int32_t PVS::algorithm(board b, int depth, colour side,
 }
 
 move_t PVS::search(board b, int depth) {
-    int32_t score;
+    value_t score;
     board child;
     colour side;
     b.getSide(&side);
@@ -354,10 +355,10 @@ move_t PVS::search(board b, int depth) {
     struct move_t moves[256];
     int num_moves = b.gen_legal_moves(moves);
     struct move_t best_move;
-    int32_t max_score = std::numeric_limits<int32_t>::min();
+    value_t max_score = std::numeric_limits<value_t>::min();
 
-    int32_t alpha = std::numeric_limits<int32_t>::min() + 1;
-    int32_t beta = std::numeric_limits<int32_t>::max() - 1;
+    value_t alpha = std::numeric_limits<value_t>::min() + 1;
+    value_t beta = std::numeric_limits<value_t>::max() - 1;
 
     for (int i = 0; i < num_moves; i++) {
         child = doMove(b, moves[i]);
@@ -371,9 +372,11 @@ move_t PVS::search(board b, int depth) {
 }
 
 
-int32_t quiesce(board b, colour side, int32_t alpha, int32_t beta) {
-    int32_t stand_pat = b.getValue() * ((side == white) ? 1 : -1);
+value_t quiesce(board b, colour side, value_t alpha, value_t beta) {
+    value_t stand_pat = b.getValue() * ((side == white) ? 1 : -1);
 
+//    std::cout << b << std::endl;
+//    std::cout << b.FEN() << std::endl;
 //    return stand_pat;
     if (stand_pat >= beta) return beta;
     if (stand_pat > alpha) alpha = stand_pat;
@@ -383,7 +386,7 @@ int32_t quiesce(board b, colour side, int32_t alpha, int32_t beta) {
     move_t captures[256];
     int num_captures = b.gen_captures(captures);
     board child;
-    int32_t score;
+    value_t score;
 
     for (int i=0; i<num_captures; i++) {
         child = doMove(b, captures[i]);
@@ -407,16 +410,16 @@ void reorder_moves(move_t * moves, int num_moves, move_t best_move) {
 }
 
 
-int32_t Player::principal_variation(board b, colour side, uint8_t depth,
-                                 int32_t alpha, int32_t beta) {
+value_t Player::principal_variation(board b, colour side, uint8_t depth,
+                                 value_t alpha, value_t beta) {
 
-    int32_t ret;
+    value_t ret;
 
 #ifdef USE_TABLE
     uint64_t sig;
     uint32_t ind;
     move_t bestMove(0,0,0,0,0,0);
-    int32_t ibv;
+    value_t ibv;
     uint8_t age;
     b.getHash(&sig);
     ind = (uint32_t)sig;
@@ -471,11 +474,11 @@ int32_t Player::principal_variation(board b, colour side, uint8_t depth,
     bool bSearchPv = true;
     board child;
     struct move_t moves[256];
-    int32_t score;
+    value_t score;
 
     int num_moves = b.gen_legal_moves(moves);
     if (num_moves == 0) {
-        ret = (std::numeric_limits<int32_t>::min() / 10) * is_checkmate();
+        ret = (std::numeric_limits<value_t>::min() / 10) * is_checkmate();
         ret *= ((side == white) ? 1 : -1);
 #ifdef USE_TABLE
         ibv = 4 * ret;
@@ -538,17 +541,17 @@ int32_t Player::principal_variation(board b, colour side, uint8_t depth,
 }
 
 
-int32_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
-                                 int32_t alpha, int32_t beta) {
+value_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
+                                 value_t alpha, value_t beta) {
 
-    int32_t ret;
-    int32_t alphaOrig = alpha;
+    value_t ret;
+    value_t alphaOrig = alpha;
 
 #ifdef USE_TABLE
     uint64_t sig;
     uint32_t ind;
     move_t bestMove(0,0,0,0,0,0);
-    int32_t ibv;
+    value_t ibv;
     uint8_t age;
     b.getHash(&sig);
     ind = (uint32_t)sig;
@@ -595,6 +598,7 @@ int32_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
 #endif
 
     if (depth == 0) {
+//        std::cout << b.FEN() << std::endl;
         ret = quiesce(b, side, alpha, beta);
         return ret;
     }
@@ -602,11 +606,11 @@ int32_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
     colour otherSide = (side == white) ? black : white;
     board child;
     struct move_t moves[256];
-    int32_t score, value = std::numeric_limits<int32_t>::min() + 10;
+    value_t score, value = std::numeric_limits<value_t>::min() + 10;
 
     int num_moves = b.gen_legal_moves(moves);
     if (num_moves == 0) {
-        ret = (std::numeric_limits<int32_t>::min() / 10) * is_checkmate();
+        ret = (std::numeric_limits<value_t>::min() / 10) * is_checkmate();
         ret *= ((side == white) ? 1 : -1);
 #ifdef USE_TABLE
         ibv = 4 * ret;
@@ -655,15 +659,15 @@ int32_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
 
 move_t Player::search_negamax_alphabeta(uint8_t depth) {
 
-    int32_t max_score = std::numeric_limits<int32_t>::min();
-    int32_t alpha = std::numeric_limits<int32_t>::min() / 10;
-    int32_t beta = std::numeric_limits<int32_t>::max() / 10;
+    value_t max_score = std::numeric_limits<value_t>::min();
+    value_t alpha = std::numeric_limits<value_t>::min() / 10;
+    value_t beta = std::numeric_limits<value_t>::max() / 10;
 
 #ifdef USE_TABLE
     uint64_t sig;
     uint32_t ind;
     move_t bestMove(0,0,0,0,0,0);
-    int32_t ibv;
+    value_t ibv;
     uint8_t age;
     getHash(&sig);
     ind = (uint32_t)sig;
@@ -710,7 +714,7 @@ move_t Player::search_negamax_alphabeta(uint8_t depth) {
 
 #endif
 
-    int32_t score;
+    value_t score;
     board child;
     colour side;
     getSide(&side);
@@ -756,9 +760,9 @@ move_t Player::search_negamax_alphabeta(uint8_t depth) {
 
 move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move, double time_remaining) {
 
-    int32_t max_score = std::numeric_limits<int32_t>::min();
-    int32_t alpha = std::numeric_limits<int32_t>::min() / 10;
-    int32_t beta = std::numeric_limits<int32_t>::max() / 10;
+    value_t max_score = std::numeric_limits<value_t>::min();
+    value_t alpha = std::numeric_limits<value_t>::min() / 10;
+    value_t beta = std::numeric_limits<value_t>::max() / 10;
 
     clock_t start_time = clock();
 
@@ -766,7 +770,7 @@ move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move, double
     uint64_t sig;
     uint32_t ind;
     move_t bestMove(0,0,0,0,0,0);
-    int32_t ibv;
+    value_t ibv;
     uint8_t age;
     getHash(&sig);
     ind = (uint32_t)sig;
@@ -813,7 +817,7 @@ move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move, double
 
 #endif
 
-    int32_t score;
+    value_t score;
     board child;
     colour side;
     getSide(&side);
@@ -869,15 +873,15 @@ move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move, double
 
 move_t Player::search_principal_variation(uint8_t depth) {
 
-    int32_t max_score = std::numeric_limits<int32_t>::min();
-    int32_t alpha = std::numeric_limits<int32_t>::min() / 10;
-    int32_t beta = std::numeric_limits<int32_t>::max() / 10;
+    value_t max_score = std::numeric_limits<value_t>::min();
+    value_t alpha = std::numeric_limits<value_t>::min() / 10;
+    value_t beta = std::numeric_limits<value_t>::max() / 10;
 
 #ifdef USE_TABLE
     uint64_t sig;
     uint32_t ind;
     move_t bestMove(0,0,0,0,0,0);
-    int32_t ibv;
+    value_t ibv;
     uint8_t age;
     getHash(&sig);
     ind = (uint32_t)sig;
@@ -924,7 +928,7 @@ move_t Player::search_principal_variation(uint8_t depth) {
 
 #endif
 
-    int32_t score;
+    value_t score;
     board child;
     colour side;
     getSide(&side);
@@ -974,8 +978,8 @@ move_t Player::iterative_deepening(int timeout, uint8_t max_depth) {
     uint8_t depth = 1;
     move_t best_move(0,0,0,0,0,0);
     move_t new_move;
-    int32_t alpha = std::numeric_limits<int32_t>::min() / 10;
-    int32_t beta = std::numeric_limits<int32_t>::max() / 10;
+    value_t alpha = std::numeric_limits<value_t>::min() / 10;
+    value_t beta = std::numeric_limits<value_t>::max() / 10;
 
     while (time_taken < timeout && depth <= max_depth) {
         new_move = search_negamax_alphabeta(depth, best_move, timeout - time_taken);
@@ -994,5 +998,5 @@ move_t Player::iterative_deepening(int timeout, uint8_t max_depth) {
 
 move_t Player::search(uint8_t depth) {
     return iterative_deepening(60);
-    return search_negamax_alphabeta(depth);
+//    return search_negamax_alphabeta(depth);
 }

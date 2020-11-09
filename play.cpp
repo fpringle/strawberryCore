@@ -4,13 +4,17 @@
 #include "action.h"
 #include "search.h"
 #include "init.h"
+#include "typedefs.h"
 
+#include <cstdint>
 #include <string>
+#include <sstream>
 #include <iostream>
+#include <fstream>
 
 
 std::ostream& operator<<(std::ostream &out, const record_t &rec) {
-    int32_t val;
+    value_t val;
 
     out << "Best/refutation move:     " << rec.best_ref_move << std::endl
         << "Depth searched:           " << +rec.depth << std::endl
@@ -44,8 +48,10 @@ Player::Player() : board::board() {
 }
 
 Player::Player(bitboard * startPositions, bool * castling, bool ep, int dpp,
-        uint8_t clock, uint8_t full_clock, colour side, int32_t val, uint64_t hash) :
-    board::board(startPositions, castling, ep, dpp, clock, full_clock, side, val, hash) {
+        uint8_t clock, uint8_t full_clock, colour side,
+        value_t open_val, value_t end_val, uint64_t hash) :
+    board::board(startPositions, castling, ep, dpp, clock, full_clock,
+        side, open_val, end_val, hash) {
 }
 
 Player::Player(Player& p1) : board::board(p1) {
@@ -90,6 +96,86 @@ void Player::print_table() {
     }
 }
 
+void Player::save_state(std::string filename) {
+    std::ofstream fil(filename);
+//    fil << FEN() << std::endl;
+//    fil << std::endl;
+//    for (auto& move : move_history) {
+//        fil << move << std::endl;
+//    }
+//    fil << std::endl;
+    record_t rec;
+    std::map<uint32_t, record_t>::iterator it;
+    for (it = trans_table.begin(); it != trans_table.end(); it++) {
+        fil << it->first << ",";
+        rec = it->second;
+        fil << rec.signature << ","
+            << rec.best_ref_move.give() << ","
+            << + rec.depth << ","
+            << rec.IBV_score << ","
+            << + rec.age << std::endl;
+    }
+    fil.close();
+}
+
+void Player::load_state(std::string filename) {
+    std::string line;
+    std::ifstream fil(filename);
+    std::stringstream num;
+    int comma_1, comma_2, length;
+    value_t score;
+    record_t rec;
+    uint32_t ind;
+    uint64_t sig;
+    uint16_t movedata;
+    move_t move;
+    uint8_t depth;
+    value_t ibv;
+    uint8_t age;
+//    fil.seek(0);
+    while (fil) {
+        fil >> line;
+
+        comma_1 = 0;
+        comma_2 = line.find(",",comma_1 + 1);
+        length = comma_2 - comma_1;
+        num << line.substr(comma_1, length);
+        num >> ind;
+        num.str("");
+        num.clear();
+
+        comma_1 = comma_2 + 1;
+        comma_2 = line.find(",",comma_1);
+        length = comma_2 - comma_1;
+        num << line.substr(comma_1, length);
+        num >> sig;
+        num.str("");
+        num.clear();
+
+        comma_1 = comma_2 + 1;
+        comma_2 = line.find(",",comma_1);
+        length = comma_2 - comma_1;
+        movedata = std::stoi(line.substr(comma_1, length));
+        move = move_t(movedata);
+
+        comma_1 = comma_2 + 1;
+        comma_2 = line.find(",",comma_1);
+        length = comma_2 - comma_1;
+        depth = std::stoi(line.substr(comma_1, length));
+
+        comma_1 = comma_2 + 1;
+        comma_2 = line.find(",",comma_1);
+        length = comma_2 - comma_1;
+        ibv = std::stoi(line.substr(comma_1, length));
+
+        comma_1 = comma_2 + 1;
+        age = std::stoi(line.substr(comma_1));
+
+        rec = {sig, move, depth, ibv, age};
+        trans_table[ind] = rec;
+    }
+}
+
 
 move_t Player::input_move() {
     move_t ret;
@@ -116,6 +202,8 @@ void Player::play(colour side, int plies) {
     move_t player_move;
     int num_moves = 0;
     colour movingSide;
+    int log = 1;
+    std::stringstream ss;
 
     if (gameover()) {
         std::cout << "Game is complete!\n";
@@ -125,7 +213,6 @@ void Player::play(colour side, int plies) {
     while (! gameover()) {
         if (side == black) print_board();
         else print_board_flipped();
-        std::cout << FEN() << std::endl;
         getSide(&movingSide);
         if (movingSide != side) {
             player_move = input_move();
@@ -136,6 +223,11 @@ void Player::play(colour side, int plies) {
             comp_move = search(plies);
             std::cout << "Computer move: " << comp_move << std::endl;
             doMoveInPlace(comp_move);
+            ss << "/home/freddy/Documents/cpl/chess_net/log/log"
+               << log << ".log";
+            save_state(ss.str());
+            ss.str("");
+            log++;
         }
         num_moves++;
     }
