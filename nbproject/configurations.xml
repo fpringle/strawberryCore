@@ -15,7 +15,7 @@
       <itemPath>tree.h</itemPath>
       <itemPath>twiddle.h</itemPath>
     </logicalFolder>
-    <logicalFolder name="f1" displayName="Scripts" projectFiles="true" kind="ROOT">
+    <logicalFolder name="f1" displayName="Scripts" projectFiles="true">
       <itemPath>scripts/analyse.cpp</itemPath>
       <itemPath>scripts/py_analyse.py</itemPath>
       <itemPath>scripts/run_analysis.sh</itemPath>

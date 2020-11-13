@@ -5,6 +5,8 @@
 #include <math.h>
 
 
+namespace chessCore {
+
 // initialise constants declared in twiddle.h
 const bitboard fileA = 0x0101010101010101;
 const bitboard fileB = 0x0202020202020202;
@@ -159,3 +161,6 @@ bitboard oneWNW(bitboard b) {
 bitboard oneNNW(bitboard b) {
     return (b << NNW) & notFileH;
 }
+
+
+} // end of chessCore namespace

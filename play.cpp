@@ -13,6 +13,9 @@
 #include <fstream>
 
 
+
+namespace chessCore {
+
 std::ostream& operator<<(std::ostream &out, const record_t &rec) {
     value_t val;
 
@@ -259,3 +262,4 @@ void Player::play(colour side, int plies) {
     }
 }
 
+} // end of chessCore namespace

@@ -7,6 +7,8 @@
 #include <queue>
 
 
+namespace chessCore {
+
 template <class T>
 struct treeNode {
     T data;
@@ -204,4 +206,5 @@ void delete_node( treeNode<T> ** node ) {
 //template class treeNode<int32_t>;
 
 
+} // end of chessCore namespace
 #endif

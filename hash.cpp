@@ -9,6 +9,8 @@
 #include <time.h>
 
 
+namespace chessCore {
+
 // transposition table
 //struct record_t table[130000000];
 
@@ -121,3 +123,4 @@ uint64_t board::zobrist_hash() {
 }
 
 
+} // end of chessCore namespace

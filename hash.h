@@ -3,6 +3,8 @@
 
 #include <cstdint>
 
+namespace chessCore {
+
 // n=312, w=64
 
 extern uint64_t MT[312];
@@ -60,5 +62,6 @@ void init_keys(uint64_t);
 // 1.3e8 seems to be the max
 //extern struct record_t table[130000000];
 
+} // end of chessCore namespace
 
 #endif

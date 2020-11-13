@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=chess_net
+PROJECTNAME=core
 
 # Active Configuration
 DEFAULTCONF=Debug

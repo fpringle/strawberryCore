@@ -7,6 +7,9 @@
 
 #include <cstdint>
 
+namespace chessCore {
+
+
 board doMove(board startBoard, move_t move) {
     int i;
     uint16_t fromSquare = move.from_sq();
@@ -443,3 +446,5 @@ void Player::makeChild(board* child, move_t move) {
     *child = *this;
     child->doMoveInPlace(move);
 }
+
+} // end of chessCore namespace

@@ -3,6 +3,9 @@
 #include "twiddle.h"
 #include "typedefs.h"
 
+
+namespace chessCore {
+
 // initialise constants declared in eval.h
 // indexed by phase(0=opening, 1=endgame), then colourPiece
 const value_t pieceValues[2][12] = {{100, 500, 320, 330, 900, 20000, -100, -500, -320, -330, -900, -20000},
@@ -390,5 +393,4 @@ int board::getPhase() {
 
 
 
-
-
+} // end of chessCore namespace

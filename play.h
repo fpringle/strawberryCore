@@ -12,6 +12,9 @@
 #include <cstdint>
 #include <vector>
 
+
+namespace chessCore {
+
 // transposition table
 // "signature" = zobrist hash (64 bits)
 // best/refutation move (16 bits)
@@ -76,5 +79,7 @@ public:
     void play(colour side, int plies);
 };
 
+
+} // end of chessCore namespace
 
 #endif

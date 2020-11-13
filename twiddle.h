@@ -5,6 +5,9 @@
 
 #include "typedefs.h"
 
+
+namespace chessCore {
+
 // general-purpose bit twiddling functions
 // defined in twiddle.cpp
 int count_bits_set(bitboard);
@@ -56,5 +59,7 @@ bitboard oneSSW(bitboard);
 bitboard oneWSW(bitboard);
 bitboard oneWNW(bitboard);
 bitboard oneNNW(bitboard);
+
+} // end of chessCore namespace
 
 #endif

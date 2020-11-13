@@ -3,6 +3,8 @@
 
 #include "typedefs.h"
 
+namespace chessCore {
+
 // piece values for material evaluation
 // defined in eval.cpp
 extern const value_t pieceValues[2][12];
@@ -12,5 +14,7 @@ extern const value_t pieceValues[2][12];
 // defined in eval.cpp
 extern const value_t pieceSquareTables[2][12][64];
 
+
+} // end of chessCore namespace
 
 #endif

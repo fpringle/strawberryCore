@@ -5,6 +5,8 @@
 
 #include <cstdint>
 
+namespace chessCore {
+
 void init() {
     // initialise rays for sliding piece move generation
     init_rays();
@@ -20,3 +22,6 @@ void init(uint64_t seed) {
     // initialise zobrist keys
     init_keys(seed);
 }
+
+
+} // end of chessCore namespace

@@ -4,6 +4,8 @@
 #include "typedefs.h"
 
 
+namespace chessCore {
+
 bool board::is_check(colour side) {
     // on-the-fly check detection
     int kingpos = last_set_bit(pieceBoards[ (6 * side) + 5 ]);
@@ -356,3 +358,6 @@ bool board::is_checking_move(move_t move) {
 
     return false;
 }
+
+
+} // end of chessCore namespace

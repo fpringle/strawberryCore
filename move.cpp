@@ -8,6 +8,10 @@
 #include <stdlib.h>     // for abs
 #include <string>
 
+
+
+namespace chessCore {
+
 // initialise constants declared in move.h
 const int N = +8;
 const int NE = +9;
@@ -1388,3 +1392,6 @@ bool board::is_legal(struct move_t move) {
 
     return true;
 }
+
+
+} // end of chessCore namespace

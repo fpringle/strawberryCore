@@ -9,6 +9,9 @@
 #include <iostream>
 
 
+namespace chessCore {
+
+
 // some constants
 // constants for sliding pieces which moves in straight lines
 // defined in move.cpp
@@ -113,5 +116,7 @@ bitboard queenTargets         (int, bitboard, bitboard, colour);
 
 // general piece
 bitboard pieceTargets         (int, bitboard, bitboard, colourPiece);
+
+} // end of chessCore namespace
 
 #endif

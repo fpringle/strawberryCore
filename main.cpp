@@ -11,12 +11,16 @@
 #include <cstdlib>
 
 
+using namespace chessCore;
+
 int main() {
     init();
 
-    Player p;
+    bitboard bb = 1152921504606846976ULL;
 
-    p.play(black,6);
+    print_bb(bb);
 
     return 0;
 }
+
+

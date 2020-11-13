@@ -6,6 +6,8 @@
 #include "typedefs.h"
 
 
+namespace chessCore {
+
 class Searcher {
 public:
     static value_t algorithm(board b, int depth, colour side);
@@ -66,4 +68,6 @@ value_t quiesce(board b, colour side, value_t alpha, value_t beta);
 
 void reorder_moves(move_t * moves, int num_moves, move_t best_move);
 
+
+} // end of chessCore namespace
 #endif

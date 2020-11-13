@@ -8,6 +8,9 @@
 #include <string>
 #include <sstream>
 
+
+namespace chessCore {
+
 // initialise constants declared in board.h
 const char symbols[12] = {'p', 'r', 'n', 'b', 'q', 'k',
                           'P', 'R', 'N', 'B', 'Q', 'K'
@@ -801,3 +804,6 @@ bitboard board::takenSquares() {
 bitboard board::emptySquares() {
     return ( ~takenSquares());
 }
+
+
+} // end of chessCore namespace

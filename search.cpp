@@ -11,6 +11,8 @@
 
 #define USE_TABLE
 
+namespace chessCore {
+
 value_t Minimax::algorithm(board b, int depth, colour side) {
     if (depth == 0) return b.getValue();
 
@@ -1000,3 +1002,6 @@ move_t Player::search(uint8_t depth) {
     return iterative_deepening(60);
 //    return search_negamax_alphabeta(depth);
 }
+
+
+} // end of chessCore namespace

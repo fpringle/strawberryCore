@@ -9,19 +9,19 @@ CND_DISTDIR=dist
 # Debug configuration
 CND_PLATFORM_Debug=GNU-Linux
 CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-Linux
-CND_ARTIFACT_NAME_Debug=chess_net
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux/chess_net
+CND_ARTIFACT_NAME_Debug=core
+CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux/core
 CND_PACKAGE_DIR_Debug=dist/Debug/GNU-Linux/package
-CND_PACKAGE_NAME_Debug=chessnet.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux/package/chessnet.tar
+CND_PACKAGE_NAME_Debug=core.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux/package/core.tar
 # Release configuration
 CND_PLATFORM_Release=GNU-Linux
 CND_ARTIFACT_DIR_Release=dist/Release/GNU-Linux
-CND_ARTIFACT_NAME_Release=chess_net
-CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux/chess_net
+CND_ARTIFACT_NAME_Release=core
+CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux/core
 CND_PACKAGE_DIR_Release=dist/Release/GNU-Linux/package
-CND_PACKAGE_NAME_Release=chessnet.tar
-CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux/package/chessnet.tar
+CND_PACKAGE_NAME_Release=core.tar
+CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux/package/core.tar
 #
 # include compiler specific variables
 #

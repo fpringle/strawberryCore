@@ -21,6 +21,9 @@
 #include <iostream>
 #include <string>
 
+namespace chessCore {
+
+
 // declare starting bitboards
 // defined in board.cpp
 
@@ -183,5 +186,9 @@ public:
     bool was_lastmove_check(move_t);
     bool is_checking_move(move_t);
 };
+
+
+} // end of chessCore namespace
+
 
 #endif
