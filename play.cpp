@@ -85,9 +85,16 @@ std::map<uint32_t, record_t> Player::getTable() {
     return trans_table;
 }
 
-void Player::print_history() {
-    for (auto& move : move_history) {
-        std::cout << move << std::endl;
+void Player::print_history(std::ostream& cout) {
+    int sz = move_history.size();
+    for (int i=0; i<sz; i+=2) {
+        cout << int((i / 2) + 1) << ". " << move_history[i];
+        if (i + 1 < sz) {
+            cout << "    " << move_history[i + 1] << std::endl;
+        }
+        else {
+            cout << std::endl;
+        }
     }
 }
 
@@ -126,7 +133,6 @@ void Player::load_state(std::string filename) {
     std::ifstream fil(filename);
     std::stringstream num;
     int comma_1, comma_2, length;
-    value_t score;
     record_t rec;
     uint32_t ind;
     uint64_t sig;

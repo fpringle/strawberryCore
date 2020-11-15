@@ -410,6 +410,8 @@ void move_t::set_promotion(piece pc) {
         data = set_bit(data, 13);
         data = set_bit(data, 14);
         break;
+    default:
+        break;
     }
 }
 
@@ -921,7 +923,6 @@ int board::get_out_of_check(move_t * moves, piece checkingPiece,
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
     bitboard _other = (sideToMove == white) ? _black : _white;
-    colour otherSide = (sideToMove == white) ? black : white;
 
 
     // king moves out of check
@@ -1061,7 +1062,6 @@ int board::gen_captures(move_t * moves) {
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
     bitboard _other = ((sideToMove == white) ? _black : _white);
-    colour otherSide = ((sideToMove == white) ? black : white);
     for (_piece = sideToMove * 6; _piece < (1 + sideToMove)*6; _piece++) {
         for (from_sq = 0; from_sq < 64; from_sq++) {
             if (pieceBoards[_piece] & (1ULL << from_sq)) {
@@ -1124,7 +1124,6 @@ int board::gen_legal_moves(move_t * moves) {
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
     bitboard _other = ((sideToMove == white) ? _black : _white);
-    colour otherSide = ((sideToMove == white) ? black : white);
 
     // if we're in check we can limit the search
     piece checkingPiece;
@@ -1254,18 +1253,23 @@ bool board::is_legal(struct move_t move) {
     int from_ind = move.from_sq();
     int to_ind = move.to_sq();
     bitboard from_square = (1ULL << from_ind);
+    bool foundMovingPiece = false;
+
     for (int i = sideToMove * 6; i < (1 + sideToMove)*6; i++) {
         if (pieceBoards[i] & from_square) {
             movingPiece = colourPiece(i);
+            foundMovingPiece = true;
             break;
         }
+    }
+
+    if (! foundMovingPiece) {
+        return false;
     }
 
     colour otherSide = (sideToMove == white) ? black : white;
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
-    bitboard _other = (sideToMove == white) ? _black : _white;
-    bitboard _own = (sideToMove == white) ? _white : _black;
 
 
     // king can't move into check
@@ -1291,7 +1295,6 @@ bool board::is_legal(struct move_t move) {
     bitboard blockers = takenSquares();
     bitboard tmp;
     bitboard attacker;
-    bitboard first;
 
     for (int i = 0; i < 8; i++) {
         _ray2 = rays[i][from_ind] & blockers;
@@ -1362,10 +1365,7 @@ bool board::is_legal(struct move_t move) {
 
         int kingInd = last_set_bit(pieceBoards[(sideToMove * 6) + 5]);
         int blockingInd;
-        int blockingPiece;
         int ind_diff = checkingInd - kingInd;
-        bitboard blockers;
-        int defenderInd;
         int _dir;
 
         if (ind_diff > 0) {

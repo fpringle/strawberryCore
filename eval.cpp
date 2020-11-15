@@ -320,7 +320,7 @@ value_t board::evaluate_material(int phase) {
 }
 
 value_t board::evaluate_pieceSquareTables(int phase) {
-    int i, j;
+    int i;
     bitboard tmp;
     value_t ret = 0;
 

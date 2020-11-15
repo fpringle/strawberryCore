@@ -30,6 +30,7 @@ board doMove(board startBoard, move_t move) {
     colour otherColour = (movingColour == white) ? black : white;
     colourPiece movingPiece;
     bool rooktaken = false;
+    bool foundMovingPiece = false;
 
     bitboard startingPos[12];
     startBoard.getBitboards(startingPos);
@@ -44,10 +45,14 @@ board doMove(board startBoard, move_t move) {
             endgame_value += pieceSquareTables[1][i][toSquare];
             hash ^= zobristKeys[i * 64 + fromSquare];
             hash ^= zobristKeys[i * 64 + toSquare];
+            foundMovingPiece = true;
             break;
         }
     }
 
+    if (! foundMovingPiece) {
+        return startBoard;
+    }
 
     if (move.is_capture()) {
         if (!move.is_ep_capture()) {
@@ -242,6 +247,7 @@ void board::doMoveInPlace(move_t move) {
     colour otherColour = (sideToMove == white) ? black : white;
     colourPiece movingPiece;
     bool rooktaken = false;
+    bool foundMovingPiece = false;
 
     for (i = (sideToMove * 6); i < (1 + sideToMove)*6; i++) {
         if (is_bit_set(pieceBoards[i], fromSquare)) {
@@ -253,10 +259,14 @@ void board::doMoveInPlace(move_t move) {
             endgame_value += pieceSquareTables[1][i][toSquare];
             hash_value ^= zobristKeys[i * 64 + fromSquare];
             hash_value ^= zobristKeys[i * 64 + toSquare];
+            foundMovingPiece = true;
             break;
         }
     }
 
+    if (! foundMovingPiece) {
+        return;
+    }
 
     if (move.is_capture()) {
         if (!move.is_ep_capture()) {

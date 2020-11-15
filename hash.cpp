@@ -39,7 +39,7 @@ uint64_t zobristKeys[781];
 void init_gen(uint64_t seed) {
     check_index = n;
     MT[0] = seed;
-    for (int i = 1; i < n; i++) {
+    for (uint64_t i = 1; i < n; i++) {
         MT[i] = ((((MT[i - 1] >> (w - 1)) ^ MT[i - 1]) + i) * f) + i;
     }
 }
@@ -62,7 +62,7 @@ uint64_t extract_number() {
 }
 
 void twist() {
-    for (int i = 0; i < n; i++) {
+    for (uint64_t i = 0; i < n; i++) {
         uint64_t x = (MT[i] & upper_mask) + (MT[(i + 1) % n] & lower_mask);
         uint64_t xA = x >> 1;
         if (x & 1ULL) xA ^= a;

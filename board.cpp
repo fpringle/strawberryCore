@@ -162,7 +162,8 @@ board::board(std::string fen) {
     //std::cout << fen << std::endl;
     int j, i = 0;
     for (j = 0; j < 12; j++) pieceBoards[j] = 0;
-    int cp;
+    int cp = -1;
+    int sz = fen.size();
 
     while (fen[i] == ' ') i++;
 
@@ -286,7 +287,7 @@ board::board(std::string fen) {
     halfMoveClock = 0;
     fullMoveClock = 0;
 
-    if (i >= fen.size()) {
+    if (i >= sz) {
         return;
     }
 
@@ -304,7 +305,7 @@ board::board(std::string fen) {
         i++;
     } while (fen[i] == ' ');
 
-    if (i >= fen.size()) {
+    if (i >= sz) {
         fullMoveClock = 0;
         return;
     }
@@ -365,6 +366,46 @@ bool board::operator==(const board& other) {
 bool board::operator!=(const board& other) {
     return !(*this == other);
 }
+
+board& board::operator=(const board& other) {
+//    bitboard * p = other.pieceBoards;
+//    bitboard * q = pieceBoards;
+
+//    while (p < other.pieceBoards + 12) *q++ = *p++;
+
+
+    other.getBitboards(pieceBoards);
+
+    // castling rights
+    castleWhiteKingSide = other.castleWhiteKingSide;
+    castleWhiteQueenSide = other.castleWhiteQueenSide;
+    castleBlackKingSide = other.castleBlackKingSide;
+    castleBlackQueenSide = other.castleBlackQueenSide;
+
+    // 50-move rule
+    halfMoveClock = other.halfMoveClock;
+    fullMoveClock = other.fullMoveClock;
+
+    // en passant pawn capture
+    lastMoveDoublePawnPush = other.lastMoveDoublePawnPush;
+
+    // double pawn push file
+
+    dPPFile = other.dPPFile;
+
+    // side to move
+    sideToMove = other.sideToMove;
+
+    // value
+    opening_value = other.opening_value;
+    endgame_value = other.endgame_value;
+
+    // hash
+    hash_value = other.hash_value;
+
+    return *this;
+}
+
 
 // get data
 

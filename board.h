@@ -101,6 +101,7 @@ public:
     bool operator==(const board&);
     bool operator!=(const board&);
     friend std::ostream& operator<<(std::ostream &out, const board &brd);
+    board& operator=(const board&);
 
     // get data
     // defined in board.cpp

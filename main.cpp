@@ -16,9 +16,17 @@ using namespace chessCore;
 int main() {
     init();
 
-    bitboard bb = 1152921504606846976ULL;
+    Player p;
 
-    print_bb(bb);
+    move_t g1f3 = move_t( 6, 21, 0, 0, 0, 0);
+    move_t g8f6 = move_t(62, 45, 0, 0, 0, 0);
+    move_t b1c3 = move_t( 1, 18, 0, 0, 0, 0);
+
+    p.doMoveInPlace(g1f3);
+    p.doMoveInPlace(g8f6);
+    p.doMoveInPlace(b1c3);
+
+    p.print_history();
 
     return 0;
 }

@@ -427,7 +427,6 @@ value_t Player::principal_variation(board b, colour side, uint8_t depth,
     ind = (uint32_t)sig;
     getFullClock(&age);
     record_t record;
-    bool found_in_table = false;
 
     // lookup
     std::map<uint32_t, record_t>::iterator it = trans_table.find(ind);
@@ -435,7 +434,6 @@ value_t Player::principal_variation(board b, colour side, uint8_t depth,
         record = it->second;
         if (record.signature == sig) {
             // match
-            found_in_table = true;
             bestMove = record.best_ref_move;
             if (record.depth >= depth) {
                 switch (record.IBV_score % 4) {
@@ -559,7 +557,6 @@ value_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
     ind = (uint32_t)sig;
     getFullClock(&age);
     record_t record;
-    bool found_in_table = false;
 
     // lookup
     std::map<uint32_t, record_t>::iterator it = trans_table.find(ind);
@@ -567,7 +564,6 @@ value_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
         record = it->second;
         if (record.signature == sig) {
             // match
-            found_in_table = true;
             bestMove = record.best_ref_move;
             if (record.depth >= depth) {
                 switch (record.IBV_score % 4) {
@@ -675,7 +671,6 @@ move_t Player::search_negamax_alphabeta(uint8_t depth) {
     ind = (uint32_t)sig;
     getFullClock(&age);
     record_t record;
-    bool found_in_table = false;
 
     // lookup
     std::map<uint32_t, record_t>::iterator it = trans_table.find(ind);
@@ -683,7 +678,6 @@ move_t Player::search_negamax_alphabeta(uint8_t depth) {
         record = it->second;
         if (record.signature == sig) {
             // match
-            found_in_table = true;
             bestMove = record.best_ref_move;
             if (record.depth >= depth) {
                 switch (record.IBV_score % 4) {
@@ -778,7 +772,6 @@ move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move, double
     ind = (uint32_t)sig;
     getFullClock(&age);
     record_t record;
-    bool found_in_table = false;
 
     // lookup
     std::map<uint32_t, record_t>::iterator it = trans_table.find(ind);
@@ -786,7 +779,6 @@ move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move, double
         record = it->second;
         if (record.signature == sig) {
             // match
-            found_in_table = true;
             bestMove = record.best_ref_move;
             if (record.depth >= depth) {
                 switch (record.IBV_score % 4) {
@@ -889,7 +881,6 @@ move_t Player::search_principal_variation(uint8_t depth) {
     ind = (uint32_t)sig;
     getFullClock(&age);
     record_t record;
-    bool found_in_table = false;
 
     // lookup
     std::map<uint32_t, record_t>::iterator it = trans_table.find(ind);
@@ -897,7 +888,6 @@ move_t Player::search_principal_variation(uint8_t depth) {
         record = it->second;
         if (record.signature == sig) {
             // match
-            found_in_table = true;
             bestMove = record.best_ref_move;
             if (record.depth >= depth) {
                 switch (record.IBV_score % 4) {
@@ -980,8 +970,6 @@ move_t Player::iterative_deepening(int timeout, uint8_t max_depth) {
     uint8_t depth = 1;
     move_t best_move(0,0,0,0,0,0);
     move_t new_move;
-    value_t alpha = std::numeric_limits<value_t>::min() / 10;
-    value_t beta = std::numeric_limits<value_t>::max() / 10;
 
     while (time_taken < timeout && depth <= max_depth) {
         new_move = search_negamax_alphabeta(depth, best_move, timeout - time_taken);
@@ -999,7 +987,7 @@ move_t Player::iterative_deepening(int timeout, uint8_t max_depth) {
 }
 
 move_t Player::search(uint8_t depth) {
-    return iterative_deepening(60);
+    return iterative_deepening(1);
 //    return search_negamax_alphabeta(depth);
 }
 

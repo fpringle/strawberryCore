@@ -52,7 +52,7 @@ public:
     bool lookup(uint64_t pos_hash, record_t * dest);
     std::vector<move_t> getHistory();
     std::map<uint32_t, record_t> getTable();
-    void print_history();
+    void print_history(std::ostream& cout = std::cout);
     void print_table();
     void save_state(std::string);
     void load_state(std::string);

@@ -10,5 +10,4 @@
 - make pawns better in middle during opening
 - config file
 - cutoff iterative deepening if two consecutive iterations produce the same move?
-- go through g++ warnings, get rid of unused variables etc
 - consistent naming convention

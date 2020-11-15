@@ -116,7 +116,6 @@ int board::is_checkmate() {
     //        -1  if black is in checkmate,
     //         0  otherwise
     if (!(is_check(black) || is_check(white))) return 0;
-    colour pre_side = sideToMove;
     struct move_t moves[256];
     int num_moves = gen_legal_moves(moves);
 
@@ -127,9 +126,9 @@ int board::is_checkmate() {
     set_side((sideToMove == white) ? black : white);
 
     num_moves = gen_legal_moves(moves);
+    set_side((sideToMove == white) ? black : white);
 
     if (num_moves == 0) {
-        set_side((sideToMove == white) ? black : white);
         return (sideToMove == white) ? -1 : 1;
     }
 
@@ -154,7 +153,6 @@ bool board::was_lastmove_check(move_t lastmove) {
     colourPiece movingPiece;
     int from_ind = lastmove.from_sq();
     int to_ind = lastmove.to_sq();
-    bitboard from_square = (1ULL << from_ind);
     bitboard to_square = (1ULL << to_ind);
     bitboard kingBoard = pieceBoards[(sideToMove * 6) + 5];
     int king_ind = last_set_bit(kingBoard);
@@ -165,13 +163,19 @@ bool board::was_lastmove_check(move_t lastmove) {
     bitboard _black = blackSquares();
     bitboard blockers = takenSquares();
 
+    bool foundMovingPiece = false;
+
     for (i = (otherSide)*6; i < (1 + otherSide)*6; i++) {
         if (pieceBoards[i] & to_square) {
             movingPiece = colourPiece(i);
+            foundMovingPiece = true;
             break;
         }
     }
 
+    if (! foundMovingPiece) {
+        return false;           // hmmm.....
+    }
 
     // direct check
     switch (movingPiece % 6) {
@@ -265,15 +269,20 @@ bool board::is_checking_move(move_t move) {
     int from_ind = move.from_sq();
     int to_ind = move.to_sq();
     bitboard from_square = (1ULL << from_ind);
-    bitboard to_square = (1ULL << to_ind);
     bitboard kingBoard = pieceBoards[((1 - sideToMove)*6) + 5]; // king under attack
     int king_ind = last_set_bit(kingBoard);
+    bool foundMovingPiece = false;
 
     for (i = sideToMove * 6; i < (1 + sideToMove)*6; i++) {
         if (pieceBoards[i] & from_square) {
             movingPiece = colourPiece(i);
+            foundMovingPiece = true;
             break;
         }
+    }
+
+    if (! foundMovingPiece) {
+        return false;
     }
 
     colour otherSide = (sideToMove == white) ? black : white; // side under attack
