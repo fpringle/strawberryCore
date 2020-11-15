@@ -5,6 +5,7 @@
 #include "play.h"
 #include "typedefs.h"
 
+#include <vector>
 #include <limits>
 #include <cstdint>
 #include <time.h>
@@ -970,24 +971,34 @@ move_t Player::iterative_deepening(int timeout, uint8_t max_depth) {
     uint8_t depth = 1;
     move_t best_move(0,0,0,0,0,0);
     move_t new_move;
+    std::vector<move_t> moves;
+    int sz;
 
     while (time_taken < timeout && depth <= max_depth) {
         new_move = search_negamax_alphabeta(depth, best_move, timeout - time_taken);
         depth++;
-        if (new_move.give()) best_move = new_move;
+        if (new_move.give()) {
+            best_move = new_move;
+            moves.push_back(best_move);
+        }
         time_taken = double(clock() - start_time) / double(CLOCKS_PER_SEC);
         std::cout << "Depth searched: " << depth - 1 << "   ("
                   << time_taken
                   << " seconds total)"
                   << "  (best move so far: "
                   << best_move << ")" << std::endl;
+
+        sz = moves.size();
+        if (((sz >= 8) || (sz >= 5 && time_taken > 10.0)) && moves[sz - 1] == moves[sz - 2]) {
+            break;
+        }
     }
 
     return best_move;
 }
 
 move_t Player::search(uint8_t depth) {
-    return iterative_deepening(1);
+    return iterative_deepening(60, depth);
 //    return search_negamax_alphabeta(depth);
 }
 
