@@ -16,6 +16,7 @@
 #define __BOARD_H
 
 #include "typedefs.h"
+#include "move.h"
 
 #include <cstdint>
 #include <iostream>
@@ -49,13 +50,13 @@ extern const char colours[2];
 
 // define enums for colour, piece and colourPiece
 
-enum colour {white,black};
-enum piece {pawn,rook,knight,bishop,queen,king};
-enum colourPiece {whitePawn,whiteRook,whiteKnight,
-                  whiteBishop,whiteQueen,whiteKing,
-                  blackPawn,blackRook,blackKnight,
-                  blackBishop,blackQueen,blackKing
-                 };
+//enum colour {white,black};
+//enum piece {pawn,rook,knight,bishop,queen,king};
+//enum colourPiece {whitePawn,whiteRook,whiteKnight,
+//                  whiteBishop,whiteQueen,whiteKing,
+//                  blackPawn,blackRook,blackKnight,
+//                  blackBishop,blackQueen,blackKing
+//                 };
 
 
 // defined in board.cpp
@@ -136,7 +137,7 @@ public:
     void print_all(std::ostream& cout = std::cout);
     std::string FEN();
     //    std::string SAN_post_move(move_t);
-    //    std::string SAN_pre_move (move_t);
+        std::string SAN_pre_move (move_t);
     //    move_t move_from_SAN(std::string);
     void FEN(std::ostream&);
 

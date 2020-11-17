@@ -60,6 +60,7 @@ Player::Player(bitboard * startPositions, bool * castling, bool ep, int dpp,
 Player::Player(Player& p1) : board::board(p1) {
     trans_table = p1.getTable();
     move_history = p1.getHistory();
+    move_history_san = p1.getHistorySAN();
 }
 
 Player::Player(std::string fen) : board::board(fen) {
@@ -81,6 +82,10 @@ std::vector<move_t> Player::getHistory() {
     return move_history;
 }
 
+std::vector<std::string> Player::getHistorySAN() {
+    return move_history_san;
+}
+
 std::map<uint32_t, record_t> Player::getTable() {
     return trans_table;
 }
@@ -91,6 +96,19 @@ void Player::print_history(std::ostream& cout) {
         cout << int((i / 2) + 1) << ". " << move_history[i];
         if (i + 1 < sz) {
             cout << "    " << move_history[i + 1] << std::endl;
+        }
+        else {
+            cout << std::endl;
+        }
+    }
+}
+
+void Player::print_history_san(std::ostream& cout) {
+    int sz = move_history_san.size();
+    for (int i=0; i<sz; i+=2) {
+        cout << int((i / 2) + 1) << ". " << move_history_san[i];
+        if (i + 1 < sz) {
+            cout << "    " << move_history_san[i + 1] << std::endl;
         }
         else {
             cout << std::endl;

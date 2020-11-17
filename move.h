@@ -1,7 +1,7 @@
 #ifndef __MOVE_H
 #define __MOVE_H
 
-#include "board.h"
+//#include "board.h"
 #include "typedefs.h"
 
 #include <cstdint>
@@ -84,6 +84,7 @@ public:
 // defined in move.cpp
 void print_move( struct move_t, std::ostream& cout = std::cout );
 move_t stom( move_t*, int, std::string);
+//std::string SAN_pre_move(board, move_t);
 
 // naive move generation
 // all defined in move.cpp

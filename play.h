@@ -38,6 +38,7 @@ class Player : public board {
 private:
     std::map<uint32_t, record_t> trans_table;
     std::vector<move_t> move_history;
+    std::vector<std::string> move_history_san;
 public:
     // constructors
     // defined in play.cpp
@@ -51,8 +52,10 @@ public:
     // defined in play.cpp
     bool lookup(uint64_t pos_hash, record_t * dest);
     std::vector<move_t> getHistory();
+    std::vector<std::string> getHistorySAN();
     std::map<uint32_t, record_t> getTable();
     void print_history(std::ostream& cout = std::cout);
+    void print_history_san(std::ostream& cout = std::cout);
     void print_table();
     void save_state(std::string);
     void load_state(std::string);

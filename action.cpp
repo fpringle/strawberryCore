@@ -448,8 +448,10 @@ void board::doMoveInPlace(move_t move) {
 
 
 void Player::doMoveInPlace(move_t move) {
+    std::string san = SAN_pre_move(move);
     board::doMoveInPlace(move);
     move_history.push_back(move);
+    move_history_san.push_back(san);
 }
 
 void Player::makeChild(board* child, move_t move) {

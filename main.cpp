@@ -22,11 +22,19 @@ int main() {
     move_t g8f6 = move_t(62, 45, 0, 0, 0, 0);
     move_t b1c3 = move_t( 1, 18, 0, 0, 0, 0);
 
+//    p.print_board();
+    std::cout << p.SAN_pre_move(g1f3) << std::endl;
     p.doMoveInPlace(g1f3);
+
+//    p.print_board();
+    std::cout << p.SAN_pre_move(g8f6) << std::endl;
     p.doMoveInPlace(g8f6);
+
+//    p.print_board();
+    std::cout << p.SAN_pre_move(b1c3) << std::endl;
     p.doMoveInPlace(b1c3);
 
-    p.print_history();
+    p.print_history_san();
 
     return 0;
 }

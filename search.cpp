@@ -11,6 +11,7 @@
 #include <time.h>
 
 #define USE_TABLE
+#define SEARCH_TIME 10
 
 namespace chessCore {
 
@@ -546,9 +547,9 @@ value_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
                                  value_t alpha, value_t beta) {
 
     value_t ret;
-    value_t alphaOrig = alpha;
 
 #ifdef USE_TABLE
+    value_t alphaOrig = alpha;
     uint64_t sig;
     uint32_t ind;
     move_t bestMove(0,0,0,0,0,0);
@@ -998,7 +999,7 @@ move_t Player::iterative_deepening(int timeout, uint8_t max_depth) {
 }
 
 move_t Player::search(uint8_t depth) {
-    return iterative_deepening(60, depth);
+    return iterative_deepening(SEARCH_TIME, depth);
 //    return search_negamax_alphabeta(depth);
 }
 

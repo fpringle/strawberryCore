@@ -2,12 +2,13 @@
 #include "move.h"
 #include "twiddle.h"
 #include "typedefs.h"
+#include "action.h"
 
 #include <cstdint>
 #include <iostream>
 #include <stdlib.h>     // for abs
 #include <string>
-
+#include <sstream>
 
 
 namespace chessCore {
@@ -98,7 +99,7 @@ int _stoi(std::string s) {
 //            int tmp;
 //
 //            while ( alternates ) {
-//                tmp = first_set_bit( alterantes );
+//                tmp = first_set_bit( alternates );
 //                alternates &= ( alternates - 1ULL );
 //                other_ranks[count] = tmp / 8;
 //                other_files[count] = tmp % 8;
@@ -139,90 +140,96 @@ int _stoi(std::string s) {
 //    return ret;
 //}
 //
-//std::string board::SAN_pre_move( move_t _move ) {
-//    std::string ret;
-//    int i;
-//    colour otherSide = ( sideToMove == white ) ? black : white;
-//
-//    if      ( _move.is_queenCastle() ) ret += "O-O-O";
-//    else if  ( _move.is_kingCastle() ) ret += "O-O";
-//
-//    else {
-//        int from_sq = _move.from_sq();
-//        int to_sq   = _move.to_sq();
-//        colourPiece cP;
-//
-//        for ( i=0; i<12; i++ ) {
-//            if ( is_bit_set(pieceBoards[i], from_sq) ) {
-//                cP = i;
-//                break;
-//            }
-//        }
-//
-//        char piece_sym = symbols[int(_piece)+6];
-//        std::string from_sq_str =  itos( from_sq );
-//        std::string to_sq_str   =  itos( to_sq );
-//
-//        if ( _piece != 0 ) {
-//            ret += piece_sym;
-//        }
-//
-//        // ambiguity tests
-//        bitboard alternates = pieceTargets( to_sq, whiteSquares(), blackSquares(), (cP+6)%12 );
-//        alternates &= pieceBoards[cP];
-//
-//        int other_ranks[8];
-//        int other_files[8];
-//        int from_file = from_sq % 8;
-//        int from_rank = from_sq / 8;
-//        bool unique_file = true;
-//        bool unique_rank = true;
-//        int count = 0;
-//        int tmp;
-//
-//        if ( alternates ) {
-//            while ( alternates ) {
-//                tmp = first_set_bit( alterantes );
-//                alternates &= ( alternates - 1ULL );
-//                other_ranks[count] = tmp / 8;
-//                other_files[count] = tmp % 8;
-//                count++;
-//            }
-//
-//            for ( i=0; i<count; i++ ) {
-//                if ( other_files[i] == from_file ) {
-//                    unique_file = false;
-//                }
-//                if ( other_ranks[i] == from_rank ) {
-//                    unique_rank = false;
-//                }
-//            }
-//
-//            if      ( unique_file ) ret += char('a'+from_file);
-//            else if ( unique_rank ) ret += char('1'+from_rank);
-//            else                    ret += char('a'+from_file) + char('1'+from_rank);
-//        }
-//
-//        if ( _move.is_capture() ) {
-//            ret += "x";
-//        }
-//
-//        ret += to_sqr_str;
-//
-//        if ( _move.is_promotion() ) {
-//            ret += "=";
-//            ret += symbols[int(_move.which_promotion())];
-//        }
-//    }
-//
-//    if ( is_checking_move( _move ) ) {
+
+
+std::string board::SAN_pre_move( move_t _move ) {
+    std::stringstream san;
+    int i;
+    colour otherSide = ( sideToMove == white ) ? black : white;
+
+    if      ( _move.is_queenCastle() ) san << "O-O-O";
+    else if  ( _move.is_kingCastle() ) san << "O-O";
+
+    else {
+        int from_sq = _move.from_sq();
+        int to_sq   = _move.to_sq();
+        piece movingPiece = piece((6 * sideToMove) + 6);
+
+        for ( i = 6 * sideToMove; i < (6 * sideToMove) + 6; i++ ) {
+            if ( is_bit_set(pieceBoards[i], from_sq) ) {
+                movingPiece = piece(i % 6);
+                break;
+            }
+        }
+
+        if (movingPiece == piece((6 * sideToMove) + 6)) {
+            return "";
+        }
+
+        char piece_sym = symbols[int(movingPiece)+6];
+        std::string from_sq_str =  itos( from_sq );
+        std::string to_sq_str   =  itos( to_sq );
+
+        if ( movingPiece != 0 ) {
+            san << piece_sym;
+
+    //         ambiguity tests
+            bitboard alternates = pieceTargets( to_sq, whiteSquares(), blackSquares(), colourPiece((movingPiece+(6*sideToMove)+6)%12) );
+            alternates &= pieceBoards[movingPiece + (6 * sideToMove)];
+            alternates &= (~ (1ULL << from_sq));
+
+            int from_file = from_sq % 8;
+            int from_rank = from_sq / 8;
+            bool unique_file = true;
+            bool unique_rank = true;
+            int tmp;
+
+            if ( alternates ) {
+//                print_bb(alternates);
+                std::cout << std::endl;
+                while ( alternates ) {
+                    tmp = first_set_bit( alternates );
+                    alternates &= ( alternates - 1ULL );
+                    if (int(tmp / 8) == from_rank) unique_rank = false;
+                    if (int(tmp % 8) == from_file) unique_file = false;
+                }
+
+                if      ( unique_file ) san << from_sq_str[0];
+                else if ( unique_rank ) san << from_sq_str[1];
+                else                    san << from_sq_str;
+            }
+
+        }
+
+        if (_move.is_capture()) {
+            if ( movingPiece == 0 ) {
+                san << char('a' + (from_sq % 8));
+            }
+
+            san << "x";
+        }
+
+        san << to_sq_str;
+
+        if ( _move.is_promotion() ) {
+            san << "=";
+            san << symbols[int(_move.which_promotion()) + 6];
+        }
+    }
+
+    if ( is_checking_move( _move ) ) {
+        board child = *this;
+        child.doMoveInPlace(_move);
 //        board child = doMove( *this, _move );
-//        if ( is_checkmate( otherSide ) ) ret += "#";
-//        else                             ret += "+";
-//    }
-//
-//    return ret;
-//}
+        if ( is_checkmate( otherSide ) ) san << "#";
+        else                             san << "+";
+    }
+
+    return san.str();
+}
+
+
+
 //
 //move_t board::move_from_SAN( std::string san ) {
 //    // castling
