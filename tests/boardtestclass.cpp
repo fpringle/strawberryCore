@@ -12,6 +12,8 @@
 #include <string>
 #include <cstdint>
 
+using namespace chessCore;
+
 CPPUNIT_TEST_SUITE_REGISTRATION(boardtestclass);
 
 boardtestclass::boardtestclass() { }

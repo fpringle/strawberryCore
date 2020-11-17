@@ -11,6 +11,8 @@
 #include "move.h"
 #include "action.h"
 
+using namespace chessCore;
+
 CPPUNIT_TEST_SUITE_REGISTRATION(checktestclass);
 
 checktestclass::checktestclass() { }

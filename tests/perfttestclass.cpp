@@ -21,6 +21,8 @@
 #include <limits>
 #include <algorithm>
 
+using namespace chessCore;
+
 CPPUNIT_TEST_SUITE_REGISTRATION(perfttestclass);
 
 perfttestclass::perfttestclass() { }

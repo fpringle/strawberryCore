@@ -9,6 +9,7 @@
 #include "movetestclass.h"
 #include "board.h"
 #include "move.h"
+#include "init.h"
 #include "twiddle.h"
 #include <string>
 #include <sstream>
@@ -16,6 +17,8 @@
 #include <vector>
 #include <algorithm>
 
+
+using namespace chessCore;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(movetestclass);
 
@@ -369,4 +372,52 @@ void movetestclass::testGenCaptures() {
     CPPUNIT_ASSERT(testGenPerft(b6, 3));
     std::cout << "Checked board 6 to depth 3, good\n";
 
+}
+
+bool perftSAN(board b, int depth) {
+    if (depth == 0) return true;
+
+    std::string san_pre, san_post;
+    move_t moves[256];
+    int num_moves = b.gen_legal_moves(moves);
+    board child;
+
+    for (int i=0; i<num_moves; i++) {
+        san_pre = b.SAN_pre_move(moves[i]);
+        child = b;
+        child.doMoveInPlace(moves[i]);
+        san_post = child.SAN_post_move(moves[i]);
+        if (san_pre != san_post) {
+            std::cout << b << moves[i] << std::endl
+                      << "pre:  " << san_pre << std::endl
+                      << "post: " << san_post << std::endl;
+            return false;
+        }
+        if (! perftSAN(child, depth-1)) return false;
+    }
+
+    return true;
+}
+
+void movetestclass::testSANoutput() {
+    init();
+    board b1;
+    board b2("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 1 0");
+    board b3("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1");
+    board b4("r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1");
+    board b5("rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8");
+    board b6("r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10");
+
+    CPPUNIT_ASSERT(perftSAN(b1, 5));
+    std::cout << "Successful b1\n";
+    CPPUNIT_ASSERT(perftSAN(b2, 5));
+    std::cout << "Successful b2\n";
+    CPPUNIT_ASSERT(perftSAN(b3, 5));
+    std::cout << "Successful b3\n";
+    CPPUNIT_ASSERT(perftSAN(b4, 5));
+    std::cout << "Successful b4\n";
+    CPPUNIT_ASSERT(perftSAN(b5, 5));
+    std::cout << "Successful b5\n";
+    CPPUNIT_ASSERT(perftSAN(b6, 5));
+    std::cout << "Successful b6\n";
 }

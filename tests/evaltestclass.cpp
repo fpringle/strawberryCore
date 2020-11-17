@@ -13,6 +13,8 @@
 #include "init.h"
 #include "action.h"
 
+using namespace chessCore;
+
 CPPUNIT_TEST_SUITE_REGISTRATION(evaltestclass);
 
 evaltestclass::evaltestclass() { }

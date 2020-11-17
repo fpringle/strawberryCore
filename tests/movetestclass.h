@@ -35,8 +35,10 @@ class movetestclass : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(testKingPushNaive);
     CPPUNIT_TEST(testKingTargets);
     
-    CPPUNIT_TEST(testGenCaptures);
+//    CPPUNIT_TEST(testGenCaptures);
     
+    CPPUNIT_TEST(testSANoutput);
+
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -76,6 +78,8 @@ private:
     void testQueenTargets();
 
     void testGenCaptures();
+
+    void testSANoutput();
 };
 
 #endif /* MOVETESTCLASS_H */

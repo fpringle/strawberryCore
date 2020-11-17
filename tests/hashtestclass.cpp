@@ -14,6 +14,8 @@
 #include "action.h"
 #include "play.h"
 
+using namespace chessCore;
+
 CPPUNIT_TEST_SUITE_REGISTRATION(hashtestclass);
 
 hashtestclass::hashtestclass() { }

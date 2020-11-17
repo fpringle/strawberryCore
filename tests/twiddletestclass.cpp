@@ -11,6 +11,8 @@
 #include "twiddle.h"
 
 
+using namespace chessCore;
+
 CPPUNIT_TEST_SUITE_REGISTRATION(twiddletestclass);
 
 twiddletestclass::twiddletestclass() { }

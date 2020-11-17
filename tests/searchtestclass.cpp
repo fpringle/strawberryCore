@@ -17,6 +17,8 @@
 #include <fstream>
 
 
+using namespace chessCore;
+
 CPPUNIT_TEST_SUITE_REGISTRATION(searchtestclass);
 
 searchtestclass::searchtestclass() { }

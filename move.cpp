@@ -56,92 +56,6 @@ int _stoi(std::string s) {
     return int(rank - '1')*8 + int(file - 'a');
 }
 
-//std::string board::SAN_post_move( move_t _move ) {
-//    std::string ret;
-//    int i;
-//
-//    if      ( _move.is_queenCastle() ) ret += "O-O-O";
-//    else if  ( _move.is_kingCastle() ) ret += "O-O";
-//
-//    else {
-//        int from_sq = _move.from_sq();
-//        int to_sq   = _move.to_sq();
-//        colourPiece cP;
-//
-//        for ( i=0; i<12; i++ ) {
-//            if ( is_bit_set(pieceBoards[i], to_sq) ) {
-//                cP = i;
-//                break;
-//            }
-//        }
-//
-//        char piece_sym = symbols[int(_piece)+6];
-//        std::string from_sq_str =  itos( from_sq );
-//        std::string to_sq_str   =  itos( to_sq );
-//
-//        if ( _piece != 0 ) {
-//            ret += piece_sym;
-//        }
-//
-//        // ambiguity tests
-//        colour otherSide = ( sideToMove == white ) ? black : white;
-//        bitboard alternates = pieceTargets( to_sq, whiteSquares(), blackSquares(), (cP+6)%12 );
-//        alternates &= pieceBoards[cP];
-//
-//        if ( alternates ) {
-//            int other_ranks[8];
-//            int other_files[8];
-//            int from_file = from_sq % 8;
-//            int from_rank = from_sq / 8;
-//            bool unique_file = true;
-//            bool unique_rank = true;
-//            int count = 0;
-//            int tmp;
-//
-//            while ( alternates ) {
-//                tmp = first_set_bit( alternates );
-//                alternates &= ( alternates - 1ULL );
-//                other_ranks[count] = tmp / 8;
-//                other_files[count] = tmp % 8;
-//                count++;
-//            }
-//
-//            for ( i=0; i<count; i++ ) {
-//                if ( other_files[i] == from_file ) {
-//                    unique_file = false;
-//                }
-//                if ( other_ranks[i] == from_rank ) {
-//                    unique_rank = false;
-//                }
-//            }
-//
-//            if      ( unique_file ) ret += char('a'+from_file);
-//            else if ( unique_rank ) ret += char('1'+from_rank);
-//            else                    ret += char('a'+from_file) + char('1'+from_rank);
-//        }
-//
-//        if ( _move.is_capture() ) {
-//            ret += "x";
-//        }
-//
-//        ret += to_sq_str;
-//
-//        if ( _move.is_promotion() ) {
-//            ret += "=";
-//            ret += symbols[int(_move.which_promotion())];
-//        }
-//    }
-//
-//    if ( is_check(sideToMove) ) {
-//        if ( is_checkmate(sideToMove) ) ret += "#";
-//        else                ret += "+";
-//    }
-//
-//    return ret;
-//}
-//
-
-
 std::string board::SAN_pre_move( move_t _move ) {
     std::stringstream san;
     int i;
@@ -186,7 +100,7 @@ std::string board::SAN_pre_move( move_t _move ) {
 
             if ( alternates ) {
 //                print_bb(alternates);
-                std::cout << std::endl;
+//                std::cout << std::endl;
                 while ( alternates ) {
                     tmp = first_set_bit( alternates );
                     alternates &= ( alternates - 1ULL );
@@ -217,10 +131,118 @@ std::string board::SAN_pre_move( move_t _move ) {
         }
     }
 
-    if ( is_checking_move( _move ) ) {
-        board child = *this;
-        child.doMoveInPlace(_move);
+    board child = *this;
+    child.doMoveInPlace(_move);
+
+    if ( child.is_check( otherSide ) ) {
 //        board child = doMove( *this, _move );
+        if ( child.is_checkmate( otherSide ) ) san << "#";
+        else                             san << "+";
+    }
+
+    return san.str();
+}
+
+
+std::string board::SAN_post_move( move_t _move ) {
+    std::stringstream san;
+    int i;
+    colour side_to_move = ( sideToMove == white ) ? black : white;
+    colour otherSide = sideToMove;
+
+    if      ( _move.is_queenCastle() ) san << "O-O-O";
+    else if  ( _move.is_kingCastle() ) san << "O-O";
+
+    else {
+        int from_sq = _move.from_sq();
+        int to_sq   = _move.to_sq();
+        piece movingPiece = piece((6 * side_to_move) + 6);
+
+        if (_move.is_promotion()) {
+            movingPiece = pawn;
+        }
+        else {
+
+            for ( i = 6 * side_to_move; i < (6 * side_to_move) + 6; i++ ) {
+                if ( is_bit_set(pieceBoards[i], to_sq) ) {
+                    movingPiece = piece(i % 6);
+                    break;
+                }
+            }
+
+            if (movingPiece == piece((6 * side_to_move) + 6)) {
+                return "";
+            }
+        }
+
+        char piece_sym = symbols[int(movingPiece)+6];
+        std::string from_sq_str =  itos( from_sq );
+        std::string to_sq_str   =  itos( to_sq );
+
+
+
+        if ( movingPiece != 0 ) {
+            san << piece_sym;
+
+            // ambiguity tests
+            bitboard _white = whiteSquares();
+            bitboard _black = blackSquares();
+            if (side_to_move == white) {
+                _white |= (1ULL << from_sq);
+            }
+            else {
+                _black |= (1ULL << from_sq);
+            }
+
+//            print_bb(_white);
+//            std::cout << std::endl;
+//            print_bb(_black);
+//            std::cout << std::endl;
+
+            bitboard alternates = pieceTargets( to_sq, _white, _black, colourPiece((movingPiece+(6*otherSide))%12) );
+            alternates &= pieceBoards[movingPiece + (6 * side_to_move)];
+            alternates &= (~ (1ULL << from_sq));
+
+            int from_file = from_sq % 8;
+            int from_rank = from_sq / 8;
+            bool unique_file = true;
+            bool unique_rank = true;
+            int tmp;
+
+            if ( alternates ) {
+//                print_bb(alternates);
+//                std::cout << std::endl;
+                while ( alternates ) {
+                    tmp = first_set_bit( alternates );
+                    alternates &= ( alternates - 1ULL );
+                    if (int(tmp / 8) == from_rank) unique_rank = false;
+                    if (int(tmp % 8) == from_file) unique_file = false;
+                }
+
+                if      ( unique_file ) san << from_sq_str[0];
+                else if ( unique_rank ) san << from_sq_str[1];
+                else                    san << from_sq_str;
+            }
+
+        }
+
+        if (_move.is_capture()) {
+            if ( movingPiece == 0) {
+                san << char('a' + (from_sq % 8));
+            }
+
+            san << "x";
+        }
+
+        san << to_sq_str;
+
+        if ( _move.is_promotion() ) {
+            san << "=";
+            san << symbols[int(_move.which_promotion()) + 6];
+        }
+    }
+
+    if ( is_check(otherSide) ) {
         if ( is_checkmate( otherSide ) ) san << "#";
         else                             san << "+";
     }
