@@ -121,41 +121,41 @@ board::board(bitboard * startPositions, bool * castling, bool ep, int dpp,
     hash_value = hash;
 }
 
-board::board(board & b1) {
+board::board(board& other) {
     // copy constructor
 
     // initialise an array of pointers to the piece bitboards
-    bitboard * p = b1.pieceBoards;
+    bitboard * p = other.pieceBoards;
     bitboard * q = pieceBoards;
 
-    while (p < b1.pieceBoards + 12) *q++ = *p++;
+    while (p < other.pieceBoards + 12) *q++ = *p++;
 
     // castling rights
-    castleWhiteKingSide = b1.castleWhiteKingSide;
-    castleWhiteQueenSide = b1.castleWhiteQueenSide;
-    castleBlackKingSide = b1.castleBlackKingSide;
-    castleBlackQueenSide = b1.castleBlackQueenSide;
+    castleWhiteKingSide = other.castleWhiteKingSide;
+    castleWhiteQueenSide = other.castleWhiteQueenSide;
+    castleBlackKingSide = other.castleBlackKingSide;
+    castleBlackQueenSide = other.castleBlackQueenSide;
 
     // 50-move rule
-    halfMoveClock = b1.halfMoveClock;
-    fullMoveClock = b1.fullMoveClock;
+    halfMoveClock = other.halfMoveClock;
+    fullMoveClock = other.fullMoveClock;
 
     // en passant pawn capture
-    lastMoveDoublePawnPush = b1.lastMoveDoublePawnPush;
+    lastMoveDoublePawnPush = other.lastMoveDoublePawnPush;
 
     // double pawn push file
 
-    dPPFile = b1.dPPFile;
+    dPPFile = other.dPPFile;
 
     // side to move
-    sideToMove = b1.sideToMove;
+    sideToMove = other.sideToMove;
 
     // value
-    opening_value = b1.opening_value;
-    endgame_value = b1.endgame_value;
+    opening_value = other.opening_value;
+    endgame_value = other.endgame_value;
 
     // hash
-    hash_value = b1.hash_value;
+    hash_value = other.hash_value;
 }
 
 board::board(std::string fen) {
@@ -535,40 +535,6 @@ void board::print_board_flipped(std::ostream& cout) {
     cout << "\n   H G F E D C B A\n";
 }
 
-void board::print_board_indent(std::ostream& cout, int indent) {
-    // uppercase = black, lowercase = white
-    int i, j;
-    bitboard tmp;
-    char to_print[64];
-    for (i = 0; i < 64; i++) to_print[i] = '.';
-
-    for (i = 0; i < 12; i++) {
-        tmp = pieceBoards[i]; //pieces[i];
-        for (j = 0; j < 64; j++) {
-            if (tmp & 1ULL) {
-                to_print[j] = symbols[i];
-            }
-            tmp >>= 1;
-            //if (~tmp) break;
-        }
-    }
-
-    for (i = 0; i < indent; i++) cout << " ";
-
-    cout << "   A B C D E F G H\n\n";
-    for (i = 7; i >= 0; i--) {
-        for (j = 0; j < indent; j++) cout << " ";
-        cout << i + 1 << " ";
-        for (j = 0; j < 8; j++) {
-            cout << " " << to_print[i * 8 + j];
-        }
-        cout << "  " << i + 1 << std::endl;
-    }
-    cout << std::endl;
-    for (i = 0; i < indent; i++) cout << " ";
-    cout << "   A B C D E F G H\n";
-}
-
 void board::print_all(std::ostream& cout) {
     print_board(cout);
 
@@ -601,7 +567,7 @@ void board::print_all(std::ostream& cout) {
     cout << "  " << + fullMoveClock << "\n";
 }
 
-std::ostream& operator<<(std::ostream &out, const board &brd) {
+std::ostream& operator<<(std::ostream& out, const board& brd) {
     // uppercase = black, lowercase = white
     int i, j;
     bitboard pieceBoards[12];
@@ -702,73 +668,6 @@ std::string board::FEN() {
     return ss.str();
 }
 
-void board::FEN(std::ostream& ss) {
-    int count;
-    int i, j, k;
-    bitboard tmp;
-    char to_print[64];
-    for (i = 0; i < 64; i++) to_print[i] = '.';
-
-    for (i = 0; i < 12; i++) {
-        tmp = pieceBoards[i];
-        for (j = 0; j < 8; j++) {
-            for (k = 0; k < 8; k++) {
-                if (tmp & 1ULL) {
-                    to_print[((7 - j)*8) + k] = symbols[(i + 6) % 12];
-                }
-                tmp >>= 1;
-            }
-        }
-    }
-
-    for (i = 0; i < 8; i++) {
-        for (j = 0; j < 8; j++) {
-            if (to_print[i * 8 + j] == '.') {
-                count = j;
-                while (to_print[i * 8 + count] == '.' && count < 8) count++;
-                ss << char('0' + (count - j));
-                j = count - 1;
-            }
-            else {
-                ss << to_print[i * 8 + j];
-            }
-        }
-        if (i != 7) {
-            ss << "/";
-        }
-    }
-
-    if (sideToMove == white) ss << " w ";
-    else ss << " b ";
-
-
-    if (!(castleWhiteKingSide | castleWhiteQueenSide | castleBlackKingSide |
-            castleBlackQueenSide)) {
-        ss << "-";
-    }
-
-    else {
-        if (castleWhiteKingSide) ss << "K";
-        if (castleWhiteQueenSide) ss << "Q";
-        if (castleBlackKingSide) ss << "k";
-        if (castleBlackQueenSide) ss << "q";
-    }
-
-    ss << " ";
-
-    if (lastMoveDoublePawnPush) {
-        ss << char('a' + dPPFile);
-        ss << ((sideToMove == white) ? "6" : "3");
-    }
-
-    else {
-        ss << " -";
-    }
-
-    ss << " " << + halfMoveClock;
-    ss << " " << + fullMoveClock;
-}
-
 void board::set_piece(colourPiece cP, int pos) {
     pieceBoards[cP] |= (1ULL << pos);
 }
@@ -791,8 +690,8 @@ void board::update_hash() {
     hash_value = zobrist_hash();
 }
 
-void board::set_hash(uint64_t _hash) {
-    hash_value = _hash;
+void board::set_hash(uint64_t hash) {
+    hash_value = hash;
 }
 
 void board::setBitboards(bitboard * bb) {

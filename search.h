@@ -8,64 +8,30 @@
 
 namespace chessCore {
 
-class Searcher {
-public:
-    static value_t algorithm(board b, int depth, colour side);
-    static value_t algorithm(board b, int depth, colour side,
-                             value_t alpha, value_t beta);
-    static move_t search(board b, int depth);
-};
 
-
-class Minimax : Searcher {
-public:
-    static value_t algorithm(board b, int depth, colour side);
-    static move_t search(board b, int depth);
-};
-
-class Negamax : Searcher {
-public:
-    static value_t algorithm(board b, int depth, colour side);
-    static move_t search(board b, int depth);
-};
-
-class NegamaxAB : Searcher {
-public:
-    static value_t algorithm(board b, int depth, colour side,
-                             value_t alpha, value_t beta);
-    static move_t search(board b, int depth);
-};
-
-class NegaScoutOriginal : Searcher {
-public:
-    static value_t algorithm(board b, int depth, colour side,
-                             value_t alpha, value_t beta);
-    static move_t search(board b, int depth);
-};
-
-class NegaScoutAlternative : Searcher {
-public:
-    static value_t algorithm(board b, int depth, colour side,
-                             value_t alpha, value_t beta);
-    static move_t search(board b, int depth);
-};
-
-class PVS : Searcher {
-public:
-    static value_t algorithm(board b, int depth, colour side,
-                             value_t alpha, value_t beta);
-    static move_t search(board b, int depth);
-};
-
-
-
-////////////////////////////////////////
-
+/**
+ *  \brief Perform a quiescence search on a board.
+ *
+ *  Quiescence search is a technique to mitigate the horizon effect,
+ *  where we recursively search through all the upcoming capture tradeoffs
+ *  to get a better heuristic value for a given position.
+ *
+ *  \param b            The board to analyse.
+ *  \param side         The side whose turn it is to move.
+ *  \param alpha        The current value of alpha in negamax search.
+ *  \param beta         The current value of beta in negamax search.
+ *  \return             The heuristic value for the node.
+ */
 value_t quiesce(board b, colour side, value_t alpha, value_t beta);
 
-////////////////////////////////////////
-
-
+/**
+ *  Given an array of moves and a preferred "best move" to search first,
+ *  reorder the array so that the move is searched first.
+ *
+ *  \param moves        An array of moves to search.
+ *  \param num_moves    The length of the array moves.
+ *  \param best_move    The move we want to search first.
+ */
 void reorder_moves(move_t * moves, int num_moves, move_t best_move);
 
 

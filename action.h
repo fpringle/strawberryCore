@@ -6,9 +6,15 @@
 
 namespace chessCore {
 
-// defined in action.cpp
-board doMove (board, move_t);
-board unMove (board, move_t);
+/**
+ *  Perform a move.
+ *
+ *  \param startBoard       The board before the move is made.
+ *  \param move             The move to be made.
+ *  \return                 The board after the move is made.
+ */
+board doMove (board startBoard, move_t move);
+
 
 }
 

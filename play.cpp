@@ -116,11 +116,11 @@ void Player::print_history_san(std::ostream& cout) {
     }
 }
 
-void Player::print_table() {
+void Player::print_table(std::ostream& cout) {
     std::map<uint32_t, record_t>::iterator it;
     for (it = trans_table.begin(); it != trans_table.end(); it++) {
-        std::cout << it->first << ":" << std::endl
-                  << it->second << std:: endl;
+        cout << it->first << ":" << std::endl
+             << it->second << std:: endl;
     }
 }
 

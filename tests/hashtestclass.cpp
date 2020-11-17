@@ -175,7 +175,7 @@ void divideHash(board b, int depth) {
 
     for (int i = 0; i < n_moves; i++) {
         child = doMove(b, moves[i]);
-        print_move(moves[i]);
+        std::cout << moves[i];
         if (perftHash(child, depth - 1)) std::cout << "   success\n";
         else std::cout << "   fail\n";
     }

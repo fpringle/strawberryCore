@@ -5,13 +5,18 @@
 
 namespace chessCore {
 
-// piece values for material evaluation
-// defined in eval.cpp
+/**
+ *  Constant values for material evaluation, indexed by phase and square index.
+ *  See \ref eval.h.
+ */
 extern const value_t pieceValues[2][12];
 
 
-// piece square tables
-// defined in eval.cpp
+/**
+ *  Constant values for piece placement evaluation, indexed by phase,
+ *  piece, and square index.
+ *  See \ref eval.h.
+ */
 extern const value_t pieceSquareTables[2][12][64];
 
 

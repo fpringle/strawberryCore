@@ -44,7 +44,7 @@ bool verify_legalgen(board b) {
     for (i = 0; i < n_moves; i++) {
 #if DEBUG
         std::cout << "  ";
-        print_move(moves[i]);
+        std::cout << moves[i];
 #endif
         if (b.is_legal(moves[i])) {
             legal[n_legal] = moves[i];
@@ -72,7 +72,7 @@ bool verify_legalgen(board b) {
 #if DEBUG
     for (i = 0; i < n_legal; i++) {
         std::cout << "  ";
-        print_move(legal[i]);
+        std::cout << legal[i];
         std::cout << std::endl;
     }
 #endif
@@ -94,7 +94,7 @@ bool verify_legalgen(board b) {
 #if DEBUG
     for (i = 0; i < n_gen_legal; i++) {
         std::cout << "  ";
-        print_move(legal_gen[i]);
+        std::cout << legal_gen[i];
         std::cout << std::endl;
     }
 #endif

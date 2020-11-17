@@ -13,3 +13,5 @@ __pycache__
 *.o.d
 /scripts/obj
 /log/
+/doc/
+old_search_for_posterity.cpp

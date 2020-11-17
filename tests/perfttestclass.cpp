@@ -184,7 +184,7 @@ void perfttestclass::testPosition3() { //    8
             for (j = 0; j < _n_pseudo; j++) {
                 child = doMove(_board, moves_pseudo[j]);
                 if (!child.is_check(white)) {
-                    //                    print_move( moves_pseudo[j] );
+                    //                    std::cout <<  moves_pseudo[j] ;
                     //                    std::cout << std::endl;
                 }
                 else n_pseudo--;
@@ -192,7 +192,7 @@ void perfttestclass::testPosition3() { //    8
             //            std::cout << "  Total: " << n_pseudo << std::endl;
             //            std::cout << "Our moves:\n";
             //            for ( j=0; j<n_legal; j++ ) {
-            //                print_move( moves_legal[j] );
+            //                std::cout <<  moves_legal[j] ;
             //                std::cout << std::endl;
             //            }
             //            std::cout << "  Total: " << n_legal << std::endl;
@@ -234,13 +234,13 @@ void perfttestclass::testPosition4() { //    6
                 child = doMove(_board, moves_pseudo[j]);
                 if (child.is_check(white)) continue;
                 //                std::cout << "   "; 
-                //                print_move( moves_pseudo[j] );
+                //                std::cout <<  moves_pseudo[j] ;
                 //                std::cout << std::endl;
             }
             //            std::cout << "Ours:\n";
             //            for ( j=0; j<n_legal; j++ ) {
             //                std::cout << "   ";
-            //                print_move( moves_legal[j] );
+            //                std::cout <<  moves_legal[j] ;
             //                std::cout << std::endl;
             //            }
         }
@@ -280,13 +280,13 @@ void perfttestclass::testPosition5() { //    6
                 child = doMove(_board, moves_pseudo[j]);
                 if (child.is_check(white)) continue;
                 //                std::cout << "   "; 
-                //                print_move( moves_pseudo[j] );
+                //                std::cout <<  moves_pseudo[j] ;
                 //                std::cout << std::endl;
             }
             //            std::cout << "Ours:\n";
             //            for ( j=0; j<n_legal; j++ ) {
             //                std::cout << "   ";
-            //                print_move( moves_legal[j] );
+            //                std::cout <<  moves_legal[j] ;
             //                std::cout << std::endl;
             //            }
         }
@@ -326,13 +326,13 @@ void perfttestclass::testPosition6() { //    6
                 child = doMove(_board, moves_pseudo[j]);
                 if (child.is_check(white)) continue;
                 //                std::cout << "   "; 
-                //                print_move( moves_pseudo[j] );
+                //                std::cout <<  moves_pseudo[j] ;
                 //                std::cout << std::endl;
             }
             //            std::cout << "Ours:\n";
             //            for ( j=0; j<n_legal; j++ ) {
             //                std::cout << "   ";
-            //                print_move( moves_legal[j] );
+            //                std::cout <<  moves_legal[j] ;
             //                std::cout << std::endl;
             //            }
         }
@@ -360,7 +360,7 @@ void divide_pseud(board _board, int depth, unsigned int * cache) {
         if (_child.is_check(side)) {
             if (moves[i].is_promotion()) {
                 //                std::cout << "promotion ";
-                //                print_move( moves[i] );
+                //                std::cout <<  moves[i] ;
                 //                std::cout << " causes a check\n";
                 if (moves[i].is_capture()) {
                     std::cout << "      (capture)\n";
@@ -370,7 +370,7 @@ void divide_pseud(board _board, int depth, unsigned int * cache) {
         }
         num_perft = PERFT_simple(_child, depth - 1, print_progress);
         if (_print_moves) {
-            print_move(moves[i]);
+            std::cout << moves[i];
             std::cout << ": " << num_perft << std::endl;
         }
         if (!moves[i].is_promotion()) {
@@ -402,7 +402,7 @@ void divide_pseud(board _board, int depth, unsigned int * cache) {
             cache[ _ind ] = num_perft;
             //            std::cout << "promotion at square " << moves[i].to_sq();
             //            std::cout << "    adding ";
-            //            print_move(moves[i]);
+            //            std::cout << moves[i];
             //            std::cout << " to pseud_cache at index " << _ind << std::endl;
         }
         total += num_perft;
@@ -434,7 +434,7 @@ bool divide_legal(board _board, int depth, unsigned int * cache) {
         _child = doMove(_board, moves[i]);
         num_perft = PERFT_legalcheck_faster(_child, depth - 1, print_progress);
         if (_print_moves) {
-            print_move(moves[i]);
+            std::cout << moves[i];
             std::cout << ": " << num_perft << std::endl;
         }
         if (!moves[i].is_promotion()) {
@@ -466,7 +466,7 @@ bool divide_legal(board _board, int depth, unsigned int * cache) {
             cache[ _ind ] = num_perft;
             //            std::cout << "promotion at square " << moves[i].to_sq();
             //            std::cout << "    adding ";
-            //            print_move(moves[i]);
+            //            std::cout << moves[i];
             //            std::cout << " to legal_cache at index " << _ind << std::endl;
         }
         total += num_perft;
@@ -533,9 +533,9 @@ void perfttestclass::divideStartboard() {
         int i;
 
         for (i = 0; i < std::max(n_pseud, n_legal); i++) {
-            print_move(pseud[i]);
+            std::cout << pseud[i];
             std::cout << "   ";
-            print_move(legal[i]);
+            std::cout << legal[i];
             std::cout << "\n";
         }
     }
@@ -601,9 +601,9 @@ void perfttestclass::dividePos2() {
         int i;
 
         for (i = 0; i < std::max(n_pseud, n_legal); i++) {
-            print_move(pseud[i]);
+            std::cout << pseud[i];
             std::cout << "   ";
-            print_move(legal[i]);
+            std::cout << legal[i];
             std::cout << "\n";
         }
     }
@@ -651,14 +651,14 @@ void perfttestclass::dividePos3() {
                 if (i < 4096) {
                     from_sq = i / 64;
                     to_sq = i % 64;
-                    print_move(move_t(from_sq, to_sq, 0, 0, 0, 0));
+                    std::cout << move_t(from_sq, to_sq, 0, 0, 0, 0);
                 }
                 else {
                     to_sq = i - 4096;
                     if (to_sq < 32) to_sq = to_sq / 4;
                     else to_sq = ((to_sq - 32) / 4) + 56;
                     int j = i % 4;
-                    print_move(move_t(0, to_sq, 1, 0, j / 2, j % 2));
+                    std::cout << move_t(0, to_sq, 1, 0, j / 2, j % 2);
                 }
                 std::cout << "   ";
                 std::cout << pseud_cache[i] << "   ";
@@ -680,9 +680,9 @@ void perfttestclass::dividePos3() {
         int i;
 
         for (i = 0; i < std::max(n_pseud, n_legal); i++) {
-            print_move(pseud[i]);
+            std::cout << pseud[i];
             std::cout << "   ";
-            print_move(legal[i]);
+            std::cout << legal[i];
             std::cout << "\n";
         }
     }
@@ -748,9 +748,9 @@ void perfttestclass::dividePos4() {
         int i;
 
         for (i = 0; i < std::max(n_pseud, n_legal); i++) {
-            print_move(pseud[i]);
+            std::cout << pseud[i];
             std::cout << "   ";
-            print_move(legal[i]);
+            std::cout << legal[i];
             std::cout << "\n";
         }
     }
@@ -772,7 +772,7 @@ void perfttestclass::pos3b4b1f4f3e2e3f3g2b1h1() {
         child = doMove(b, pseud_moves[i]);
         if (child.is_check(black)) continue;
         std::cout << "  ";
-        print_move(pseud_moves[i]);
+        std::cout << pseud_moves[i];
         std::cout << std::endl;
         _num_pseud++;
     }
@@ -781,7 +781,7 @@ void perfttestclass::pos3b4b1f4f3e2e3f3g2b1h1() {
     std::cout << "\n\nlegal:\n";
     for (int i = 0; i < num_legal; i++) {
         std::cout << "  ";
-        print_move(legal_moves[i]);
+        std::cout << legal_moves[i];
         std::cout << std::endl;
     }
     std::cout << "    Total: " << num_legal;

@@ -56,17 +56,17 @@ int _stoi(std::string s) {
     return int(rank - '1')*8 + int(file - 'a');
 }
 
-std::string board::SAN_pre_move( move_t _move ) {
+std::string board::SAN_pre_move( move_t move ) {
     std::stringstream san;
     int i;
     colour otherSide = ( sideToMove == white ) ? black : white;
 
-    if      ( _move.is_queenCastle() ) san << "O-O-O";
-    else if  ( _move.is_kingCastle() ) san << "O-O";
+    if      ( move.is_queenCastle() ) san << "O-O-O";
+    else if  ( move.is_kingCastle() ) san << "O-O";
 
     else {
-        int from_sq = _move.from_sq();
-        int to_sq   = _move.to_sq();
+        int from_sq = move.from_sq();
+        int to_sq   = move.to_sq();
         piece movingPiece = piece((6 * sideToMove) + 6);
 
         for ( i = 6 * sideToMove; i < (6 * sideToMove) + 6; i++ ) {
@@ -115,7 +115,7 @@ std::string board::SAN_pre_move( move_t _move ) {
 
         }
 
-        if (_move.is_capture()) {
+        if (move.is_capture()) {
             if ( movingPiece == 0 ) {
                 san << char('a' + (from_sq % 8));
             }
@@ -125,17 +125,17 @@ std::string board::SAN_pre_move( move_t _move ) {
 
         san << to_sq_str;
 
-        if ( _move.is_promotion() ) {
+        if ( move.is_promotion() ) {
             san << "=";
-            san << symbols[int(_move.which_promotion()) + 6];
+            san << symbols[int(move.which_promotion()) + 6];
         }
     }
 
     board child = *this;
-    child.doMoveInPlace(_move);
+    child.doMoveInPlace(move);
 
     if ( child.is_check( otherSide ) ) {
-//        board child = doMove( *this, _move );
+//        board child = doMove( *this, move );
         if ( child.is_checkmate( otherSide ) ) san << "#";
         else                             san << "+";
     }
@@ -144,21 +144,21 @@ std::string board::SAN_pre_move( move_t _move ) {
 }
 
 
-std::string board::SAN_post_move( move_t _move ) {
+std::string board::SAN_post_move( move_t move ) {
     std::stringstream san;
     int i;
     colour side_to_move = ( sideToMove == white ) ? black : white;
     colour otherSide = sideToMove;
 
-    if      ( _move.is_queenCastle() ) san << "O-O-O";
-    else if  ( _move.is_kingCastle() ) san << "O-O";
+    if      ( move.is_queenCastle() ) san << "O-O-O";
+    else if  ( move.is_kingCastle() ) san << "O-O";
 
     else {
-        int from_sq = _move.from_sq();
-        int to_sq   = _move.to_sq();
+        int from_sq = move.from_sq();
+        int to_sq   = move.to_sq();
         piece movingPiece = piece((6 * side_to_move) + 6);
 
-        if (_move.is_promotion()) {
+        if (move.is_promotion()) {
             movingPiece = pawn;
         }
         else {
@@ -226,7 +226,7 @@ std::string board::SAN_post_move( move_t _move ) {
 
         }
 
-        if (_move.is_capture()) {
+        if (move.is_capture()) {
             if ( movingPiece == 0) {
                 san << char('a' + (from_sq % 8));
             }
@@ -236,9 +236,9 @@ std::string board::SAN_post_move( move_t _move ) {
 
         san << to_sq_str;
 
-        if ( _move.is_promotion() ) {
+        if ( move.is_promotion() ) {
             san << "=";
-            san << symbols[int(_move.which_promotion()) + 6];
+            san << symbols[int(move.which_promotion()) + 6];
         }
     }
 
@@ -495,7 +495,37 @@ piece move_t::which_promotion() {
 }
 
 std::ostream& operator<<(std::ostream &out, const move_t &move) {
-    print_move(move, out);
+
+    move_t _move = move;
+
+    if (_move.give() == 0) {
+        out << "NULL";
+        return out;
+    }
+
+    int fromSq = _move.from_sq();
+    int toSq = _move.to_sq();
+
+    itos(fromSq, out);
+    itos(toSq, out);
+
+    if (_move.is_promotion()) {
+        switch (_move.flags() & 6) {
+        case 0:
+            out << "Q";
+            break;
+        case 2:
+            out << "R";
+            break;
+        case 4:
+            out << "B";
+            break;
+        case 6:
+            out << "N";
+            break;
+        }
+    }
+
     return out;
 }
 
@@ -505,40 +535,6 @@ bool operator==(const move_t &self, const move_t &other) {
 
 bool operator!=(const move_t &self, const move_t &other) {
     return self.data != other.data;
-}
-
-void print_move(struct move_t move, std::ostream& cout) {
-    if (move.give() == 0) {
-        cout << "NULL";
-        return;
-    }
-
-    int fromSq = move.from_sq();
-    int toSq = move.to_sq();
-
-    //itos( fromSq, from_c );
-    //itos(   toSq,   to_c );
-
-    itos(fromSq, cout);
-    itos(toSq, cout);
-
-    if (move.is_promotion()) {
-        switch (move.flags() & 6) {
-        case 0:
-            cout << "Q";
-            break;
-        case 2:
-            cout << "R";
-            break;
-        case 4:
-            cout << "B";
-            break;
-        case 6:
-            cout << "N";
-            break;
-        }
-    }
-
 }
 
 move_t stom(move_t* moves, int n_moves, std::string s) {

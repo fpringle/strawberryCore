@@ -334,6 +334,19 @@ value_t board::evaluate_pieceSquareTables(int phase) {
     return ret;
 }
 
+value_t board::getValue() {
+    int phase = getPhase();
+    return (opening_value * (256 - phase) + endgame_value * phase) / 256;
+}
+
+value_t board::getOpeningValue() {
+    return opening_value;
+}
+
+value_t board::getEndgameValue() {
+    return endgame_value;
+}
+
 value_t board::evaluate() {
     int phase = getPhase();
     value_t open = evaluateOpening();
@@ -348,19 +361,6 @@ value_t board::evaluateOpening() {
 
 value_t board::evaluateEndgame() {
     return evaluate_material(1) + evaluate_pieceSquareTables(1);
-}
-
-value_t board::getValue() {
-    int phase = getPhase();
-    return (opening_value * (256 - phase) + endgame_value * phase) / 256;
-}
-
-value_t board::getOpeningValue() {
-    return opening_value;
-}
-
-value_t board::getEndgameValue() {
-    return endgame_value;
 }
 
 int board::getPhase() {
