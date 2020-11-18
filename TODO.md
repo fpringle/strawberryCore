@@ -1,7 +1,6 @@
 # To-do list
 - generate checking moves
 - undo a move (unMove in action.h)
-- Function comments to explain parameters
 - better variable names
 - test suite with check-in-x challenges etc
 - SAN input
@@ -9,7 +8,5 @@
 - make pawns better in middle during opening
 - config file
 - consistent naming convention
-- utility functions for common operations (e.g. get moving piece,
-  iterate through bits set using macros, other side)
 - fix bugs in is_checking_move, was_lastmove_check
         - then use in san pre/post

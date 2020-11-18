@@ -8,6 +8,12 @@
 
 namespace chessCore {
 
+#define FSB first_set_bit
+#define ITER_BITBOARD(ind, bb) \
+    for(ind = FSB(bb); bb; bb &= (bb - 1ULL), ind = FSB(bb))
+
+
+
 // constant masks
 // defined in twiddle.cpp
 /**@{*/

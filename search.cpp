@@ -26,7 +26,7 @@ value_t quiesce(board b, colour side, value_t alpha, value_t beta) {
     if (stand_pat > alpha) alpha = stand_pat;
 
 
-    colour otherSide = (side == white) ? black : white;
+    colour otherSide = flipColour(side);
     move_t captures[256];
     int num_captures = b.gen_captures(captures);
     board child;
@@ -112,7 +112,7 @@ value_t Player::principal_variation(board b, colour side, uint8_t depth,
         return ret;
     }
 
-    colour otherSide = (side == white) ? black : white;
+    colour otherSide = flipColour(side);
     bool bSearchPv = true;
     board child;
     struct move_t moves[256];
@@ -243,7 +243,7 @@ value_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
         return ret;
     }
 
-    colour otherSide = (side == white) ? black : white;
+    colour otherSide = flipColour(side);
     board child;
     struct move_t moves[256];
     value_t score, value = std::numeric_limits<value_t>::min() + 10;
@@ -356,7 +356,7 @@ move_t Player::search_negamax_alphabeta(uint8_t depth) {
     board child;
     colour side;
     getSide(&side);
-    colour otherSide = (side == white) ? black : white;
+    colour otherSide = flipColour(side);
 
     struct move_t moves[256];
     int num_moves = gen_legal_moves(moves);
@@ -457,7 +457,7 @@ move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move, double
     board child;
     colour side;
     getSide(&side);
-    colour otherSide = (side == white) ? black : white;
+    colour otherSide = flipColour(side);
 
     struct move_t moves[256];
     int num_moves = gen_legal_moves(moves);
@@ -566,7 +566,7 @@ move_t Player::search_principal_variation(uint8_t depth) {
     board child;
     colour side;
     getSide(&side);
-    colour otherSide = (side == white) ? black : white;
+    colour otherSide = flipColour(side);
 
     struct move_t moves[256];
     int num_moves = gen_legal_moves(moves);

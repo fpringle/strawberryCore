@@ -59,7 +59,7 @@ int _stoi(std::string s) {
 std::string board::SAN_pre_move( move_t move ) {
     std::stringstream san;
     int i;
-    colour otherSide = ( sideToMove == white ) ? black : white;
+    colour otherSide = flipColour(sideToMove);
 
     if      ( move.is_queenCastle() ) san << "O-O-O";
     else if  ( move.is_kingCastle() ) san << "O-O";
@@ -99,11 +99,7 @@ std::string board::SAN_pre_move( move_t move ) {
             int tmp;
 
             if ( alternates ) {
-//                print_bb(alternates);
-//                std::cout << std::endl;
-                while ( alternates ) {
-                    tmp = first_set_bit( alternates );
-                    alternates &= ( alternates - 1ULL );
+                ITER_BITBOARD(tmp, alternates) {
                     if (int(tmp / 8) == from_rank) unique_rank = false;
                     if (int(tmp % 8) == from_file) unique_file = false;
                 }
@@ -147,7 +143,7 @@ std::string board::SAN_pre_move( move_t move ) {
 std::string board::SAN_post_move( move_t move ) {
     std::stringstream san;
     int i;
-    colour side_to_move = ( sideToMove == white ) ? black : white;
+    colour side_to_move = flipColour(sideToMove);
     colour otherSide = sideToMove;
 
     if      ( move.is_queenCastle() ) san << "O-O-O";
@@ -210,11 +206,7 @@ std::string board::SAN_post_move( move_t move ) {
             int tmp;
 
             if ( alternates ) {
-//                print_bb(alternates);
-//                std::cout << std::endl;
-                while ( alternates ) {
-                    tmp = first_set_bit( alternates );
-                    alternates &= ( alternates - 1ULL );
+                ITER_BITBOARD(tmp, alternates) {
                     if (int(tmp / 8) == from_rank) unique_rank = false;
                     if (int(tmp % 8) == from_file) unique_file = false;
                 }
@@ -401,16 +393,16 @@ move_t::move_t(uint16_t cons_data) {
 // bit 14:    special 1
 // bit 15:    promotion
 
-uint16_t move_t::from_sq() {
+uint8_t move_t::from_sq() {
     return (data & 63);
 }
 
-uint16_t move_t::to_sq() {
+uint8_t move_t::to_sq() {
     return (data >> 6) & 63;
 }
 
-uint16_t move_t::flags() {
-    return (data >> 12);
+uint8_t move_t::flags() {
+    return (data >> 12) & 15;
 }
 
 bool move_t::is_quiet() {
@@ -451,8 +443,6 @@ bool move_t::is_capture() {
 bool move_t::is_ep_capture() {
     return (flags() == 3);
 }
-//bool move_t::special1()     { return (flags() & 4); }
-//bool move_t::special0()     { return (flags() & 2); }
 
 bool move_t::is_doublePP() {
     return (flags() == 2);
@@ -831,9 +821,7 @@ int board::gen_moves(move_t * moves) {
             if (pieceBoards[piece] & (1ULL << from_sq)) {
                 targets = pieceTargets(from_sq, _white, _black, colourPiece(piece));
 
-                while (targets) {
-                    to_sq = first_set_bit(targets);
-                    //          if (targets & 1ULL) {
+                ITER_BITBOARD(to_sq, targets) {
                     // found a move!
                     if (((1ULL << to_sq) & _black) | ((1ULL << to_sq) & _white)) {
                         // capture
@@ -872,7 +860,6 @@ int board::gen_moves(move_t * moves) {
                             }
                         }
                     }
-                    targets &= (targets - 1ULL);
                 }
             }
         }
@@ -956,15 +943,13 @@ int board::get_out_of_check(move_t * moves, piece checkingPiece,
                                     colourPiece((sideToMove * 6) + 5));
     int to_ind;
 
-    while (targets) {
-        to_ind = first_set_bit(targets);
+    ITER_BITBOARD(to_ind, targets) {
         if (_other & (1ULL << to_ind)) {
             count += add_moves(&moves, move_t(king_ind, to_ind, 0, 1, 0, 0), true);
         }
         else {
             count += add_moves(&moves, move_t(king_ind, to_ind, 0, 0, 0, 0), true);
         }
-        targets &= (targets - 1ULL);
     }
 
     if (double_check) {
@@ -978,9 +963,7 @@ int board::get_out_of_check(move_t * moves, piece checkingPiece,
         defender = pieceTargets(checkingInd, _white, _black,
                                 colourPiece((i + 6) % 12)) & pieceBoards[i];
 
-        while (defender) {
-            from_sq = first_set_bit(defender);
-            //              if ( defender & 1ULL ) {
+        ITER_BITBOARD(from_sq, defender) {
             if (i == (6 * sideToMove) && (checkingInd / 8 == 0 || checkingInd / 8 == 7)) {
                 move_t prom_queen(from_sq, checkingInd, 1, 1, 0, 0);
                 if (!is_legal(prom_queen)) continue;
@@ -993,7 +976,6 @@ int board::get_out_of_check(move_t * moves, piece checkingPiece,
                 count += add_moves(&moves, move_t(from_sq, checkingInd, 0, 1, 0, 0), true);
             }
             //              }
-            defender &= (defender - 1ULL);
         }
     }
     bitboard left = oneW(1ULL << checkingInd);
@@ -1042,8 +1024,8 @@ int board::get_out_of_check(move_t * moves, piece checkingPiece,
             blockingInd += _dir) {
         // pawns
         blockers = pieceBoards[sideToMove * 6];
-        while (blockers) {
-            defenderInd = first_set_bit(blockers);
+
+        ITER_BITBOARD(defenderInd, blockers) {
             if (is_bit_set(pieceTargets(defenderInd, _white, _black,
                                         colourPiece(sideToMove * 6)), blockingInd)) {
                 switch (abs(defenderInd - blockingInd)) {
@@ -1056,7 +1038,6 @@ int board::get_out_of_check(move_t * moves, piece checkingPiece,
                     break;
                 }
             }
-            blockers &= (blockers - 1);
         }
 
 
@@ -1065,10 +1046,8 @@ int board::get_out_of_check(move_t * moves, piece checkingPiece,
                 blockingPiece++) {
             blockers = pieceBoards[blockingPiece] & pieceTargets(blockingInd, _white,
                        _black, colourPiece((blockingPiece + 6) % 12));
-            while (blockers) {
-                defenderInd = first_set_bit(blockers);
+            ITER_BITBOARD(defenderInd, blockers) {
                 count += add_moves(&moves, move_t(defenderInd, blockingInd, 0, 0, 0, 0), true);
-                blockers &= (blockers - 1ULL);
             }
         }
     }
@@ -1092,8 +1071,7 @@ int board::gen_captures(move_t * moves) {
             if (pieceBoards[_piece] & (1ULL << from_sq)) {
                 targets = pieceTargets(from_sq, _white, _black, colourPiece(_piece));
 
-                while (targets) {
-                    to_sq = first_set_bit(targets);
+                ITER_BITBOARD(to_sq, targets) {
                     if ((1ULL << to_sq) & _other) {
                         // capture
                         if (_piece % 6 == 0 && ((rankOne | rankEight)&(1ULL << to_sq))) {
@@ -1107,7 +1085,6 @@ int board::gen_captures(move_t * moves) {
                             count += add_moves(&moves, move_t(from_sq, to_sq, 0, 1, 0, 0), true);
                         }
                     }
-                    targets &= (targets - 1ULL);
                 }
             }
         }
@@ -1164,8 +1141,7 @@ int board::gen_legal_moves(move_t * moves) {
             if (pieceBoards[_piece] & (1ULL << from_sq)) {
                 targets = pieceTargets(from_sq, _white, _black, colourPiece(_piece));
 
-                while (targets) {
-                    to_sq = first_set_bit(targets);
+                ITER_BITBOARD(to_sq, targets) {
                     // found a move!
                     if ((1ULL << to_sq) & _other) {
                         // capture
@@ -1204,7 +1180,6 @@ int board::gen_legal_moves(move_t * moves) {
                             }
                         }
                     }
-                    targets &= (targets - 1ULL);
                 }
             }
         }
@@ -1292,7 +1267,7 @@ bool board::is_legal(struct move_t move) {
         return false;
     }
 
-    colour otherSide = (sideToMove == white) ? black : white;
+    colour otherSide = flipColour(sideToMove);
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
 

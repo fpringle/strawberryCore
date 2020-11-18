@@ -100,10 +100,8 @@ uint64_t board::zobrist_hash() {
     // pieces
     for (cP = 0; cP < 12; cP++) {
         tmp = pieceBoards[cP];
-        while (tmp) {
-            i = first_set_bit(tmp);
+        ITER_BITBOARD(i, tmp) {
             ret ^= zobristKeys[cP * 64 + i];
-            tmp &= (tmp - 1ULL);
         }
     }
 

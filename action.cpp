@@ -27,7 +27,7 @@ board doMove(board startBoard, move_t move) {
     value_t endgame_value = startBoard.getEndgameValue();
     colour movingColour;
     startBoard.getSide(& movingColour);
-    colour otherColour = (movingColour == white) ? black : white;
+    colour otherColour = flipColour(movingColour);
     colourPiece movingPiece;
     bool rooktaken = false;
     bool foundMovingPiece = false;
@@ -243,8 +243,7 @@ void board::doMoveInPlace(move_t move) {
     int i;
     uint16_t fromSquare = move.from_sq();
     uint16_t toSquare = move.to_sq();
-    //  int plus_minus = ( sideToMove == white ) ? 1 : -1;
-    colour otherColour = (sideToMove == white) ? black : white;
+    colour otherColour = flipColour(sideToMove);
     colourPiece movingPiece;
     bool rooktaken = false;
     bool foundMovingPiece = false;

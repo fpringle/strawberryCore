@@ -323,12 +323,12 @@ value_t board::evaluate_pieceSquareTables(int phase) {
     int i;
     bitboard tmp;
     value_t ret = 0;
+    int ind;
 
     for (i = 0; i < 12; i++) {
         tmp = pieceBoards[i];
-        while (tmp) {
-            ret += pieceSquareTables[phase][i][first_set_bit(tmp)];
-            tmp &= (tmp - 1ULL);
+        ITER_BITBOARD(ind, tmp) {
+            ret += pieceSquareTables[phase][i][ind];
         }
     }
     return ret;

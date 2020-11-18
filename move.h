@@ -137,21 +137,21 @@ public:
     /**
      *  Get the from square of the move.
      *
-     *  \return             16-bit integer representing the from square.
+     *  \return             8-bit unsigned integer representing the from square.
      */
-    uint16_t from_sq();
+    uint8_t from_sq();
     /**
      *  Get the from square of the move.
      *
-     *  \return             16-bit integer representing the from square.
+     *  \return             8-bit unsigned integer representing the from square.
      */
-    uint16_t to_sq();
+    uint8_t to_sq();
     /**
      *  Get the flag data of the square.
      *
-     *  \return             16-bit integer representing the move flags.
+     *  \return             8-bit unsigned integer representing the move flags.
      */
-    uint16_t flags();
+    uint8_t flags();
 
     /**
      *  Whether or not the move is "quiet", in other words not a capture,

@@ -11,7 +11,7 @@ bool board::is_check(colour side) {
     int kingpos = last_set_bit(pieceBoards[ (6 * side) + 5 ]);
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
-    colour otherSide = (side == white) ? black : white;
+    colour otherSide = flipColour(side);
 
     // pawns
     if (pawnAttackNaive(kingpos,
@@ -38,7 +38,7 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
     int kingpos = last_set_bit(pieceBoards[ (6 * side) + 5 ]);
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
-    colour otherSide = (side == white) ? black : white;
+    colour otherSide = flipColour(side);
     bitboard _check;
     int count = 0;
 
@@ -123,10 +123,10 @@ int board::is_checkmate() {
         return (sideToMove == white) ? 1 : -1;
     }
 
-    set_side((sideToMove == white) ? black : white);
+    set_side(flipColour(sideToMove));
 
     num_moves = gen_legal_moves(moves);
-    set_side((sideToMove == white) ? black : white);
+    set_side(flipColour(sideToMove));
 
     if (num_moves == 0) {
         return (sideToMove == white) ? -1 : 1;
@@ -157,8 +157,7 @@ bool board::was_lastmove_check(move_t lastmove) {
     bitboard kingBoard = pieceBoards[(sideToMove * 6) + 5];
     int king_ind = last_set_bit(kingBoard);
 
-    colour otherSide = (sideToMove == white) ? black :
-                       white; // side that just moved
+    colour otherSide = flipColour(sideToMove);
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
     bitboard blockers = takenSquares();
@@ -285,7 +284,7 @@ bool board::is_checking_move(move_t move) {
         return false;
     }
 
-    colour otherSide = (sideToMove == white) ? black : white; // side under attack
+    colour otherSide = flipColour(sideToMove);
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
     bitboard blockers = takenSquares();

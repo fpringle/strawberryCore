@@ -11,6 +11,11 @@
 
 namespace chessCore {
 
+colour flipColour(colour side) {
+    if (side == white) return black;
+    else return white;
+}
+
 // initialise constants declared in board.h
 const char symbols[12] = {'p', 'r', 'n', 'b', 'q', 'k',
                           'P', 'R', 'N', 'B', 'Q', 'K'

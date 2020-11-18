@@ -32,6 +32,14 @@
  */
 namespace chessCore {
 
+/**
+ *
+ *  Convenience function for getting the opposing side.
+ *
+ *  \param side             The colour to invert.
+ *  \return                 \ref white if side is \ref black, else \black.
+ */
+colour flipColour(colour side);
 
 // declare starting bitboards
 // defined in board.cpp
