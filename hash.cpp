@@ -91,7 +91,7 @@ void init_keys(uint64_t seed) {
 
 // zobrist hash
 
-uint64_t board::zobrist_hash() {
+uint64_t board::zobrist_hash() const {
     uint64_t ret = 0;
     int cP;
     bitboard tmp;

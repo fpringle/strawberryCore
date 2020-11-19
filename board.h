@@ -200,7 +200,7 @@ public:
      *
      *  \param other    The board object to be copied.
      */
-    board(board& other);
+    board(const board& other);
 
     /**
      *  \brief FEN constructor for board.
@@ -219,7 +219,7 @@ public:
      *  \param other        RHS board object to compare.
      *  \return             True if the moves are equal, false otherwise.
      */
-    bool operator==(const board& other);
+    bool operator==(const board& other) const;
 
     /**
      *  Inequality comparison operator for board.
@@ -227,7 +227,7 @@ public:
      *  \param other        RHS board object to compare.
      *  \return             False if the moves are equal, true otherwise.
      */
-    bool operator!=(const board& other);
+    bool operator!=(const board& other) const;
 
     /**
      *  Print the board to an output stream.
@@ -259,49 +259,49 @@ public:
      *
      *  \param[out] dest    The location to copy to.
      */
-    void getCastlingRights(bool* dest);
+    void getCastlingRights(bool* dest) const;
 
     /**
      *  Get a copy of the en-passant boolean.
      *
      *  \param[out] dest    The location to copy to.
      */
-    void getEP(bool* dest);
+    void getEP(bool* dest) const;
 
     /**
      *  Get a copy of the double pawn push file.
      *
      *  \param[out] dest    The location to copy to.
      */
-    void getdPPFile(int* dest);
+    void getdPPFile(int* dest) const;
 
     /**
      *  Get a copy of the half-move clock.
      *
      *  \param[out] dest    The location to copy to.
      */
-    void getClock(uint8_t* dest);
+    void getClock(uint8_t* dest) const;
 
     /**
      *  Get a copy of the full-move clock.
      *
      *  \param[out] dest    The location to copy to.
      */
-    void getFullClock(uint8_t* dest);
+    void getFullClock(uint8_t* dest) const;
 
     /**
      *  Get a copy of the side to move.
      *
      *  \param[out] dest    The location to copy to.
      */
-    void getSide(colour* dest);
+    void getSide(colour* dest) const;
 
     /**
      *  Get a copy of the Zobrist hash value.
      *
      *  \param[out] dest    The location to copy to.
      */
-    void getHash(uint64_t* dest);
+    void getHash(uint64_t* dest) const;
 
     /**
      *  Get the number of pieces of a particular type that remain on the board.
@@ -309,13 +309,13 @@ public:
      *  \param cp       The colour/piece combination to count. See \ref colourPiece.
      *  \return         The number of pieces cp that remain on the board.
      */
-    int num_pieces_left(colourPiece cp);
+    int num_pieces_left(colourPiece cp) const;
     /**
      *  Get the total number of pieces that remain on the board.
      *
      *  \return         The number of pieces hat remain on the board.
      */
-    int num_pieces_left();
+    int num_pieces_left() const;
 
     // evaluation
     // defined in eval.cpp
@@ -329,7 +329,7 @@ public:
      *                  a negative value means that black is winning.
      *                  See \ref value_t.
      */
-    value_t evaluate_material(int phase);
+    value_t evaluate_material(int phase) const;
 
     /**
      *  Evaluate the board based on the placement of pieces left on each side.
@@ -341,7 +341,7 @@ public:
      *                  a negative value means that black is winning.
      *                  See \ref value_t.
      */
-    value_t evaluate_pieceSquareTables(int phase);
+    value_t evaluate_pieceSquareTables(int phase) const;
 
     /**
      *  Get the interpolated phase-dependent value of the board.
@@ -351,7 +351,7 @@ public:
      *                  a negative value means that black is winning.
      *                  See \ref value_t.
      */
-    value_t getValue();
+    value_t getValue() const;
 
     /**
      *  Get the opening value of the board.
@@ -361,7 +361,7 @@ public:
      *                  a negative value means that black is winning.
      *                  See \ref value_t.
      */
-    value_t getOpeningValue();
+    value_t getOpeningValue() const;
 
     /**
      *  Get the endgame value of the board.
@@ -371,7 +371,7 @@ public:
      *                  a negative value means that black is winning.
      *                  See \ref value_t.
      */
-    value_t getEndgameValue();
+    value_t getEndgameValue() const;
 
     /**
      *  Calculate the interpolated phase-dependent value of the board.
@@ -381,7 +381,7 @@ public:
      *                  a negative value means that black is winning.
      *                  See \ref value_t.
      */
-    value_t evaluate();
+    value_t evaluate() const;
 
     /**
      *  Calculate the opening value of the board.
@@ -391,7 +391,7 @@ public:
      *                  a negative value means that black is winning.
      *                  See \ref value_t.
      */
-    value_t evaluateOpening();
+    value_t evaluateOpening() const;
 
     /**
      *  Calculate the endgame value of the board.
@@ -401,7 +401,7 @@ public:
      *                  a negative value means that black is winning.
      *                  See \ref value_t.
      */
-    value_t evaluateEndgame();
+    value_t evaluateEndgame() const;
 
     /**
      *  Calculate the phase of the game based on the number of pieces
@@ -411,7 +411,7 @@ public:
                         of the game. 0 corresponds to the opening and 256
                         corresponds to the endgame.
      */
-    int getPhase();
+    int getPhase() const;
 
     /**
      *  Print the state of the pieces on the board, white side down.
@@ -419,7 +419,7 @@ public:
      *  \param cout     The output stream to print to. Defaults to the
      *                  standard ouput stream std::cout.
      */
-    void print_board(std::ostream& cout = std::cout);
+    void print_board(std::ostream& cout = std::cout) const;
 
     /**
      *  Print the state of the pieces on the board, black side down.
@@ -427,7 +427,7 @@ public:
      *  \param cout     The output stream to print to. Defaults to the
      *                  standard ouput stream std::cout.
      */
-    void print_board_flipped(std::ostream& cout = std::cout);
+    void print_board_flipped(std::ostream& cout = std::cout) const;
 
     /**
      *  Print the state of the pieces on the board, with added information
@@ -436,14 +436,14 @@ public:
      *  \param cout     The output stream to print to. Defaults to the
      *                  standard ouput stream std::cout.
      */
-    void print_all(std::ostream& cout = std::cout);
+    void print_all(std::ostream& cout = std::cout) const;
 
     /**
      *  Represent the board state as a string in Forsyth-Edwards Notation (FEN).
      *
      *  \return         A string representing the board in FEN format.
      */
-    std::string FEN();
+    std::string FEN() const;
 
     /**
      *  Represent a move to be played as a string in Standard Algebraic
@@ -452,7 +452,7 @@ public:
      *  \param move     The move to represented
      *  \return         A string representing the move in SAN format.
      */
-    std::string SAN_pre_move(move_t move);
+    std::string SAN_pre_move(move_t move) const;
 
     /**
      *  Represent a move that has just been played as a string in Standard
@@ -461,7 +461,7 @@ public:
      *  \param move     The move to represented
      *  \return         A string representing the move in SAN format.
      */
-    std::string SAN_post_move(move_t move);
+    std::string SAN_post_move(move_t move) const;
     //    move_t move_from_SAN(std::string);
 
     /**
@@ -551,26 +551,26 @@ public:
      *
      *  \return         A bitboard representing the locations of the white pieces.
      */
-    bitboard whiteSquares();
+    bitboard whiteSquares() const;
 
     /**
      *  Get a bitboard representing the locations of the black pieces.
      *
      *  \return         A bitboard representing the locations of the black pieces.
      */
-    bitboard blackSquares();
+    bitboard blackSquares() const;
     /**
      *  Get a bitboard representing the locations of all pieces.
      *
      *  \return         A bitboard representing the locations of all the pieces.
      */
-    bitboard takenSquares();
+    bitboard takenSquares() const;
     /**
      *  Get a bitboard representing the locations of all empty squares.
      *
      *  \return         A bitboard representing the locations of all empty squares.
      */
-    bitboard emptySquares();
+    bitboard emptySquares() const;
 
     /**
      *  Add a move to an array, with the option to check if the move is legal.
@@ -583,7 +583,7 @@ public:
      *                          successfully. Automatically returns true if
      *                          check_legal is false.
      */
-    bool add_moves(move_t** dest, move_t move, bool legal_check);
+    bool add_moves(move_t** dest, move_t move, bool legal_check) const;
 
     /**
      *  Generate all pseudo-legal moves from a given position.
@@ -592,7 +592,7 @@ public:
      *  \return                 An integer corresponding to the number of moves
      *                          generated.
      */
-    int gen_moves(move_t* moves);
+    int gen_moves(move_t* moves) const;
 
     /**
      *  Check if a particular move is legal in the current board state.
@@ -600,7 +600,7 @@ public:
      *  \param move             A move to check.
      *  \return                 True if the move is legal, false otherwise.
      */
-    bool is_legal(move_t move);
+    bool is_legal(move_t move) const;
 
     /**
      *  Generate all captures from a given position.
@@ -609,11 +609,12 @@ public:
      *  \return                 An integer corresponding to the number of captures
      *                          generated.
      */
-    int gen_captures(move_t* moves);
+    int gen_captures(move_t* moves) const;
 
     /**
      *  Generate all moves that get the side to move out of check.
      *
+     *  \param side             The side in check.
      *  \param moves            An empty array of moves.
      *  \param checkingPiece    The colour/piece combination checking the king.
      *  \param checkingInd      The square index of the checking piece.
@@ -622,8 +623,22 @@ public:
      *  \return                 An integer corresponding to the number of moves
      *                          generated.
      */
-    int get_out_of_check(move_t* moves, piece checkingPiece, int checkingInd,
-                         int kingInd, bool double_check);
+    int get_out_of_check(colour side, move_t* moves, piece checkingPiece,
+                         int checkingInd, int kingInd, bool double_check) const;
+
+    /**
+     *  Determine whether a given side can get out of check.
+     *  Equivalent to (get_out_of_check(...) > 0)
+     *
+     *  \param side             The side in check.
+     *  \param checkingPiece    The colour/piece combination checking the king.
+     *  \param checkingInd      The square index of the checking piece.
+     *  \param kingInd          The square index of the king under attack.
+     *  \param double_check     Whether the king is under double check.
+     *  \return                 True if side can get out of check, false otherwise.
+     */
+    bool can_get_out_of_check(colour side, piece checkingPiece,
+                         int checkingInd, int kingInd, bool double_check) const;
 
     /**
      *  Generate all legal moves from a given position.
@@ -632,7 +647,7 @@ public:
      *  \return                 An integer corresponding to the number of moves
      *                          generated.
      */
-    int gen_legal_moves(move_t* moves);
+    int gen_legal_moves(move_t* moves) const;
 
     /**
      *  Do a move in-place.
@@ -648,7 +663,7 @@ public:
      *  \return                 An unsigned 64-bit integer representing the
                                 Zobrist hash of the board.
      */
-    uint64_t zobrist_hash();
+    uint64_t zobrist_hash() const;
 
     /**
      *  Test if a given side is in check.
@@ -656,7 +671,7 @@ public:
      *  \param side             The colour to test.
      *  \return                 True if side is in check, false otherwise.
      */
-    bool is_check(colour side);
+    bool is_check(colour side) const;
 
     /**
      *  Test if a given side is in check. If so, output the type and location
@@ -671,7 +686,7 @@ public:
      *  \return                         True if side is in check, false otherwise.
      */
     bool is_check(colour side, piece* checkingPiece,
-                  int* checkingInd, bool* doubleCheck);
+                  int* checkingInd, bool* doubleCheck) const;
 
     /**
      *  Test if a given side is in checkmate.
@@ -679,7 +694,7 @@ public:
      *  \param side             The colour to test.
      *  \return                 True if side is in checkmate, false otherwise.
      */
-    bool is_checkmate(colour side);
+    bool is_checkmate(colour side) const;
 
     /**
      *  Test if either side is in checkmate.
@@ -689,21 +704,21 @@ public:
      *                          -1 if black is in checkmate,\n
      *                          0  otherwise.
      */
-    int is_checkmate();
+    int is_checkmate() const;
 
     /**
      *  Test if the game is a stalemate.
      *
      *  \return                 True if stalemate, false otherwise.
      */
-    bool is_stalemate();
+    bool is_stalemate() const;
 
     /**
      *  Test if the game is over, whether by checkmate or stalemate.
      *
      *  \return                 True if game over, false otherwise.
      */
-    bool gameover();
+    bool gameover() const;
 
     /**
      *  Test if the last played move was checking.
@@ -711,7 +726,7 @@ public:
      *  \param lastmove         The last move played.
      *  \return                 True if move was checking, false otherwise.
      */
-    bool was_lastmove_check(move_t lastmove);
+    bool was_lastmove_check(move_t lastmove) const;
 
     /**
      *  Test if a move will be checking.
@@ -719,7 +734,7 @@ public:
      *  \param move             A move to be played.
      *  \return                 True if move is checking, false otherwise.
      */
-    bool is_checking_move(move_t move);
+    bool is_checking_move(move_t move) const;
 };
 
 

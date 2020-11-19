@@ -126,11 +126,11 @@ board::board(bitboard * startPositions, bool * castling, bool ep, int dpp,
     hash_value = hash;
 }
 
-board::board(board& other) {
+board::board(const board& other) {
     // copy constructor
 
     // initialise an array of pointers to the piece bitboards
-    bitboard * p = other.pieceBoards;
+    const bitboard * p = other.pieceBoards;
     bitboard * q = pieceBoards;
 
     while (p < other.pieceBoards + 12) *q++ = *p++;
@@ -321,7 +321,7 @@ board::board(std::string fen) {
 
 // operator overloading - do this with hashes instead?
 
-bool board::operator==(const board& other) {
+bool board::operator==(const board& other) const {
     int i;
 
     for (i = 0; i < 12; i++) {
@@ -368,7 +368,7 @@ bool board::operator==(const board& other) {
     return true;
 }
 
-bool board::operator!=(const board& other) {
+bool board::operator!=(const board& other) const {
     return !(*this == other);
 }
 
@@ -420,42 +420,42 @@ void board::getBitboards(bitboard * dest) const {
     while (p < pieceBoards + 12) *dest++ = *p++;
 }
 
-void board::getCastlingRights(bool * dest) {
+void board::getCastlingRights(bool * dest) const {
     dest[0] = castleWhiteKingSide;
     dest[1] = castleWhiteQueenSide;
     dest[2] = castleBlackKingSide;
     dest[3] = castleBlackQueenSide;
 }
 
-void board::getEP(bool * dest) {
+void board::getEP(bool * dest) const {
     *dest = lastMoveDoublePawnPush;
 }
 
-void board::getdPPFile(int * dest) {
+void board::getdPPFile(int * dest) const {
     *dest = dPPFile;
 }
 
-void board::getClock(uint8_t * dest) {
+void board::getClock(uint8_t * dest) const {
     *dest = halfMoveClock;
 }
 
-void board::getFullClock(uint8_t * dest) {
+void board::getFullClock(uint8_t * dest) const {
     *dest = fullMoveClock;
 }
 
-void board::getSide(colour * dest) {
+void board::getSide(colour * dest) const {
     *dest = sideToMove;
 }
 
-void board::getHash(uint64_t * dest) {
+void board::getHash(uint64_t * dest) const {
     *dest = hash_value;
 }
 
-int board::num_pieces_left(colourPiece cp) {
+int board::num_pieces_left(colourPiece cp) const {
     return count_bits_set(pieceBoards[cp]);
 }
 
-int board::num_pieces_left() {
+int board::num_pieces_left() const {
     int ret = 0;
     for (int i = 0; i < 12; i++) {
         ret += num_pieces_left(colourPiece(i));
@@ -482,7 +482,7 @@ void print_bb(bitboard bb, char c, std::ostream& cout) {
 
 // display the current state of the board
 
-void board::print_board(std::ostream& cout) {
+void board::print_board(std::ostream& cout) const {
     // uppercase = black, lowercase = white
     int i, j;
     bitboard tmp;
@@ -511,7 +511,7 @@ void board::print_board(std::ostream& cout) {
     cout << "\n   A B C D E F G H\n";
 }
 
-void board::print_board_flipped(std::ostream& cout) {
+void board::print_board_flipped(std::ostream& cout) const {
     // uppercase = black, lowercase = white
     int i, j;
     bitboard tmp;
@@ -540,7 +540,7 @@ void board::print_board_flipped(std::ostream& cout) {
     cout << "\n   H G F E D C B A\n";
 }
 
-void board::print_all(std::ostream& cout) {
+void board::print_all(std::ostream& cout) const {
     print_board(cout);
 
     cout << "\nSide to move:\n";
@@ -602,7 +602,7 @@ std::ostream& operator<<(std::ostream& out, const board& brd) {
     return out;
 }
 
-std::string board::FEN() {
+std::string board::FEN() const {
     int count;
     std::stringstream ss;
     int i, j, k;
@@ -726,7 +726,7 @@ void board::setFullClock(uint8_t clk) {
     fullMoveClock = clk;
 }
 
-bitboard board::whiteSquares() {
+bitboard board::whiteSquares() const {
     int i;
     bitboard ret = 0;
 
@@ -734,7 +734,7 @@ bitboard board::whiteSquares() {
     return ret;
 }
 
-bitboard board::blackSquares() {
+bitboard board::blackSquares() const {
     int i;
     bitboard ret = 0;
 
@@ -742,11 +742,11 @@ bitboard board::blackSquares() {
     return ret;
 }
 
-bitboard board::takenSquares() {
+bitboard board::takenSquares() const {
     return (whiteSquares() | blackSquares());
 }
 
-bitboard board::emptySquares() {
+bitboard board::emptySquares() const {
     return ( ~takenSquares());
 }
 

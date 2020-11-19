@@ -6,7 +6,7 @@
 
 namespace chessCore {
 
-bool board::is_check(colour side) {
+bool board::is_check(colour side) const {
     // on-the-fly check detection
     int kingpos = last_set_bit(pieceBoards[ (6 * side) + 5 ]);
     bitboard _white = whiteSquares();
@@ -33,7 +33,7 @@ bool board::is_check(colour side) {
 }
 
 bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
-                     bool * doubleCheck) {
+                     bool * doubleCheck) const {
     // on-the-fly check detection
     int kingpos = last_set_bit(pieceBoards[ (6 * side) + 5 ]);
     bitboard _white = whiteSquares();
@@ -101,42 +101,32 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
     return ( count > 0);
 }
 
-bool board::is_checkmate(colour side) {
-    if (!is_check(side)) return false;
-    colour pre_side = sideToMove;
-    set_side(side);
-    struct move_t moves[256];
-    int num_moves = gen_legal_moves(moves);
-    set_side(pre_side);
-    return (num_moves == 0);
+bool board::is_checkmate(colour side) const {
+    piece checkingPiece;
+    int checkingInd;
+    bool double_check = false;
+    move_t moves[256];
+
+    if (! is_check(side, &checkingPiece, &checkingInd, &double_check)) {
+        return false;
+    }
+    else {
+        return ! can_get_out_of_check(side, checkingPiece, checkingInd,
+                    last_set_bit(pieceBoards[(6 * sideToMove) + 5]), double_check);
+    }
 }
 
-int board::is_checkmate() {
+int board::is_checkmate() const {
     // return  1  if white is in checkmate,
     //        -1  if black is in checkmate,
     //         0  otherwise
-    if (!(is_check(black) || is_check(white))) return 0;
-    struct move_t moves[256];
-    int num_moves = gen_legal_moves(moves);
-
-    if (num_moves == 0) {
-        return (sideToMove == white) ? 1 : -1;
-    }
-
-    set_side(flipColour(sideToMove));
-
-    num_moves = gen_legal_moves(moves);
-    set_side(flipColour(sideToMove));
-
-    if (num_moves == 0) {
-        return (sideToMove == white) ? -1 : 1;
-    }
-
-    return 0;
+    if (is_checkmate(white)) return 1;
+    else if (is_checkmate(black)) return -1;
+    else return 0;
 
 }
 
-bool board::is_stalemate() {
+bool board::is_stalemate() const {
     if (halfMoveClock >= 50) return true;
     if (is_check(sideToMove)) return false;
     move_t moves[256];
@@ -144,11 +134,11 @@ bool board::is_stalemate() {
     return num_legal == 0;
 }
 
-bool board::gameover() {
+bool board::gameover() const {
     return is_checkmate(white) || is_checkmate(black) || is_stalemate();
 }
 
-bool board::was_lastmove_check(move_t lastmove) {
+bool board::was_lastmove_check(move_t lastmove) const {
     int i, j;
     colourPiece movingPiece;
     int from_ind = lastmove.from_sq();
@@ -261,7 +251,7 @@ bool board::was_lastmove_check(move_t lastmove) {
     return false;
 }
 
-bool board::is_checking_move(move_t move) {
+bool board::is_checking_move(move_t move) const {
     // assume the move is legal
     int i, j;
     colourPiece movingPiece;

@@ -308,7 +308,7 @@ const value_t pieceSquareTables[2][12][64] = {
 
 // evaluation functions
 
-value_t board::evaluate_material(int phase) {
+value_t board::evaluate_material(int phase) const {
     // a rudimentary evaluation function based on material
     // white is positive, black is negative
 
@@ -319,7 +319,7 @@ value_t board::evaluate_material(int phase) {
     return ret;
 }
 
-value_t board::evaluate_pieceSquareTables(int phase) {
+value_t board::evaluate_pieceSquareTables(int phase) const {
     int i;
     bitboard tmp;
     value_t ret = 0;
@@ -334,20 +334,20 @@ value_t board::evaluate_pieceSquareTables(int phase) {
     return ret;
 }
 
-value_t board::getValue() {
+value_t board::getValue() const {
     int phase = getPhase();
     return (opening_value * (256 - phase) + endgame_value * phase) / 256;
 }
 
-value_t board::getOpeningValue() {
+value_t board::getOpeningValue() const {
     return opening_value;
 }
 
-value_t board::getEndgameValue() {
+value_t board::getEndgameValue() const {
     return endgame_value;
 }
 
-value_t board::evaluate() {
+value_t board::evaluate() const {
     int phase = getPhase();
     value_t open = evaluateOpening();
     value_t end = evaluateEndgame();
@@ -355,15 +355,15 @@ value_t board::evaluate() {
 //    return evaluate_material() + evaluate_pieceSquareTables();
 }
 
-value_t board::evaluateOpening() {
+value_t board::evaluateOpening() const {
     return evaluate_material(0) + evaluate_pieceSquareTables(0);
 }
 
-value_t board::evaluateEndgame() {
+value_t board::evaluateEndgame() const {
     return evaluate_material(1) + evaluate_pieceSquareTables(1);
 }
 
-int board::getPhase() {
+int board::getPhase() const {
     int pawnPhase = 0;
     int knightPhase = 1;
     int bishopPhase = 1;

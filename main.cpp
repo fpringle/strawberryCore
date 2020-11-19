@@ -13,28 +13,21 @@
 
 using namespace chessCore;
 
+
 int main() {
     init();
 
-    Player p;
+    board b("6R1/8/8/8/Q6b/K7/8/7k w - - 0 1");
 
-    move_t g1f3 = move_t( 6, 21, 0, 0, 0, 0);
-    move_t g8f6 = move_t(62, 45, 0, 0, 0, 0);
-    move_t b1c3 = move_t( 1, 18, 0, 0, 0, 0);
+    move_t move(24,31,0,1,0,0);
 
-//    p.print_board();
-    std::cout << p.SAN_pre_move(g1f3) << std::endl;
-    p.doMoveInPlace(g1f3);
+    std::cout << b.SAN_pre_move(move) << std::endl;
 
-//    p.print_board();
-    std::cout << p.SAN_pre_move(g8f6) << std::endl;
-    p.doMoveInPlace(g8f6);
+    b.doMoveInPlace(move);
 
-//    p.print_board();
-    std::cout << p.SAN_pre_move(b1c3) << std::endl;
-    p.doMoveInPlace(b1c3);
+    std::cout << b.SAN_post_move(move) << std::endl;
 
-    p.print_history_san();
+    if (b.is_checkmate(black)) std::cout << "Black is in checkmate\n";
 
     return 0;
 }
