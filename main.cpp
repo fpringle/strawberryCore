@@ -1,3 +1,5 @@
+#include <cstdlib>
+
 #include "action.h"
 #include "board.h"
 #include "eval.h"
@@ -7,8 +9,6 @@
 #include "play.h"
 #include "search.h"
 #include "twiddle.h"
-
-#include <cstdlib>
 
 
 using namespace chessCore;

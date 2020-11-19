@@ -1,14 +1,16 @@
-#include "board.h"
-#include "action.h"
-#include "move.h"
 #include "search.h"
+
+#include <time.h>
+
+#include <cstdint>
+#include <limits>
+#include <vector>
+
+#include "action.h"
+#include "board.h"
+#include "move.h"
 #include "play.h"
 #include "typedefs.h"
-
-#include <vector>
-#include <limits>
-#include <cstdint>
-#include <time.h>
 
 #define USE_TABLE
 #define SEARCH_TIME 10

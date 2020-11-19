@@ -1,11 +1,13 @@
 #include "action.h"
-#include "twiddle.h"
+
+#include <cstdint>
+
 #include "eval.h"
 #include "hash.h"
 #include "play.h"
+#include "twiddle.h"
 #include "typedefs.h"
 
-#include <cstdint>
 
 namespace chessCore {
 

@@ -1,8 +1,9 @@
-#include "move.h"
 #include "twiddle.h"
-#include "typedefs.h"
 
 #include <math.h>
+
+#include "move.h"
+#include "typedefs.h"
 
 
 namespace chessCore {

@@ -15,12 +15,12 @@
 #ifndef __BOARD_H
 #define __BOARD_H
 
-#include "typedefs.h"
-#include "move.h"
-
 #include <cstdint>
 #include <iostream>
 #include <string>
+
+#include "move.h"
+#include "typedefs.h"
 
 
 /**

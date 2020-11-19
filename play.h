@@ -1,16 +1,16 @@
 #ifndef __PLAY_H
 #define __PLAY_H
 
+#include <cstdint>
+#include <iostream>
+#include <map>
+#include <string>
+#include <vector>
+
 #include "board.h"
 #include "move.h"
 #include "tree.h"
 #include "typedefs.h"
-
-#include <iostream>
-#include <string>
-#include <map>
-#include <cstdint>
-#include <vector>
 
 
 namespace chessCore {

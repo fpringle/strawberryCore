@@ -1,16 +1,17 @@
-#include "board.h"
-#include "move.h"
 #include "play.h"
-#include "action.h"
-#include "search.h"
-#include "init.h"
-#include "typedefs.h"
 
 #include <cstdint>
-#include <string>
-#include <sstream>
-#include <iostream>
 #include <fstream>
+#include <iostream>
+#include <sstream>
+#include <string>
+
+#include "action.h"
+#include "board.h"
+#include "init.h"
+#include "move.h"
+#include "search.h"
+#include "typedefs.h"
 
 
 

@@ -1,11 +1,14 @@
-#include "board.h"
-#include "move.h"
 #include "init.h"
-#include "hash.h"
 
 #include <cstdint>
 
+#include "board.h"
+#include "hash.h"
+#include "move.h"
+
+
 namespace chessCore {
+
 
 void init() {
     // initialise rays for sliding piece move generation

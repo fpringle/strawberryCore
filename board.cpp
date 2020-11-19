@@ -1,12 +1,14 @@
 #include "board.h"
-#include "twiddle.h"
-#include "typedefs.h"
+
+#include <math.h>
 
 #include <cstdint>
 #include <iostream>
-#include <math.h>
-#include <string>
 #include <sstream>
+#include <string>
+
+#include "twiddle.h"
+#include "typedefs.h"
 
 
 namespace chessCore {

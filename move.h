@@ -1,12 +1,11 @@
 #ifndef __MOVE_H
 #define __MOVE_H
 
-//#include "board.h"
-#include "typedefs.h"
-
 #include <cstdint>
-#include <string>
 #include <iostream>
+#include <string>
+
+#include "typedefs.h"
 
 
 namespace chessCore {

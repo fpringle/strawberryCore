@@ -1,18 +1,18 @@
+#include "hash.h"
+
+#include <assert.h>
+#include <time.h>
+
 #include "board.h"
 #include "move.h"
-#include "hash.h"
 #include "twiddle.h"
 #include "typedefs.h"
 
 #include <cstdint>
-#include <assert.h>
-#include <time.h>
 
 
 namespace chessCore {
 
-// transposition table
-//struct record_t table[130000000];
 
 // Mersenne_Twister pseudorandom number generator
 

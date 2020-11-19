@@ -1,10 +1,9 @@
 #ifndef __NTREE_H
 #define __NTREE_H
 
-#include <vector>
 #include <iostream>
-
 #include <queue>
+#include <vector>
 
 
 namespace chessCore {

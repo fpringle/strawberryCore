@@ -1,5 +1,6 @@
-#include "board.h"
 #include "eval.h"
+
+#include "board.h"
 #include "twiddle.h"
 #include "typedefs.h"
 
