@@ -12,7 +12,7 @@ namespace chessCore {
 using bitboard = uint64_t;
 
 /** A signed integer used for evaluation. */
-using value_t = int32_t;
+using value_t = int16_t;
 
 /**
  *  \enum colour
