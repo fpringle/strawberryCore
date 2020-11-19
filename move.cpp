@@ -131,12 +131,11 @@ std::string board::SAN_pre_move( move_t move ) const {
     }
 
 
-
+    // need to fix bug in is_checking_move
     board child = *this;
     child.doMoveInPlace(move);
 
     if ( child.is_check( otherSide ) ) {
-//        board child = doMove( *this, move );
         if ( child.is_checkmate( otherSide ) ) san << "#";
         else                             san << "+";
     }
@@ -194,11 +193,6 @@ std::string board::SAN_post_move( move_t move ) const {
             else {
                 _black |= (1ULL << from_sq);
             }
-
-//            print_bb(_white);
-//            std::cout << std::endl;
-//            print_bb(_black);
-//            std::cout << std::endl;
 
             bitboard alternates = pieceTargets( to_sq, _white, _black, colourPiece((movingPiece+(6*otherSide))%12) );
             alternates &= pieceBoards[movingPiece + (6 * side_to_move)];
@@ -791,6 +785,62 @@ bitboard pieceTargets(int sq, bitboard _white, bitboard _black,
     }
 }
 
+bitboard allTargets(colour side, bitboard* pieces) {
+    bitboard attacked = 0ULL;
+    int sq;
+    bitboard tmp;
+
+    bitboard allPieces = 0ULL;
+    for (sq=0; sq<12; sq++) {
+        allPieces |= pieces[sq];
+    }
+
+    // pawns
+    tmp = pieces[side * 6];
+    ITER_BITBOARD(sq, tmp) {
+        attacked |= pawnAttackNaive(sq, side);
+    }
+
+    // rooks
+    tmp = pieces[(side * 6) + 1];
+    ITER_BITBOARD(sq, tmp) {
+        attacked |= rookPushNaive(sq, allPieces);
+    }
+
+    // knights
+    tmp = pieces[(side * 6) + 2];
+    ITER_BITBOARD(sq, tmp) {
+        attacked |= knightPushNaive(sq);
+    }
+
+    // bishops
+    tmp = pieces[(side * 6) + 3];
+    ITER_BITBOARD(sq, tmp) {
+        attacked |= bishopPushNaive(sq, allPieces);
+    }
+
+    // queens
+    tmp = pieces[(side * 6) + 4];
+    ITER_BITBOARD(sq, tmp) {
+        attacked |= queenPushNaive(sq, allPieces);
+    }
+
+    // kings
+    tmp = pieces[(side * 6) + 5];
+    ITER_BITBOARD(sq, tmp) {
+        attacked |= kingPushNaive(sq);
+    }
+
+    for (sq=(side * 6); sq < (side * 6) + 6; sq++) {
+        attacked &= (~ pieces[sq]);
+    }
+
+    return attacked;
+}
+
+
+
+
 bool board::add_moves(move_t ** dest, move_t move, bool check_legal) const {
     if (check_legal) {
         if (is_legal(move)) {
@@ -893,39 +943,30 @@ int board::gen_moves(move_t * moves) const {
     }
 
     // castling
+    bitboard pb[12];
+    getBitboards(pb);
+    bitboard attacked_squares = allTargets(flipColour(sideToMove), pb);
     if (sideToMove == white && !is_check(white)) {
         if (castleWhiteKingSide && (!((_white | _black) & 0x0000000000000060))) {
             // can't castle through check
-            board copy = *this;
-            copy.set_piece(whiteKing, 5);
-            copy.clear_square(4);
-            if (!copy.is_check(white)) {
+            if (! (attacked_squares & 0x0000000000000060)) {
                 count += add_moves(&moves, move_t(4, 6, 0, 0, 1, 0), false);
             }
         }
         if (castleWhiteQueenSide && (!((_white | _black) & 0x000000000000000e))) {
-            board copy = *this;
-            copy.set_piece(whiteKing, 3);
-            copy.clear_square(4);
-            if (!copy.is_check(white)) {
+            if (! (attacked_squares & 0x000000000000000c)) {
                 count += add_moves(&moves, move_t(4, 2, 0, 0, 1, 1), false);
             }
         }
     }
     else if (sideToMove == black && !is_check(black)) {
         if (castleBlackKingSide && (!((_white | _black) & 0x6000000000000000))) {
-            board copy = *this;
-            copy.set_piece(blackKing, 61);
-            copy.clear_square(60);
-            if (!copy.is_check(black)) {
+            if (! (attacked_squares & 0x6000000000000000)) {
                 count += add_moves(&moves, move_t(60, 62, 0, 0, 1, 0), false);
             }
         }
         if (castleBlackQueenSide && (!((_white | _black) & 0x0e00000000000000))) {
-            board copy = *this;
-            copy.set_piece(blackKing, 59);
-            copy.clear_square(60);
-            if (!copy.is_check(black)) {
+            if (! (attacked_squares & 0x0c00000000000000)) {
                 count += add_moves(&moves, move_t(60, 58, 0, 0, 1, 1), false);
             }
         }
@@ -980,17 +1021,18 @@ int board::get_out_of_check(colour side, move_t * moves, piece checkingPiece,
             else {
                 count += add_moves(&moves, move_t(from_sq, checkingInd, 0, 1, 0, 0), true);
             }
-            //              }
         }
     }
     bitboard left = oneW(1ULL << checkingInd);
     bitboard right = oneE(1ULL << checkingInd);
     if (lastMoveDoublePawnPush && (checkingPiece == 0)) {
         to_ind = checkingInd + ((side == white) ? N : S);
-        if (pieceBoards[side * 6] & right) count += add_moves(&moves,
-                    move_t(checkingInd + 1, to_ind, 0, 1, 0, 1), true);
-        if (pieceBoards[side * 6] & left) count += add_moves(&moves,
-                    move_t(checkingInd - 1, to_ind, 0, 1, 0, 1), true);
+        if (pieceBoards[side * 6] & right) {
+            count += add_moves(&moves, move_t(checkingInd + 1, to_ind, 0, 1, 0, 1), true);
+        }
+        if (pieceBoards[side * 6] & left) {
+            count += add_moves(&moves, move_t(checkingInd - 1, to_ind, 0, 1, 0, 1), true);
+        }
     }
     if (is_bit_set(kingTargets(kingInd, _white, _black, side), checkingInd)) {
         return count;
@@ -1334,39 +1376,30 @@ int board::gen_legal_moves(move_t * moves) const {
     }
 
     // castling
+    bitboard pb[12];
+    getBitboards(pb);
+    bitboard attacked_squares = allTargets(flipColour(sideToMove), pb);
     if (sideToMove == white && !is_check(white)) {
         if (castleWhiteKingSide && (!((_white | _black) & 0x0000000000000060))) {
             // can't castle through check
-            board copy = *this;
-            copy.set_piece(whiteKing, 5);
-            copy.clear_square(4);
-            if (!copy.is_check(white)) {
+            if (! (attacked_squares & 0x0000000000000060)) {
                 count += add_moves(&moves, move_t(4, 6, 0, 0, 1, 0), true);
             }
         }
         if (castleWhiteQueenSide && (!((_white | _black) & 0x000000000000000e))) {
-            board copy = *this;
-            copy.set_piece(whiteKing, 3);
-            copy.clear_square(4);
-            if (!copy.is_check(white)) {
+            if (! (attacked_squares & 0x000000000000000c)) {
                 count += add_moves(&moves, move_t(4, 2, 0, 0, 1, 1), true);
             }
         }
     }
     else if (sideToMove == black && !is_check(black)) {
         if (castleBlackKingSide && (!((_white | _black) & 0x6000000000000000))) {
-            board copy = *this;
-            copy.set_piece(blackKing, 61);
-            copy.clear_square(60);
-            if (!copy.is_check(black)) {
+            if (! (attacked_squares & 0x6000000000000000)) {
                 count += add_moves(&moves, move_t(60, 62, 0, 0, 1, 0), true);
             }
         }
         if (castleBlackQueenSide && (!((_white | _black) & 0x0e00000000000000))) {
-            board copy = *this;
-            copy.set_piece(blackKing, 59);
-            copy.clear_square(60);
-            if (!copy.is_check(black)) {
+            if (! (attacked_squares & 0x0c00000000000000)) {
                 count += add_moves(&moves, move_t(60, 58, 0, 0, 1, 1), true);
             }
         }
@@ -1457,8 +1490,10 @@ bool board::is_legal(struct move_t move) const {
         }
     }
 
+    int other_pawn_ind;
+
     if (move.is_ep_capture()) {
-        int other_pawn_ind = to_ind + ((sideToMove == white) ? S : N);
+        other_pawn_ind = to_ind + ((sideToMove == white) ? S : N);
         bitboard left_ray = rays[6][from_ind] & rays[6][other_pawn_ind] & blockers;
         bitboard right_ray = rays[2][from_ind] & rays[2][other_pawn_ind] & blockers;
         bitboard attacker_left = (left_ray) ? (1ULL << last_set_bit(left_ray)) : 0;
@@ -1488,6 +1523,10 @@ bool board::is_legal(struct move_t move) const {
 
         if (to_ind == checkingInd) {
             return true;
+        }
+
+        if (move.is_ep_capture()) {
+            if (other_pawn_ind == checkingInd) return true;
         }
 
         int kingInd = last_set_bit(pieceBoards[(sideToMove * 6) + 5]);

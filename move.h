@@ -432,6 +432,19 @@ bitboard queenTargets         (int sq, bitboard _white, bitboard _black,
 bitboard pieceTargets         (int sq, bitboard _white, bitboard _black,
                                colourPiece cP);
 
+/**
+ *  Calculate all squares under attack by a particular side.
+ *  Note: legality of attacks is not taken into consideration.
+ *
+ *  \param side             The attacking side.
+ *  \param pieces           A 12-bitboard array of piece positions.
+ *  \return                 A bitboard representing all the squares under
+ *                          attack by side.
+ */
+bitboard allTargets           (colour side, bitboard* pieces);
+
+
+
 } // end of chessCore namespace
 
 
