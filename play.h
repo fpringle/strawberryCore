@@ -306,10 +306,10 @@ public:
     /**
      *  Start a game between the user and the computer.
      *
-     *  \param side         The user colour.
+     *  \param playerSide   The user colour.
      *  \param plies        The depth to search to.
      */
-    void play(colour side, int plies);
+    void play(colour playerSide, int plies);
 };
 
 

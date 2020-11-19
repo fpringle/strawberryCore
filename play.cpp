@@ -224,7 +224,7 @@ move_t Player::input_move() {
     return ret;
 }
 
-void Player::play(colour side, int plies) {
+void Player::play(colour playerSide, int plies) {
 //    init();
     move_t comp_move;
     move_t player_move;
@@ -239,10 +239,12 @@ void Player::play(colour side, int plies) {
     }
 
     while (! gameover()) {
-        if (side == black) print_board();
+        if (playerSide == white) print_board();
         else print_board_flipped();
+
         getSide(&movingSide);
-        if (movingSide != side) {
+
+        if (movingSide == playerSide) {
             player_move = input_move();
             doMoveInPlace(player_move);
         }
@@ -260,13 +262,13 @@ void Player::play(colour side, int plies) {
         num_moves++;
     }
 
-    if (side == black) print_board();
+    if (playerSide == white) print_board();
     else print_board_flipped();
     print_history();
 
     switch (is_checkmate()) {
     case 1:
-        if (side == black) {
+        if (playerSide == white) {
             std::cout << "Computer wins" << std::endl;
         }
         else {
@@ -274,7 +276,7 @@ void Player::play(colour side, int plies) {
         }
         break;
     case -1:
-        if (side == black) {
+        if (playerSide == white) {
             std::cout << "Player wins" << std::endl;
         }
         else {

@@ -15,7 +15,7 @@ const value_t pieceValues[2][12] = {{100, 500, 320, 330, 900, 20000, -100, -500,
 // indexed by phase(0=opening, 1=endgame), then colourPiece, then square
 const value_t pieceSquareTables[2][12][64] = {
     {
-        // white pawn
+        // white pawn - opening
         {
             0, 0, 0, 0, 0, 0, 0, 0,
             5, 10, 10, -20, -20, 10, 10, 5,
@@ -27,7 +27,7 @@ const value_t pieceSquareTables[2][12][64] = {
             0, 0, 0, 0, 0, 0, 0, 0
         },
 
-        // white rook
+        // white rook - opening
         {
             0, 0, 0, 5, 5, 0, 0, 0,
             -5, 0, 0, 0, 0, 0, 0, -5,
@@ -39,7 +39,7 @@ const value_t pieceSquareTables[2][12][64] = {
             0, 0, 0, 0, 0, 0, 0, 0
         },
 
-        // white knight
+        // white knight - opening
         {
             -50, -40, -30, -30, -30, -30, -40, -50,
                 -40, -20, 0, 5, 5, 0, -20, -40,
@@ -51,7 +51,7 @@ const value_t pieceSquareTables[2][12][64] = {
                 -50, -40, -30, -30, -30, -30, -40, -50
             },
 
-        // white bishop
+        // white bishop - opening
         {
             -20, -10, -10, -10, -10, -10, -10, -20,
                 -10, 5, 0, 0, 0, 0, 5, -10,
@@ -63,7 +63,7 @@ const value_t pieceSquareTables[2][12][64] = {
                 -20, -10, -10, -10, -10, -10, -10, -20
             },
 
-        // white queen
+        // white queen - opening
         {
             -20, -10, -10, -5, -5, -10, -10, -20,
                 -10, 0, 5, 0, 0, 0, 0, -10,
@@ -75,7 +75,7 @@ const value_t pieceSquareTables[2][12][64] = {
                 -20, -10, -10, -5, -5, -10, -10, -20
             },
 
-        // white king
+        // white king - opening
         {
             20, 30, 10, 0, 0, 10, 30, 20,
             20, 20, 0, 0, 0, 0, 20, 20,
@@ -87,7 +87,7 @@ const value_t pieceSquareTables[2][12][64] = {
             -30, -40, -40, -50, -50, -40, -40, -30
         },
 
-        // black pawn
+        // black pawn - opening
         {
             0, 0, 0, 0, 0, 0, 0, 0,
             -50, -50, -50, -50, -50, -50, -50, -50,
@@ -99,7 +99,7 @@ const value_t pieceSquareTables[2][12][64] = {
             0, 0, 0, 0, 0, 0, 0, 0
         },
 
-        // black rook
+        // black rook - opening
         {
             0, 0, 0, 0, 0, 0, 0, 0,
             -5, -10, -10, -10, -10, -10, -10, -5,
@@ -111,7 +111,7 @@ const value_t pieceSquareTables[2][12][64] = {
             0, 0, 0, -5, -5, 0, 0, 0
         },
 
-        // black knight
+        // black knight - opening
         {
             +50, +40, +30, +30, +30, +30, +40, +50,
                 +40, +20, 0, 0, 0, 0, +20, +40,
@@ -123,7 +123,7 @@ const value_t pieceSquareTables[2][12][64] = {
                 +50, +40, +30, +30, +30, +30, +40, +50
             },
 
-        //black bishop
+        // black bishop - opening
         {
             +20, +10, +10, +10, +10, +10, +10, +20,
                 +10, 0, 0, 0, 0, 0, 0, +10,
@@ -135,7 +135,7 @@ const value_t pieceSquareTables[2][12][64] = {
                 +20, +10, +10, +10, +10, +10, +10, +20
             },
 
-        // black queen
+        // black queen - opening
         {
             +20, +10, +10, +5, +5, +10, +10, +20,
                 +10, 0, 0, 0, 0, 0, 0, +10,
@@ -147,7 +147,7 @@ const value_t pieceSquareTables[2][12][64] = {
                 +20, +10, +10, +5, +5, +10, +10, +20
             },
 
-        // black king
+        // black king - opening
         {
             +30, +40, +40, +50, +50, +40, +40, +30,
                 +30, +40, +40, +50, +50, +40, +40, +30,
@@ -161,7 +161,7 @@ const value_t pieceSquareTables[2][12][64] = {
     },
 
     {
-        // white pawn
+        // white pawn - endgame
         {
             0, 0, 0, 0, 0, 0, 0, 0,
             5, 10, 10, -20, -20, 10, 10, 5,
@@ -173,7 +173,7 @@ const value_t pieceSquareTables[2][12][64] = {
             0, 0, 0, 0, 0, 0, 0, 0
         },
 
-        // white rook
+        // white rook - endgame
         {
             0, 0, 0, 5, 5, 0, 0, 0,
             -5, 0, 0, 0, 0, 0, 0, -5,
@@ -185,7 +185,7 @@ const value_t pieceSquareTables[2][12][64] = {
             0, 0, 0, 0, 0, 0, 0, 0
         },
 
-        // white knight
+        // white knight - endgame
         {
             -50, -40, -30, -30, -30, -30, -40, -50,
                 -40, -20, 0, 5, 5, 0, -20, -40,
@@ -197,7 +197,7 @@ const value_t pieceSquareTables[2][12][64] = {
                 -50, -40, -30, -30, -30, -30, -40, -50
             },
 
-        // white bishop
+        // white bishop - endgame
         {
             -20, -10, -10, -10, -10, -10, -10, -20,
                 -10, 5, 0, 0, 0, 0, 5, -10,
@@ -209,7 +209,7 @@ const value_t pieceSquareTables[2][12][64] = {
                 -20, -10, -10, -10, -10, -10, -10, -20
             },
 
-        // white queen
+        // white queen - endgame
         {
             -20, -10, -10, -5, -5, -10, -10, -20,
                 -10, 0, 5, 0, 0, 0, 0, -10,
@@ -221,7 +221,7 @@ const value_t pieceSquareTables[2][12][64] = {
                 -20, -10, -10, -5, -5, -10, -10, -20
             },
 
-        // white king   - different for endgame
+        // white king   - endgame
         {
             -50, -30, -30, -30, -30, -30, -30, -50,
             -30, -30, 0, 0, 0, 0, -30, -30,
@@ -233,7 +233,7 @@ const value_t pieceSquareTables[2][12][64] = {
             -50, -40, -30, -20, -20, -30, -40, -50
         },
 
-        // black pawn
+        // black pawn - endgame
         {
             0, 0, 0, 0, 0, 0, 0, 0,
             -50, -50, -50, -50, -50, -50, -50, -50,
@@ -245,7 +245,7 @@ const value_t pieceSquareTables[2][12][64] = {
             0, 0, 0, 0, 0, 0, 0, 0
         },
 
-        // black rook
+        // black rook - endgame
         {
             0, 0, 0, 0, 0, 0, 0, 0,
             -5, -10, -10, -10, -10, -10, -10, -5,
@@ -257,7 +257,7 @@ const value_t pieceSquareTables[2][12][64] = {
             0, 0, 0, -5, -5, 0, 0, 0
         },
 
-        // black knight
+        // black knight - endgame
         {
             +50, +40, +30, +30, +30, +30, +40, +50,
                 +40, +20, 0, 0, 0, 0, +20, +40,
@@ -269,7 +269,7 @@ const value_t pieceSquareTables[2][12][64] = {
                 +50, +40, +30, +30, +30, +30, +40, +50
             },
 
-        //black bishop
+        //black bishop - endgame
         {
             +20, +10, +10, +10, +10, +10, +10, +20,
                 +10, 0, 0, 0, 0, 0, 0, +10,
@@ -281,7 +281,7 @@ const value_t pieceSquareTables[2][12][64] = {
                 +20, +10, +10, +10, +10, +10, +10, +20
             },
 
-        // black queen
+        // black queen - endgame
         {
             +20, +10, +10, +5, +5, +10, +10, +20,
                 +10, 0, 0, 0, 0, 0, 0, +10,
@@ -293,7 +293,7 @@ const value_t pieceSquareTables[2][12][64] = {
                 +20, +10, +10, +5, +5, +10, +10, +20
             },
 
-        // black king - different for endgame
+        // black king - endgame
         {
             50, 40, 30, 20, 20, 30, 40, 50,
             30, 20, 10, 0, 0, 10, 20, 30,
