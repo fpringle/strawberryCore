@@ -6,6 +6,8 @@
 #include <sstream>
 #include <string>
 
+#include <toml.hpp>
+
 #include "action.h"
 #include "board.h"
 #include "init.h"
@@ -49,6 +51,8 @@ std::ostream& operator<<(std::ostream &out, const record_t &rec) {
 }
 
 Player::Player() : board::board() {
+    user_colour = white;
+    iterative_deepening_timeout = 30;
 }
 
 Player::Player(bitboard * startPositions, bool * castling, bool ep, int dpp,
@@ -56,15 +60,66 @@ Player::Player(bitboard * startPositions, bool * castling, bool ep, int dpp,
         value_t open_val, value_t end_val, uint64_t hash) :
     board::board(startPositions, castling, ep, dpp, clock, full_clock,
         side, open_val, end_val, hash) {
+
+    user_colour = white;
+    iterative_deepening_timeout = 30;
 }
 
 Player::Player(Player& p1) : board::board(p1) {
     trans_table = p1.getTable();
     move_history = p1.getHistory();
     move_history_san = p1.getHistorySAN();
+    user_colour = white;
+    iterative_deepening_timeout = 30;
 }
 
 Player::Player(std::string fen) : board::board(fen) {
+    user_colour = white;
+    iterative_deepening_timeout = 30;
+}
+
+std::string upper_string(std::string s) {
+    std::stringstream ss;
+    for (char c : s) {
+        ss << char(toupper(c));
+    }
+    return ss.str();
+}
+
+void Player::read_config(std::string filename) {
+    toml::value config;
+
+    try {
+        config = toml::parse(filename);
+    }
+    catch (const std::exception& err) {
+        std::cerr << err.what() << std::endl;
+        return;
+    }
+
+    try {
+        const auto& search_table = toml::find(config, "search");
+        const auto max_search_time = toml::find<int>(search_table, "MAX_SEARCH_TIME");
+        iterative_deepening_timeout = max_search_time;
+    }
+    catch(...) {
+        std::cerr << "Unable to parse config file for MAX_SEARCH_TIME." << std::endl
+                  << "Using default value of " << iterative_deepening_timeout
+                  << "." << std::endl;
+    }
+
+    try {
+        const auto& play_table = toml::find(config, "play");
+        const auto parsed_user_colour = toml::find<std::string>(play_table, "USER_COLOUR");
+        std::string upper = upper_string(parsed_user_colour);
+        if (upper == "WHITE") user_colour = white;
+        else if (upper == "BLACK") user_colour = black;
+    }
+    catch(...) {
+        std::cerr << "Unable to parse config file for USER_COLOUR." << std::endl
+                  << "Using default value of " << user_colour
+                  << "." << std::endl;
+    }
 }
 
 bool Player::lookup(uint64_t pos_hash, record_t * dest) {
@@ -123,6 +178,11 @@ void Player::print_table(std::ostream& cout) {
         cout << it->first << ":" << std::endl
              << it->second << std:: endl;
     }
+}
+
+void Player::print_board(std::ostream& cout) const {
+    if (user_colour == white) board::print_board(cout);
+    else board::print_board_flipped(cout);
 }
 
 void Player::save_state(std::string filename) {
@@ -224,7 +284,7 @@ move_t Player::input_move() {
     return ret;
 }
 
-void Player::play(colour playerSide, int plies) {
+void Player::play(colour playerSide, int timeout) {
 //    init();
     move_t comp_move;
     move_t player_move;
@@ -250,7 +310,7 @@ void Player::play(colour playerSide, int plies) {
         }
         else {
             std::cout << "Computer thinking...    " << std::endl;
-            comp_move = search(plies);
+            comp_move = iterative_deepening(timeout, 100);
             std::cout << "Computer move: " << comp_move << std::endl;
             doMoveInPlace(comp_move);
             ss << "/home/freddy/Documents/cpl/chess_net/log/log"
@@ -277,6 +337,68 @@ void Player::play(colour playerSide, int plies) {
         break;
     case -1:
         if (playerSide == white) {
+            std::cout << "Player wins" << std::endl;
+        }
+        else {
+            std::cout << "Computer wins" << std::endl;
+        }
+        break;
+    case 0:
+        std::cout << "Draw" << std::endl;
+        break;
+    }
+}
+
+void Player::play() {
+    move_t comp_move;
+    move_t player_move;
+    int num_moves = 0;
+    colour movingSide;
+    int log = 1;
+    std::stringstream ss;
+
+    if (gameover()) {
+        std::cout << "Game is complete!\n";
+        return;
+    }
+
+    while (! gameover()) {
+        print_board();
+
+        getSide(&movingSide);
+
+        if (movingSide == user_colour) {
+            player_move = input_move();
+            doMoveInPlace(player_move);
+        }
+        else {
+            std::cout << "Computer thinking...    " << std::endl;
+            comp_move = iterative_deepening(iterative_deepening_timeout, 100);
+            std::cout << "Computer move: " << comp_move << std::endl;
+            doMoveInPlace(comp_move);
+            ss << "/home/freddy/Documents/cpl/chess_net/log/log"
+               << log << ".log";
+            save_state(ss.str());
+            ss.str("");
+            log++;
+        }
+        num_moves++;
+    }
+
+    print_board();
+    print_history();
+
+    switch (is_checkmate()) {
+    case 1:
+        if (user_colour == white) {
+            std::cout << "Computer wins" << std::endl;
+        }
+        else {
+            std::cout << "Player wins" << std::endl;
+        }
+        break;
+    case -1:
+        if (user_colour == white) {
             std::cout << "Player wins" << std::endl;
         }
         else {

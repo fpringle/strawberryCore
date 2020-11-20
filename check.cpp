@@ -105,7 +105,6 @@ bool board::is_checkmate(colour side) const {
     piece checkingPiece;
     int checkingInd;
     bool double_check = false;
-    move_t moves[256];
 
     if (! is_check(side, &checkingPiece, &checkingInd, &double_check)) {
         return false;

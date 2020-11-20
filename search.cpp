@@ -13,7 +13,6 @@
 #include "typedefs.h"
 
 #define USE_TABLE
-#define SEARCH_TIME 10
 
 namespace chessCore {
 
@@ -640,10 +639,6 @@ move_t Player::iterative_deepening(int timeout, uint8_t max_depth) {
     return best_move;
 }
 
-move_t Player::search(uint8_t depth) {
-    return iterative_deepening(SEARCH_TIME, depth);
-//    return search_negamax_alphabeta(depth);
-}
 
 
 } // end of chessCore namespace

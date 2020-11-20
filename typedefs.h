@@ -1,6 +1,7 @@
 #ifndef __TYPEDEFS_H
 #define __TYPEDEFS_H
 
+#include <iostream>
 #include <cstdint>
 
 namespace chessCore {
@@ -20,6 +21,10 @@ using value_t = int16_t;
  */
 enum colour {white,black};
 
+inline std::ostream& operator<<(std::ostream& out, const colour& colour) {
+    out << ((colour == white) ? "white" : "black");
+    return out;
+}
 /**
  *  \enum piece
  *  An Enum to represents the six types of piece.

@@ -1106,7 +1106,6 @@ int board::get_out_of_check(colour side, move_t * moves, piece checkingPiece,
 
 bool board::can_get_out_of_check(colour side, piece checkingPiece,
                             int checkingInd, int kingInd, bool double_check) const {
-    int count = 0;
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
     bitboard _other = (side == white) ? _black : _white;
@@ -1492,7 +1491,7 @@ bool board::is_legal(struct move_t move) const {
         }
     }
 
-    int other_pawn_ind;
+    int other_pawn_ind = 64;
 
     if (move.is_ep_capture()) {
         other_pawn_ind = to_ind + ((sideToMove == white) ? S : N);

@@ -85,6 +85,10 @@ private:
      *  A record of all the previoius moves in SAN format.
      */
     std::vector<std::string> move_history_san;
+
+    colour user_colour;
+
+    int iterative_deepening_timeout;
 public:
     // constructors
     // defined in play.cpp
@@ -151,6 +155,15 @@ public:
     Player(std::string fen);
 
     /**
+     *  Read a config file.
+     *
+     *  \param filename         The path of the TOML config file.
+     *  \return                 True if the config file was read
+     *                          successfully, false otherwise.
+     */
+    void read_config(std::string filename);
+
+    /**
      *  Lookup a node in the transposition table.
      *
      *  \param pos_hash         The hash value of the node to look up.
@@ -190,6 +203,8 @@ public:
     void print_history_san(std::ostream& cout = std::cout);
     void print_table(std::ostream& cout = std::cout);
     /**@}*/
+
+    void print_board(std::ostream& cout = std::cout) const;
 
     /**
      *  Save the transposition table to file.
@@ -289,14 +304,6 @@ public:
     move_t search_principal_variation(uint8_t depth);
 
     /**
-     *  Choose the best move to make from the current node.
-     *
-     *  \param depth        The depth to search to.
-     *  \return             The best move to play from the current node.
-     */
-    move_t search(uint8_t depth);
-
-    /**
      *  Prompt the user for a move.
      *
      *  \return             The move the player has entered.
@@ -304,12 +311,22 @@ public:
     move_t input_move();
 
     /**
-     *  Start a game between the user and the computer.
+     *  Start a game between the user and the computer. Uses the class members
+     *  \ref user_colour and \ref iterative_deepening_timeout.
+     *
+     */
+    void play();
+
+    /**
+     *  Start a game between the user and the computer. The parameters
+     *  playerSide and timeout override the class members \ref user_colour
+     *  and \ref iterative_deepening_timeout, respectively.
      *
      *  \param playerSide   The user colour.
-     *  \param plies        The depth to search to.
+     *  \param timeout      The cutoff time for computer search per move.
      */
-    void play(colour playerSide, int plies);
+    void play(colour playerSide, int timeout);
+
 };
 
 
