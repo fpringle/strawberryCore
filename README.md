@@ -1,2 +1,2 @@
-# chess_netbeans
-project "chess" migrated to NetBeans IDE
+# strawberryCore
+The core of my strawberry, my chess engine written in C++
