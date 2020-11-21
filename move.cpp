@@ -394,23 +394,23 @@ move_t::move_t(uint16_t cons_data) {
 // bit 14:    special 1
 // bit 15:    promotion
 
-uint8_t move_t::from_sq() {
+uint8_t move_t::from_sq() const {
     return (data & 63);
 }
 
-uint8_t move_t::to_sq() {
+uint8_t move_t::to_sq() const {
     return (data >> 6) & 63;
 }
 
-uint8_t move_t::flags() {
+uint8_t move_t::flags() const {
     return (data >> 12) & 15;
 }
 
-bool move_t::is_quiet() {
+bool move_t::is_quiet() const {
     return !flags();
 }
 
-bool move_t::is_promotion() {
+bool move_t::is_promotion() const {
     return (flags() & 8);
 }
 
@@ -437,35 +437,35 @@ void move_t::set_promotion(piece pc) {
     }
 }
 
-bool move_t::is_capture() {
+bool move_t::is_capture() const {
     return (flags() & 1);
 }
 
-bool move_t::is_ep_capture() {
+bool move_t::is_ep_capture() const {
     return (flags() == 3);
 }
 
-bool move_t::is_doublePP() {
+bool move_t::is_doublePP() const {
     return (flags() == 2);
 }
 
-bool move_t::is_kingCastle() {
+bool move_t::is_kingCastle() const {
     return ( flags() == 4);
 }
 
-bool move_t::is_queenCastle() {
+bool move_t::is_queenCastle() const {
     return ( flags() == 6);
 }
 
-bool move_t::is_castle() {
+bool move_t::is_castle() const {
     return ( is_kingCastle() | is_queenCastle());
 }
 
-uint16_t move_t::give() {
+uint16_t move_t::give() const {
     return data;
 }
 
-piece move_t::which_promotion() {
+piece move_t::which_promotion() const {
     switch (flags() & 6) {
     case 0:
         return queen;

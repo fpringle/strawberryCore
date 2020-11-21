@@ -134,19 +134,19 @@ bool Player::lookup(uint64_t pos_hash, record_t * dest) {
     }
 }
 
-std::vector<move_t> Player::getHistory() {
+std::vector<move_t> Player::getHistory() const {
     return move_history;
 }
 
-std::vector<std::string> Player::getHistorySAN() {
+std::vector<std::string> Player::getHistorySAN() const {
     return move_history_san;
 }
 
-std::map<uint32_t, record_t> Player::getTable() {
+std::map<uint32_t, record_t> Player::getTable() const {
     return trans_table;
 }
 
-void Player::print_history(std::ostream& cout) {
+void Player::print_history(std::ostream& cout) const {
     int sz = move_history.size();
     for (int i=0; i<sz; i+=2) {
         cout << int((i / 2) + 1) << ". " << move_history[i];
@@ -159,7 +159,7 @@ void Player::print_history(std::ostream& cout) {
     }
 }
 
-void Player::print_history_san(std::ostream& cout) {
+void Player::print_history_san(std::ostream& cout) const {
     int sz = move_history_san.size();
     for (int i=0; i<sz; i+=2) {
         cout << int((i / 2) + 1) << ". " << move_history_san[i];
@@ -265,7 +265,7 @@ void Player::load_state(std::string filename) {
 }
 
 
-move_t Player::input_move() {
+move_t Player::input_move() const {
     move_t ret;
     move_t moves[256];
     int n_moves = gen_legal_moves(moves);

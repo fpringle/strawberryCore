@@ -455,7 +455,7 @@ void Player::doMoveInPlace(move_t move) {
     move_history_san.push_back(san);
 }
 
-void Player::makeChild(board* child, move_t move) {
+void Player::makeChild(board* child, move_t move) const {
     *child = *this;
     child->doMoveInPlace(move);
 }

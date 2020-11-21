@@ -37,7 +37,7 @@ namespace chessCore {
  *  Convenience function for getting the opposing side.
  *
  *  \param side             The colour to invert.
- *  \return                 \ref white if side is \ref black, else \black.
+ *  \return                 white if side is black, else black.
  */
 colour flipColour(colour side);
 

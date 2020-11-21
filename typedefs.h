@@ -21,6 +21,13 @@ using value_t = int16_t;
  */
 enum colour {white,black};
 
+/**
+ *  Print the name of a colour to an output stream.
+ *
+ *  \param out          The output stream to print to.
+ *  \param colour       The colour to pretty-print.
+ *  \return             The output stream.
+ */
 inline std::ostream& operator<<(std::ostream& out, const colour& colour) {
     out << ((colour == white) ? "white" : "black");
     return out;

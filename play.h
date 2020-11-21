@@ -28,7 +28,7 @@ namespace chessCore {
 /**
  *  \struct record_t
  *
- *  A struct for recording search details, used in the transposition table.
+ *  \brief A struct for recording search details, used in the transposition table.
  */
 struct record_t {
     /** The hash value of the corresponding board state. */
@@ -86,8 +86,14 @@ private:
      */
     std::vector<std::string> move_history_san;
 
+    /**
+     *  The side that the user is playing as.
+     */
     colour user_colour;
 
+    /**
+     *  The maximum time the computer can use to search for each move.
+     */
     int iterative_deepening_timeout;
 public:
     // constructors
@@ -158,8 +164,6 @@ public:
      *  Read a config file.
      *
      *  \param filename         The path of the TOML config file.
-     *  \return                 True if the config file was read
-     *                          successfully, false otherwise.
      */
     void read_config(std::string filename);
 
@@ -177,21 +181,21 @@ public:
      *
      *  \return                 A vector of the history in move_t formmat.
      */
-    std::vector<move_t> getHistory();
+    std::vector<move_t> getHistory() const;
 
     /**
      *  Access the move history in SAN format.
      *
      *  \return                 A vector of the history in SAN formmat.
      */
-    std::vector<std::string> getHistorySAN();
+    std::vector<std::string> getHistorySAN() const;
 
     /**
      *  Access the transposition table.
      *
      *  \return                 A copy of the transposition table.
      */
-    std::map<uint32_t, record_t> getTable();
+    std::map<uint32_t, record_t> getTable() const;
 
     /**@{*/
     /**
@@ -199,11 +203,17 @@ public:
      *
      *  \param cout             The output stream to print to.
      */
-    void print_history(std::ostream& cout = std::cout);
-    void print_history_san(std::ostream& cout = std::cout);
+    void print_history(std::ostream& cout = std::cout) const;
+    void print_history_san(std::ostream& cout = std::cout) const;
     void print_table(std::ostream& cout = std::cout);
     /**@}*/
 
+    /**
+     *  Print the board state to an output stream with the orientation
+     *  depending on which side the user is playing.
+     *
+     *  \param cout             The output stream to print to.
+     */
     void print_board(std::ostream& cout = std::cout) const;
 
     /**
@@ -233,7 +243,7 @@ public:
      *  \param child            A pointer to the board to transform.
      *  \param move             The move to make.
      */
-    void makeChild(board* child, move_t move);
+    void makeChild(board* child, move_t move) const;
 
     /**
      *  Search using Principal Variation search, to
@@ -308,7 +318,7 @@ public:
      *
      *  \return             The move the player has entered.
      */
-    move_t input_move();
+    move_t input_move() const;
 
     /**
      *  Start a game between the user and the computer. Uses the class members

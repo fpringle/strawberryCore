@@ -82,7 +82,7 @@ void init_rays();
 /**
  *  \struct move_t
  *
- *  A struct representing one move on the board.
+ *  \brief A struct representing one move on the board.
  */
 struct move_t {
     // bits 0-5:  from square
@@ -138,19 +138,19 @@ public:
      *
      *  \return             8-bit unsigned integer representing the from square.
      */
-    uint8_t from_sq();
+    uint8_t from_sq() const;
     /**
      *  Get the from square of the move.
      *
      *  \return             8-bit unsigned integer representing the from square.
      */
-    uint8_t to_sq();
+    uint8_t to_sq() const;
     /**
      *  Get the flag data of the square.
      *
      *  \return             8-bit unsigned integer representing the move flags.
      */
-    uint8_t flags();
+    uint8_t flags() const;
 
     /**
      *  Whether or not the move is "quiet", in other words not a capture,
@@ -158,14 +158,14 @@ public:
      *
      *  \return             Boolean indicating whether the move is quiet.
      */
-    bool is_quiet();
+    bool is_quiet() const;
 
     /**
      *  Whether or not the move is a promotion.
      *
      *  \return             Boolean indicating whether the move is a prommotion.
      */
-    bool is_promotion();
+    bool is_promotion() const;
 
     /**
      *  If the move is a promotion, get the promoting piece.
@@ -173,7 +173,7 @@ public:
      *  \return             A \ref piece object indicating which piece the
      *                      pawn is being promoted to.
      */
-    piece which_promotion();
+    piece which_promotion() const;
 
     /**
      *  Alter the promotion type of the move.
@@ -187,7 +187,7 @@ public:
      *
      *  \return             Boolean indicating whether the move is a capture.
      */
-    bool is_capture();
+    bool is_capture() const;
 
     /**
      *  Whether or not the move is an en-passant capture.
@@ -195,7 +195,7 @@ public:
      *  \return             Boolean indicating whether the move is an
      *                      en-passant capture.
      */
-    bool is_ep_capture();
+    bool is_ep_capture() const;
 
     /**
      *  Whether or not the move is a double pawn push.
@@ -203,7 +203,7 @@ public:
      *  \return             Boolean indicating whether the move is a
      *                      double pawn push.
      */
-    bool is_doublePP();
+    bool is_doublePP() const;
 
     /**
      *  Whether or not the move is a king-side castle.
@@ -211,7 +211,7 @@ public:
      *  \return             Boolean indicating whether the move is a
      *                      king-side castle.
      */
-    bool is_kingCastle();
+    bool is_kingCastle() const;
 
     /**
      *  Whether or not the move is a queen-side castle.
@@ -219,7 +219,7 @@ public:
      *  \return             Boolean indicating whether the move is a
      *                      queen-side castle.
      */
-    bool is_queenCastle();
+    bool is_queenCastle() const;
 
     /**
      *  Whether or not the move is a castling move.
@@ -227,14 +227,14 @@ public:
      *  \return             Boolean indicating whether the move is a
      *                      castling move.
      */
-    bool is_castle();
+    bool is_castle() const;
 
     /**
      *  Get the 16-bit integer representing the move data.
      *
      *  \return             16-bit integer representing the move data.
      */
-    uint16_t give();
+    uint16_t give() const;
 
     /**
      *  Print the move to an output stream in the form FileRankFileRank,
