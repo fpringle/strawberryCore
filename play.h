@@ -15,15 +15,14 @@
 
 namespace chessCore {
 
-// transposition table
-// "signature" = zobrist hash (64 bits)
-// best/refutation move (16 bits)
-// depth (8 bits)
-// score (integrated bound and values (16 bits)
-// age (8 bits)
-// total 112 bits
-// -> 16 bits left over if we want to add something
 
+/**
+ *  Convenience function to convert a string to uppercase.
+ *
+ *  \param s                The string to convert.
+ *  \return                 The string s converted to uppercase.
+ */
+std::string upper_string(std::string s);
 
 /**
  *  \struct record_t
