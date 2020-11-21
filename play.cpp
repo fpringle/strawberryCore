@@ -6,7 +6,9 @@
 #include <sstream>
 #include <string>
 
-#include <toml.hpp>
+#if USE_CONFIG_FILE
+    #include <toml.hpp>
+#endif
 
 #include "action.h"
 #include "board.h"
@@ -87,6 +89,8 @@ std::string upper_string(std::string s) {
 }
 
 void Player::read_config(std::string filename) {
+
+#if USE_CONFIG_FILE
     toml::value config;
 
     try {
@@ -120,6 +124,7 @@ void Player::read_config(std::string filename) {
                   << "Using default value of " << user_colour
                   << "." << std::endl;
     }
+#endif
 }
 
 bool Player::lookup(uint64_t pos_hash, record_t * dest) {

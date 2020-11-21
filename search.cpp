@@ -13,6 +13,7 @@
 #include "typedefs.h"
 
 #define USE_TABLE
+#define DEBUG 0
 
 namespace chessCore {
 
@@ -624,11 +625,13 @@ move_t Player::iterative_deepening(int timeout, uint8_t max_depth) {
             moves.push_back(best_move);
         }
         time_taken = double(clock() - start_time) / double(CLOCKS_PER_SEC);
+#if DEBUG
         std::cout << "Depth searched: " << depth - 1 << "   ("
                   << time_taken
                   << " seconds total)"
                   << "  (best move so far: "
                   << best_move << ")" << std::endl;
+#endif
 
         sz = moves.size();
         if (((sz >= 8) || (sz >= 5 && time_taken > 10.0)) && moves[sz - 1] == moves[sz - 2]) {
