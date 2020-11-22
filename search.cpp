@@ -122,8 +122,9 @@ value_t Player::principal_variation(board b, colour side, uint8_t depth,
 
     int num_moves = b.gen_legal_moves(moves);
     if (num_moves == 0) {
-        ret = (std::numeric_limits<value_t>::min() / 10) * is_checkmate();
-        ret *= ((side == white) ? 1 : -1);
+        ret = (std::numeric_limits<value_t>::min() / 10);
+        if (is_checkmate()) ret *= ((side == white) ? 1 : -1);
+        else ret = 0;
 #ifdef USE_TABLE
         ibv = 4 * ret;
         record = {sig, bestMove, depth, ibv, age};
@@ -252,8 +253,9 @@ value_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
 
     int num_moves = b.gen_legal_moves(moves);
     if (num_moves == 0) {
-        ret = (std::numeric_limits<value_t>::min() / 10) * is_checkmate();
-        ret *= ((side == white) ? 1 : -1);
+        ret = (std::numeric_limits<value_t>::min() / 10);
+        if (is_checkmate()) ret *= ((side == white) ? 1 : -1);
+        else ret = 0;
 #ifdef USE_TABLE
         ibv = 4 * ret;
         record = {sig, bestMove, depth, ibv, age};
@@ -477,7 +479,7 @@ move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move, double
 
     for (int i = 0; i < num_moves; i++) {
         makeChild(&child, moves[i]);
-        if (child.is_checkmate(otherSide)) {
+        if (child.is_checkmate()) {
             return moves[i];
         }
         if (double(clock() - start_time) / double(CLOCKS_PER_SEC) > time_remaining) {

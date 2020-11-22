@@ -45,7 +45,7 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
     // pawns
     _check = pawnAttackNaive(kingpos, side) & pieceBoards[(6 * otherSide) + 0];
     if (_check) {
-        *checkingPiece = piece(0);
+        *checkingPiece = piece((6 * otherSide) + 0);
         *checkingInd = last_set_bit(_check);
         count += count_bits_set(_check);
     }
@@ -53,7 +53,7 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
     _check = rookTargets(kingpos, _white, _black,
                          side) & pieceBoards[(6 * otherSide) + 1];
     if (_check) {
-        *checkingPiece = piece(1);
+        *checkingPiece = piece((6 * otherSide) + 1);
         *checkingInd = last_set_bit(_check);
         count += count_bits_set(_check);
         if (count == 2) {
@@ -65,7 +65,7 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
     _check = knightTargets(kingpos, _white, _black,
                            side) & pieceBoards[(6 * otherSide) + 2];
     if (_check) {
-        *checkingPiece = piece(2);
+        *checkingPiece = piece((6 * otherSide) + 2);
         *checkingInd = last_set_bit(_check);
         count += count_bits_set(_check);
         if (count == 2) {
@@ -77,7 +77,7 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
     _check = bishopTargets(kingpos, _white, _black,
                            side) & pieceBoards[(6 * otherSide) + 3];
     if (_check) {
-        *checkingPiece = piece(3);
+        *checkingPiece = piece((6 * otherSide) + 3);
         *checkingInd = last_set_bit(_check);
         count += count_bits_set(_check);
         if (count == 2) {
@@ -89,7 +89,7 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
     _check = queenTargets(kingpos, _white, _black,
                           side) & pieceBoards[(6 * otherSide) + 4];
     if (_check) {
-        *checkingPiece = piece(4);
+        *checkingPiece = piece((6 * otherSide) + 4);
         *checkingInd = last_set_bit(_check);
         count += count_bits_set(_check);
         if (count == 2) {
@@ -101,28 +101,18 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
     return ( count > 0);
 }
 
-bool board::is_checkmate(colour side) const {
+bool board::is_checkmate() const {
     piece checkingPiece;
     int checkingInd;
     bool double_check = false;
 
-    if (! is_check(side, &checkingPiece, &checkingInd, &double_check)) {
+    if (! is_check(sideToMove, &checkingPiece, &checkingInd, &double_check)) {
         return false;
     }
     else {
-        return ! can_get_out_of_check(side, checkingPiece, checkingInd,
+        return ! can_get_out_of_check(sideToMove, checkingPiece, checkingInd,
                     last_set_bit(pieceBoards[(6 * sideToMove) + 5]), double_check);
     }
-}
-
-int board::is_checkmate() const {
-    // return  1  if white is in checkmate,
-    //        -1  if black is in checkmate,
-    //         0  otherwise
-    if (is_checkmate(white)) return 1;
-    else if (is_checkmate(black)) return -1;
-    else return 0;
-
 }
 
 bool board::is_stalemate() const {
@@ -134,7 +124,7 @@ bool board::is_stalemate() const {
 }
 
 bool board::gameover() const {
-    return is_checkmate(white) || is_checkmate(black) || is_stalemate();
+    return is_checkmate() || is_stalemate();
 }
 
 bool board::was_lastmove_check(move_t lastmove) const {

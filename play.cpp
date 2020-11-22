@@ -91,6 +91,7 @@ std::string upper_string(std::string s) {
 void Player::read_config(std::string filename) {
 
 #if USE_CONFIG_FILE
+    std::cout << "Reading config file\n";
     toml::value config;
 
     try {
@@ -331,26 +332,17 @@ void Player::play(colour playerSide, int timeout) {
     else print_board_flipped();
     print_history();
 
-    switch (is_checkmate()) {
-    case 1:
-        if (playerSide == white) {
+    if (is_checkmate()) {
+        getSide(&movingSide);
+        if (movingSide == playerSide) {
             std::cout << "Computer wins" << std::endl;
         }
         else {
             std::cout << "Player wins" << std::endl;
         }
-        break;
-    case -1:
-        if (playerSide == white) {
-            std::cout << "Player wins" << std::endl;
-        }
-        else {
-            std::cout << "Computer wins" << std::endl;
-        }
-        break;
-    case 0:
+    }
+    else if (is_stalemate()) {
         std::cout << "Draw" << std::endl;
-        break;
     }
 }
 
@@ -393,26 +385,17 @@ void Player::play() {
     print_board();
     print_history();
 
-    switch (is_checkmate()) {
-    case 1:
-        if (user_colour == white) {
+    if (is_checkmate()) {
+        getSide(&movingSide);
+        if (movingSide == user_colour) {
             std::cout << "Computer wins" << std::endl;
         }
         else {
             std::cout << "Player wins" << std::endl;
         }
-        break;
-    case -1:
-        if (user_colour == white) {
-            std::cout << "Player wins" << std::endl;
-        }
-        else {
-            std::cout << "Computer wins" << std::endl;
-        }
-        break;
-    case 0:
+    }
+    else if (is_stalemate()) {
         std::cout << "Draw" << std::endl;
-        break;
     }
 }
 

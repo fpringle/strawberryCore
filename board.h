@@ -689,22 +689,11 @@ public:
                   int* checkingInd, bool* doubleCheck) const;
 
     /**
-     *  Test if a given side is in checkmate.
+     *  Test if the side to move is in checkmate.
      *
-     *  \param side             The colour to test.
      *  \return                 True if side is in checkmate, false otherwise.
      */
-    bool is_checkmate(colour side) const;
-
-    /**
-     *  Test if either side is in checkmate.
-     *
-     *  \param side             The colour to test.
-     *  \return                 1  if white is in checkmate,\n
-     *                          -1 if black is in checkmate,\n
-     *                          0  otherwise.
-     */
-    int is_checkmate() const;
+    bool is_checkmate() const;
 
     /**
      *  Test if the game is a stalemate.

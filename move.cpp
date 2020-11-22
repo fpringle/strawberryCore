@@ -138,8 +138,8 @@ std::string board::SAN_pre_move( move_t move ) const {
     child.doMoveInPlace(move);
 
     if ( child.is_check( otherSide ) ) {
-        if ( child.is_checkmate( otherSide ) ) san << "#";
-        else                             san << "+";
+        if (child.is_checkmate()) san << "#";
+        else                      san << "+";
     }
 
     return san.str();
@@ -235,9 +235,9 @@ std::string board::SAN_post_move( move_t move ) const {
         }
     }
 
-    if ( is_check(otherSide) ) {
-        if ( is_checkmate( otherSide ) ) san << "#";
-        else                             san << "+";
+    if (is_check(otherSide)) {
+        if (is_checkmate()) san << "#";
+        else                san << "+";
     }
 
     return san.str();
