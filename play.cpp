@@ -54,7 +54,12 @@ std::ostream& operator<<(std::ostream &out, const record_t &rec) {
 
 Player::Player() : board::board() {
     user_colour = white;
-    iterative_deepening_timeout = 30;
+    iterative_deepening_timeout = 60;
+}
+
+Player::Player(colour userColour) : board::board() {
+    user_colour = userColour;
+    iterative_deepening_timeout = 60;
 }
 
 Player::Player(bitboard * startPositions, bool * castling, bool ep, int dpp,
@@ -64,7 +69,7 @@ Player::Player(bitboard * startPositions, bool * castling, bool ep, int dpp,
         side, open_val, end_val, hash) {
 
     user_colour = white;
-    iterative_deepening_timeout = 30;
+    iterative_deepening_timeout = 60;
 }
 
 Player::Player(Player& p1) : board::board(p1) {
@@ -72,12 +77,12 @@ Player::Player(Player& p1) : board::board(p1) {
     move_history = p1.getHistory();
     move_history_san = p1.getHistorySAN();
     user_colour = white;
-    iterative_deepening_timeout = 30;
+    iterative_deepening_timeout = 60;
 }
 
 Player::Player(std::string fen) : board::board(fen) {
     user_colour = white;
-    iterative_deepening_timeout = 30;
+    iterative_deepening_timeout = 60;
 }
 
 std::string upper_string(std::string s) {

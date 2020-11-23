@@ -107,6 +107,17 @@ public:
     Player();
 
     /**
+     *  \brief The default constructor for Player. Specify the user colour.
+     *
+     *  Construct the default board with starting bitboards, all
+     *  castling rights, value 0, empty move history and transposition
+     *  table, and generate the hash.
+     *
+     *  \param userColour           The colour the user will play as.
+     */
+    Player(colour userColour);
+
+    /**
      *  \brief Parameterised constructor for Player.
      *
      *  \param startPositions   An array of 12 bitboards representing the
@@ -281,6 +292,8 @@ public:
      *  \return             The best move to play from the current node.
      */
     move_t iterative_deepening(int timeout, uint8_t max_depth = 100);
+
+    move_t iterative_deepening();
 
     /**
      *  Use Player::negamax_alphabeta to choose the best move to make

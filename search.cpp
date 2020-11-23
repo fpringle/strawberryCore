@@ -644,6 +644,9 @@ move_t Player::iterative_deepening(int timeout, uint8_t max_depth) {
     return best_move;
 }
 
+move_t Player::iterative_deepening() {
+    return iterative_deepening(iterative_deepening_timeout);
+}
 
 
 } // end of chessCore namespace
