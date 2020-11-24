@@ -45,7 +45,7 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
     // pawns
     _check = pawnAttackNaive(kingpos, side) & pieceBoards[(6 * otherSide) + 0];
     if (_check) {
-        *checkingPiece = piece((6 * otherSide) + 0);
+        *checkingPiece = piece(0);
         *checkingInd = last_set_bit(_check);
         count += count_bits_set(_check);
     }
@@ -53,7 +53,7 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
     _check = rookTargets(kingpos, _white, _black,
                          side) & pieceBoards[(6 * otherSide) + 1];
     if (_check) {
-        *checkingPiece = piece((6 * otherSide) + 1);
+        *checkingPiece = piece(1);
         *checkingInd = last_set_bit(_check);
         count += count_bits_set(_check);
         if (count == 2) {
@@ -65,7 +65,7 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
     _check = knightTargets(kingpos, _white, _black,
                            side) & pieceBoards[(6 * otherSide) + 2];
     if (_check) {
-        *checkingPiece = piece((6 * otherSide) + 2);
+        *checkingPiece = piece(2);
         *checkingInd = last_set_bit(_check);
         count += count_bits_set(_check);
         if (count == 2) {
@@ -77,7 +77,7 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
     _check = bishopTargets(kingpos, _white, _black,
                            side) & pieceBoards[(6 * otherSide) + 3];
     if (_check) {
-        *checkingPiece = piece((6 * otherSide) + 3);
+        *checkingPiece = piece(3);
         *checkingInd = last_set_bit(_check);
         count += count_bits_set(_check);
         if (count == 2) {
@@ -89,7 +89,7 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
     _check = queenTargets(kingpos, _white, _black,
                           side) & pieceBoards[(6 * otherSide) + 4];
     if (_check) {
-        *checkingPiece = piece((6 * otherSide) + 4);
+        *checkingPiece = piece(4);
         *checkingInd = last_set_bit(_check);
         count += count_bits_set(_check);
         if (count == 2) {

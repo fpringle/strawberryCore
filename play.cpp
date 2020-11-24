@@ -85,6 +85,10 @@ Player::Player(std::string fen) : board::board(fen) {
     iterative_deepening_timeout = 60;
 }
 
+void Player::setTimeout(int timeout) {
+    if (timeout > 0) iterative_deepening_timeout = timeout;
+}
+
 int Player::getTimeout() {
     return iterative_deepening_timeout;
 }

@@ -170,6 +170,8 @@ public:
      */
     Player(std::string fen);
 
+    void setTimeout(int timeout);
+
     int getTimeout();
 
     /**
