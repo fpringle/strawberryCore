@@ -13,26 +13,26 @@ namespace chessCore {
 
 /**@{*/
 /** Constants for sliding pieces which moves in straight lines. */
-extern const int N;
-extern const int NE;
-extern const int E;
-extern const int SE;
-extern const int S;
-extern const int SW;
-extern const int W;
-extern const int NW;
+constexpr int N = 8;
+constexpr int NE = 9;
+constexpr int E = 1;
+constexpr int SE = -7;
+constexpr int S = -8;
+constexpr int SW = -9;
+constexpr int W = -1;
+constexpr int NW = 7;
 /**@}*/
 
 /**@{*/
 /** Constants for knights. */
-extern const int NNE;
-extern const int ENE;
-extern const int ESE;
-extern const int SSE;
-extern const int SSW;
-extern const int WSW;
-extern const int WNW;
-extern const int NNW;
+constexpr int NNE = 17;
+constexpr int ENE = 10;
+constexpr int ESE = -6;
+constexpr int SSE = -15;
+constexpr int SSW = -17;
+constexpr int WSW = -10;
+constexpr int WNW = 6;
+constexpr int NNW = 15;
 /**@}*/
 
 /**

@@ -16,6 +16,7 @@
 namespace chessCore {
 
 // initialise constants declared in move.h
+/*
 const int N = +8;
 const int NE = +9;
 const int E = +1;
@@ -32,6 +33,7 @@ const int SSW = -17;
 const int WSW = -10;
 const int WNW = 6;
 const int NNW = 15;
+*/
 
 // utility
 
