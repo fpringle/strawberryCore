@@ -85,6 +85,10 @@ Player::Player(std::string fen) : board::board(fen) {
     iterative_deepening_timeout = 60;
 }
 
+int Player::getTimeout() {
+    return iterative_deepening_timeout;
+}
+
 std::string upper_string(std::string s) {
     std::stringstream ss;
     for (char c : s) {

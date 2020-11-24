@@ -170,6 +170,8 @@ public:
      */
     Player(std::string fen);
 
+    int getTimeout();
+
     /**
      *  Read a config file.
      *
