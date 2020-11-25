@@ -14,8 +14,8 @@ namespace chessCore {
 
 board doMove(board startBoard, move_t move) {
     int i;
-    uint16_t fromSquare = move.from_sq();
-    uint16_t toSquare = move.to_sq();
+    uint16_t fromSquare = from_sq(move);
+    uint16_t toSquare = to_sq(move);
     bool castling[4];
     bool ep;
     startBoard.getEP(&ep);
@@ -56,8 +56,8 @@ board doMove(board startBoard, move_t move) {
         return startBoard;
     }
 
-    if (move.is_capture()) {
-        if (!move.is_ep_capture()) {
+    if (is_capture(move)) {
+        if (!is_ep_capture(move)) {
             for (i = (1 - movingColour)*6; i < (2 - movingColour)*6; i++) {
                 if (is_bit_set(startingPos[i], toSquare)) {
                     if (i % 6 == 1) rooktaken = true;
@@ -84,7 +84,7 @@ board doMove(board startBoard, move_t move) {
         }
     }
 
-    if (move.is_kingCastle()) {
+    if (is_kingCastle(move)) {
         startingPos[1 + (6 * movingColour)] = (startingPos[1 + (6 * movingColour)] & ~
                                                (1ULL << (fromSquare + 3)))
                                               | (1ULL << (toSquare - 1));
@@ -95,7 +95,7 @@ board doMove(board startBoard, move_t move) {
         hash ^= zobristKeys[(1 + (6 * movingColour))*64 + fromSquare + 3];
         hash ^= zobristKeys[(1 + (6 * movingColour))*64 + toSquare - 1];
     }
-    else if (move.is_queenCastle()) {
+    else if (is_queenCastle(move)) {
         startingPos[1 + (6 * movingColour)] = (startingPos[1 + (6 * movingColour)] & ~
                                                (1ULL << (fromSquare - 4)))
                                               | (1ULL << (toSquare + 1));
@@ -108,7 +108,7 @@ board doMove(board startBoard, move_t move) {
     }
 
     // promotion
-    if (move.is_promotion()) {
+    if (is_promotion(move)) {
         startingPos[6 * movingColour] &= (~(1ULL << toSquare));
         opening_value -= pieceSquareTables[0][6 * movingColour][toSquare];
         endgame_value -= pieceSquareTables[1][6 * movingColour][toSquare];
@@ -117,7 +117,7 @@ board doMove(board startBoard, move_t move) {
         hash ^= zobristKeys[6 * movingColour * 64 + toSquare];
 
         colourPiece prom_piece = colourPiece((6 * movingColour) +
-                                             move.which_promotion());
+                                             which_promotion(move));
 
         startingPos[prom_piece] |= (1ULL << toSquare);
         opening_value += pieceSquareTables[0][prom_piece][toSquare];
@@ -135,7 +135,7 @@ board doMove(board startBoard, move_t move) {
     if (ep) {
         hash ^= zobristKeys[772 + dpp];
     }
-    if (move.is_doublePP()) {
+    if (is_doublePP(move)) {
         ep = true;
         dpp = fromSquare % 8;
         hash ^= zobristKeys[772 + dpp];
@@ -226,7 +226,7 @@ board doMove(board startBoard, move_t move) {
     }
 
     // increment halfMoveClock
-    if (move.is_capture() | (movingPiece % 6 == 0)) clk = 0;
+    if (is_capture(move) | (movingPiece % 6 == 0)) clk = 0;
     else clk++;
 
     // increment fullMoveClock
@@ -243,8 +243,8 @@ board doMove(board startBoard, move_t move) {
 
 void board::doMoveInPlace(move_t move) {
     int i;
-    uint16_t fromSquare = move.from_sq();
-    uint16_t toSquare = move.to_sq();
+    uint16_t fromSquare = from_sq(move);
+    uint16_t toSquare = to_sq(move);
     colour otherColour = flipColour(sideToMove);
     colourPiece movingPiece;
     bool rooktaken = false;
@@ -269,8 +269,8 @@ void board::doMoveInPlace(move_t move) {
         return;
     }
 
-    if (move.is_capture()) {
-        if (!move.is_ep_capture()) {
+    if (is_capture(move)) {
+        if (!is_ep_capture(move)) {
             for (i = (1 - sideToMove)*6; i < (2 - sideToMove)*6; i++) {
                 if (is_bit_set(pieceBoards[i], toSquare)) {
                     if (i % 6 == 1) rooktaken = true;
@@ -296,7 +296,7 @@ void board::doMoveInPlace(move_t move) {
         }
     }
 
-    if (move.is_kingCastle()) {
+    if (is_kingCastle(move)) {
         pieceBoards[1 + (6 * sideToMove)] = (pieceBoards[1 + (6 * sideToMove)] & ~
                                              (1ULL << (fromSquare + 3)))
                                             | (1ULL << (toSquare - 1));
@@ -307,7 +307,7 @@ void board::doMoveInPlace(move_t move) {
         hash_value ^= zobristKeys[(1 + (6 * sideToMove))*64 + fromSquare + 3];
         hash_value ^= zobristKeys[(1 + (6 * sideToMove))*64 + toSquare - 1];
     }
-    else if (move.is_queenCastle()) {
+    else if (is_queenCastle(move)) {
         pieceBoards[1 + (6 * sideToMove)] = (pieceBoards[1 + (6 * sideToMove)] & ~
                                              (1ULL << (fromSquare - 4)))
                                             | (1ULL << (toSquare + 1));
@@ -320,7 +320,7 @@ void board::doMoveInPlace(move_t move) {
     }
 
     // promotion
-    if (move.is_promotion()) {
+    if (is_promotion(move)) {
         pieceBoards[6 * sideToMove] &= (~(1ULL << toSquare));
         opening_value -= pieceSquareTables[0][6 * sideToMove][toSquare];
         endgame_value -= pieceSquareTables[1][6 * sideToMove][toSquare];
@@ -328,7 +328,7 @@ void board::doMoveInPlace(move_t move) {
         endgame_value -= pieceValues[1][6 * sideToMove];
         hash_value ^= zobristKeys[6 * sideToMove * 64 + toSquare];
 
-        colourPiece prom_piece = colourPiece((6 * sideToMove) + move.which_promotion());
+        colourPiece prom_piece = colourPiece((6 * sideToMove) + which_promotion(move));
 
         pieceBoards[prom_piece] |= (1ULL << toSquare);
         opening_value += pieceSquareTables[0][prom_piece][toSquare];
@@ -343,7 +343,7 @@ void board::doMoveInPlace(move_t move) {
     if (lastMoveDoublePawnPush) {
         hash_value ^= zobristKeys[772 + dPPFile];
     }
-    if (move.is_doublePP()) {
+    if (is_doublePP(move)) {
         lastMoveDoublePawnPush = true;
         dPPFile = fromSquare % 8;
         hash_value ^= zobristKeys[772 + dPPFile];
@@ -434,7 +434,7 @@ void board::doMoveInPlace(move_t move) {
     }
 
     // increment halfMoveClock
-    if (move.is_capture() | (movingPiece % 6 == 0)) halfMoveClock = 0;
+    if (is_capture(move) | (movingPiece % 6 == 0)) halfMoveClock = 0;
     else halfMoveClock++;
 
     // increment fullMoveClock

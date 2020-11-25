@@ -15,6 +15,8 @@ using bitboard = uint64_t;
 /** A signed integer used for evaluation. */
 using value_t = int16_t;
 
+using move_t = uint16_t;
+
 /**
  *  \enum colour
  *  An Enum to represents the two colours of pieces.

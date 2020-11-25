@@ -130,8 +130,8 @@ bool board::gameover() const {
 bool board::was_lastmove_check(move_t lastmove) const {
     int i, j;
     colourPiece movingPiece;
-    int from_ind = lastmove.from_sq();
-    int to_ind = lastmove.to_sq();
+    int from_ind = from_sq(lastmove);
+    int to_ind = to_sq(lastmove);
     bitboard to_square = (1ULL << to_ind);
     bitboard kingBoard = pieceBoards[(sideToMove * 6) + 5];
     int king_ind = last_set_bit(kingBoard);
@@ -202,7 +202,7 @@ bool board::was_lastmove_check(move_t lastmove) const {
 
 
     // en passant
-    if (lastmove.is_ep_capture()) {
+    if (is_ep_capture(lastmove)) {
         int other_pawn_ind = to_ind + ((sideToMove == black) ? S : N);
         bitboard left_ray = rays[6][from_ind] & rays[6][other_pawn_ind] & blockers;
         bitboard right_ray = rays[2][from_ind] & rays[2][other_pawn_ind] & blockers;
@@ -221,19 +221,19 @@ bool board::was_lastmove_check(move_t lastmove) const {
         }
     }
     // castling rook
-    if (lastmove.is_kingCastle()) {
+    if (is_kingCastle(lastmove)) {
         int rook_ind = to_ind - 1;
         if (kingBoard & rookTargets(rook_ind, _white, _black, otherSide)) return true;
     }
-    else if (lastmove.is_queenCastle()) {
+    else if (is_queenCastle(lastmove)) {
         int rook_ind = to_ind + 1;
         if (kingBoard & rookTargets(rook_ind, _white, _black, otherSide)) return true;
     }
 
     // promotion
-    if (lastmove.is_promotion()) {
+    if (is_promotion(lastmove)) {
         colourPiece prom_piece = colourPiece((6 * otherSide) +
-                                             lastmove.which_promotion());
+                                             which_promotion(lastmove));
         if (kingBoard & pieceTargets(to_ind, _white, _black, prom_piece)) return true;
     }
 
@@ -244,8 +244,8 @@ bool board::is_checking_move(move_t move) const {
     // assume the move is legal
     int i, j;
     colourPiece movingPiece;
-    int from_ind = move.from_sq();
-    int to_ind = move.to_sq();
+    int from_ind = from_sq(move);
+    int to_ind = to_sq(move);
     bitboard from_square = (1ULL << from_ind);
     bitboard kingBoard = pieceBoards[((1 - sideToMove)*6) + 5]; // king under attack
     int king_ind = last_set_bit(kingBoard);
@@ -307,7 +307,7 @@ bool board::is_checking_move(move_t move) const {
     }
 
     // en passant
-    if (move.is_ep_capture()) {
+    if (is_ep_capture(move)) {
         int other_pawn_ind = to_ind + ((sideToMove == white) ? S : N);
         bitboard left_ray = rays[6][from_ind] & rays[6][other_pawn_ind] & blockers;
         bitboard right_ray = rays[2][from_ind] & rays[2][other_pawn_ind] & blockers;
@@ -328,18 +328,18 @@ bool board::is_checking_move(move_t move) const {
 
 
     // castling rook
-    if (move.is_kingCastle()) {
+    if (is_kingCastle(move)) {
         int rook_ind = to_ind - 1;
         if (kingBoard & rookTargets(rook_ind, _white, _black, sideToMove)) return true;
     }
-    else if (move.is_queenCastle()) {
+    else if (is_queenCastle(move)) {
         int rook_ind = to_ind + 1;
         if (kingBoard & rookTargets(rook_ind, _white, _black, sideToMove)) return true;
     }
 
     // promotion
-    if (move.is_promotion()) {
-        colourPiece prom_piece = colourPiece((6 * sideToMove) + move.which_promotion());
+    if (is_promotion(move)) {
+        colourPiece prom_piece = colourPiece((6 * sideToMove) + which_promotion(move));
         if (kingBoard & pieceTargets(to_ind, _white, _black, prom_piece)) return true;
     }
 

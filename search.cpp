@@ -64,7 +64,7 @@ value_t Player::principal_variation(board b, colour side, uint8_t depth,
 #ifdef USE_TABLE
     uint64_t sig;
     uint32_t ind;
-    move_t bestMove(0,0,0,0,0,0);
+    move_t bestMove = 0;
     value_t ibv;
     uint8_t age;
     b.getHash(&sig);
@@ -117,7 +117,7 @@ value_t Player::principal_variation(board b, colour side, uint8_t depth,
     colour otherSide = flipColour(side);
     bool bSearchPv = true;
     board child;
-    struct move_t moves[256];
+    move_t moves[256];
     value_t score;
 
     int num_moves = b.gen_legal_moves(moves);
@@ -134,7 +134,7 @@ value_t Player::principal_variation(board b, colour side, uint8_t depth,
     }
 
 #ifdef USE_TABLE
-    if (bestMove.give()) {
+    if (bestMove) {
         reorder_moves(moves, num_moves, bestMove);
     }
 #endif
@@ -195,7 +195,7 @@ value_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
     value_t alphaOrig = alpha;
     uint64_t sig;
     uint32_t ind;
-    move_t bestMove(0,0,0,0,0,0);
+    move_t bestMove = 0;
     value_t ibv;
     uint8_t age;
     b.getHash(&sig);
@@ -248,7 +248,7 @@ value_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
 
     colour otherSide = flipColour(side);
     board child;
-    struct move_t moves[256];
+    move_t moves[256];
     value_t score, value = std::numeric_limits<value_t>::min() + 10;
 
     int num_moves = b.gen_legal_moves(moves);
@@ -265,7 +265,7 @@ value_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
     }
 
 #ifdef USE_TABLE
-    if (bestMove.give()) {
+    if (bestMove) {
         reorder_moves(moves, num_moves, bestMove);
     }
 #endif
@@ -310,7 +310,7 @@ move_t Player::search_negamax_alphabeta(uint8_t depth) {
 #ifdef USE_TABLE
     uint64_t sig;
     uint32_t ind;
-    move_t bestMove(0,0,0,0,0,0);
+    move_t bestMove = 0;
     value_t ibv;
     uint8_t age;
     getHash(&sig);
@@ -362,12 +362,12 @@ move_t Player::search_negamax_alphabeta(uint8_t depth) {
     getSide(&side);
     colour otherSide = flipColour(side);
 
-    struct move_t moves[256];
+    move_t moves[256];
     int num_moves = gen_legal_moves(moves);
-    struct move_t best_move;
+    move_t best_move = 0;
 
 #ifdef USE_TABLE
-    if (bestMove.give()) {
+    if (bestMove) {
         reorder_moves(moves, num_moves, bestMove);
     }
 #endif
@@ -411,7 +411,7 @@ move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move, double
 #ifdef USE_TABLE
     uint64_t sig;
     uint32_t ind;
-    move_t bestMove(0,0,0,0,0,0);
+    move_t bestMove = 0;
     value_t ibv;
     uint8_t age;
     getHash(&sig);
@@ -463,16 +463,16 @@ move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move, double
     getSide(&side);
     colour otherSide = flipColour(side);
 
-    struct move_t moves[256];
+    move_t moves[256];
     int num_moves = gen_legal_moves(moves);
-    struct move_t best_move;
+    move_t best_move = 0;
 
-    if (first_move.give()) {
+    if (first_move) {
         reorder_moves(moves, num_moves, first_move);
     }
 
 #ifdef USE_TABLE
-    if (bestMove.give()) {
+    if (bestMove) {
         reorder_moves(moves, num_moves, bestMove);
     }
 #endif
@@ -483,7 +483,7 @@ move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move, double
             return moves[i];
         }
         if (double(clock() - start_time) / double(CLOCKS_PER_SEC) > time_remaining) {
-            return {0,0,0,0,0,0};
+            return 0;
         }
         score = - negamax_alphabeta(child, otherSide, depth - 1, alpha, beta);
         if (score > max_score) {
@@ -520,7 +520,7 @@ move_t Player::search_principal_variation(uint8_t depth) {
 #ifdef USE_TABLE
     uint64_t sig;
     uint32_t ind;
-    move_t bestMove(0,0,0,0,0,0);
+    move_t bestMove = 0;
     value_t ibv;
     uint8_t age;
     getHash(&sig);
@@ -572,12 +572,12 @@ move_t Player::search_principal_variation(uint8_t depth) {
     getSide(&side);
     colour otherSide = flipColour(side);
 
-    struct move_t moves[256];
+    move_t moves[256];
     int num_moves = gen_legal_moves(moves);
-    struct move_t best_move;
+    move_t best_move = 0;
 
 #ifdef USE_TABLE
-    if (bestMove.give()) {
+    if (bestMove) {
         reorder_moves(moves, num_moves, bestMove);
     }
 #endif
@@ -614,7 +614,7 @@ move_t Player::iterative_deepening(int timeout, uint8_t max_depth) {
     clock_t start_time = clock();
     double time_taken = 0.0;
     uint8_t depth = 1;
-    move_t best_move(0,0,0,0,0,0);
+    move_t best_move = 0;
     move_t new_move;
     std::vector<move_t> moves;
     int sz;
@@ -622,7 +622,7 @@ move_t Player::iterative_deepening(int timeout, uint8_t max_depth) {
     while (time_taken < timeout && depth <= max_depth) {
         new_move = search_negamax_alphabeta(depth, best_move, timeout - time_taken);
         depth++;
-        if (new_move.give()) {
+        if (new_move) {
             best_move = new_move;
             moves.push_back(best_move);
         }

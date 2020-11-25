@@ -6,35 +6,10 @@
 #include <string>
 
 #include "typedefs.h"
+#include "twiddle.h"
 
 
 namespace chessCore {
-
-
-/**@{*/
-/** Constants for sliding pieces which moves in straight lines. */
-constexpr int N = 8;
-constexpr int NE = 9;
-constexpr int E = 1;
-constexpr int SE = -7;
-constexpr int S = -8;
-constexpr int SW = -9;
-constexpr int W = -1;
-constexpr int NW = 7;
-/**@}*/
-
-/**@{*/
-/** Constants for knights. */
-constexpr int NNE = 17;
-constexpr int ENE = 10;
-constexpr int ESE = -6;
-constexpr int SSE = -15;
-constexpr int SSW = -17;
-constexpr int WSW = -10;
-constexpr int WNW = 6;
-constexpr int NNW = 15;
-/**@}*/
-
 /**
  *  Convert a square index to a 2-char array.
  *
@@ -77,195 +52,134 @@ extern bitboard rays[8][64];
 /** Generate the ray bitboards */
 void init_rays();
 
-// 2-byte container to store the information of a move.
+/**
+ *
+ *  Constructor a move_t object from the relevant parameters.
+ *
+ *  \param from         The index of the square to move from.
+ *  \param to           The index of the square to move to.
+ *  \param promotion    Boolean indicating promotion.
+ *  \param capture      Boolean indicating capture.
+ *  \param spec1        Special flag for promotion type,
+ *                      double pawn push etc.
+ *  \param spec0        Special flag for promotion type,
+ *                      double pawn push etc.
+ *  \return             A move_t object representing the move.
+ */
+move_t make_move(uint8_t from, uint8_t to, bool promotion,
+       bool capture, bool spec1, bool spec0);
+/**
+ *  Get the from square of the move.
+ *
+ *  \return             8-bit unsigned integer representing the from square.
+ */
+uint8_t from_sq(move_t move);
 
 /**
- *  \struct move_t
+ *  Get the from square of the move.
  *
- *  \brief A struct representing one move on the board.
+ *  \return             8-bit unsigned integer representing the from square.
  */
-struct move_t {
-    // bits 0-5:  from square
-    // bits 6-11: to square
-    // bits 12:   capture
-    // bit 13:    special 0
-    // bit 14:    special 1
-    // bit 15:    promotion
-private:
-    /**
-     *  A 16-bit integer containing all the necessary information.
-     *
-     *  Bits 0-5        From square index.\n
-     *  Bits 6-11       From square index.\n
-     *  Bit 12          Capture flag.\n
-     *  Bit 13          Special bit 0.\n
-     *  Bit 14          Special bit 1.\n
-     *  Bit 15          Promotion flag.\n
-     *
-     *  See <a href="https://www.chessprogramming.org/Encoding_Moves">
-     *  Chess Programming Wiki</a>.
-     */
-    uint16_t data;
-public:
-    /** Default constructor for move_t */
-    move_t();
+uint8_t to_sq(move_t move);
 
-    /**
-     *
-     *  Parameterised constructor for move_t.
-     *
-     *  \param from         The index of the square to move from.
-     *  \param to           The index of the square to move to.
-     *  \param promotion    Boolean indicating promotion.
-     *  \param capture      Boolean indicating capture.
-     *  \param spec1        Special flag for promotion type,
-     *                      double pawn push etc.
-     *  \param spec2        Special flag for promotion type,
-     *                      double pawn push etc.
-     */
-    move_t(uint8_t from, uint8_t to, bool promotion,
-           bool capture, bool spec1, bool spec2);
+/**
+ *  Get the flag data of the square.
+ *
+ *  \return             8-bit unsigned integer representing the move flags.
+ */
+uint8_t flags(move_t move);
 
-    /**
-     *  Construct the move explicitly from \ref data.
-     *
-     *  \param cons_data    16-bit unsigned integer representing the move data.
-     */
-    move_t(uint16_t cons_data);
+/**
+ *  Whether or not the move is "quiet", in other words not a capture,
+ *  a promotion, castling or a double pawn push.
+ *
+ *  \return             Boolean indicating whether the move is quiet.
+ */
+bool is_quiet(move_t move);
 
-    /**
-     *  Get the from square of the move.
-     *
-     *  \return             8-bit unsigned integer representing the from square.
-     */
-    uint8_t from_sq() const;
-    /**
-     *  Get the from square of the move.
-     *
-     *  \return             8-bit unsigned integer representing the from square.
-     */
-    uint8_t to_sq() const;
-    /**
-     *  Get the flag data of the square.
-     *
-     *  \return             8-bit unsigned integer representing the move flags.
-     */
-    uint8_t flags() const;
+/**
+ *  Whether or not the move is a promotion.
+ *
+ *  \return             Boolean indicating whether the move is a prommotion.
+ */
+bool is_promotion(move_t move);
 
-    /**
-     *  Whether or not the move is "quiet", in other words not a capture,
-     *  a promotion, castling or a double pawn push.
-     *
-     *  \return             Boolean indicating whether the move is quiet.
-     */
-    bool is_quiet() const;
+/**
+ *  If the move is a promotion, get the promoting piece.
+ *
+ *  \return             A \ref piece object indicating which piece the
+ *                      pawn is being promoted to.
+ */
+piece which_promotion(move_t move);
 
-    /**
-     *  Whether or not the move is a promotion.
-     *
-     *  \return             Boolean indicating whether the move is a prommotion.
-     */
-    bool is_promotion() const;
+/**
+ *  Alter the promotion type of the move.
+ *
+ *  \param pc           A \ref piece object to promote to.
+ */
+move_t set_promotion(move_t move, piece pc);
 
-    /**
-     *  If the move is a promotion, get the promoting piece.
-     *
-     *  \return             A \ref piece object indicating which piece the
-     *                      pawn is being promoted to.
-     */
-    piece which_promotion() const;
+/**
+ *  Whether or not the move is a capture.
+ *
+ *  \return             Boolean indicating whether the move is a capture.
+ */
+bool is_capture(move_t move);
 
-    /**
-     *  Alter the promotion type of the move.
-     *
-     *  \param pc           A \ref piece object to promote to.
-     */
-    void set_promotion(piece);
+/**
+ *  Whether or not the move is an en-passant capture.
+ *
+ *  \return             Boolean indicating whether the move is an
+ *                      en-passant capture.
+ */
+bool is_ep_capture(move_t move);
 
-    /**
-     *  Whether or not the move is a capture.
-     *
-     *  \return             Boolean indicating whether the move is a capture.
-     */
-    bool is_capture() const;
+/**
+ *  Whether or not the move is a double pawn push.
+ *
+ *  \return             Boolean indicating whether the move is a
+ *                      double pawn push.
+ */
+bool is_doublePP(move_t move);
 
-    /**
-     *  Whether or not the move is an en-passant capture.
-     *
-     *  \return             Boolean indicating whether the move is an
-     *                      en-passant capture.
-     */
-    bool is_ep_capture() const;
+/**
+ *  Whether or not the move is a king-side castle.
+ *
+ *  \return             Boolean indicating whether the move is a
+ *                      king-side castle.
+ */
+bool is_kingCastle(move_t move);
 
-    /**
-     *  Whether or not the move is a double pawn push.
-     *
-     *  \return             Boolean indicating whether the move is a
-     *                      double pawn push.
-     */
-    bool is_doublePP() const;
+/**
+ *  Whether or not the move is a queen-side castle.
+ *
+ *  \return             Boolean indicating whether the move is a
+ *                      queen-side castle.
+ */
+bool is_queenCastle(move_t move);
 
-    /**
-     *  Whether or not the move is a king-side castle.
-     *
-     *  \return             Boolean indicating whether the move is a
-     *                      king-side castle.
-     */
-    bool is_kingCastle() const;
+/**
+ *  Whether or not the move is a castling move.
+ *
+ *  \return             Boolean indicating whether the move is a
+ *                      castling move.
+ */
+bool is_castle(move_t move);
 
-    /**
-     *  Whether or not the move is a queen-side castle.
-     *
-     *  \return             Boolean indicating whether the move is a
-     *                      queen-side castle.
-     */
-    bool is_queenCastle() const;
-
-    /**
-     *  Whether or not the move is a castling move.
-     *
-     *  \return             Boolean indicating whether the move is a
-     *                      castling move.
-     */
-    bool is_castle() const;
-
-    /**
-     *  Get the 16-bit integer representing the move data.
-     *
-     *  \return             16-bit integer representing the move data.
-     */
-    uint16_t give() const;
-
-    /**
-     *  Print the move to an output stream in the form FileRankFileRank,
-     *  e.g. e2e4.
-     *
-     *  \param out          The output stream to print to. Defaults to
-     *                      the standard output stream std::cout
-     *  \param move         The move to print.
-     *  \return             The output stream.
-     */
-    friend std::ostream& operator<<(std::ostream& out, const move_t& move);
-
-    /**
-     *  Equality comparison operator for move_t.
-     *
-     *  \param self         LHS move_t object to compare.
-     *  \param other        RHS move_t object to compare.
-     *  \return             True if the moves are equal, false otherwise.
-     */
-    friend bool operator==(const move_t& self, const move_t& other);
-
-    /**
-     *  Inequality comparison operator for move_t.
-     *
-     *  \param self         LHS move_t object to compare.
-     *  \param other        RHS move_t object to compare.
-     *  \return             False if the moves are equal, true otherwise.
-     */
-    friend bool operator!=(const move_t& self, const move_t& other);
+struct prettyMove {
+    move_t data;
 };
 
+/**
+ *  Print the move to an output stream in the form FileRankFileRank,
+ *  e.g. e2e4.
+ *
+ *  \param out          The output stream to print to. Defaults to
+ *                      the standard output stream std::cout
+ *  \param move         The move to print.
+ *  \return             The output stream.
+ */
+std::ostream& operator<<(std::ostream& out, const prettyMove& move);
 
 /**
  *  Convert a string to a move_t object given an array of possible moves.

@@ -24,7 +24,9 @@ namespace chessCore {
 std::ostream& operator<<(std::ostream &out, const record_t &rec) {
     value_t val;
 
-    out << "Best/refutation move:     " << rec.best_ref_move << std::endl
+    prettyMove pm = {rec.best_ref_move};
+
+    out << "Best/refutation move:     " << pm << std::endl
         << "Depth searched:           " << +rec.depth << std::endl
         << "Clock when last searched: " << +rec.age << std::endl
         << "Bound flag:               ";
@@ -167,10 +169,13 @@ std::map<uint32_t, record_t> Player::getTable() const {
 
 void Player::print_history(std::ostream& cout) const {
     int sz = move_history.size();
+    prettyMove pm;
     for (int i=0; i<sz; i+=2) {
-        cout << int((i / 2) + 1) << ". " << move_history[i];
+        pm.data = move_history[i];
+        cout << int((i / 2) + 1) << ". " << pm;
         if (i + 1 < sz) {
-            cout << "    " << move_history[i + 1] << std::endl;
+            pm.data = move_history[i + 1];
+            cout << "    " << pm << std::endl;
         }
         else {
             cout << std::endl;
@@ -214,11 +219,13 @@ void Player::save_state(std::string filename) {
 //    fil << std::endl;
     record_t rec;
     std::map<uint32_t, record_t>::iterator it;
+    prettyMove pm;
     for (it = trans_table.begin(); it != trans_table.end(); it++) {
         fil << it->first << ",";
         rec = it->second;
+        pm.data = rec.best_ref_move;
         fil << rec.signature << ","
-            << rec.best_ref_move.give() << ","
+            << pm << ","
             << + rec.depth << ","
             << rec.IBV_score << ","
             << + rec.age << std::endl;
@@ -294,7 +301,7 @@ move_t Player::input_move() const {
     std::cin >> inp;
     ret = stom(moves, n_moves, inp);
 
-    while (ret.give() == 0) {
+    while (ret == 0) {
         std::cout << "Sorry, that's not a valid move.\n"
                   << "Enter move as FileRankFileRank (e.g. e2e4): ";
         std::cin >> inp;
@@ -311,6 +318,7 @@ void Player::play(colour playerSide, int timeout) {
     colour movingSide;
     int log = 1;
     std::stringstream ss;
+    prettyMove pm;
 
     if (gameover()) {
         std::cout << "Game is complete!\n";
@@ -330,7 +338,8 @@ void Player::play(colour playerSide, int timeout) {
         else {
             std::cout << "Computer thinking...    " << std::endl;
             comp_move = iterative_deepening(timeout, 100);
-            std::cout << "Computer move: " << comp_move << std::endl;
+            pm.data = comp_move;
+            std::cout << "Computer move: " << pm << std::endl;
             doMoveInPlace(comp_move);
             ss << "/home/freddy/Documents/cpl/chess_net/log/log"
                << log << ".log";
@@ -366,6 +375,7 @@ void Player::play() {
     colour movingSide;
     int log = 1;
     std::stringstream ss;
+    prettyMove pm;
 
     if (gameover()) {
         std::cout << "Game is complete!\n";
@@ -384,7 +394,8 @@ void Player::play() {
         else {
             std::cout << "Computer thinking...    " << std::endl;
             comp_move = iterative_deepening(iterative_deepening_timeout, 100);
-            std::cout << "Computer move: " << comp_move << std::endl;
+            pm.data = comp_move;
+            std::cout << "Computer move: " << pm << std::endl;
             doMoveInPlace(comp_move);
             ss << "/home/freddy/Documents/cpl/chess_net/log/log"
                << log << ".log";
