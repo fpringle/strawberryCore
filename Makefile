@@ -61,8 +61,7 @@ SOURCES       = action.cpp \
 		main.cpp \
 		move.cpp \
 		play.cpp \
-		search.cpp \
-		twiddle.cpp 
+		search.cpp 
 OBJECTS       = obj/action.o \
 		obj/board.o \
 		obj/check.o \
@@ -72,8 +71,7 @@ OBJECTS       = obj/action.o \
 		obj/main.o \
 		obj/move.o \
 		obj/play.o \
-		obj/search.o \
-		obj/twiddle.o
+		obj/search.o
 DIST          = ../../.qmake.conf \
 		../../.qmake.stash \
 		core.pro action.h \
@@ -94,8 +92,7 @@ DIST          = ../../.qmake.conf \
 		main.cpp \
 		move.cpp \
 		play.cpp \
-		search.cpp \
-		twiddle.cpp
+		search.cpp
 QMAKE_TARGET  = strawberryCLI
 DESTDIR       = build/
 TARGET        = build/strawberryCLI
@@ -381,11 +378,6 @@ obj/search.o: search.cpp search.h \
 		play.h \
 		tree.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/search.o search.cpp
-
-obj/twiddle.o: twiddle.cpp twiddle.h \
-		typedefs.h \
-		move.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/twiddle.o twiddle.cpp
 
 ####### Install
 

@@ -154,6 +154,144 @@ class board {
      */
     uint64_t hash_value;
 
+    // methods
+
+    /**
+     *  Get the number of pieces of a particular type that remain on the board.
+     *
+     *  \param cp       The colour/piece combination to count. See \ref colourPiece.
+     *  \return         The number of pieces cp that remain on the board.
+     */
+    int num_pieces_left(colourPiece cp) const;
+    /**
+     *  Get the total number of pieces that remain on the board.
+     *
+     *  \return         The number of pieces hat remain on the board.
+     */
+    int num_pieces_left() const;
+
+    /**
+     *  Evaluate the board based on the number of pieces left on each side.
+     *
+     *  \param phase    The phase of the game. 0 corresponds to the opening,
+     *                                         1 corresponds to the endgame.
+     *  \return         The phase-dependent evaluation of the game state.
+     *                  A positive value means that white is winning,
+     *                  a negative value means that black is winning.
+     *                  See \ref value_t.
+     */
+    value_t evaluate_material(int phase) const;
+
+    /**
+     *  Evaluate the board based on the placement of pieces left on each side.
+     *
+     *  \param phase    The phase of the game. 0 corresponds to the opening,
+     *                                         1 corresponds to the endgame.
+     *  \return         The phase-dependent evaluation of the game state.
+     *                  A positive value means that white is winning,
+     *                  a negative value means that black is winning.
+     *                  See \ref value_t.
+     */
+    value_t evaluate_pieceSquareTables(int phase) const;
+
+    /**
+     *  Calculate the opening value of the board.
+     *
+     *  \return         The opening evaluation of the game state.
+     *                  A positive value means that white is winning,
+     *                  a negative value means that black is winning.
+     *                  See \ref value_t.
+     */
+    value_t evaluateOpening() const;
+
+    /**
+     *  Calculate the endgame value of the board.
+     *
+     *  \return         The endgame evaluation of the game state.
+     *                  A positive value means that white is winning,
+     *                  a negative value means that black is winning.
+     *                  See \ref value_t.
+     */
+    value_t evaluateEndgame() const;
+
+    /**
+     *  Calculate the phase of the game based on the number of pieces
+     *  left on the board.
+     *
+     *  \return         An integer between 0 and 256 representing the phase
+                        of the game. 0 corresponds to the opening and 256
+                        corresponds to the endgame.
+     */
+    int getPhase() const;
+
+    /**
+     *  Get a bitboard representing the locations of the white pieces.
+     *
+     *  \return         A bitboard representing the locations of the white pieces.
+     */
+    bitboard whiteSquares() const;
+
+    /**
+     *  Get a bitboard representing the locations of the black pieces.
+     *
+     *  \return         A bitboard representing the locations of the black pieces.
+     */
+    bitboard blackSquares() const;
+    /**
+     *  Get a bitboard representing the locations of all pieces.
+     *
+     *  \return         A bitboard representing the locations of all the pieces.
+     */
+    bitboard takenSquares() const;
+    /**
+     *  Get a bitboard representing the locations of all empty squares.
+     *
+     *  \return         A bitboard representing the locations of all empty squares.
+     */
+    bitboard emptySquares() const;
+
+    /**
+     *  Add a move to an array, with the option to check if the move is legal.
+     *  Used by \ref board::gen_moves and \ref board::gen_legal_moves.
+     *
+     *  \param dest             A pointer to the array of moves.
+     *  \param move             The move to add to the array.
+     *  \param legal_check      Whether or not to check if the move is legal.
+     *  \return                 A boolean indicating whether the move was added
+     *                          successfully. Automatically returns true if
+     *                          check_legal is false.
+     */
+    bool add_moves(move_t** dest, move_t move, bool legal_check) const;
+
+    /**
+     *  Generate all moves that get the side to move out of check.
+     *
+     *  \param side             The side in check.
+     *  \param moves            An empty array of moves.
+     *  \param checkingPiece    The colour/piece combination checking the king.
+     *  \param checkingInd      The square index of the checking piece.
+     *  \param kingInd          The square index of the king under attack.
+     *  \param double_check     Whether the king is under double check.
+     *  \return                 An integer corresponding to the number of moves
+     *                          generated.
+     */
+    int get_out_of_check(colour side, move_t* moves, piece checkingPiece,
+                         int checkingInd, int kingInd, bool double_check) const;
+
+    /**
+     *  Determine whether a given side can get out of check.
+     *  Equivalent to (get_out_of_check(...) > 0)
+     *
+     *  \param side             The side in check.
+     *  \param checkingPiece    The colour/piece combination checking the king.
+     *  \param checkingInd      The square index of the checking piece.
+     *  \param kingInd          The square index of the king under attack.
+     *  \param double_check     Whether the king is under double check.
+     *  \return                 True if side can get out of check, false otherwise.
+     */
+    bool can_get_out_of_check(colour side, piece checkingPiece,
+                         int checkingInd, int kingInd, bool double_check) const;
+
 public:
     // constructors
     // defined in board.cpp
@@ -303,45 +441,8 @@ public:
      */
     void getHash(uint64_t* dest) const;
 
-    /**
-     *  Get the number of pieces of a particular type that remain on the board.
-     *
-     *  \param cp       The colour/piece combination to count. See \ref colourPiece.
-     *  \return         The number of pieces cp that remain on the board.
-     */
-    int num_pieces_left(colourPiece cp) const;
-    /**
-     *  Get the total number of pieces that remain on the board.
-     *
-     *  \return         The number of pieces hat remain on the board.
-     */
-    int num_pieces_left() const;
-
     // evaluation
     // defined in eval.cpp
-    /**
-     *  Evaluate the board based on the number of pieces left on each side.
-     *
-     *  \param phase    The phase of the game. 0 corresponds to the opening,
-     *                                         1 corresponds to the endgame.
-     *  \return         The phase-dependent evaluation of the game state.
-     *                  A positive value means that white is winning,
-     *                  a negative value means that black is winning.
-     *                  See \ref value_t.
-     */
-    value_t evaluate_material(int phase) const;
-
-    /**
-     *  Evaluate the board based on the placement of pieces left on each side.
-     *
-     *  \param phase    The phase of the game. 0 corresponds to the opening,
-     *                                         1 corresponds to the endgame.
-     *  \return         The phase-dependent evaluation of the game state.
-     *                  A positive value means that white is winning,
-     *                  a negative value means that black is winning.
-     *                  See \ref value_t.
-     */
-    value_t evaluate_pieceSquareTables(int phase) const;
 
     /**
      *  Get the interpolated phase-dependent value of the board.
@@ -382,36 +483,6 @@ public:
      *                  See \ref value_t.
      */
     value_t evaluate() const;
-
-    /**
-     *  Calculate the opening value of the board.
-     *
-     *  \return         The opening evaluation of the game state.
-     *                  A positive value means that white is winning,
-     *                  a negative value means that black is winning.
-     *                  See \ref value_t.
-     */
-    value_t evaluateOpening() const;
-
-    /**
-     *  Calculate the endgame value of the board.
-     *
-     *  \return         The endgame evaluation of the game state.
-     *                  A positive value means that white is winning,
-     *                  a negative value means that black is winning.
-     *                  See \ref value_t.
-     */
-    value_t evaluateEndgame() const;
-
-    /**
-     *  Calculate the phase of the game based on the number of pieces
-     *  left on the board.
-     *
-     *  \return         An integer between 0 and 256 representing the phase
-                        of the game. 0 corresponds to the opening and 256
-                        corresponds to the endgame.
-     */
-    int getPhase() const;
 
     /**
      *  Print the state of the pieces on the board, white side down.
@@ -465,125 +536,21 @@ public:
     //    move_t move_from_SAN(std::string);
 
     /**
-     *  Set a given piece at a given square index.
-     *
-     *  \param cP           The colour/piece to set.
-     *  \param pos          The square index to set.
-     */
-    void set_piece(colourPiece cP, int pos);
-
-    /**
      *  Set the side to move.
      *
      *  \param side         The colour to set.
      */
-    void set_side(colour side);
-
-    /**
-     *  Clear a given square index.
-     *
-     *  \param ind          The square index to clear.
-     */
-    void clear_square(int ind);
+    void set_side(colour side);                     // delete
 
     /**
      *  Re-calculate the opening and endgame values.
      */
-    void update_value();
+    void update_value();                            // private / delete
 
     /**
      *  Re-calculate the Zobrist hash.
      */
-    void update_hash();
-
-    /**
-     *  Set the Zobrist hash.
-     *
-     *  \param hash         The 64-bit hash to set.
-     */
-    void set_hash(uint64_t hash);
-
-    /**
-     *  Set the bitboards representing the piece positions.
-     *
-     *  \param bb           An array of bitboards.
-     */
-    void setBitboards(bitboard* bb);
-
-    /**
-     *  Set the castling rights.
-     *
-     *  \param castling     An array of booleans.
-     */
-    void setCastlingRights(bool* castling);
-
-    /**
-     *  Set the en-passant boolean.
-     *
-     *  \param ep           The boolean to set.
-     */
-    void setEP(bool ep);
-
-    /**
-     *  Set the double pawn push file.
-     *
-     *  \param file         An integer representing the file of the
-     *                      double pawn push in the last move.
-     */
-    void setdPPFile(int file);
-
-    /**
-     *  Set the half-move clock.
-     *
-     *  \param clk          The clock value to set.
-     */
-    void setClock(uint8_t clk);
-
-    /**
-     *  Set the full-move clock.
-     *
-     *  \param clk          The clock value to set.
-     */
-    void setFullClock(uint8_t clk);
-
-    /**
-     *  Get a bitboard representing the locations of the white pieces.
-     *
-     *  \return         A bitboard representing the locations of the white pieces.
-     */
-    bitboard whiteSquares() const;
-
-    /**
-     *  Get a bitboard representing the locations of the black pieces.
-     *
-     *  \return         A bitboard representing the locations of the black pieces.
-     */
-    bitboard blackSquares() const;
-    /**
-     *  Get a bitboard representing the locations of all pieces.
-     *
-     *  \return         A bitboard representing the locations of all the pieces.
-     */
-    bitboard takenSquares() const;
-    /**
-     *  Get a bitboard representing the locations of all empty squares.
-     *
-     *  \return         A bitboard representing the locations of all empty squares.
-     */
-    bitboard emptySquares() const;
-
-    /**
-     *  Add a move to an array, with the option to check if the move is legal.
-     *  Used by \ref board::gen_moves and \ref board::gen_legal_moves.
-     *
-     *  \param dest             A pointer to the array of moves.
-     *  \param move             The move to add to the array.
-     *  \param legal_check      Whether or not to check if the move is legal.
-     *  \return                 A boolean indicating whether the move was added
-     *                          successfully. Automatically returns true if
-     *                          check_legal is false.
-     */
-    bool add_moves(move_t** dest, move_t move, bool legal_check) const;
+    void update_hash();                             // private / delete
 
     /**
      *  Generate all pseudo-legal moves from a given position.
@@ -612,35 +579,6 @@ public:
     int gen_captures(move_t* moves) const;
 
     /**
-     *  Generate all moves that get the side to move out of check.
-     *
-     *  \param side             The side in check.
-     *  \param moves            An empty array of moves.
-     *  \param checkingPiece    The colour/piece combination checking the king.
-     *  \param checkingInd      The square index of the checking piece.
-     *  \param kingInd          The square index of the king under attack.
-     *  \param double_check     Whether the king is under double check.
-     *  \return                 An integer corresponding to the number of moves
-     *                          generated.
-     */
-    int get_out_of_check(colour side, move_t* moves, piece checkingPiece,
-                         int checkingInd, int kingInd, bool double_check) const;
-
-    /**
-     *  Determine whether a given side can get out of check.
-     *  Equivalent to (get_out_of_check(...) > 0)
-     *
-     *  \param side             The side in check.
-     *  \param checkingPiece    The colour/piece combination checking the king.
-     *  \param checkingInd      The square index of the checking piece.
-     *  \param kingInd          The square index of the king under attack.
-     *  \param double_check     Whether the king is under double check.
-     *  \return                 True if side can get out of check, false otherwise.
-     */
-    bool can_get_out_of_check(colour side, piece checkingPiece,
-                         int checkingInd, int kingInd, bool double_check) const;
-
-    /**
      *  Generate all legal moves from a given position.
      *
      *  \param moves            An empty array of moves.
@@ -663,7 +601,7 @@ public:
      *  \return                 An unsigned 64-bit integer representing the
                                 Zobrist hash of the board.
      */
-    uint64_t zobrist_hash() const;
+    uint64_t zobrist_hash() const;          // private
 
     /**
      *  Test if a given side is in check.
@@ -686,7 +624,7 @@ public:
      *  \return                         True if side is in check, false otherwise.
      */
     bool is_check(colour side, piece* checkingPiece,
-                  int* checkingInd, bool* doubleCheck) const;
+                  int* checkingInd, bool* doubleCheck) const;       // private
 
     /**
      *  Test if the side to move is in checkmate.
@@ -715,7 +653,7 @@ public:
      *  \param lastmove         The last move played.
      *  \return                 True if move was checking, false otherwise.
      */
-    bool was_lastmove_check(move_t lastmove) const;
+    bool was_lastmove_check(move_t lastmove) const;         // private
 
     /**
      *  Test if a move will be checking.
@@ -723,7 +661,7 @@ public:
      *  \param move             A move to be played.
      *  \return                 True if move is checking, false otherwise.
      */
-    bool is_checking_move(move_t move) const;
+    bool is_checking_move(move_t move) const;               // private
 };
 
 

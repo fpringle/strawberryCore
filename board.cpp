@@ -675,17 +675,8 @@ std::string board::FEN() const {
     return ss.str();
 }
 
-void board::set_piece(colourPiece cP, int pos) {
-    pieceBoards[cP] |= (1ULL << pos);
-}
-
 void board::set_side(colour side) {
     sideToMove = side;
-}
-
-void board::clear_square(int ind) {
-    bitboard b = ~(1ULL << ind);
-    for (int i = 0; i < 12; i++) pieceBoards[i] &= b;
 }
 
 void board::update_value() {
@@ -695,37 +686,6 @@ void board::update_value() {
 
 void board::update_hash() {
     hash_value = zobrist_hash();
-}
-
-void board::set_hash(uint64_t hash) {
-    hash_value = hash;
-}
-
-void board::setBitboards(bitboard * bb) {
-    for (int i = 0; i < 12; i++) pieceBoards[i] = bb[i];
-}
-
-void board::setCastlingRights(bool * castling) {
-    castleWhiteKingSide = castling[0];
-    castleWhiteQueenSide = castling[1];
-    castleBlackKingSide = castling[2];
-    castleBlackQueenSide = castling[3];
-}
-
-void board::setEP(bool ep) {
-    lastMoveDoublePawnPush = ep;
-}
-
-void board::setdPPFile(int file) {
-    dPPFile = file;
-}
-
-void board::setClock(uint8_t clk) {
-    halfMoveClock = clk;
-}
-
-void board::setFullClock(uint8_t clk) {
-    fullMoveClock = clk;
 }
 
 bitboard board::whiteSquares() const {

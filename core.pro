@@ -40,7 +40,6 @@ SOURCES += action.cpp \
            main.cpp \
            move.cpp \
            play.cpp \
-           search.cpp \
-           twiddle.cpp
+           search.cpp
 
 QT -= core gui
