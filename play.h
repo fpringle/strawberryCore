@@ -65,7 +65,7 @@ private:
      *  A table storing the nodes that have been visited in previous searches.
      *  See \ref record_t
      */
-    std::map<uint32_t, record_t> trans_table;
+    TransTable trans_table;
 
     /**
      *  A record of all the previous moves.

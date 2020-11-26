@@ -12,3 +12,4 @@
 - use constexpr instead of const for constants
 - write some constexpr/inline functions for common piece/colour/index operations
 - split source code into more, smaller files
+- fix checkmate conditions in search

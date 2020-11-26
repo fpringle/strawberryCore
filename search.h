@@ -8,6 +8,26 @@
 
 namespace chessCore {
 
+class Searcher {
+private:
+    TransTable* trans_table;
+public:
+    Searcher();
+    Searcher(TransTable* tt);
+
+    value_t quiesce(board b, colour side, value_t alpha, value_t beta)
+    value_t principal_variation(board b, colour side, uint8_t depth,
+                                value_t alpha, value_t beta);
+    value_t negamax_alphabeta(board b, colour side, uint8_t depth,
+                              value_t alpha, value_t beta);
+
+    move_t search_negamax_alphabeta(board b, uint8_t depth);
+    move_t search_negamax_alphabeta(board b, uint8_t depth, move_t first_move, double time_remaining);
+    move_t iterative_deepening(board b, colour side, int timeout,
+                               uint8_t max_depth = 100);
+    move_t search_principal_variation(board b, uint8_t depth);
+};
+
 
 /**
  *  \brief Perform a quiescence search on a board.

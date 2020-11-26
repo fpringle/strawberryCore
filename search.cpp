@@ -12,17 +12,12 @@
 #include "play.h"
 #include "typedefs.h"
 
-#define USE_TABLE
-#define DEBUG 0
 
 namespace chessCore {
 
 
-value_t quiesce(board b, colour side, value_t alpha, value_t beta) {
+value_t Searcher::quiesce(board b, colour side, value_t alpha, value_t beta) {
     value_t stand_pat = b.getValue() * ((side == white) ? 1 : -1);
-
-//    std::cout << b << std::endl;
-//    std::cout << b.FEN() << std::endl;
 //    return stand_pat;
     if (stand_pat >= beta) return beta;
     if (stand_pat > alpha) alpha = stand_pat;
@@ -44,24 +39,22 @@ value_t quiesce(board b, colour side, value_t alpha, value_t beta) {
     return alpha;
 }
 
-
-void reorder_moves(move_t * moves, int num_moves, move_t best_move) {
-    for (int i=0; i<num_moves; i++) {
-        if (moves[i] == best_move) {
-            moves[i] = moves[0];
-            moves[0] = best_move;
-            break;
+namespace {
+    void reorder_moves(move_t * moves, int num_moves, move_t best_move) {
+        for (int i=0; i<num_moves; i++) {
+            if (moves[i] == best_move) {
+                moves[i] = moves[0];
+                moves[0] = best_move;
+                break;
+            }
         }
     }
 }
 
-
-value_t Player::principal_variation(board b, colour side, uint8_t depth,
+value_t Searcher::principal_variation(board b, colour side, uint8_t depth,
                                  value_t alpha, value_t beta) {
 
     value_t ret;
-
-#ifdef USE_TABLE
     uint64_t sig;
     uint32_t ind;
     move_t bestMove = 0;
@@ -107,7 +100,6 @@ value_t Player::principal_variation(board b, colour side, uint8_t depth,
         }
     }
 
-#endif
 
     if (depth == 0) {
         ret = quiesce(b, side, alpha, beta);
@@ -125,19 +117,15 @@ value_t Player::principal_variation(board b, colour side, uint8_t depth,
         ret = (std::numeric_limits<value_t>::min() / 10);
         if (is_checkmate()) ret *= ((side == white) ? 1 : -1);
         else ret = 0;
-#ifdef USE_TABLE
         ibv = 4 * ret;
         record = {sig, bestMove, depth, ibv, age};
         trans_table[ind] = record;
-#endif
         return ret;
     }
 
-#ifdef USE_TABLE
     if (bestMove) {
         reorder_moves(moves, num_moves, bestMove);
     }
-#endif
 
     for (int i = 0; i < num_moves; i++) {
         child = doMove(b, moves[i]);
@@ -153,24 +141,19 @@ value_t Player::principal_variation(board b, colour side, uint8_t depth,
 
         if (score >= beta) {
             // lower bound
-#ifdef USE_TABLE
             ibv = 4 * beta + 1;
             bestMove = moves[i];
             record = {sig, bestMove, depth, ibv, age};
             trans_table[ind] = record;
-#endif
             return beta;
         }
         if (score > alpha) {
             // upper bound
             alpha = score;
             bSearchPv = false;
-#ifdef USE_TABLE
             bestMove = moves[i];
-#endif
         }
     }
-#ifdef USE_TABLE
     if (bSearchPv) {
         // exact
         ibv = 4 * alpha - 1;
@@ -181,17 +164,14 @@ value_t Player::principal_variation(board b, colour side, uint8_t depth,
     }
     record = {sig, bestMove, depth, ibv, age};
     trans_table[ind] = record;
-#endif
     return alpha;
 }
 
 
-value_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
-                                 value_t alpha, value_t beta) {
+value_t Searcher::negamax_alphabeta(board b, colour side, uint8_t depth,
+                                    value_t alpha, value_t beta) {
 
     value_t ret;
-
-#ifdef USE_TABLE
     value_t alphaOrig = alpha;
     uint64_t sig;
     uint32_t ind;
@@ -238,7 +218,6 @@ value_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
         }
     }
 
-#endif
 
     if (depth == 0) {
 //        std::cout << b.FEN() << std::endl;
@@ -256,27 +235,21 @@ value_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
         ret = (std::numeric_limits<value_t>::min() / 10);
         if (is_checkmate()) ret *= ((side == white) ? 1 : -1);
         else ret = 0;
-#ifdef USE_TABLE
         ibv = 4 * ret;
         record = {sig, bestMove, depth, ibv, age};
         trans_table[ind] = record;
-#endif
         return ret;
     }
 
-#ifdef USE_TABLE
     if (bestMove) {
         reorder_moves(moves, num_moves, bestMove);
     }
-#endif
 
     for (int i = 0; i < num_moves; i++) {
         child = doMove(b, moves[i]);
-        score = - principal_variation(child, otherSide, depth - 1, -beta, -alpha);
+        score = - negamax_alphabeta(child, otherSide, depth - 1, -beta, -alpha);
         if (value < score) {
-#ifdef USE_TABLE
             bestMove = moves[i];
-#endif
             value = score;
         }
         if (alpha < value) {
@@ -285,7 +258,6 @@ value_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
         if (alpha >= beta) break;
 
     }
-#ifdef USE_TABLE
     if (value <= alphaOrig) {
         ibv = 4 * value - 1;
     }
@@ -297,7 +269,6 @@ value_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
     }
     record = {sig, bestMove, depth, ibv, age};
     trans_table[ind] = record;
-#endif
     return value;
 }
 
@@ -307,7 +278,6 @@ move_t Player::search_negamax_alphabeta(uint8_t depth) {
     value_t alpha = std::numeric_limits<value_t>::min() / 10;
     value_t beta = std::numeric_limits<value_t>::max() / 10;
 
-#ifdef USE_TABLE
     uint64_t sig;
     uint32_t ind;
     move_t bestMove = 0;
@@ -354,7 +324,6 @@ move_t Player::search_negamax_alphabeta(uint8_t depth) {
         }
     }
 
-#endif
 
     value_t score;
     board child;
@@ -366,11 +335,9 @@ move_t Player::search_negamax_alphabeta(uint8_t depth) {
     int num_moves = gen_legal_moves(moves);
     move_t best_move = 0;
 
-#ifdef USE_TABLE
     if (bestMove) {
         reorder_moves(moves, num_moves, bestMove);
     }
-#endif
 
     for (int i = 0; i < num_moves; i++) {
         makeChild(&child, moves[i]);
@@ -384,7 +351,6 @@ move_t Player::search_negamax_alphabeta(uint8_t depth) {
         }
         if (alpha >= beta) break;
     }
-#ifdef USE_TABLE
     if (max_score <= alpha) {
         ibv = 4 * max_score - 1;
     }
@@ -396,7 +362,6 @@ move_t Player::search_negamax_alphabeta(uint8_t depth) {
     }
     record = {sig, best_move, depth, ibv, age};
     trans_table[ind] = record;
-#endif
     return best_move;
 }
 
@@ -408,7 +373,6 @@ move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move, double
 
     clock_t start_time = clock();
 
-#ifdef USE_TABLE
     uint64_t sig;
     uint32_t ind;
     move_t bestMove = 0;
@@ -455,7 +419,6 @@ move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move, double
         }
     }
 
-#endif
 
     value_t score;
     board child;
@@ -471,11 +434,9 @@ move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move, double
         reorder_moves(moves, num_moves, first_move);
     }
 
-#ifdef USE_TABLE
     if (bestMove) {
         reorder_moves(moves, num_moves, bestMove);
     }
-#endif
 
     for (int i = 0; i < num_moves; i++) {
         makeChild(&child, moves[i]);
@@ -495,7 +456,6 @@ move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move, double
         }
         if (alpha >= beta) break;
     }
-#ifdef USE_TABLE
     if (max_score <= alpha) {
         ibv = 4 * max_score - 1;
     }
@@ -507,7 +467,6 @@ move_t Player::search_negamax_alphabeta(uint8_t depth, move_t first_move, double
     }
     record = {sig, best_move, depth, ibv, age};
     trans_table[ind] = record;
-#endif
     return best_move;
 }
 
@@ -517,7 +476,6 @@ move_t Player::search_principal_variation(uint8_t depth) {
     value_t alpha = std::numeric_limits<value_t>::min() / 10;
     value_t beta = std::numeric_limits<value_t>::max() / 10;
 
-#ifdef USE_TABLE
     uint64_t sig;
     uint32_t ind;
     move_t bestMove = 0;
@@ -564,7 +522,6 @@ move_t Player::search_principal_variation(uint8_t depth) {
         }
     }
 
-#endif
 
     value_t score;
     board child;
@@ -576,11 +533,9 @@ move_t Player::search_principal_variation(uint8_t depth) {
     int num_moves = gen_legal_moves(moves);
     move_t best_move = 0;
 
-#ifdef USE_TABLE
     if (bestMove) {
         reorder_moves(moves, num_moves, bestMove);
     }
-#endif
 
     for (int i = 0; i < num_moves; i++) {
         makeChild(&child, moves[i]);
@@ -594,7 +549,6 @@ move_t Player::search_principal_variation(uint8_t depth) {
         }
         if (alpha >= beta) break;
     }
-#ifdef USE_TABLE
     if (max_score <= alpha) {
         ibv = 4 * max_score - 1;
     }
@@ -606,7 +560,6 @@ move_t Player::search_principal_variation(uint8_t depth) {
     }
     record = {sig, best_move, depth, ibv, age};
     trans_table[ind] = record;
-#endif
     return best_move;
 }
 
@@ -627,13 +580,10 @@ move_t Player::iterative_deepening(int timeout, uint8_t max_depth) {
             moves.push_back(best_move);
         }
         time_taken = double(clock() - start_time) / double(CLOCKS_PER_SEC);
-#if DEBUG
-        std::cout << "Depth searched: " << depth - 1 << "   ("
                   << time_taken
                   << " seconds total)"
                   << "  (best move so far: "
                   << best_move << ")" << std::endl;
-#endif
 
         sz = moves.size();
         if (((sz >= 8) || (sz >= 5 && time_taken > 10.0)) && moves[sz - 1] == moves[sz - 2]) {

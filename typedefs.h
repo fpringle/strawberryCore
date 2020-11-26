@@ -57,6 +57,9 @@ enum colourPiece {whitePawn,whiteRook,whiteKnight,
 enum direction {dirN, dirNE, dirE, dirSE, dirS, dirSW, dirW, dirNW};
 
 
+using TransTable = std::map<uint32_t, record_t>;
+
+
 } // end of chessCore namespace
 
 #endif
