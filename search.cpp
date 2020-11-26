@@ -272,7 +272,7 @@ value_t Player::negamax_alphabeta(board b, colour side, uint8_t depth,
 
     for (int i = 0; i < num_moves; i++) {
         child = doMove(b, moves[i]);
-        score = - principal_variation(child, otherSide, depth - 1, -beta, -alpha);
+        score = - negamax_alphabeta(child, otherSide, depth - 1, -beta, -alpha);
         if (value < score) {
 #ifdef USE_TABLE
             bestMove = moves[i];
