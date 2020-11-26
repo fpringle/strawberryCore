@@ -6,14 +6,11 @@
 #include <sstream>
 #include <string>
 
-#if USE_CONFIG_FILE
-    #include <toml.hpp>
-#endif
-
 #include "action.h"
 #include "board.h"
 #include "init.h"
 #include "move.h"
+#include "parse.h"
 #include "search.h"
 #include "typedefs.h"
 
@@ -105,42 +102,59 @@ std::string upper_string(std::string s) {
 
 void Player::read_config(std::string filename) {
 
-#if USE_CONFIG_FILE
     std::cout << "Reading config file\n";
-    toml::value config;
+    Config cfg;
 
     try {
-        config = toml::parse(filename);
+        parse_file(filename, &cfg);
     }
     catch (const std::exception& err) {
         std::cerr << err.what() << std::endl;
         return;
     }
 
-    try {
-        const auto& search_table = toml::find(config, "search");
-        const auto max_search_time = toml::find<int>(search_table, "MAX_SEARCH_TIME");
-        iterative_deepening_timeout = max_search_time;
+    Config::iterator it;
+
+    // iterative deepening timeout
+    it = cfg.find("MAX_SEARCH_TIME");
+    if (it != cfg.end()) {
+        try {
+            int max_search_time = std::stoi(it->second);
+            iterative_deepening_timeout = max_search_time;
+        }
+        catch(...) {
+            std::cerr << "Unable to parse config file for MAX_SEARCH_TIME." << std::endl
+                      << "Using default value of " << iterative_deepening_timeout
+                      << "." << std::endl;
+        }
     }
-    catch(...) {
+    else {
         std::cerr << "Unable to parse config file for MAX_SEARCH_TIME." << std::endl
                   << "Using default value of " << iterative_deepening_timeout
                   << "." << std::endl;
     }
 
-    try {
-        const auto& play_table = toml::find(config, "play");
-        const auto parsed_user_colour = toml::find<std::string>(play_table, "USER_COLOUR");
-        std::string upper = upper_string(parsed_user_colour);
-        if (upper == "WHITE") user_colour = white;
-        else if (upper == "BLACK") user_colour = black;
+    // user colour
+    it = cfg.find("USER_COLOUR");
+    if (it != cfg.end()) {
+        try {
+            std::string parsed_user_colour = upper_string(it->second);
+            if (parsed_user_colour == "WHITE") user_colour = white;
+            else if (parsed_user_colour == "BLACK") user_colour = black;
+            else throw;
+        }
+        catch(...) {
+            std::cerr << "Unable to parse config file for USER_COLOUR." << std::endl
+                      << "Using default value of " << user_colour
+                      << "." << std::endl;
+        }
     }
-    catch(...) {
+    else {
         std::cerr << "Unable to parse config file for USER_COLOUR." << std::endl
                   << "Using default value of " << user_colour
                   << "." << std::endl;
+
     }
-#endif
 }
 
 bool Player::lookup(uint64_t pos_hash, record_t * dest) {

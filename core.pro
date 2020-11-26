@@ -27,6 +27,7 @@ HEADERS += action.h \
            hash.h \
            init.h \
            move.h \
+           parse.h \
            play.h \
            search.h \
            twiddle.h \

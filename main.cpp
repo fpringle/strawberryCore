@@ -19,7 +19,7 @@ int main() {
 
     Player p;
 
-    p.read_config("config.toml");
+    p.read_config("config.conf");
 
     p.play();
 

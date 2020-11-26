@@ -80,6 +80,7 @@ DIST          = ../../.qmake.conf \
 		hash.h \
 		init.h \
 		move.h \
+		parse.h \
 		play.h \
 		search.h \
 		twiddle.h \
@@ -300,11 +301,11 @@ obj/action.o: action.cpp action.h \
 		board.h \
 		move.h \
 		typedefs.h \
+		twiddle.h \
 		eval.h \
 		hash.h \
 		play.h \
-		tree.h \
-		twiddle.h
+		tree.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/action.o action.cpp
 
 obj/board.o: board.cpp board.h \
@@ -337,6 +338,7 @@ obj/init.o: init.cpp init.h \
 		board.h \
 		move.h \
 		typedefs.h \
+		twiddle.h \
 		hash.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/init.o init.cpp
 
@@ -344,29 +346,31 @@ obj/main.o: main.cpp action.h \
 		board.h \
 		move.h \
 		typedefs.h \
+		twiddle.h \
 		eval.h \
 		hash.h \
 		init.h \
 		play.h \
 		tree.h \
-		search.h \
-		twiddle.h
+		search.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/main.o main.cpp
 
 obj/move.o: move.cpp move.h \
 		typedefs.h \
+		twiddle.h \
 		action.h \
-		board.h \
-		twiddle.h
+		board.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/move.o move.cpp
 
 obj/play.o: play.cpp play.h \
 		board.h \
 		move.h \
 		typedefs.h \
+		twiddle.h \
 		tree.h \
 		action.h \
 		init.h \
+		parse.h \
 		search.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/play.o play.cpp
 
@@ -374,6 +378,7 @@ obj/search.o: search.cpp search.h \
 		board.h \
 		move.h \
 		typedefs.h \
+		twiddle.h \
 		action.h \
 		play.h \
 		tree.h

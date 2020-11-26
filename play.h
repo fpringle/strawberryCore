@@ -17,14 +17,6 @@ namespace chessCore {
 
 
 /**
- *  Convenience function to convert a string to uppercase.
- *
- *  \param s                The string to convert.
- *  \return                 The string s converted to uppercase.
- */
-std::string upper_string(std::string s);
-
-/**
  *  \struct record_t
  *
  *  \brief A struct for recording search details, used in the transposition table.
@@ -188,7 +180,7 @@ public:
      *  \param dest             A pointer to the destination record_t.
      *  \return                 True if a record was found, false otherwise.
      */
-    bool lookup(uint64_t pos_hash, record_t * dest);
+    bool lookup(uint64_t pos_hash, record_t * dest);        // private
 
     /**
      *  Access the move history.
@@ -235,14 +227,14 @@ public:
      *
      *  \param filename         The name of the file to save to.
      */
-    void save_state(std::string filename);
+    void save_state(std::string filename);              // private
 
     /**
      *  Load a transposition table from file.
      *
      *  \param filename         The name of the file to load from.
      */
-    void load_state(std::string filename);
+    void load_state(std::string filename);              // private
 
     /**
      *  Do a move in-place.
@@ -257,7 +249,7 @@ public:
      *  \param child            A pointer to the board to transform.
      *  \param move             The move to make.
      */
-    void makeChild(board* child, move_t move) const;
+    void makeChild(board* child, move_t move) const;    // private?
 
     /**
      *  Search using Principal Variation search, to
