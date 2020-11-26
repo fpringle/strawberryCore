@@ -1,8 +1,9 @@
 #ifndef __TYPEDEFS_H
 #define __TYPEDEFS_H
 
-#include <iostream>
 #include <cstdint>
+#include <iostream>
+#include <map>
 
 namespace chessCore {
 
@@ -56,7 +57,7 @@ enum colourPiece {whitePawn,whiteRook,whiteKnight,
  */
 enum direction {dirN, dirNE, dirE, dirSE, dirS, dirSW, dirW, dirNW};
 
-
+struct record_t;
 using TransTable = std::map<uint32_t, record_t>;
 
 
