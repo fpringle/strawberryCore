@@ -305,6 +305,7 @@ obj/action.o: action.cpp action.h \
 		eval.h \
 		hash.h \
 		play.h \
+		search.h \
 		tree.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/action.o action.cpp
 
@@ -351,8 +352,8 @@ obj/main.o: main.cpp action.h \
 		hash.h \
 		init.h \
 		play.h \
-		tree.h \
-		search.h
+		search.h \
+		tree.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/main.o main.cpp
 
 obj/move.o: move.cpp move.h \
@@ -367,11 +368,11 @@ obj/play.o: play.cpp play.h \
 		move.h \
 		typedefs.h \
 		twiddle.h \
+		search.h \
 		tree.h \
 		action.h \
 		init.h \
-		parse.h \
-		search.h
+		parse.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/play.o play.cpp
 
 obj/search.o: search.cpp search.h \

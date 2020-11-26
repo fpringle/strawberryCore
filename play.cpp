@@ -312,7 +312,7 @@ void Player::play(colour playerSide, int timeout) {
         else {
             std::cout << "Computer thinking...    " << std::endl;
             std::cout << "Timeout: " << iterative_deepening_timeout << std::endl;
-            comp_move = searcher->iterative_deepening(board(*this), timeout);
+            comp_move = searcher->iterative_deepening_negamax(board(*this), timeout);
             pm.data = comp_move;
             std::cout << "Computer move: " << pm << std::endl;
             doMoveInPlace(comp_move);
@@ -369,7 +369,7 @@ void Player::play() {
         else {
             std::cout << "Computer thinking...    " << std::endl;
             std::cout << "Timeout: " << iterative_deepening_timeout << std::endl;
-            comp_move = searcher->iterative_deepening(board(*this), iterative_deepening_timeout);
+            comp_move = searcher->iterative_deepening_negamax(board(*this), iterative_deepening_timeout);
             pm.data = comp_move;
             std::cout << "Computer move: " << pm << std::endl;
             doMoveInPlace(comp_move);

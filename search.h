@@ -77,6 +77,22 @@ public:
                                 value_t alpha, value_t beta);
 
     /**
+     *  Search using Principal Variation search, to
+     *  estimate the value of the given node.
+     *
+     *  \param b                The board state of the node to be searched.
+     *  \param side             The side to move.
+     *  \param depth            The depth to search to.
+     *  \param alpha            The current value of alpha.
+     *  \param beta             The current value of beta.
+     *  \param time_remaining   The timeout in seconds.
+     *  \return                 The estimated value of node b.
+     */
+    value_t principal_variation(board b, uint8_t depth,
+                                value_t alpha, value_t beta,
+                                double time_remaining);
+
+    /**
      *  Search using the Negamax algorithm with alpha-beta pruning, to
      *  estimate the value of the given node.
      *
@@ -115,7 +131,18 @@ public:
      *  \param max_depth    The maximum depth to search to.
      *  \return             The best move to play from the current node.
      */
-    move_t iterative_deepening(board b, int timeout, bool cutoff=false);
+    move_t iterative_deepening_negamax(board b, int timeout, bool cutoff=false);
+
+    /**
+     *  Search using the Prinicpal Variation algorithm to increasing depth, to
+     *  choose the best move from the current node.
+     *
+     *  \param b            The board state of the node to be searched.
+     *  \param timeout      The maximum time to spend searching.
+     *  \param max_depth    The maximum depth to search to.
+     *  \return             The best move to play from the current node.
+     */
+    move_t iterative_deepening_pv(board b, int timeout, bool cutoff=false);
 
 };
 
