@@ -8,6 +8,12 @@
 
 namespace chessCore {
 
+enum valueType {
+    EXACT,
+    LOWER,
+    UPPER
+};
+
 /**
  *  \struct record_t
  *
@@ -21,13 +27,13 @@ struct record_t {
     /** The depth to which this node has been searched. */
     uint8_t depth;
     /**
-     *  The integrated bound and value for this node.
-     *  See <a href="https://www.chessprogramming.org/Integrated_Bounds_and_Values">
-     *  Chess Programming Wiki</a>.
+     *  The bound or value for this node.
      */
-    value_t IBV_score;
+    value_t score;
     /** The full move clock of the game when this node was searched. */
     uint8_t age;
+
+    valueType flag;
 };
 
 /**

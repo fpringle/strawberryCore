@@ -137,7 +137,7 @@ std::vector<std::string> Player::getHistorySAN() const {
     return move_history_san;
 }
 
-std::map<uint32_t, record_t> Player::getTable() const {
+TransTable Player::getTable() const {
     return trans_table;
 }
 
@@ -171,7 +171,7 @@ void Player::print_history_san(std::ostream& cout) const {
 }
 
 void Player::print_table(std::ostream& cout) {
-    std::map<uint32_t, record_t>::iterator it;
+    TransTable::iterator it;
     for (it = trans_table.begin(); it != trans_table.end(); it++) {
         cout << it->first << ":" << std::endl
              << it->second << std:: endl;
@@ -183,31 +183,26 @@ void Player::print_board(std::ostream& cout) const {
     else board::print_board_flipped(cout);
 }
 
-void Player::save_state(std::string filename) {
+void Player::save_table(std::string filename) {
     std::ofstream fil(filename);
-//    fil << FEN() << std::endl;
-//    fil << std::endl;
-//    for (auto& move : move_history) {
-//        fil << move << std::endl;
-//    }
-//    fil << std::endl;
     record_t rec;
     std::map<uint32_t, record_t>::iterator it;
-    prettyMove pm;
     for (it = trans_table.begin(); it != trans_table.end(); it++) {
         fil << it->first << ",";
         rec = it->second;
-        pm.data = rec.best_ref_move;
         fil << rec.signature << ","
-            << pm << ","
+            << + rec.best_ref_move << ","
             << + rec.depth << ","
-            << rec.IBV_score << ","
-            << + rec.age << std::endl;
+            << rec.score << ","
+            << + rec.age << ","
+            << (rec.flag == EXACT ? "EXACT" :
+                rec.flag == LOWER ? "LOWER" :
+                "UPPER") << std::endl;
     }
     fil.close();
 }
 
-void Player::load_state(std::string filename) {
+void Player::load_table(std::string filename) {
     std::string line;
     std::ifstream fil(filename);
     std::stringstream num;
@@ -220,7 +215,9 @@ void Player::load_state(std::string filename) {
     uint8_t depth;
     value_t ibv;
     uint8_t age;
-//    fil.seek(0);
+    std::string flag_str;
+    valueType flag;
+
     while (fil) {
         fil >> line;
 
@@ -243,8 +240,7 @@ void Player::load_state(std::string filename) {
         comma_1 = comma_2 + 1;
         comma_2 = line.find(",",comma_1);
         length = comma_2 - comma_1;
-        movedata = std::stoi(line.substr(comma_1, length));
-        move = move_t(movedata);
+        move = std::stoi(line.substr(comma_1, length));
 
         comma_1 = comma_2 + 1;
         comma_2 = line.find(",",comma_1);
@@ -257,9 +253,16 @@ void Player::load_state(std::string filename) {
         ibv = std::stoi(line.substr(comma_1, length));
 
         comma_1 = comma_2 + 1;
-        age = std::stoi(line.substr(comma_1));
+        comma_2 = line.find(",",comma_1);
+        length = comma_2 - comma_1;
+        age = std::stoi(line.substr(comma_1, length));
 
-        rec = {sig, move, depth, ibv, age};
+        comma_1 = comma_2 + 1;
+        flag_str = line.substr(comma_1);
+        flag = flag_str == "EXACT" ? EXACT :
+               flag_str == "LOWER" ? LOWER : UPPER;
+
+        rec = {sig, move, depth, ibv, age, flag};
         trans_table[ind] = rec;
     }
 }
@@ -318,7 +321,7 @@ void Player::play(colour playerSide, int timeout) {
             doMoveInPlace(comp_move);
             ss << "/home/freddy/Documents/cpl/chess_net/log/log"
                << log << ".log";
-            save_state(ss.str());
+            save_table(ss.str());
             ss.str("");
             log++;
         }
@@ -375,7 +378,7 @@ void Player::play() {
             doMoveInPlace(comp_move);
             ss << "/home/freddy/Documents/cpl/chess_net/log/log"
                << log << ".log";
-            save_state(ss.str());
+            save_table(ss.str());
             ss.str("");
             log++;
         }

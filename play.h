@@ -173,7 +173,7 @@ public:
      *
      *  \return                 A copy of the transposition table.
      */
-    std::map<uint32_t, record_t> getTable() const;
+    TransTable getTable() const;
 
     /**@{*/
     /**
@@ -199,14 +199,14 @@ public:
      *
      *  \param filename         The name of the file to save to.
      */
-    void save_state(std::string filename);              // private
+    void save_table(std::string filename);              // private
 
     /**
      *  Load a transposition table from file.
      *
      *  \param filename         The name of the file to load from.
      */
-    void load_state(std::string filename);              // private
+    void load_table(std::string filename);              // private
 
     /**
      *  Do a move in-place.

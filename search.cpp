@@ -16,35 +16,15 @@
 namespace chessCore {
 
 std::ostream& operator<<(std::ostream &out, const record_t &rec) {
-    value_t val;
-
     prettyMove pm = {rec.best_ref_move};
-
     out << "Best/refutation move:     " << pm << std::endl
         << "Depth searched:           " << +rec.depth << std::endl
         << "Clock when last searched: " << +rec.age << std::endl
-        << "Bound flag:               ";
+        << "Bound flag:               " << (rec.flag == UPPER ? "Upper\n" :
+                                            rec.flag == LOWER ? "Lower\n" :
+                                                                "Exact\n")
 
-    switch (rec.IBV_score % 4) {
-        case -1:
-        case 3:
-            out << "Upper" << std::endl;
-            val = (rec.IBV_score + 1) / 4;
-            break;
-        case 1:
-        case -3:
-            out << "Lower" << std::endl;
-            val = (rec.IBV_score - 1) / 4;
-            break;
-        case 0:
-        case -4:
-        default:
-            out << "Exact" << std::endl;
-            val = rec.IBV_score / 4;
-            break;
-    }
-
-    out << "Value:                    " << val << std::endl;
+        << "Value:                    " << rec.score << std::endl;
     return out;
 }
 
@@ -111,7 +91,6 @@ value_t Searcher::principal_variation(board b, uint8_t depth,
     uint64_t sig;
     uint32_t ind;
     move_t bestMove = 0;
-    value_t ibv;
     uint8_t age;
     b.getHash(&sig);
     ind = (uint32_t)sig;
@@ -126,33 +105,25 @@ value_t Searcher::principal_variation(board b, uint8_t depth,
             // match
             bestMove = record.best_ref_move;
             if (record.depth >= depth) {
-                switch (record.IBV_score % 4) {
-                    case -1:
-                    case 3:
+                switch (record.flag) {
+                    case UPPER:
                         // upper bound
-                        if (beta > (record.IBV_score + 1) / 4) {
-                            beta = (record.IBV_score + 1) / 4;
-                        }
+                        beta = std::min(beta, record.score);
                         break;
-                    case 1:
-                    case -3:
+                    case LOWER:
                         // lower bound
-                        if (alpha < (record.IBV_score - 1) / 4) {
-                            alpha = (record.IBV_score - 1) / 4;
-                        }
+                        alpha = std::max(alpha, record.score);
                         break;
-                    case 0:
-                    case -4:
+                    case EXACT:
                         // exact
-                        return record.IBV_score / 4;
+                        return record.score;
                 }
                 if (alpha >= beta) {
-                    return (record.IBV_score + 1) / 4;
+                    return record.score;
                 }
             }
         }
     }
-
 
     if (depth == 0) {
         ret = quiesce(b, alpha, beta);
@@ -166,11 +137,13 @@ value_t Searcher::principal_variation(board b, uint8_t depth,
 
     int num_moves = b.gen_legal_moves(moves);
     if (num_moves == 0) {
-        ret = (std::numeric_limits<value_t>::min() / 10);
-        if (b.is_checkmate()) ret *= ((side == white) ? 1 : -1);
-        else ret = 0;
-        ibv = 4 * ret;
-        record = {sig, bestMove, depth, ibv, age};
+        if (b.is_checkmate()) {
+            ret = value * ((side == white) ? 1 : -1);
+        }
+        else {
+            ret = 0;
+        }
+        record = {sig, bestMove, depth, ret, age, EXACT};
         trans_table->operator[](ind) = record;
         return ret;
     }
@@ -202,9 +175,8 @@ value_t Searcher::principal_variation(board b, uint8_t depth,
         }
         if (alpha >= beta) {
             // lower bound
-            ibv = 4 * beta + 1;
             bestMove = moves[i];
-            record = {sig, bestMove, depth, ibv, age};
+            record = {sig, bestMove, depth, beta, age, LOWER};
             trans_table->operator[](ind) = record;
             return beta;
         }
@@ -227,13 +199,12 @@ value_t Searcher::principal_variation(board b, uint8_t depth,
     }
     if (bSearchPv) {
         // exact
-        ibv = 4 * value - 1;
+        record = {sig, bestMove, depth, value, age, EXACT};
     }
     else {
-        ibv = 4 * value;
         // upper bound
+        record = {sig, bestMove, depth, value, age, UPPER};
     }
-    record = {sig, bestMove, depth, ibv, age};
     trans_table->operator[](ind) = record;
     return alpha;
 }
@@ -250,7 +221,6 @@ value_t Searcher::principal_variation(board b, uint8_t depth,
     uint64_t sig;
     uint32_t ind;
     move_t bestMove = 0;
-    value_t ibv;
     uint8_t age;
     b.getHash(&sig);
     ind = (uint32_t)sig;
@@ -265,33 +235,25 @@ value_t Searcher::principal_variation(board b, uint8_t depth,
             // match
             bestMove = record.best_ref_move;
             if (record.depth >= depth) {
-                switch (record.IBV_score % 4) {
-                    case -1:
-                    case 3:
+                switch (record.flag) {
+                    case UPPER:
                         // upper bound
-                        if (beta > (record.IBV_score + 1) / 4) {
-                            beta = (record.IBV_score + 1) / 4;
-                        }
+                        beta = std::min(beta, record.score);
                         break;
-                    case 1:
-                    case -3:
+                    case LOWER:
                         // lower bound
-                        if (alpha < (record.IBV_score - 1) / 4) {
-                            alpha = (record.IBV_score - 1) / 4;
-                        }
+                        alpha = std::max(alpha, record.score);
                         break;
-                    case 0:
-                    case -4:
+                    case EXACT:
                         // exact
-                        return record.IBV_score / 4;
+                        return record.score;
                 }
                 if (alpha >= beta) {
-                    return (record.IBV_score + 1) / 4;
+                    return record.score;
                 }
             }
         }
     }
-
 
     if (double(clock() - start_time) / double(CLOCKS_PER_SEC) > time_remaining ||
                 depth <= 0) {
@@ -302,15 +264,17 @@ value_t Searcher::principal_variation(board b, uint8_t depth,
     bool bSearchPv = true;
     board child;
     move_t moves[256];
-    value_t score;
+    value_t score = std::numeric_limits<value_t>::min();
 
     int num_moves = b.gen_legal_moves(moves);
     if (num_moves == 0) {
-        ret = (std::numeric_limits<value_t>::min() / 10);
-        if (b.is_checkmate()) ret *= ((side == white) ? 1 : -1);
-        else ret = 0;
-        ibv = 4 * ret;
-        record = {sig, bestMove, depth, ibv, age};
+        if (b.is_checkmate()) {
+            ret = score * ((side == white) ? 1 : -1);
+        }
+        else {
+            ret = 0;
+        }
+        record = {sig, bestMove, depth, ret, age, EXACT};
         trans_table->operator[](ind) = record;
         return ret;
     }
@@ -336,9 +300,8 @@ value_t Searcher::principal_variation(board b, uint8_t depth,
 
         if (score >= beta) {
             // lower bound
-            ibv = 4 * beta + 1;
             bestMove = moves[i];
-            record = {sig, bestMove, depth, ibv, age};
+            record = {sig, bestMove, depth, beta, age, LOWER};
             trans_table->operator[](ind) = record;
             return beta;
         }
@@ -351,13 +314,12 @@ value_t Searcher::principal_variation(board b, uint8_t depth,
     }
     if (bSearchPv) {
         // exact
-        ibv = 4 * alpha - 1;
+        record = {sig, bestMove, depth, alpha, age, EXACT};
     }
     else {
-        ibv = 4 * alpha;
         // upper bound
+        record = {sig, bestMove, depth, alpha, age, UPPER};
     }
-    record = {sig, bestMove, depth, ibv, age};
     trans_table->operator[](ind) = record;
     return alpha;
 }
@@ -373,7 +335,6 @@ value_t Searcher::negamax_alphabeta(board b, uint8_t depth,
     uint64_t sig;
     uint32_t ind;
     move_t bestMove = 0;
-    value_t ibv;
     uint8_t age;
     b.getHash(&sig);
     ind = (uint32_t)sig;
@@ -388,36 +349,27 @@ value_t Searcher::negamax_alphabeta(board b, uint8_t depth,
             // match
             bestMove = record.best_ref_move;
             if (record.depth >= depth) {
-                switch (record.IBV_score % 4) {
-                    case -1:
-                    case 3:
+                switch (record.flag) {
+                    case UPPER:
                         // upper bound
-                        if (beta > (record.IBV_score + 1) / 4) {
-                            beta = (record.IBV_score + 1) / 4;
-                        }
+                        beta = std::min(beta, record.score);
                         break;
-                    case 1:
-                    case -3:
+                    case LOWER:
                         // lower bound
-                        if (alpha < (record.IBV_score - 1) / 4) {
-                            alpha = (record.IBV_score - 1) / 4;
-                        }
+                        alpha = std::min(alpha, record.score);
                         break;
-                    case 0:
-                    case -4:
+                    case EXACT:
                         // exact
-                        return record.IBV_score / 4;
+                        return record.score;
                 }
                 if (alpha >= beta) {
-                    return (record.IBV_score + 1) / 4;
+                    return record.score;
                 }
             }
         }
     }
 
-
     if (depth == 0) {
-//        std::cout << b.FEN() << std::endl;
         ret = quiesce(b, alpha, beta);
         return ret;
     }
@@ -428,11 +380,13 @@ value_t Searcher::negamax_alphabeta(board b, uint8_t depth,
 
     int num_moves = b.gen_legal_moves(moves);
     if (num_moves == 0) {
-        ret = (std::numeric_limits<value_t>::min() / 10);
-        if (b.is_checkmate()) ret *= ((side == white) ? 1 : -1);
-        else ret = 0;
-        ibv = 4 * ret;
-        record = {sig, bestMove, depth, ibv, age};
+        if (b.is_checkmate()) {
+            ret = value * ((side == white) ? 1 : -1);
+        }
+        else {
+            ret = 0;
+        }
+        record = {sig, bestMove, depth, ret, age, EXACT};
         trans_table->operator[](ind) = record;
         return ret;
     }
@@ -455,15 +409,14 @@ value_t Searcher::negamax_alphabeta(board b, uint8_t depth,
 
     }
     if (value <= alphaOrig) {
-        ibv = 4 * value - 1;
+        record = {sig, bestMove, depth, value, age, UPPER};
     }
     else if (value >= beta) {
-        ibv = 4 * value + 1;
+        record = {sig, bestMove, depth, value, age, LOWER};
     }
     else {
-        ibv = 4 * value;
+        record = {sig, bestMove, depth, value, age, EXACT};
     }
-    record = {sig, bestMove, depth, ibv, age};
     trans_table->operator[](ind) = record;
     return value;
 }
@@ -479,7 +432,6 @@ value_t Searcher::negamax_alphabeta(board b, uint8_t depth,
     uint64_t sig;
     uint32_t ind;
     move_t bestMove = 0;
-    value_t ibv;
     uint8_t age;
     b.getHash(&sig);
     ind = (uint32_t)sig;
@@ -494,28 +446,21 @@ value_t Searcher::negamax_alphabeta(board b, uint8_t depth,
             // match
             bestMove = record.best_ref_move;
             if (record.depth >= depth) {
-                switch (record.IBV_score % 4) {
-                    case -1:
-                    case 3:
+                switch (record.flag) {
+                    case UPPER:
                         // upper bound
-                        if (beta > (record.IBV_score + 1) / 4) {
-                            beta = (record.IBV_score + 1) / 4;
-                        }
+                        beta = std::min(beta, record.score);
                         break;
-                    case 1:
-                    case -3:
+                    case LOWER:
                         // lower bound
-                        if (alpha < (record.IBV_score - 1) / 4) {
-                            alpha = (record.IBV_score - 1) / 4;
-                        }
+                        alpha = std::max(alpha, record.score);
                         break;
-                    case 0:
-                    case -4:
+                    case EXACT:
                         // exact
-                        return record.IBV_score / 4;
+                        return record.score;
                 }
                 if (alpha >= beta) {
-                    return (record.IBV_score + 1) / 4;
+                    return record.score;
                 }
             }
         }
@@ -523,7 +468,6 @@ value_t Searcher::negamax_alphabeta(board b, uint8_t depth,
 
     if (double(clock() - start_time) / double(CLOCKS_PER_SEC) > time_remaining ||
         depth <= 0) {
-//        std::cout << b.FEN() << std::endl;
         ret = quiesce(b, alpha, beta);
         return ret;
     }
@@ -534,11 +478,13 @@ value_t Searcher::negamax_alphabeta(board b, uint8_t depth,
 
     int num_moves = b.gen_legal_moves(moves);
     if (num_moves == 0) {
-        ret = (std::numeric_limits<value_t>::min() / 10);
-        if (b.is_checkmate()) ret *= ((side == white) ? 1 : -1);
-        else ret = 0;
-        ibv = 4 * ret;
-        record = {sig, bestMove, depth, ibv, age};
+        if (b.is_checkmate()) {
+            ret = value * ((side == white) ? 1 : -1);
+        }
+        else {
+            ret = 0;
+        }
+        record = {sig, bestMove, depth, ret, age, EXACT};
         trans_table->operator[](ind) = record;
         return ret;
     }
@@ -563,15 +509,14 @@ value_t Searcher::negamax_alphabeta(board b, uint8_t depth,
 
     }
     if (value <= alphaOrig) {
-        ibv = 4 * value - 1;
+        record = {sig, bestMove, depth, value, age, UPPER};
     }
     else if (value >= beta) {
-        ibv = 4 * value + 1;
+        record = {sig, bestMove, depth, value, age, LOWER};
     }
     else {
-        ibv = 4 * value;
+        record = {sig, bestMove, depth, value, age, EXACT};
     }
-    record = {sig, bestMove, depth, ibv, age};
     trans_table->operator[](ind) = record;
     return value;
 }
