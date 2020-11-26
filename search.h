@@ -8,31 +8,116 @@
 
 namespace chessCore {
 
+/**
+ *  \struct record_t
+ *
+ *  \brief A struct for recording search details, used in the transposition table.
+ */
+struct record_t {
+    /** The hash value of the corresponding board state. */
+    uint64_t signature;
+    /** If available, the best move for this node. Leave = 0 if not. */
+    move_t best_ref_move;
+    /** The depth to which this node has been searched. */
+    uint8_t depth;
+    /**
+     *  The integrated bound and value for this node.
+     *  See <a href="https://www.chessprogramming.org/Integrated_Bounds_and_Values">
+     *  Chess Programming Wiki</a>.
+     */
+    value_t IBV_score;
+    /** The full move clock of the game when this node was searched. */
+    uint8_t age;
+};
 
 /**
- *  \brief Perform a quiescence search on a board.
+ *  Pretty-print a record_t object to an output stream.
  *
- *  Quiescence search is a technique to mitigate the horizon effect,
- *  where we recursively search through all the upcoming capture tradeoffs
- *  to get a better heuristic value for a given position.
- *
- *  \param b            The board to analyse.
- *  \param side         The side whose turn it is to move.
- *  \param alpha        The current value of alpha in negamax search.
- *  \param beta         The current value of beta in negamax search.
- *  \return             The heuristic value for the node.
+ *  \param out      The output stream to print to.
+ *  \param rec      The record_t object to print.
+ *  \return         The output stream.
  */
-value_t quiesce(board b, colour side, value_t alpha, value_t beta);
+std::ostream& operator<<(std::ostream& out, const record_t& rec);
 
-/**
- *  Given an array of moves and a preferred "best move" to search first,
- *  reorder the array so that the move is searched first.
- *
- *  \param moves        An array of moves to search.
- *  \param num_moves    The length of the array moves.
- *  \param best_move    The move we want to search first.
- */
-void reorder_moves(move_t * moves, int num_moves, move_t best_move);
+
+class Searcher {
+private:
+    TransTable* trans_table;
+public:
+    Searcher();
+    Searcher(TransTable* tt);
+
+    /**
+     *  \brief Perform a quiescence search on a position.
+     *
+     *  Quiescence search is a technique to mitigate the horizon effect,
+     *  where we recursively search through all the upcoming capture tradeoffs
+     *  to get a better heuristic value for a given position.
+     *
+     *  \param b            The board to analyse.
+     *  \param side         The side whose turn it is to move.
+     *  \param alpha        The current value of alpha in negamax search.
+     *  \param beta         The current value of beta in negamax search.
+     *  \return             The heuristic value for the node.
+     */
+    value_t quiesce(board b, value_t alpha, value_t beta);
+
+    /**
+     *  Search using Principal Variation search, to
+     *  estimate the value of the given node.
+     *
+     *  \param b            The board state of the node to be searched.
+     *  \param side         The side to move.
+     *  \param depth        The depth to search to.
+     *  \param alpha        The current value of alpha.
+     *  \param beta         The current value of beta.
+     *  \return             The estimated value of node b.
+     */
+    value_t principal_variation(board b, uint8_t depth,
+                                value_t alpha, value_t beta);
+
+    /**
+     *  Search using the Negamax algorithm with alpha-beta pruning, to
+     *  estimate the value of the given node.
+     *
+     *  \param b            The board state of the node to be searched.
+     *  \param side         The side to move.
+     *  \param depth        The depth to search to.
+     *  \param alpha        The current value of alpha.
+     *  \param beta         The current value of beta.
+     *  \return             The estimated value of node b.
+     */
+    value_t negamax_alphabeta(board b, uint8_t depth,
+                              value_t alpha, value_t beta);
+
+    /**
+     *  Search using the Negamax algorithm with alpha-beta pruning, to
+     *  estimate the value of the given node. Specify a timeout in seconds.
+     *
+     *  \param b                The board state of the node to be searched.
+     *  \param side             The side to move.
+     *  \param depth            The depth to search to.
+     *  \param alpha            The current value of alpha.
+     *  \param beta             The current value of beta.
+     *  \param time_remaining   The timeout in seconds.
+     *  \return                 The estimated value of node b.
+     */
+    value_t negamax_alphabeta(board b, uint8_t depth,
+                              value_t alpha, value_t beta,
+                              double time_remaining);
+
+    /**
+     *  Search using the Negamax algorithm to increasing depth, to
+     *  choose the best move from the current node.
+     *
+     *  \param b            The board state of the node to be searched.
+     *  \param timeout      The maximum time to spend searching.
+     *  \param max_depth    The maximum depth to search to.
+     *  \return             The best move to play from the current node.
+     */
+    move_t iterative_deepening(board b, int timeout, bool cutoff=false);
+
+};
 
 
 } // end of chessCore namespace

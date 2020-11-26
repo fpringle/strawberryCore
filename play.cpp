@@ -18,47 +18,16 @@
 
 namespace chessCore {
 
-std::ostream& operator<<(std::ostream &out, const record_t &rec) {
-    value_t val;
-
-    prettyMove pm = {rec.best_ref_move};
-
-    out << "Best/refutation move:     " << pm << std::endl
-        << "Depth searched:           " << +rec.depth << std::endl
-        << "Clock when last searched: " << +rec.age << std::endl
-        << "Bound flag:               ";
-
-    switch (rec.IBV_score % 4) {
-        case -1:
-        case 3:
-            out << "Upper" << std::endl;
-            val = (rec.IBV_score + 1) / 4;
-            break;
-        case 1:
-        case -3:
-            out << "Lower" << std::endl;
-            val = (rec.IBV_score - 1) / 4;
-            break;
-        case 0:
-        case -4:
-        default:
-            out << "Exact" << std::endl;
-            val = rec.IBV_score / 4;
-            break;
-    }
-
-    out << "Value:                    " << val << std::endl;
-    return out;
-}
-
 Player::Player() : board::board() {
     user_colour = white;
     iterative_deepening_timeout = 60;
+    searcher = new Searcher(&trans_table);
 }
 
 Player::Player(colour userColour) : board::board() {
     user_colour = userColour;
     iterative_deepening_timeout = 60;
+    searcher = new Searcher(&trans_table);
 }
 
 Player::Player(bitboard * startPositions, bool * castling, bool ep, int dpp,
@@ -69,6 +38,7 @@ Player::Player(bitboard * startPositions, bool * castling, bool ep, int dpp,
 
     user_colour = white;
     iterative_deepening_timeout = 60;
+    searcher = new Searcher(&trans_table);
 }
 
 Player::Player(Player& p1) : board::board(p1) {
@@ -77,11 +47,13 @@ Player::Player(Player& p1) : board::board(p1) {
     move_history_san = p1.getHistorySAN();
     user_colour = white;
     iterative_deepening_timeout = 60;
+    searcher = new Searcher(&trans_table);
 }
 
 Player::Player(std::string fen) : board::board(fen) {
     user_colour = white;
     iterative_deepening_timeout = 60;
+    searcher = new Searcher(&trans_table);
 }
 
 void Player::setTimeout(int timeout) {
@@ -154,18 +126,6 @@ void Player::read_config(std::string filename) {
                   << "Using default value of " << user_colour
                   << "." << std::endl;
 
-    }
-}
-
-bool Player::lookup(uint64_t pos_hash, record_t * dest) {
-    uint32_t index = (uint32_t) pos_hash;
-    std::map<uint32_t, record_t>::iterator it = trans_table.find(index);
-    if (it == trans_table.end() || it->second.signature != pos_hash) {
-        return false;
-    }
-    else {
-        *dest = it->second;
-        return true;
     }
 }
 
@@ -351,7 +311,8 @@ void Player::play(colour playerSide, int timeout) {
         }
         else {
             std::cout << "Computer thinking...    " << std::endl;
-            comp_move = iterative_deepening(timeout, 100);
+            std::cout << "Timeout: " << iterative_deepening_timeout << std::endl;
+            comp_move = searcher->iterative_deepening(board(*this), timeout);
             pm.data = comp_move;
             std::cout << "Computer move: " << pm << std::endl;
             doMoveInPlace(comp_move);
@@ -407,7 +368,8 @@ void Player::play() {
         }
         else {
             std::cout << "Computer thinking...    " << std::endl;
-            comp_move = iterative_deepening(iterative_deepening_timeout, 100);
+            std::cout << "Timeout: " << iterative_deepening_timeout << std::endl;
+            comp_move = searcher->iterative_deepening(board(*this), iterative_deepening_timeout);
             pm.data = comp_move;
             std::cout << "Computer move: " << pm << std::endl;
             doMoveInPlace(comp_move);
