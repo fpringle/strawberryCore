@@ -143,13 +143,10 @@ TransTable Player::getTable() const {
 
 void Player::print_history(std::ostream& cout) const {
     int sz = move_history.size();
-    prettyMove pm;
     for (int i=0; i<sz; i+=2) {
-        pm.data = move_history[i];
-        cout << int((i / 2) + 1) << ". " << pm;
+        cout << int((i / 2) + 1) << ". " << mtos(move_history[i]);
         if (i + 1 < sz) {
-            pm.data = move_history[i + 1];
-            cout << "    " << pm << std::endl;
+            cout << "    " << mtos(move_history[i + 1]) << std::endl;
         }
         else {
             cout << std::endl;
@@ -210,7 +207,6 @@ void Player::load_table(std::string filename) {
     record_t rec;
     uint32_t ind;
     uint64_t sig;
-    uint16_t movedata;
     move_t move;
     uint8_t depth;
     value_t ibv;
@@ -295,7 +291,6 @@ void Player::play(colour playerSide, int timeout) {
     colour movingSide;
     int log = 1;
     std::stringstream ss;
-    prettyMove pm;
 
     if (gameover()) {
         std::cout << "Game is complete!\n";
@@ -315,9 +310,8 @@ void Player::play(colour playerSide, int timeout) {
         else {
             std::cout << "Computer thinking...    " << std::endl;
             std::cout << "Timeout: " << iterative_deepening_timeout << std::endl;
-            comp_move = searcher->iterative_deepening_negamax(board(*this), timeout);
-            pm.data = comp_move;
-            std::cout << "Computer move: " << pm << std::endl;
+            comp_move = searcher->search((board*)this, timeout, true);
+            std::cout << "Computer move: " << mtos(comp_move) << std::endl;
             doMoveInPlace(comp_move);
             ss << "/home/freddy/Documents/cpl/chess_net/log/log"
                << log << ".log";
@@ -353,7 +347,6 @@ void Player::play() {
     colour movingSide;
     int log = 1;
     std::stringstream ss;
-    prettyMove pm;
 
     if (gameover()) {
         std::cout << "Game is complete!\n";
@@ -372,9 +365,8 @@ void Player::play() {
         else {
             std::cout << "Computer thinking...    " << std::endl;
             std::cout << "Timeout: " << iterative_deepening_timeout << std::endl;
-            comp_move = searcher->iterative_deepening_negamax(board(*this), iterative_deepening_timeout);
-            pm.data = comp_move;
-            std::cout << "Computer move: " << pm << std::endl;
+            comp_move = searcher->search((board*)this, iterative_deepening_timeout, true);
+            std::cout << "Computer move: " << mtos(comp_move) << std::endl;
             doMoveInPlace(comp_move);
             ss << "/home/freddy/Documents/cpl/chess_net/log/log"
                << log << ".log";

@@ -6,8 +6,6 @@ TEMPLATE = app
 TARGET = build/strawberryCLI
 OBJECTS_DIR = obj
 MOC_DIR = obj
-QMAKE_LFLAGS += -DUSE_CONFIG_FILE=1
-QMAKE_CXXFLAGS += -DUSE_CONFIG_FILE=1
 
 # The following define makes your compiler warn you if you use any
 # feature of Qt which has been marked as deprecated (the exact warnings

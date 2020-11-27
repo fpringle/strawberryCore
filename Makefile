@@ -16,7 +16,7 @@ CC            = gcc
 CXX           = g++
 DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_NO_DEBUG
 CFLAGS        = -pipe -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-CXXFLAGS      = -pipe -DUSE_CONFIG_FILE=1 -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
+CXXFLAGS      = -pipe -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 INCPATH       = -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
 QMAKE         = /usr/lib/qt5/bin/qmake
 DEL_FILE      = rm -f
@@ -39,7 +39,7 @@ COMPRESS      = gzip -9f
 DISTNAME      = strawberryCLI1.0.0
 DISTDIR = /home/freddy/Documents/cpl/strawberry/src/core/obj/strawberryCLI1.0.0
 LINK          = g++
-LFLAGS        = -DUSE_CONFIG_FILE=1 -Wl,-O1
+LFLAGS        = -Wl,-O1
 LIBS          = $(SUBLIBS) -lpthread   
 AR            = ar cqs
 RANLIB        = 

@@ -166,10 +166,6 @@ bool is_queenCastle(move_t move);
  */
 bool is_castle(move_t move);
 
-struct prettyMove {
-    move_t data;
-};
-
 /**
  *  Print the move to an output stream in the form FileRankFileRank,
  *  e.g. e2e4.
@@ -179,7 +175,7 @@ struct prettyMove {
  *  \param move         The move to print.
  *  \return             The output stream.
  */
-std::ostream& operator<<(std::ostream& out, const prettyMove& move);
+std::string mtos(move_t move);
 
 /**
  *  Convert a string to a move_t object given an array of possible moves.

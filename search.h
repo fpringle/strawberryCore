@@ -49,9 +49,6 @@ std::ostream& operator<<(std::ostream& out, const record_t& rec);
 class Searcher {
 private:
     TransTable* trans_table;
-public:
-    Searcher();
-    Searcher(TransTable* tt);
 
     /**
      *  \brief Perform a quiescence search on a position.
@@ -66,7 +63,7 @@ public:
      *  \param beta         The current value of beta in negamax search.
      *  \return             The heuristic value for the node.
      */
-    value_t quiesce(board b, value_t alpha, value_t beta);
+    value_t quiesce(board* b, value_t alpha, value_t beta);
 
     /**
      *  Search using Principal Variation search, to
@@ -79,7 +76,7 @@ public:
      *  \param beta         The current value of beta.
      *  \return             The estimated value of node b.
      */
-    value_t principal_variation(board b, uint8_t depth,
+    value_t principal_variation(board* b, uint8_t depth,
                                 value_t alpha, value_t beta);
 
     /**
@@ -94,7 +91,7 @@ public:
      *  \param time_remaining   The timeout in seconds.
      *  \return                 The estimated value of node b.
      */
-    value_t principal_variation(board b, uint8_t depth,
+    value_t principal_variation(board* b, uint8_t depth,
                                 value_t alpha, value_t beta,
                                 double time_remaining);
 
@@ -109,7 +106,7 @@ public:
      *  \param beta         The current value of beta.
      *  \return             The estimated value of node b.
      */
-    value_t negamax_alphabeta(board b, uint8_t depth,
+    value_t negamax_alphabeta(board* b, uint8_t depth,
                               value_t alpha, value_t beta);
 
     /**
@@ -124,9 +121,10 @@ public:
      *  \param time_remaining   The timeout in seconds.
      *  \return                 The estimated value of node b.
      */
-    value_t negamax_alphabeta(board b, uint8_t depth,
+    value_t negamax_alphabeta(board* b, uint8_t depth,
                               value_t alpha, value_t beta,
-                              double time_remaining);
+                              double time_remaining,
+                              move_t first_move = 0);
 
     /**
      *  Search using the Negamax algorithm to increasing depth, to
@@ -137,7 +135,7 @@ public:
      *  \param max_depth    The maximum depth to search to.
      *  \return             The best move to play from the current node.
      */
-    move_t iterative_deepening_negamax(board b, int timeout, bool cutoff=false);
+    move_t iterative_deepening_negamax(board* b, int timeout, bool cutoff=false);
 
     /**
      *  Search using the Prinicpal Variation algorithm to increasing depth, to
@@ -148,8 +146,13 @@ public:
      *  \param max_depth    The maximum depth to search to.
      *  \return             The best move to play from the current node.
      */
-    move_t iterative_deepening_pv(board b, int timeout, bool cutoff=false);
+    move_t iterative_deepening_pv(board* b, int timeout, bool cutoff=false);
 
+public:
+    Searcher();
+    Searcher(TransTable* tt);
+
+    move_t search(board* b, int timeout, bool cutoff = false);
 };
 
 

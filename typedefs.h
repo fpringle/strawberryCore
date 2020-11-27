@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <iostream>
+#include <limits>
 #include <map>
 
 namespace chessCore {
@@ -17,6 +18,8 @@ using bitboard = uint64_t;
 using value_t = int16_t;
 
 using move_t = uint16_t;
+
+constexpr value_t VAL_INFINITY = std::numeric_limits<value_t>::max() - 10;
 
 /**
  *  \enum colour

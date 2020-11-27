@@ -15,6 +15,7 @@ namespace chessCore {
  */
 board doMove (board startBoard, move_t move);
 
+board* doMove (board* startBoard, move_t move);
 
 }
 

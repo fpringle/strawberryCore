@@ -40,7 +40,40 @@ int _stoi(std::string s) {
     return int(rank - '1')*8 + int(file - 'a');
 }
 
+std::string mtos(move_t move) {
+    if (move == 0) {
+        return "NULL";
+    }
+
+    std::stringstream ss;
+    int fromSq = from_sq(move);
+    int toSq = to_sq(move);
+
+    itos(fromSq, ss);
+    itos(toSq, ss);
+
+    if (is_promotion(move)) {
+        switch (flags(move) & 6) {
+        case 0:
+            ss << "Q";
+            break;
+        case 2:
+            ss << "R";
+            break;
+        case 4:
+            ss << "B";
+            break;
+        case 6:
+            ss << "N";
+            break;
+        }
+    }
+
+    return ss.str();
+}
+
 std::string board::SAN_pre_move(move_t move) const {
+    if (move == 0) return "NULL";
     std::stringstream san;
     int i;
     colour otherSide = flipColour(sideToMove);
@@ -129,6 +162,7 @@ std::string board::SAN_pre_move(move_t move) const {
 
 
 std::string board::SAN_post_move( move_t move ) const {
+    if (move == 0) return "NULL";
     std::stringstream san;
     int i;
     colour side_to_move = flipColour(sideToMove);
@@ -490,40 +524,6 @@ bool is_castle(move_t move) {
 }
 
 
-
-std::ostream& operator<<(std::ostream& out, const prettyMove& pm) {
-    move_t move = pm.data;
-
-    if (move == 0) {
-        out << "NULL";
-        return out;
-    }
-
-    int fromSq = from_sq(move);
-    int toSq = to_sq(move);
-
-    itos(fromSq, out);
-    itos(toSq, out);
-
-    if (is_promotion(move)) {
-        switch (flags(move) & 6) {
-        case 0:
-            out << "Q";
-            break;
-        case 2:
-            out << "R";
-            break;
-        case 4:
-            out << "B";
-            break;
-        case 6:
-            out << "N";
-            break;
-        }
-    }
-
-    return out;
-}
 
 move_t stom(move_t* moves, int n_moves, std::string s) {
     std::string from = s.substr(0, 2);
