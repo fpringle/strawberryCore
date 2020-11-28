@@ -5,6 +5,7 @@
 #include <iostream>
 #include <limits>
 #include <map>
+#include <vector>
 
 namespace chessCore {
 
@@ -17,9 +18,11 @@ using bitboard = uint64_t;
 /** A signed integer used for evaluation. */
 using value_t = int16_t;
 
+constexpr value_t VAL_INFINITY = std::numeric_limits<value_t>::max() - 10;
+
 using move_t = uint16_t;
 
-constexpr value_t VAL_INFINITY = std::numeric_limits<value_t>::max() - 10;
+using MoveList = std::vector<move_t>;
 
 /**
  *  \enum colour

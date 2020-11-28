@@ -18,6 +18,7 @@
 #include <cstdint>
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "move.h"
 #include "typedefs.h"
@@ -261,7 +262,7 @@ class board {
      *                          successfully. Automatically returns true if
      *                          check_legal is false.
      */
-    bool add_moves(move_t** dest, move_t move, bool legal_check) const;
+    void add_moves(MoveList* dest, move_t move, bool legal_check) const;
 
     /**
      *  Generate all moves that get the side to move out of check.
@@ -275,8 +276,8 @@ class board {
      *  \return                 An integer corresponding to the number of moves
      *                          generated.
      */
-    int get_out_of_check(colour side, move_t* moves, piece checkingPiece,
-                         int checkingInd, int kingInd, bool double_check) const;
+    MoveList get_out_of_check(colour side, piece checkingPiece, int checkingInd,
+                              int kingInd, bool double_check) const;
 
     /**
      *  Determine whether a given side can get out of check.
@@ -559,7 +560,7 @@ public:
      *  \return                 An integer corresponding to the number of moves
      *                          generated.
      */
-    int gen_moves(move_t* moves) const;
+    MoveList gen_moves() const;
 
     /**
      *  Check if a particular move is legal in the current board state.
@@ -576,7 +577,7 @@ public:
      *  \return                 An integer corresponding to the number of captures
      *                          generated.
      */
-    int gen_captures(move_t* moves) const;
+    MoveList gen_captures() const;
 
     /**
      *  Generate all legal moves from a given position.
@@ -585,7 +586,7 @@ public:
      *  \return                 An integer corresponding to the number of moves
      *                          generated.
      */
-    int gen_legal_moves(move_t* moves) const;
+    MoveList gen_legal_moves() const;
 
     /**
      *  Do a move in-place.

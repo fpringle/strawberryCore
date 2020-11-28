@@ -525,37 +525,35 @@ bool is_castle(move_t move) {
 
 
 
-move_t stom(move_t* moves, int n_moves, std::string s) {
+move_t stom(MoveList moves, std::string s) {
     std::string from = s.substr(0, 2);
     std::string to = s.substr(2, 2);
     int from_ind = _stoi(from);
     int to_ind = _stoi(to);
-    move_t cand;
 
-    for (int i = 0; i < n_moves; i++) {
-        cand = moves[i];
+    for (move_t cand : moves) {
         if ((from_sq(cand) == from_ind) && (to_sq(cand) == to_ind)) {
             if (is_promotion(cand)) {
                 if (s.size() != 5) return 0;
                 switch (s[4]) {
-                case 'q':
-                case 'Q':
-                    cand = set_promotion(cand, queen);
-                    break;
-                case 'r':
-                case 'R':
-                    cand = set_promotion(cand, rook);
-                    break;
-                case 'b':
-                case 'B':
-                    cand = set_promotion(cand, bishop);
-                    break;
-                case 'n':
-                case 'N':
-                    cand = set_promotion(cand, knight);
-                    break;
-                default:
-                    return 0;
+                    case 'q':
+                    case 'Q':
+                        cand = set_promotion(cand, queen);
+                        break;
+                    case 'r':
+                    case 'R':
+                        cand = set_promotion(cand, rook);
+                        break;
+                    case 'b':
+                    case 'B':
+                        cand = set_promotion(cand, bishop);
+                        break;
+                    case 'n':
+                    case 'N':
+                        cand = set_promotion(cand, knight);
+                        break;
+                    default:
+                        return 0;
                 }
             }
             return cand;
@@ -840,32 +838,26 @@ bitboard allTargets(colour side, bitboard* pieces) {
 
 
 
-bool board::add_moves(move_t ** dest, move_t move, bool check_legal) const {
+void board::add_moves(MoveList* dest, move_t move, bool check_legal) const {
     if (check_legal) {
         if (is_legal(move)) {
-            **dest = move;
-            (*dest)++;
-            return 1;
-        }
-        else {
-            return 0;
+            dest->push_back(move);
         }
     }
     else {
-        **dest = move;
-        (*dest)++;
-        return 1;
+        dest->push_back(move);
     }
 }
+
 
 // generate pseudo-legal moves (without checking for checks)
 // returns the number of moves
 
-int board::gen_moves(move_t * moves) const {
+MoveList board::gen_moves() const {
+    MoveList moves;
     int piece;
     int from_sq;
     int to_sq;
-    int count = 0;
     bitboard targets;
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
@@ -881,13 +873,13 @@ int board::gen_moves(move_t * moves) const {
                         // capture
                         if (piece % 6 == 0 && ((rankOne | rankEight)&(1ULL << to_sq))) {
                             // promotion
-                            count += add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 0, 0), false);
-                            count += add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 0, 1), false);
-                            count += add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 1, 0), false);
-                            count += add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 1, 1), false);
+                            add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 0, 0), false);
+                            add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 0, 1), false);
+                            add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 1, 0), false);
+                            add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 1, 1), false);
                         }
                         else {
-                            count += add_moves(&moves, make_move(from_sq, to_sq, 0, 1, 0, 0), false);
+                            add_moves(&moves, make_move(from_sq, to_sq, 0, 1, 0, 0), false);
                         }
                     }
                     else {
@@ -895,7 +887,7 @@ int board::gen_moves(move_t * moves) const {
                         if ((piece % 6 == 0) & (abs(from_sq - to_sq) == 16)) {
                             // double pawn push
                             if (!((1ULL << ((from_sq + to_sq) / 2)) & (_black | _white))) {
-                                count += add_moves(&moves, make_move(from_sq, to_sq, 0, 0, 0, 1), false);
+                                add_moves(&moves, make_move(from_sq, to_sq, 0, 0, 0, 1), false);
                             }
                             else {
                             }
@@ -904,13 +896,13 @@ int board::gen_moves(move_t * moves) const {
                             // quiet move
                             if (piece % 6 == 0 && ((rankOne | rankEight)&(1ULL << to_sq))) {
                                 // promotion
-                                count += add_moves(&moves, make_move(from_sq, to_sq, 1, 0, 0, 0), false);
-                                count += add_moves(&moves, make_move(from_sq, to_sq, 1, 0, 0, 1), false);
-                                count += add_moves(&moves, make_move(from_sq, to_sq, 1, 0, 1, 0), false);
-                                count += add_moves(&moves, make_move(from_sq, to_sq, 1, 0, 1, 1), false);
+                                add_moves(&moves, make_move(from_sq, to_sq, 1, 0, 0, 0), false);
+                                add_moves(&moves, make_move(from_sq, to_sq, 1, 0, 0, 1), false);
+                                add_moves(&moves, make_move(from_sq, to_sq, 1, 0, 1, 0), false);
+                                add_moves(&moves, make_move(from_sq, to_sq, 1, 0, 1, 1), false);
                             }
                             else {
-                                count += add_moves(&moves, make_move(from_sq, to_sq, 0, 0, 0, 0), false);
+                                add_moves(&moves, make_move(from_sq, to_sq, 0, 0, 0, 0), false);
                             }
                         }
                     }
@@ -931,12 +923,12 @@ int board::gen_moves(move_t * moves) const {
         int captureSquare = 40 - (24 * sideToMove) + dPPFile;
         if (left & (pieceBoards[ 6 * sideToMove ])) {
             int leftSquare = last_set_bit(left);
-            count += add_moves(&moves, make_move(leftSquare, captureSquare, 0, 1, 0, 1),
+            add_moves(&moves, make_move(leftSquare, captureSquare, 0, 1, 0, 1),
                                false);
         }
         if (right & (pieceBoards[ 6 * sideToMove ])) {
             int rightSquare = last_set_bit(right);
-            count += add_moves(&moves, make_move(rightSquare, captureSquare, 0, 1, 0, 1),
+            add_moves(&moves, make_move(rightSquare, captureSquare, 0, 1, 0, 1),
                                false);
         }
     }
@@ -949,34 +941,34 @@ int board::gen_moves(move_t * moves) const {
         if (castleWhiteKingSide && (!((_white | _black) & 0x0000000000000060))) {
             // can't castle through check
             if (! (attacked_squares & 0x0000000000000060)) {
-                count += add_moves(&moves, make_move(4, 6, 0, 0, 1, 0), false);
+                add_moves(&moves, make_move(4, 6, 0, 0, 1, 0), false);
             }
         }
         if (castleWhiteQueenSide && (!((_white | _black) & 0x000000000000000e))) {
             if (! (attacked_squares & 0x000000000000000c)) {
-                count += add_moves(&moves, make_move(4, 2, 0, 0, 1, 1), false);
+                add_moves(&moves, make_move(4, 2, 0, 0, 1, 1), false);
             }
         }
     }
     else if (sideToMove == black && !is_check(black)) {
         if (castleBlackKingSide && (!((_white | _black) & 0x6000000000000000))) {
             if (! (attacked_squares & 0x6000000000000000)) {
-                count += add_moves(&moves, make_move(60, 62, 0, 0, 1, 0), false);
+                add_moves(&moves, make_move(60, 62, 0, 0, 1, 0), false);
             }
         }
         if (castleBlackQueenSide && (!((_white | _black) & 0x0e00000000000000))) {
             if (! (attacked_squares & 0x0c00000000000000)) {
-                count += add_moves(&moves, make_move(60, 58, 0, 0, 1, 1), false);
+                add_moves(&moves, make_move(60, 58, 0, 0, 1, 1), false);
             }
         }
     }
 
-    return count;
+    return moves;
 }
 
-int board::get_out_of_check(colour side, move_t * moves, piece checkingPiece,
-                            int checkingInd, int kingInd, bool double_check) const {
-    int count = 0;
+MoveList board::get_out_of_check(colour side, piece checkingPiece, int checkingInd,
+                                 int kingInd, bool double_check) const {
+    MoveList moves;
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
     bitboard _other = (side == white) ? _black : _white;
@@ -990,15 +982,15 @@ int board::get_out_of_check(colour side, move_t * moves, piece checkingPiece,
 
     ITER_BITBOARD(to_ind, targets) {
         if (_other & (1ULL << to_ind)) {
-            count += add_moves(&moves, make_move(king_ind, to_ind, 0, 1, 0, 0), true);
+            add_moves(&moves, make_move(king_ind, to_ind, 0, 1, 0, 0), true);
         }
         else {
-            count += add_moves(&moves, make_move(king_ind, to_ind, 0, 0, 0, 0), true);
+            add_moves(&moves, make_move(king_ind, to_ind, 0, 0, 0, 0), true);
         }
     }
 
     if (double_check) {
-        return count;
+        return moves;
     }
 
     // take the checking piece
@@ -1012,13 +1004,13 @@ int board::get_out_of_check(colour side, move_t * moves, piece checkingPiece,
             if (i == (6 * side) && (checkingInd / 8 == 0 || checkingInd / 8 == 7)) {
                 move_t prom_queen = make_move(from_sq, checkingInd, 1, 1, 0, 0);
                 if (!is_legal(prom_queen)) continue;
-                count += add_moves(&moves, prom_queen, false);
-                count += add_moves(&moves, make_move(from_sq, checkingInd, 1, 1, 0, 1), false);
-                count += add_moves(&moves, make_move(from_sq, checkingInd, 1, 1, 1, 0), false);
-                count += add_moves(&moves, make_move(from_sq, checkingInd, 1, 1, 1, 1), false);
+                add_moves(&moves, prom_queen, false);
+                add_moves(&moves, make_move(from_sq, checkingInd, 1, 1, 0, 1), false);
+                add_moves(&moves, make_move(from_sq, checkingInd, 1, 1, 1, 0), false);
+                add_moves(&moves, make_move(from_sq, checkingInd, 1, 1, 1, 1), false);
             }
             else {
-                count += add_moves(&moves, make_move(from_sq, checkingInd, 0, 1, 0, 0), true);
+                add_moves(&moves, make_move(from_sq, checkingInd, 0, 1, 0, 0), true);
             }
         }
     }
@@ -1027,18 +1019,18 @@ int board::get_out_of_check(colour side, move_t * moves, piece checkingPiece,
     if (lastMoveDoublePawnPush && (checkingPiece == 0)) {
         to_ind = checkingInd + ((side == white) ? N : S);
         if (pieceBoards[side * 6] & right) {
-            count += add_moves(&moves, make_move(checkingInd + 1, to_ind, 0, 1, 0, 1), true);
+            add_moves(&moves, make_move(checkingInd + 1, to_ind, 0, 1, 0, 1), true);
         }
         if (pieceBoards[side * 6] & left) {
-            count += add_moves(&moves, make_move(checkingInd - 1, to_ind, 0, 1, 0, 1), true);
+            add_moves(&moves, make_move(checkingInd - 1, to_ind, 0, 1, 0, 1), true);
         }
     }
     if (is_bit_set(kingTargets(kingInd, _white, _black, side), checkingInd)) {
-        return count;
+        return moves;
     }
     if (checkingPiece % 6 == 0 || checkingPiece % 6 == 2 ||
             checkingPiece % 6 == 5) {
-        return count;
+        return moves;
     }
 
 
@@ -1056,14 +1048,14 @@ int board::get_out_of_check(colour side, move_t * moves, piece checkingPiece,
         else if (checkingInd / 8 == kingInd / 8) _dir = E;
         else if (ind_diff % 8 == 0) _dir = N;
         else if (ind_diff % 7 == 0) _dir = NW;
-        else return count;
+        else return moves;
     }
     else {
         if (ind_diff == -63 || (-ind_diff) % 9 == 0) _dir = SW;
         else if (checkingInd / 8 == kingInd / 8) _dir = W;
         else if ((-ind_diff) % 8 == 0) _dir = S;
         else if ((-ind_diff) % 7 == 0) _dir = SE;
-        else return count;
+        else return moves;
     }
 
     for (blockingInd = kingInd + _dir; blockingInd != checkingInd;
@@ -1076,11 +1068,11 @@ int board::get_out_of_check(colour side, move_t * moves, piece checkingPiece,
                                         colourPiece(side * 6)), blockingInd)) {
                 switch (abs(defenderInd - blockingInd)) {
                 case 8:
-                    count += add_moves(&moves, make_move(defenderInd, blockingInd, 0, 0, 0, 0), true);
+                    add_moves(&moves, make_move(defenderInd, blockingInd, 0, 0, 0, 0), true);
                     break;
                 case 16:
                     if ((_black | _white) & (1ULL << ((defenderInd + blockingInd) / 2))) break;
-                    count += add_moves(&moves, make_move(defenderInd, blockingInd, 0, 0, 0, 1), true);
+                    add_moves(&moves, make_move(defenderInd, blockingInd, 0, 0, 0, 1), true);
                     break;
                 }
             }
@@ -1093,12 +1085,12 @@ int board::get_out_of_check(colour side, move_t * moves, piece checkingPiece,
             blockers = pieceBoards[blockingPiece] & pieceTargets(blockingInd, _white,
                        _black, colourPiece((blockingPiece + 6) % 12));
             ITER_BITBOARD(defenderInd, blockers) {
-                count += add_moves(&moves, make_move(defenderInd, blockingInd, 0, 0, 0, 0), true);
+                add_moves(&moves, make_move(defenderInd, blockingInd, 0, 0, 0, 0), true);
             }
         }
     }
 
-    return count;
+    return moves;
 }
 
 bool board::can_get_out_of_check(colour side, piece checkingPiece,
@@ -1224,11 +1216,11 @@ bool board::can_get_out_of_check(colour side, piece checkingPiece,
 
 // generate captures
 // returns the number of captures
-int board::gen_captures(move_t * moves) const {
+MoveList board::gen_captures() const {
+    MoveList moves;
     int _piece;
     int from_sq;
     int to_sq;
-    int count = 0;
     bitboard targets;
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
@@ -1243,13 +1235,13 @@ int board::gen_captures(move_t * moves) const {
                         // capture
                         if (_piece % 6 == 0 && ((rankOne | rankEight)&(1ULL << to_sq))) {
                             // promotion
-                            count += add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 0, 0), true);
-                            count += add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 0, 1), true);
-                            count += add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 1, 0), true);
-                            count += add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 1, 1), true);
+                            add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 0, 0), true);
+                            add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 0, 1), true);
+                            add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 1, 0), true);
+                            add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 1, 1), true);
                         }
                         else {
-                            count += add_moves(&moves, make_move(from_sq, to_sq, 0, 1, 0, 0), true);
+                            add_moves(&moves, make_move(from_sq, to_sq, 0, 1, 0, 0), true);
                         }
                     }
                 }
@@ -1268,15 +1260,15 @@ int board::gen_captures(move_t * moves) const {
         int captureSquare = 40 - (24 * sideToMove) + dPPFile;
         if (left & (pieceBoards[ 6 * sideToMove ])) {
             int leftSquare = last_set_bit(left);
-            count += add_moves(&moves, make_move(leftSquare, captureSquare, 0, 1, 0, 1), true);
+            add_moves(&moves, make_move(leftSquare, captureSquare, 0, 1, 0, 1), true);
         }
         if (right & (pieceBoards[ 6 * sideToMove ])) {
             int rightSquare = last_set_bit(right);
-            count += add_moves(&moves, make_move(rightSquare, captureSquare, 0, 1, 0, 1),
+            add_moves(&moves, make_move(rightSquare, captureSquare, 0, 1, 0, 1),
                                true);
         }
     }
-    return count;
+    return moves;
 }
 
 
@@ -1284,11 +1276,11 @@ int board::gen_captures(move_t * moves) const {
 // generate pseudo-legal moves (without checking for checks)
 // returns the number of moves
 
-int board::gen_legal_moves(move_t * moves) const {
+MoveList board::gen_legal_moves() const {
+    MoveList moves;
     int _piece;
     int from_sq;
     int to_sq;
-    int count = 0;
     bitboard targets;
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
@@ -1299,7 +1291,7 @@ int board::gen_legal_moves(move_t * moves) const {
     int checkingInd;
     bool double_check = false;
     if (is_check(sideToMove, &checkingPiece, &checkingInd, &double_check)) {
-        return get_out_of_check(sideToMove, moves, checkingPiece, checkingInd,
+        return get_out_of_check(sideToMove, checkingPiece, checkingInd,
                                 last_set_bit(pieceBoards[(6 * sideToMove) + 5]), double_check);
     }
 
@@ -1314,13 +1306,13 @@ int board::gen_legal_moves(move_t * moves) const {
                         // capture
                         if (_piece % 6 == 0 && ((rankOne | rankEight)&(1ULL << to_sq))) {
                             // promotion
-                            count += add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 0, 0), true);
-                            count += add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 0, 1), true);
-                            count += add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 1, 0), true);
-                            count += add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 1, 1), true);
+                            add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 0, 0), true);
+                            add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 0, 1), true);
+                            add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 1, 0), true);
+                            add_moves(&moves, make_move(from_sq, to_sq, 1, 1, 1, 1), true);
                         }
                         else {
-                            count += add_moves(&moves, make_move(from_sq, to_sq, 0, 1, 0, 0), true);
+                            add_moves(&moves, make_move(from_sq, to_sq, 0, 1, 0, 0), true);
                         }
                     }
                     else {
@@ -1328,7 +1320,7 @@ int board::gen_legal_moves(move_t * moves) const {
                         if ((_piece % 6 == 0) & (abs(from_sq - to_sq) == 16)) {
                             // double pawn push
                             if (!((1ULL << ((from_sq + to_sq) / 2)) & (_black | _white))) {
-                                count += add_moves(&moves, make_move(from_sq, to_sq, 0, 0, 0, 1), true);
+                                add_moves(&moves, make_move(from_sq, to_sq, 0, 0, 0, 1), true);
                             }
                             else {
                             }
@@ -1337,13 +1329,13 @@ int board::gen_legal_moves(move_t * moves) const {
                             // quiet move
                             if (_piece % 6 == 0 && ((rankOne | rankEight)&(1ULL << to_sq))) {
                                 // promotion
-                                count += add_moves(&moves, make_move(from_sq, to_sq, 1, 0, 0, 0), true);
-                                count += add_moves(&moves, make_move(from_sq, to_sq, 1, 0, 0, 1), true);
-                                count += add_moves(&moves, make_move(from_sq, to_sq, 1, 0, 1, 0), true);
-                                count += add_moves(&moves, make_move(from_sq, to_sq, 1, 0, 1, 1), true);
+                                add_moves(&moves, make_move(from_sq, to_sq, 1, 0, 0, 0), true);
+                                add_moves(&moves, make_move(from_sq, to_sq, 1, 0, 0, 1), true);
+                                add_moves(&moves, make_move(from_sq, to_sq, 1, 0, 1, 0), true);
+                                add_moves(&moves, make_move(from_sq, to_sq, 1, 0, 1, 1), true);
                             }
                             else {
-                                count += add_moves(&moves, make_move(from_sq, to_sq, 0, 0, 0, 0), true);
+                                add_moves(&moves, make_move(from_sq, to_sq, 0, 0, 0, 0), true);
                             }
                         }
                     }
@@ -1364,11 +1356,11 @@ int board::gen_legal_moves(move_t * moves) const {
         int captureSquare = 40 - (24 * sideToMove) + dPPFile;
         if (left & (pieceBoards[ 6 * sideToMove ])) {
             int leftSquare = last_set_bit(left);
-            count += add_moves(&moves, make_move(leftSquare, captureSquare, 0, 1, 0, 1), true);
+            add_moves(&moves, make_move(leftSquare, captureSquare, 0, 1, 0, 1), true);
         }
         if (right & (pieceBoards[ 6 * sideToMove ])) {
             int rightSquare = last_set_bit(right);
-            count += add_moves(&moves, make_move(rightSquare, captureSquare, 0, 1, 0, 1),
+            add_moves(&moves, make_move(rightSquare, captureSquare, 0, 1, 0, 1),
                                true);
         }
     }
@@ -1381,29 +1373,29 @@ int board::gen_legal_moves(move_t * moves) const {
         if (castleWhiteKingSide && (!((_white | _black) & 0x0000000000000060))) {
             // can't castle through check
             if (! (attacked_squares & 0x0000000000000060)) {
-                count += add_moves(&moves, make_move(4, 6, 0, 0, 1, 0), true);
+                add_moves(&moves, make_move(4, 6, 0, 0, 1, 0), true);
             }
         }
         if (castleWhiteQueenSide && (!((_white | _black) & 0x000000000000000e))) {
             if (! (attacked_squares & 0x000000000000000c)) {
-                count += add_moves(&moves, make_move(4, 2, 0, 0, 1, 1), true);
+                add_moves(&moves, make_move(4, 2, 0, 0, 1, 1), true);
             }
         }
     }
     else if (sideToMove == black && !is_check(black)) {
         if (castleBlackKingSide && (!((_white | _black) & 0x6000000000000000))) {
             if (! (attacked_squares & 0x6000000000000000)) {
-                count += add_moves(&moves, make_move(60, 62, 0, 0, 1, 0), true);
+                add_moves(&moves, make_move(60, 62, 0, 0, 1, 0), true);
             }
         }
         if (castleBlackQueenSide && (!((_white | _black) & 0x0e00000000000000))) {
             if (! (attacked_squares & 0x0c00000000000000)) {
-                count += add_moves(&moves, make_move(60, 58, 0, 0, 1, 1), true);
+                add_moves(&moves, make_move(60, 58, 0, 0, 1, 1), true);
             }
         }
     }
 
-    return count;
+    return moves;
 }
 
 bool board::is_legal(move_t move) const {

@@ -185,7 +185,7 @@ std::string mtos(move_t move);
  *  \param s                The string to convert.
  *  \return                 A move_t object corresponding to the move string.
  */
-move_t stom(move_t* moves, int n_moves, std::string s);
+move_t stom(MoveList moves, std::string s);
 
 
 /**

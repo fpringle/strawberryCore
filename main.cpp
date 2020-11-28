@@ -31,16 +31,15 @@ int main() {
     std::cout << b.SAN_pre_move(move) << std::endl;
 
     board child;
-    move_t moves[256];
-    int num_moves = b.gen_legal_moves(moves);
+    MoveList moves = b.gen_legal_moves();
     value_t best_value = VAL_INFINITY;
     value_t value;
     move_t best_move = 0;
     uint64_t hash;
     uint32_t ind;
     TransTable::iterator it;
-    for (int i=0; i<num_moves; i++) {
-        child = doMove(b, moves[i]);
+    for (move_t move : moves) {
+        child = doMove(b, move);
         child.getHash(&hash);
         ind = (uint32_t)hash;
         it = tt->find(ind);
@@ -48,7 +47,7 @@ int main() {
         value = it->second.score;
         if (value <= best_value) {
             best_value = value;
-            best_move = moves[i];
+            best_move = move;
         }
     }
     std::cout << b.SAN_pre_move(best_move) << std::endl;;

@@ -266,19 +266,18 @@ void Player::load_table(std::string filename) {
 
 move_t Player::input_move() const {
     move_t ret;
-    move_t moves[256];
-    int n_moves = gen_legal_moves(moves);
+    MoveList moves = gen_legal_moves();
 
     std::string inp;
     std::cout << "Enter move as FileRankFileRank (e.g. e2e4): ";
     std::cin >> inp;
-    ret = stom(moves, n_moves, inp);
+    ret = stom(moves, inp);
 
     while (ret == 0) {
         std::cout << "Sorry, that's not a valid move.\n"
                   << "Enter move as FileRankFileRank (e.g. e2e4): ";
         std::cin >> inp;
-        ret = stom(moves, n_moves, inp);
+        ret = stom(moves, inp);
     }
     return ret;
 }

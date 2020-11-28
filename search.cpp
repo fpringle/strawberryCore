@@ -46,13 +46,12 @@ value_t Searcher::quiesce(board* b, value_t alpha, value_t beta) {
     if (stand_pat > alpha) alpha = stand_pat;
 
 
-    move_t captures[256];
-    int num_captures = b->gen_captures(captures);
+    MoveList captures = b->gen_captures();
     board* child;
     value_t score;
 
-    for (int i=0; i<num_captures; i++) {
-        child = doMove(b, captures[i]);
+    for (move_t capture : captures) {
+        child = doMove(b, capture);
         score = - quiesce(child, -beta, -alpha);
         if (score >= beta) return beta;
         if (score > alpha) alpha = score;
@@ -70,11 +69,11 @@ namespace {
      *  \param num_moves    The length of the array moves.
      *  \param best_move    The move we want to search first.
      */
-    void reorder_moves(move_t * moves, int num_moves, move_t best_move) {
-        for (int i=0; i<num_moves; i++) {
-            if (moves[i] == best_move) {
-                moves[i] = moves[0];
-                moves[0] = best_move;
+    void reorder_moves(MoveList* moves, move_t best_move) {
+        for (MoveList::iterator it = moves->begin(); it != moves->end(); it++) {
+            if (*it == best_move) {
+                moves->erase(it);
+                moves->insert(moves->begin(), best_move);
                 break;
             }
         }
@@ -143,11 +142,10 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
 
     bool bSearchPv = true;
     board* child;
-    move_t moves[256];
     value_t score, value = -VAL_INFINITY;
 
-    int num_moves = b->gen_legal_moves(moves);
-    if (num_moves == 0) {
+    MoveList moves = b->gen_legal_moves();
+    if (moves.empty()) {
         if (b->is_checkmate()) {
             ret = value * ((side == white) ? 1 : -1);
         }
@@ -160,11 +158,11 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
     }
 
     if (bestMove) {
-        reorder_moves(moves, num_moves, bestMove);
+        reorder_moves(&moves, bestMove);
     }
 
-    for (int i = 0; i < num_moves; i++) {
-        child = doMove(b, moves[i]);
+    for (move_t move : moves) {
+        child = doMove(b, move);
         if (bSearchPv) {
             score = - principal_variation(child, depth - 1, -beta, -alpha);
         }
@@ -176,17 +174,17 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
         }
 
         if (value < score) {
-            bestMove = moves[i];
+            bestMove = move;
             value = score;
         }
         if (alpha < value) {
             alpha = value;
             bSearchPv = false;
-            bestMove = moves[i];
+            bestMove = move;
         }
         if (alpha >= beta) {
             // lower bound
-            bestMove = moves[i];
+            bestMove = move;
             record = {sig, bestMove, depth, beta, age, LOWER};
             trans_table->operator[](ind) = record;
             return beta;
@@ -195,7 +193,7 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
         if (score >= beta) {
             // lower bound
             ibv = 4 * beta + 1;
-            bestMove = moves[i];
+            bestMove = move;
             record = {sig, bestMove, depth, ibv, age};
             trans_table->operator[](ind) = record;
             return beta;
@@ -204,7 +202,7 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
             // upper bound
             alpha = score;
             bSearchPv = false;
-            bestMove = moves[i];
+            bestMove = move;
         }
 */
     }
@@ -274,11 +272,10 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
 
     bool bSearchPv = true;
     board* child;
-    move_t moves[256];
     value_t score = -VAL_INFINITY;
 
-    int num_moves = b->gen_legal_moves(moves);
-    if (num_moves == 0) {
+    MoveList moves = b->gen_legal_moves();
+    if (moves.empty()) {
         if (b->is_checkmate()) {
             ret = score * ((side == white) ? 1 : -1);
         }
@@ -291,11 +288,11 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
     }
 
     if (bestMove) {
-        reorder_moves(moves, num_moves, bestMove);
+        reorder_moves(&moves, bestMove);
     }
 
-    for (int i = 0; i < num_moves; i++) {
-        child = doMove(b, moves[i]);
+    for (move_t move : moves) {
+        child = doMove(b, move);
         time_remaining -= double(clock() - start_time) / double(CLOCKS_PER_SEC);
         if (time_remaining <= 0) break;
 
@@ -311,7 +308,7 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
 
         if (score >= beta) {
             // lower bound
-            bestMove = moves[i];
+            bestMove = move;
             record = {sig, bestMove, depth, beta, age, LOWER};
             trans_table->operator[](ind) = record;
             return beta;
@@ -320,7 +317,7 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
             // upper bound
             alpha = score;
             bSearchPv = false;
-            bestMove = moves[i];
+            bestMove = move;
         }
     }
     if (bSearchPv) {
@@ -386,11 +383,10 @@ value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
     }
 
     board* child;
-    move_t moves[256];
     value_t score, value = -VAL_INFINITY;
 
-    int num_moves = b->gen_legal_moves(moves);
-    if (num_moves == 0) {
+    MoveList moves = b->gen_legal_moves();
+    if (moves.empty()) {
         if (b->is_checkmate()) {
             ret = value * ((side == white) ? 1 : -1);
         }
@@ -403,14 +399,14 @@ value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
     }
 
     if (bestMove) {
-        reorder_moves(moves, num_moves, bestMove);
+        reorder_moves(&moves, bestMove);
     }
 
-    for (int i = 0; i < num_moves; i++) {
-        child = doMove(b, moves[i]);
+    for (move_t move : moves) {
+        child = doMove(b, move);
         score = - negamax_alphabeta(child, depth - 1, -beta, -alpha);
         if (value < score) {
-            bestMove = moves[i];
+            bestMove = move;
             value = score;
         }
         if (alpha < value) {
@@ -485,10 +481,9 @@ value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
     }
 
     board* child;
-    move_t moves[256];
 
-    int num_moves = b->gen_legal_moves(moves);
-    if (num_moves == 0) {
+    MoveList moves = b->gen_legal_moves();
+    if (moves.empty()) {
         if (b->is_checkmate()) {
             ret = VAL_INFINITY * ((side == white) ? -1 : 1);
         }
@@ -501,22 +496,22 @@ value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
     }
 
     if (bestMove) {
-        reorder_moves(moves, num_moves, bestMove);
+        reorder_moves(&moves, bestMove);
     }
 
     if (first_move) {
-        reorder_moves(moves, num_moves, first_move);
+        reorder_moves(&moves, first_move);
     }
 
     value_t score, value = -VAL_INFINITY;
 
-    for (int i = 0; i < num_moves; i++) {
-        child = doMove(b, moves[i]);
+    for (move_t move : moves) {
+        child = doMove(b, move);
         time_remaining -= double(clock() - start_time) / double(CLOCKS_PER_SEC);
         if (time_remaining <= 0) break;
         score = - negamax_alphabeta(child, depth - 1, -beta, -alpha, time_remaining);
         if (value < score) {
-            bestMove = moves[i];
+            bestMove = move;
             value = score;
         }
         if (alpha < value) {
@@ -543,16 +538,15 @@ namespace {
         colour side;
         b->getSide(&side);
         board* child;
-        move_t moves[256];
-        int num_moves = b->gen_legal_moves(moves);
+        MoveList moves = b->gen_legal_moves();
         value_t best_value = VAL_INFINITY * (side==white ? -1 : 1);
         value_t value;
         move_t best_move = 0;
         uint64_t hash;
         uint32_t ind;
         TransTable::iterator it;
-        for (int i=0; i<num_moves; i++) {
-            child = doMove(b, moves[i]);
+        for (move_t move : moves) {
+            child = doMove(b, move);
             child->getHash(&hash);
             ind = (uint32_t)hash;
             it = tt->find(ind);
@@ -560,11 +554,11 @@ namespace {
             value = it->second.score;
             if (side == white &&  value >= best_value) {
                 best_value = value;
-                best_move = moves[i];
+                best_move = move;
             }
             else if (side == black && value <= best_value) {
                 best_value = value;
-                best_move = moves[i];
+                best_move = move;
             }
         }
         return best_move;
@@ -578,7 +572,7 @@ move_t Searcher::iterative_deepening_negamax(board* b, int timeout, bool cutoff)
     uint8_t depth = 1;
     move_t best_move = 0;
     move_t new_move;
-    std::vector<move_t> moves;
+    MoveList moves;
     int sz;
     colour side;
     b->getSide(&side);
