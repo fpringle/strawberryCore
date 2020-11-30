@@ -1,2 +1,2 @@
 # strawberryCore
-The core of my strawberry, my chess engine written in C++
+The core of [strawberry](https://github.com/fpringle/strawberry), my chess engine written in C++.
