@@ -268,7 +268,6 @@ class board {
      *  Generate all moves that get the side to move out of check.
      *
      *  \param side             The side in check.
-     *  \param moves            An empty array of moves.
      *  \param checkingPiece    The colour/piece combination checking the king.
      *  \param checkingInd      The square index of the checking piece.
      *  \param kingInd          The square index of the king under attack.
@@ -556,9 +555,7 @@ public:
     /**
      *  Generate all pseudo-legal moves from a given position.
      *
-     *  \param moves            An empty array of moves.
-     *  \return                 An integer corresponding to the number of moves
-     *                          generated.
+     *  \return                A \ref MoveList of generated moves.
      */
     MoveList gen_moves() const;
 
@@ -573,7 +570,6 @@ public:
     /**
      *  Generate all captures from a given position.
      *
-     *  \param moves            An empty array of moves.
      *  \return                 An integer corresponding to the number of captures
      *                          generated.
      */
@@ -582,7 +578,6 @@ public:
     /**
      *  Generate all legal moves from a given position.
      *
-     *  \param moves            An empty array of moves.
      *  \return                 An integer corresponding to the number of moves
      *                          generated.
      */
