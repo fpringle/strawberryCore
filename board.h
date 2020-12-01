@@ -441,6 +441,15 @@ public:
      */
     void getHash(uint64_t* dest) const;
 
+    /**
+     *  Get the Zobrist hash of a child node without having to
+     *  make the move.
+     *
+     *  \param move         The move corresponding to the child node.
+     *  \return             The hash value of the child node.
+     */
+    uint64_t childHash(move_t move) const;
+
     // evaluation
     // defined in eval.cpp
 

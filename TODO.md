@@ -12,7 +12,5 @@
 - use constexpr instead of const for constants
 - write some constexpr/inline functions for common piece/colour/index operations
 - split source code into more, smaller files
-- fix checkmate conditions in search
 - trans table for quiescence?
-- linkedlist for move gen and reordering
 - get hash from move without having to make child

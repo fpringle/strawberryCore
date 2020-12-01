@@ -249,6 +249,8 @@ public:
 
 };
 
+void two_players();
+
 
 } // end of chessCore namespace
 

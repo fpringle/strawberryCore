@@ -120,5 +120,160 @@ uint64_t board::zobrist_hash() const {
     return ret;
 }
 
+uint64_t board::childHash(move_t move) const {
+    int i;
+    uint16_t fromSquare = from_sq(move);
+    uint16_t toSquare = to_sq(move);
+    colour otherColour = flipColour(sideToMove);
+    colourPiece movingPiece;
+    bool castling[4];
+    getCastlingRights(castling);
+    bool rooktaken = false;
+    bool foundMovingPiece = false;
+    uint64_t child_hash;
+    getHash(&child_hash);
+
+    for (i = (sideToMove * 6); i < (1 + sideToMove)*6; i++) {
+        if (is_bit_set(pieceBoards[i], fromSquare)) {
+            movingPiece = colourPiece(i);
+            child_hash ^= zobristKeys[i * 64 + fromSquare];
+            child_hash ^= zobristKeys[i * 64 + toSquare];
+            foundMovingPiece = true;
+            break;
+        }
+    }
+
+    if (! foundMovingPiece) {
+        return 0;
+    }
+
+    if (is_capture(move)) {
+        if (!is_ep_capture(move)) {
+            for (i = (1 - sideToMove)*6; i < (2 - sideToMove)*6; i++) {
+                if (is_bit_set(pieceBoards[i], toSquare)) {
+                    if (i % 6 == 1) rooktaken = true;
+                    child_hash ^= zobristKeys[i * 64 + toSquare];
+                    break;
+                }
+            }
+        }
+
+        else {
+            int _dir = (sideToMove == white) ? S : N;
+            child_hash ^= zobristKeys[(1 - sideToMove)*6 * 64 + toSquare + _dir];
+        }
+    }
+
+    if (is_kingCastle(move)) {
+        child_hash ^= zobristKeys[(1 + (6 * sideToMove))*64 + fromSquare + 3];
+        child_hash ^= zobristKeys[(1 + (6 * sideToMove))*64 + toSquare - 1];
+    }
+    else if (is_queenCastle(move)) {
+        child_hash ^= zobristKeys[(1 + (6 * sideToMove))*64 + fromSquare - 4];
+        child_hash ^= zobristKeys[(1 + (6 * sideToMove))*64 + toSquare + 1];
+    }
+
+    // promotion
+    if (is_promotion(move)) {
+        child_hash ^= zobristKeys[6 * sideToMove * 64 + toSquare];
+        colourPiece prom_piece = colourPiece((6 * sideToMove) + which_promotion(move));
+        child_hash ^= zobristKeys[prom_piece * 64 + toSquare];
+    }
+
+
+    // check for double pawn push
+    if (lastMoveDoublePawnPush) {
+        child_hash ^= zobristKeys[772 + dPPFile];
+    }
+    if (is_doublePP(move)) {
+        child_hash ^= zobristKeys[772 + (fromSquare % 8)];
+    }
+
+    // check for changes to castling rights
+    if (movingPiece % 6 == 1) {
+        switch (fromSquare) {
+        case 0:
+            if (castling[1]) {
+                child_hash ^= zobristKeys[769];
+                castling[1] = false;
+            }
+            break;
+        case 7:
+            if (castling[0]) {
+                child_hash ^= zobristKeys[768];
+                castling[0] = false;
+            }
+            break;
+        case 56:
+            if (castling[3]) {
+                child_hash ^= zobristKeys[771];
+                castling[3] = false;
+            }
+            break;
+        case 63:
+            if (castling[2]) {
+                child_hash ^= zobristKeys[770];
+                castling[2] = false;
+            }
+            break;
+        }
+    }
+    else if (movingPiece % 6 == 5) {
+        switch (sideToMove) {
+        case white:
+            if (castling[1]) {
+                child_hash ^= zobristKeys[769];
+                castling[1] = false;
+            }
+            if (castling[0]) {
+                child_hash ^= zobristKeys[768];
+                castling[0] = false;
+            }
+            break;
+        case black:
+            if (castling[3]) {
+                child_hash ^= zobristKeys[771];
+                castling[3] = false;
+            }
+            if (castling[2]) {
+                child_hash ^= zobristKeys[770];
+                castling[2] = false;
+            }
+            break;
+        }
+    }
+
+    if (rooktaken) {
+        switch (toSquare) {
+        case 0:
+            if (castling[1]) {
+                child_hash ^= zobristKeys[769];
+            }
+            break;
+        case 7:
+            if (castling[0]) {
+                child_hash ^= zobristKeys[768];
+            }
+            break;
+        case 56:
+            if (castling[3]) {
+                child_hash ^= zobristKeys[771];
+            }
+            break;
+        case 63:
+            if (castling[2]) {
+                child_hash ^= zobristKeys[770];
+            }
+            break;
+        }
+    }
+
+    // change hash for different side to move
+    child_hash ^= zobristKeys[780];
+
+    return child_hash;
+}
+
+
 
 } // end of chessCore namespace

@@ -393,4 +393,33 @@ void Player::play() {
     }
 }
 
+
+void two_players() {
+    Player* gamestate = new Player();
+    colour movingSide;
+
+    while (! gameover()) {
+        print_board();
+
+        getSide(&movingSide);
+
+        std::cout << movingSide << " to move.\n"
+
+        player_move = input_move();
+        doMoveInPlace(player_move);
+    }
+
+    print_board();
+    print_history();
+
+    if (is_checkmate()) {
+        getSide(&movingSide);
+        std::cout << movingSide << " wins!" << std::endl;
+    }
+    else if (is_stalemate()) {
+        std::cout << "Draw" << std::endl;
+    }
+}
+
+
 } // end of chessCore namespace
