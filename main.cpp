@@ -17,6 +17,11 @@ using namespace chessCore;
 
 int main() {
     init();
+    two_players();
+}
+
+int _main() {
+    init();
 
     board b("1k1r4/pp1b1R2/3q2pp/4p3/2B5/4Q3/PPP2B2/2K5 b - -");
 //    Player p;

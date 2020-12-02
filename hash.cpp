@@ -124,7 +124,6 @@ uint64_t board::childHash(move_t move) const {
     int i;
     uint16_t fromSquare = from_sq(move);
     uint16_t toSquare = to_sq(move);
-    colour otherColour = flipColour(sideToMove);
     colourPiece movingPiece;
     bool castling[4];
     getCastlingRights(castling);

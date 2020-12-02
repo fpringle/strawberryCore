@@ -397,26 +397,27 @@ void Player::play() {
 void two_players() {
     Player* gamestate = new Player();
     colour movingSide;
+    move_t player_move;
 
-    while (! gameover()) {
-        print_board();
+    while (! gamestate->gameover()) {
+        gamestate->print_board();
 
-        getSide(&movingSide);
+        gamestate->getSide(&movingSide);
 
-        std::cout << movingSide << " to move.\n"
+        std::cout << (movingSide == white ? "White" : "Black") << " to move.\n";
 
-        player_move = input_move();
-        doMoveInPlace(player_move);
+        player_move = gamestate->input_move();
+        gamestate->doMoveInPlace(player_move);
     }
 
-    print_board();
-    print_history();
+    gamestate->print_board();
+    gamestate->print_history();
 
-    if (is_checkmate()) {
-        getSide(&movingSide);
+    if (gamestate->is_checkmate()) {
+        gamestate->getSide(&movingSide);
         std::cout << movingSide << " wins!" << std::endl;
     }
-    else if (is_stalemate()) {
+    else if (gamestate->is_stalemate()) {
         std::cout << "Draw" << std::endl;
     }
 }
