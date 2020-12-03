@@ -252,15 +252,12 @@ class board {
     bitboard emptySquares() const;
 
     /**
-     *  Add a move to an array, with the option to check if the move is legal.
+     *  Add a move to a MoveList object, with the option to check if the move is legal.
      *  Used by \ref board::gen_moves and \ref board::gen_legal_moves.
      *
-     *  \param dest             A pointer to the array of moves.
-     *  \param move             The move to add to the array.
+     *  \param dest             A pointer to the MoveList object.
+     *  \param move             The move to add to the MoveList object.
      *  \param legal_check      Whether or not to check if the move is legal.
-     *  \return                 A boolean indicating whether the move was added
-     *                          successfully. Automatically returns true if
-     *                          check_legal is false.
      */
     void add_moves(MoveList* dest, move_t move, bool legal_check) const;
 
@@ -272,8 +269,8 @@ class board {
      *  \param checkingInd      The square index of the checking piece.
      *  \param kingInd          The square index of the king under attack.
      *  \param double_check     Whether the king is under double check.
-     *  \return                 An integer corresponding to the number of moves
-     *                          generated.
+     *  \return                 A \ref MoveList object containing all the moves
+     *                          that get side out of check.
      */
     MoveList get_out_of_check(colour side, piece checkingPiece, int checkingInd,
                               int kingInd, bool double_check) const;
@@ -543,7 +540,13 @@ public:
      */
     std::string SAN_post_move(move_t move) const;
 
-
+    /**
+     *  Parse a string representing a move in Standard Algebraic Notation
+     *  (SAN) and return a move_t object representing the move.
+     *
+     *  \param san      The string in SAN format.
+     *  \return         A move_t object representing the move.
+     */
     move_t move_from_SAN(std::string san);
 
     /**

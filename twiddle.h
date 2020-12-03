@@ -58,6 +58,13 @@ constexpr bitboard notRankOne = ~rankOne;
 constexpr bitboard notRankEight = ~rankEight;
 /**@}*/
 
+
+/**
+ *  Count the number of bits set in a bitboard.
+ *
+ *  \param v            The bitboard.
+ *  \return             The number of bits set in v.
+ */
 constexpr int count_bits_set(bitboard v) {
     // thanks Brian Kernighan
     int c=0;
@@ -67,62 +74,146 @@ constexpr int count_bits_set(bitboard v) {
     return c;
 }
 
+/**
+ *  Return the index of the first (rightmost) set bit in a bitboard.
+ *
+ *  \param v            The bitboard.
+ *  \return             The index of the first bit set in v.
+ */
 constexpr int first_set_bit(bitboard v) {
-    //returns the position of the rightmost set bit
     return log2(v & -v);
 }
 
+/**
+ *  Return the index of the last (leftmost) set bit in a bitboard.
+ *
+ *  \param v            The bitboard.
+ *  \return             The index of the last bit set in v.
+ */
 constexpr int last_set_bit(bitboard v) {
-    //returns the position of the leftmost set bit
     return log2(v);
 }
 
+/**
+ *  Check whether a particular bit of a bitboard is set.
+ *
+ *  \param v            The bitboard.
+ *  \param i            The index of the bit to check.
+ *  \return             A boolean indicating whether bit i is set in v.
+ */
 constexpr bool is_bit_set(bitboard v, int i) {
     return ( v & (1ULL << i));
 }
 
+/**
+ *  Set a particular bit in a bitboard.
+ *
+ *  \param v            The bitboard.
+ *  \param i            The index of the bit to set.
+ *  \return             The resulting bitboard.
+ */
 constexpr bitboard set_bit(bitboard v, int i) {
     return v | (1ULL << i);
 }
 
+/**
+ *  Unset a particular bit in a bitboard.
+ *
+ *  \param v            The bitboard.
+ *  \param i            The index of the bit to unset.
+ *  \return             The resulting bitboard.
+ */
 constexpr bitboard unset_bit(bitboard v, int i) {
     return ~((~v) | (1ULL << i));
 }
 
-// moving functions
-
+/**
+ *  Shift an entire bitboard one square north.
+ *
+ *  \param b            The bitboard to shift.
+ *  \return             The shifted bitboard.
+ */
 constexpr bitboard oneN(bitboard b) {
     return b << N;
 }
 
+/**
+ *  Shift an entire bitboard one square south.
+ *
+ *  \param b            The bitboard to shift.
+ *  \return             The shifted bitboard.
+ */
 constexpr bitboard oneS(bitboard b) {
     return b >> -S;
 }
 
+/**
+ *  Shift an entire bitboard one square east.
+ *
+ *  \param b            The bitboard to shift.
+ *  \return             The shifted bitboard.
+ */
 constexpr bitboard oneE(bitboard b) {
     return (b << E) & notFileA;
 }
 
+/**
+ *  Shift an entire bitboard one square west.
+ *
+ *  \param b            The bitboard to shift.
+ *  \return             The shifted bitboard.
+ */
 constexpr bitboard oneW(bitboard b) {
     return (b >> -W) & notFileH;
 }
 
+/**
+ *  Shift an entire bitboard one square north-east.
+ *
+ *  \param b            The bitboard to shift.
+ *  \return             The shifted bitboard.
+ */
 constexpr bitboard oneNE(bitboard b) {
     return (b << NE) & notFileA;
 }
 
+/**
+ *  Shift an entire bitboard one square south-east.
+ *
+ *  \param b            The bitboard to shift.
+ *  \return             The shifted bitboard.
+ */
 constexpr bitboard oneSE(bitboard b) {
     return (b >> -SE) & notFileA;
 }
 
+/**
+ *  Shift an entire bitboard one square south-west.
+ *
+ *  \param b            The bitboard to shift.
+ *  \return             The shifted bitboard.
+ */
 constexpr bitboard oneSW(bitboard b) {
     return (b >> -SW) & notFileH;
 }
 
+/**
+ *  Shift an entire bitboard one square north-west.
+ *
+ *  \param b            The bitboard to shift.
+ *  \return             The shifted bitboard.
+ */
 constexpr bitboard oneNW(bitboard b) {
     return (b << NW) & notFileH;
 }
 
+/**
+ *  Shift an entire bitboard one square in an arbitrary direction.
+ *
+ *  \param b            The bitboard to shift.
+ *  \param d            The direction to shift in. 0=north, increases clockwise.
+ *  \return             The shifted bitboard.
+ */
 constexpr bitboard oneGeneral8(bitboard b, int d) {
     switch (d) {
     case 0:
@@ -155,42 +246,102 @@ constexpr bitboard oneGeneral8(bitboard b, int d) {
     }
 }
 
+/**
+ *  Shift an entire bitboard two squares north.
+ *
+ *  \param b            The bitboard to shift.
+ *  \return             The shifted bitboard.
+ */
 constexpr bitboard twoN(bitboard b) {
     return b << 2 * N;
 }
 
+/**
+ *  Shift an entire bitboard two squares south.
+ *
+ *  \param b            The bitboard to shift.
+ *  \return             The shifted bitboard.
+ */
 constexpr bitboard twoS(bitboard b) {
     return b >> -2 * S;
 }
 
+/**
+ *  Shift an entire bitboard two squares north and one square east.
+ *
+ *  \param b            The bitboard to shift.
+ *  \return             The shifted bitboard.
+ */
 constexpr bitboard oneNNE(bitboard b) {
     return (b << NNE) & notFileA;
 }
 
+/**
+ *  Shift an entire bitboard two squares east and one square north.
+ *
+ *  \param b            The bitboard to shift.
+ *  \return             The shifted bitboard.
+ */
 constexpr bitboard oneENE(bitboard b) {
     return (b << ENE) & notFileA & notFileB;
 }
 
+/**
+ *  Shift an entire bitboard two squares east and one square south.
+ *
+ *  \param b            The bitboard to shift.
+ *  \return             The shifted bitboard.
+ */
 constexpr bitboard oneESE(bitboard b) {
     return (b >> -ESE) & notFileA & notFileB;
 }
 
+/**
+ *  Shift an entire bitboard two squares south and one square east.
+ *
+ *  \param b            The bitboard to shift.
+ *  \return             The shifted bitboard.
+ */
 constexpr bitboard oneSSE(bitboard b) {
     return (b >> -SSE) & notFileA;
 }
 
+/**
+ *  Shift an entire bitboard two squares south and one square west.
+ *
+ *  \param b            The bitboard to shift.
+ *  \return             The shifted bitboard.
+ */
 constexpr bitboard oneSSW(bitboard b) {
     return (b >> -SSW) & notFileH;
 }
 
+/**
+ *  Shift an entire bitboard two squares west and one square south.
+ *
+ *  \param b            The bitboard to shift.
+ *  \return             The shifted bitboard.
+ */
 constexpr bitboard oneWSW(bitboard b) {
     return (b >> -WSW) & notFileH & notFileG;
 }
 
+/**
+ *  Shift an entire bitboard two squares west and one square north.
+ *
+ *  \param b            The bitboard to shift.
+ *  \return             The shifted bitboard.
+ */
 constexpr bitboard oneWNW(bitboard b) {
     return (b << WNW) & notFileH & notFileG;
 }
 
+/**
+ *  Shift an entire bitboard two squares north and one square west.
+ *
+ *  \param b            The bitboard to shift.
+ *  \return             The shifted bitboard.
+ */
 constexpr bitboard oneNNW(bitboard b) {
     return (b << NNW) & notFileH;
 }

@@ -18,10 +18,13 @@ using bitboard = uint64_t;
 /** A signed integer used for evaluation. */
 using value_t = int16_t;
 
+/** A constant representing the maximum value of \ref value_t. */
 constexpr value_t VAL_INFINITY = std::numeric_limits<value_t>::max() - 10;
 
+/** A 16-bit unsigned integer representing a single move. */
 using move_t = uint16_t;
 
+/** A move_t vector for move generation and reordering. */
 using MoveList = std::vector<move_t>;
 
 /**
@@ -41,6 +44,7 @@ inline std::ostream& operator<<(std::ostream& out, const colour& colour) {
     out << ((colour == white) ? "white" : "black");
     return out;
 }
+
 /**
  *  \enum piece
  *  An Enum to represents the six types of piece.
@@ -64,6 +68,8 @@ enum colourPiece {whitePawn,whiteRook,whiteKnight,
 enum direction {dirN, dirNE, dirE, dirSE, dirS, dirSW, dirW, dirNW};
 
 struct record_t;
+
+/** A hash map used for search. */
 using TransTable = std::map<uint32_t, record_t>;
 
 

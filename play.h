@@ -36,6 +36,7 @@ private:
      */
     TransTable trans_table;
 
+    /** A pointer to the Searcher object for the engine to use. */
     Searcher* searcher;
 
     /**
@@ -230,8 +231,20 @@ public:
      */
     move_t input_move() const;
 
+    /**
+     *  Search from the current node to get the best move.
+     *
+     *  \return             The best move to play from this position.
+     */
     move_t search();
 
+    /**
+     *  Search from the current node to get the best move, overriding the
+     *  default timeout.
+     *
+     *  \param timeout      The maximum time to spend searhcing.
+     *  \return             The best move to play from this position.
+     */
     move_t search(int timeout);
 
     /**
@@ -253,8 +266,11 @@ public:
 
 };
 
+
+/** Play out a game with both sides controlled by the user. */
 void two_players();
 
+/** Play out a game with both sides controlled by the engine. */
 void two_computers();
 
 } // end of chessCore namespace

@@ -8,6 +8,11 @@
 
 namespace chessCore {
 
+/**
+ *  \enum valueType
+ *
+ *  An Enum to specify the bound flag in the transposition table.
+ */
 enum valueType {
     EXACT,
     LOWER,
@@ -26,13 +31,14 @@ struct record_t {
     move_t best_ref_move;
     /** The depth to which this node has been searched. */
     uint8_t depth;
-    /**
-     *  The bound or value for this node.
-     */
+    /** The bound or value for this node. */
     value_t score;
     /** The full move clock of the game when this node was searched. */
     uint8_t age;
-
+    /**
+     *  A flag to specify whether the score is exact, a lower bound,
+     *  or an upper bound. See \ref valueType.
+     */
     valueType flag;
 };
 
@@ -45,9 +51,15 @@ struct record_t {
  */
 std::ostream& operator<<(std::ostream& out, const record_t& rec);
 
-
+/**
+ *  \class Searcher
+ *  \brief A class to do all of the searching for the chess engine.
+ */
 class Searcher {
 private:
+    /**
+     *  The transposition table for the Searcher object.
+     */
     TransTable* trans_table;
 
     /**
@@ -58,7 +70,6 @@ private:
      *  to get a better heuristic value for a given position.
      *
      *  \param b            The board to analyse.
-     *  \param side         The side whose turn it is to move.
      *  \param alpha        The current value of alpha in negamax search.
      *  \param beta         The current value of beta in negamax search.
      *  \return             The heuristic value for the node.
@@ -70,7 +81,6 @@ private:
      *  estimate the value of the given node.
      *
      *  \param b            The board state of the node to be searched.
-     *  \param side         The side to move.
      *  \param depth        The depth to search to.
      *  \param alpha        The current value of alpha.
      *  \param beta         The current value of beta.
@@ -84,7 +94,6 @@ private:
      *  estimate the value of the given node.
      *
      *  \param b                The board state of the node to be searched.
-     *  \param side             The side to move.
      *  \param depth            The depth to search to.
      *  \param alpha            The current value of alpha.
      *  \param beta             The current value of beta.
@@ -100,7 +109,6 @@ private:
      *  estimate the value of the given node.
      *
      *  \param b            The board state of the node to be searched.
-     *  \param side         The side to move.
      *  \param depth        The depth to search to.
      *  \param alpha        The current value of alpha.
      *  \param beta         The current value of beta.
@@ -114,11 +122,11 @@ private:
      *  estimate the value of the given node. Specify a timeout in seconds.
      *
      *  \param b                The board state of the node to be searched.
-     *  \param side             The side to move.
      *  \param depth            The depth to search to.
      *  \param alpha            The current value of alpha.
      *  \param beta             The current value of beta.
      *  \param time_remaining   The timeout in seconds.
+     *  \param first_move       If given, search this move first.
      *  \return                 The estimated value of node b.
      */
     value_t negamax_alphabeta(board* b, uint8_t depth,
@@ -132,7 +140,9 @@ private:
      *
      *  \param b            The board state of the node to be searched.
      *  \param timeout      The maximum time to spend searching.
-     *  \param max_depth    The maximum depth to search to.
+     *  \param cutoff       A boolean indicating whether or not to
+     *                      end the search early if we find the same
+     *                      best move several times in a row.
      *  \return             The best move to play from the current node.
      */
     move_t iterative_deepening_negamax(board* b, int timeout, bool cutoff=false);
@@ -143,15 +153,35 @@ private:
      *
      *  \param b            The board state of the node to be searched.
      *  \param timeout      The maximum time to spend searching.
-     *  \param max_depth    The maximum depth to search to.
+     *  \param cutoff       A boolean indicating whether or not to
+     *                      end the search early if we find the same
+     *                      best move several times in a row.
      *  \return             The best move to play from the current node.
      */
     move_t iterative_deepening_pv(board* b, int timeout, bool cutoff=false);
 
 public:
+    /**
+     *  Default constructor for Searcher.
+     */
     Searcher();
+    /**
+     *  Default constructor for Searcher.
+     *
+     *  \param tt           A pointer to the transposition table to use.
+     */
     Searcher(TransTable* tt);
 
+    /**
+     *  Search from a node for the best move to play.
+     *
+     *  \param b            The board state of the node to be searched.
+     *  \param timeout      The maximum time to spend searching.
+     *  \param cutoff       A boolean indicating whether or not to
+     *                      end the search early if we find the same
+     *                      best move several times in a row.
+     *  \return             The best move to play from the current node.
+     */
     move_t search(board* b, int timeout, bool cutoff = false);
 };
 

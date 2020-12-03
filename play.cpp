@@ -64,12 +64,14 @@ int Player::getTimeout() {
     return iterative_deepening_timeout;
 }
 
-std::string upper_string(std::string s) {
-    std::stringstream ss;
-    for (char c : s) {
-        ss << char(toupper(c));
+namespace {
+    std::string upper_string(std::string s) {
+        std::stringstream ss;
+        for (char c : s) {
+            ss << char(toupper(c));
+        }
+        return ss.str();
     }
-    return ss.str();
 }
 
 void Player::read_config(std::string filename) {

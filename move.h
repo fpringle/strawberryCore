@@ -54,7 +54,7 @@ void init_rays();
 
 /**
  *
- *  Constructor a move_t object from the relevant parameters.
+ *  Construct a move_t object from the relevant parameters.
  *
  *  \param from         The index of the square to move from.
  *  \param to           The index of the square to move to.
@@ -71,6 +71,7 @@ move_t make_move(uint8_t from, uint8_t to, bool promotion,
 /**
  *  Get the from square of the move.
  *
+ *  \param move         move_t object representing the move.
  *  \return             8-bit unsigned integer representing the from square.
  */
 uint8_t from_sq(move_t move);
@@ -78,6 +79,7 @@ uint8_t from_sq(move_t move);
 /**
  *  Get the from square of the move.
  *
+ *  \param move         move_t object representing the move.
  *  \return             8-bit unsigned integer representing the from square.
  */
 uint8_t to_sq(move_t move);
@@ -85,6 +87,7 @@ uint8_t to_sq(move_t move);
 /**
  *  Get the flag data of the square.
  *
+ *  \param move         move_t object representing the move.
  *  \return             8-bit unsigned integer representing the move flags.
  */
 uint8_t flags(move_t move);
@@ -93,6 +96,7 @@ uint8_t flags(move_t move);
  *  Whether or not the move is "quiet", in other words not a capture,
  *  a promotion, castling or a double pawn push.
  *
+ *  \param move         move_t object representing the move.
  *  \return             Boolean indicating whether the move is quiet.
  */
 bool is_quiet(move_t move);
@@ -100,6 +104,7 @@ bool is_quiet(move_t move);
 /**
  *  Whether or not the move is a promotion.
  *
+ *  \param move         move_t object representing the move.
  *  \return             Boolean indicating whether the move is a prommotion.
  */
 bool is_promotion(move_t move);
@@ -107,6 +112,7 @@ bool is_promotion(move_t move);
 /**
  *  If the move is a promotion, get the promoting piece.
  *
+ *  \param move         move_t object representing the move.
  *  \return             A \ref piece object indicating which piece the
  *                      pawn is being promoted to.
  */
@@ -115,13 +121,16 @@ piece which_promotion(move_t move);
 /**
  *  Alter the promotion type of the move.
  *
+ *  \param move         move_t object representing the move.
  *  \param pc           A \ref piece object to promote to.
+ *  \return             The move with the promotion piece set.
  */
 move_t set_promotion(move_t move, piece pc);
 
 /**
  *  Whether or not the move is a capture.
  *
+ *  \param move         move_t object representing the move.
  *  \return             Boolean indicating whether the move is a capture.
  */
 bool is_capture(move_t move);
@@ -129,6 +138,7 @@ bool is_capture(move_t move);
 /**
  *  Whether or not the move is an en-passant capture.
  *
+ *  \param move         move_t object representing the move.
  *  \return             Boolean indicating whether the move is an
  *                      en-passant capture.
  */
@@ -137,6 +147,7 @@ bool is_ep_capture(move_t move);
 /**
  *  Whether or not the move is a double pawn push.
  *
+ *  \param move         move_t object representing the move.
  *  \return             Boolean indicating whether the move is a
  *                      double pawn push.
  */
@@ -145,6 +156,7 @@ bool is_doublePP(move_t move);
 /**
  *  Whether or not the move is a king-side castle.
  *
+ *  \param move         move_t object representing the move.
  *  \return             Boolean indicating whether the move is a
  *                      king-side castle.
  */
@@ -153,6 +165,7 @@ bool is_kingCastle(move_t move);
 /**
  *  Whether or not the move is a queen-side castle.
  *
+ *  \param move         move_t object representing the move.
  *  \return             Boolean indicating whether the move is a
  *                      queen-side castle.
  */
@@ -161,27 +174,25 @@ bool is_queenCastle(move_t move);
 /**
  *  Whether or not the move is a castling move.
  *
+ *  \param move         move_t object representing the move.
  *  \return             Boolean indicating whether the move is a
  *                      castling move.
  */
 bool is_castle(move_t move);
 
 /**
- *  Print the move to an output stream in the form FileRankFileRank,
- *  e.g. e2e4.
+ *  Convert a move_t object to a string representing the move
+ *  in the form FileRankFileRank, e.g. e2e4.
  *
- *  \param out          The output stream to print to. Defaults to
- *                      the standard output stream std::cout
  *  \param move         The move to print.
- *  \return             The output stream.
+ *  \return             A string representing move.
  */
 std::string mtos(move_t move);
 
 /**
  *  Convert a string to a move_t object given an array of possible moves.
  *
- *  \param moves            An array of possible moves.
- *  \param n_moves          The length of the move array.
+ *  \param moves            An \ref MoveList of possible moves.
  *  \param s                The string to convert.
  *  \return                 A move_t object corresponding to the move string.
  */
@@ -328,9 +339,6 @@ bitboard queenPushNaive       (int sq, bitboard blockers);
  */
 bitboard queenTargets         (int sq, bitboard _white, bitboard _black,
                                colour movingColour);
-
-bitboard piecePushesNaive     (int sq, bitboard _white, bitboard _black,
-                               colourPiece cP);
 
 /**
  *  Calculate all pseudo-legal moves from a given square for a given piece.

@@ -442,65 +442,32 @@ move_t board::move_from_SAN( std::string san ) {
     return 0;
 }
 
-//     p s1 s0 c ---to--- --from--
 move_t make_move(uint8_t from, uint8_t to, bool promotion,
        bool capture, bool spec1, bool spec0) {
     return (from) | (to << 6) | (promotion << 15) | (capture << 12) |
            (spec1 << 14) | (spec0 << 13);
 }
 
-/**
- *  Get the from square of the move.
- *
- *  \return             8-bit unsigned integer representing the from square.
- */
 uint8_t from_sq(move_t move) {
     return (move & 63);
 }
 
-/**
- *  Get the from square of the move.
- *
- *  \return             8-bit unsigned integer representing the from square.
- */
 uint8_t to_sq(move_t move) {
     return (move >> 6) & 63;
 }
 
-/**
- *  Get the flag data of the square.
- *
- *  \return             8-bit unsigned integer representing the move flags.
- */
 uint8_t flags(move_t move) {
     return (move >> 12) & 15;
 }
 
-/**
- *  Whether or not the move is "quiet", in other words not a capture,
- *  a promotion, castling or a double pawn push.
- *
- *  \return             Boolean indicating whether the move is quiet.
- */
 bool is_quiet(move_t move) {
     return !flags(move);
 }
 
-/**
- *  Whether or not the move is a promotion.
- *
- *  \return             Boolean indicating whether the move is a prommotion.
- */
 bool is_promotion(move_t move) {
     return (flags(move) & 8);
 }
 
-/**
- *  If the move is a promotion, get the promoting piece.
- *
- *  \return             A \ref piece object indicating which piece the
- *                      pawn is being promoted to.
- */
 piece which_promotion(move_t move) {
     uint16_t data = flags(move) & 6;
     return data == 2 ? rook :               // 0 1
@@ -508,11 +475,6 @@ piece which_promotion(move_t move) {
            data == 6 ? knight : queen;      // 1 1 // 0 0
 }
 
-/**
- *  Alter the promotion type of the move.
- *
- *  \param pc           A \ref piece object to promote to.
- */
 move_t set_promotion(move_t move, piece pc) {
     return pc == queen ? unset_bit(unset_bit(move, 13), 14) :
            pc == queen ? unset_bit(set_bit(move, 13), 14) :
@@ -520,61 +482,26 @@ move_t set_promotion(move_t move, piece pc) {
                          set_bit(set_bit(move, 13), 14);
 }
 
-/**
- *  Whether or not the move is a capture.
- *
- *  \return             Boolean indicating whether the move is a capture.
- */
 bool is_capture(move_t move) {
     return (flags(move) & 1);
 }
 
-/**
- *  Whether or not the move is an en-passant capture.
- *
- *  \return             Boolean indicating whether the move is an
- *                      en-passant capture.
- */
 bool is_ep_capture(move_t move) {
     return (flags(move) == 3);
 }
 
-/**
- *  Whether or not the move is a double pawn push.
- *
- *  \return             Boolean indicating whether the move is a
- *                      double pawn push.
- */
 bool is_doublePP(move_t move) {
     return (flags(move) == 2);
 }
 
-/**
- *  Whether or not the move is a king-side castle.
- *
- *  \return             Boolean indicating whether the move is a
- *                      king-side castle.
- */
 bool is_kingCastle(move_t move) {
     return (flags(move) == 4);
 }
 
-/**
- *  Whether or not the move is a queen-side castle.
- *
- *  \return             Boolean indicating whether the move is a
- *                      queen-side castle.
- */
 bool is_queenCastle(move_t move) {
     return (flags(move) == 6);
 }
 
-/**
- *  Whether or not the move is a castling move.
- *
- *  \return             Boolean indicating whether the move is a
- *                      castling move.
- */
 bool is_castle(move_t move) {
     return (is_kingCastle(move) || is_queenCastle(move));
 }
