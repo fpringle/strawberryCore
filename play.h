@@ -230,6 +230,10 @@ public:
      */
     move_t input_move() const;
 
+    move_t search();
+
+    move_t search(int timeout);
+
     /**
      *  Start a game between the user and the computer. Uses the class members
      *  \ref user_colour and \ref iterative_deepening_timeout.
@@ -251,6 +255,7 @@ public:
 
 void two_players();
 
+void two_computers();
 
 } // end of chessCore namespace
 

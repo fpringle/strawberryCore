@@ -282,6 +282,14 @@ move_t Player::input_move() const {
     return ret;
 }
 
+move_t Player::search() {
+    return searcher->search((board*)this, iterative_deepening_timeout, true);
+}
+
+move_t Player::search(int timeout) {
+    return searcher->search((board*)this, timeout, true);
+}
+
 void Player::play(colour playerSide, int timeout) {
 //    init();
     move_t comp_move;
@@ -309,7 +317,7 @@ void Player::play(colour playerSide, int timeout) {
         else {
             std::cout << "Computer thinking...    " << std::endl;
             std::cout << "Timeout: " << iterative_deepening_timeout << std::endl;
-            comp_move = searcher->search((board*)this, timeout, true);
+            comp_move = search(timeout);
             std::cout << "Computer move: " << mtos(comp_move) << std::endl;
             doMoveInPlace(comp_move);
             ss << "/home/freddy/Documents/cpl/chess_net/log/log"
@@ -364,7 +372,7 @@ void Player::play() {
         else {
             std::cout << "Computer thinking...    " << std::endl;
             std::cout << "Timeout: " << iterative_deepening_timeout << std::endl;
-            comp_move = searcher->search((board*)this, iterative_deepening_timeout, true);
+            comp_move = search();
             std::cout << "Computer move: " << mtos(comp_move) << std::endl;
             doMoveInPlace(comp_move);
             ss << "/home/freddy/Documents/cpl/chess_net/log/log"
@@ -412,6 +420,39 @@ void two_players() {
 
     gamestate->print_board();
     gamestate->print_history();
+
+    if (gamestate->is_checkmate()) {
+        gamestate->getSide(&movingSide);
+        std::cout << movingSide << " wins!" << std::endl;
+    }
+    else if (gamestate->is_stalemate()) {
+        std::cout << "Draw" << std::endl;
+    }
+}
+
+void two_computers() {
+    board* gamestate = new board;
+    Player* whiteComp = new Player();
+    Player* blackComp = new Player();
+    colour movingSide;
+    std::string side;
+    move_t comp_move;
+
+    while (! gamestate->gameover()) {
+        gamestate->print_board();
+        gamestate->getSide(&movingSide);
+        side = (movingSide == white ? "White" : "Black");
+        std::cout << side << " thinking...    " << std::endl;
+        if (movingSide == white) comp_move = whiteComp->search();
+        else comp_move = blackComp->search();
+        std::cout << side << " move: " << mtos(comp_move) << std::endl;
+        whiteComp->doMoveInPlace(comp_move);
+        blackComp->doMoveInPlace(comp_move);
+        gamestate->doMoveInPlace(comp_move);
+    }
+
+    gamestate->print_board();
+    whiteComp->print_history();
 
     if (gamestate->is_checkmate()) {
         gamestate->getSide(&movingSide);

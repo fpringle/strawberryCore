@@ -17,7 +17,7 @@ using namespace chessCore;
 
 int main() {
     init();
-    two_players();
+    two_computers();
 }
 
 int _main() {
