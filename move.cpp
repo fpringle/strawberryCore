@@ -261,132 +261,188 @@ std::string board::SAN_post_move( move_t move ) const {
 
 
 
-//
-//move_t board::move_from_SAN( std::string san ) {
-//    // castling
-//    if ( san == "O-O" ) {
-//        if ( sideToMove == white ) {
-//            return move_t (  4,  6, 0, 0, 1, 0 );
-//        }
-//        else {
-//            return move_t ( 60, 62, 0, 0, 1, 0 );
-//        }
-//    }
-//    else if ( san == "O-O-O" ) {
-//        if ( sideToMove == white ) {
-//            return move_t (  4,  1, 0, 0, 1, 1 );
-//        }
-//        else {
-//            return move_t ( 60, 58, 0, 0, 1, 1 );
-//        }
-//    }
-//
-//    int len = san.size();
-//    int to_sq;
-//    bool prom = false;
-//    bool s0 = 0;
-//    bool s1 = 0;
-//
-//    if ( san[len-1] == '#' || san[len-1] == '+' ) {
-//        san = san.substr( 0, len-1 );
-//        len--;
-//    }
-//
-//    if ( san[len-2] == '=' ) {
-//        prom = true;
-//        switch ( san[len-1] ) {
-//            case 'R':
-//                s0 = 1;
-//                s1 = 0;
-//                break;
-//            case 'N':
-//                s0 = 0;
-//                s1 = 0;
-//                break;
-//            case 'B':
-//                s0 = 0;
-//                s1 = 1;
-//                break;
-//            case 'Q':
-//                s0 = 1;
-//                s1 = 1;
-//                break;
-//        }
-//    }
-//
-//    to_sq = _stoi( san.substr( len-2, 2 ) );
-//    san = san.substr( 0, len-2 );
-//    len -= 2;
-//    bool cap = false;
-//    if ( san[len-1] == 'x' ) {
-//        cap = true;
-//        san = san.substr( 0, len-1 );
-//        l--;
-//    }
-//
-//    if ( san == "" ) {
-//        // pawn move
-//        return move_t ( to_sq + ( ( sideToMove == white ) ? S+S : N+N ), to_sq, prom, false, s0, s1 );
-//    }
-//
-//    int from_file;
-//    int to_file;
-//    piece mP;
-//
-//    switch ( san[0] ) {
-//        case 'R':
-//            mp = 1;
-//            break;
-//        case 'N':
-//            mp = 2;
-//            break;
-//        case 'B':
-//            mp = 3;
-//            break;
-//        case 'Q':
-//            mp = 4;
-//            break;
-//        case 'K':
-//            mp = 5;
-//            break;
-//
-//        case '1':
-//            mp = 0;
-//            break;
-//        case '2':
-//            mp = 0;
-//            break;
-//        case '3':
-//            mp = 0;
-//            break;
-//        case '4':
-//            mp = 0;
-//            break;
-//        case '5':
-//            mp = 0;
-//            break;
-//        case '6':
-//            mp = 0;
-//            break;
-//        case '7':
-//            mp = 0;
-//            break;
-//        case '8':
-//            mp = 0;
-//            break;
-//
-//        case 'a':
-//        case 'b':
-//        case 'c':
-//        case 'd':
-//        case 'e':
-//        case 'f':
-//        case 'g':
-//        case 'h':
-//    }
-//}
 
+move_t board::move_from_SAN( std::string san ) {
+    // castling
+    if ( san == "O-O" ) {
+        if ( sideToMove == white ) {
+            return make_move (  4,  6, 0, 0, 1, 0 );
+        }
+        else {
+            return make_move ( 60, 62, 0, 0, 1, 0 );
+        }
+    }
+    else if ( san == "O-O-O" ) {
+        if ( sideToMove == white ) {
+            return make_move (  4,  2, 0, 0, 1, 1 );
+        }
+        else {
+            return make_move ( 60, 58, 0, 0, 1, 1 );
+        }
+    }
 
+    int len = san.size();
+    int to_sq;
+    int from_sq;
+    bool prom = false;
+    bool s0 = 0;
+    bool s1 = 0;
+    bool cap = false;
+    int from_file = -1;
+    int from_rank = -1;
+    int mp = 0;
+
+    // ignore check info
+    if ( san[len-1] == '#' || san[len-1] == '+' ) {
+        san = san.substr( 0, len-1 );
+        len--;
+    }
+
+    // promotions
+    if ( san[len-2] == '=' ) {
+        prom = true;
+        switch ( san[len-1] ) {
+            case 'R':
+                s0 = 1;
+                s1 = 0;
+                break;
+            case 'N':
+                s0 = 1;
+                s1 = 1;
+                break;
+            case 'B':
+                s0 = 0;
+                s1 = 1;
+                break;
+            case 'Q':
+                s0 = 0;
+                s1 = 0;
+                break;
+            default:
+                break;
+        }
+        san = san.substr(0, len-2);
+        len -= 2;
+    }
+
+    to_sq = _stoi( san.substr( len-2, 2 ) );
+    san = san.substr( 0, len-2 );
+    len -= 2;
+
+    // captures
+    if ( san[len-1] == 'x' ) {
+        cap = true;
+        san = san.substr( 0, len-1 );
+        len--;
+    }
+
+    // pawn move, non-capture
+    if ( san == "" ) {
+        int single_push, double_push;
+        if (sideToMove == white) {
+            single_push = to_sq + S;
+            double_push = to_sq + S + S;
+        }
+        else {
+            single_push = to_sq + N;
+            double_push = to_sq + N + N;
+        }
+
+        if (is_bit_set(pieceBoards[6 * sideToMove], single_push)) {
+            return make_move(single_push, to_sq, prom, cap, s1, s0);
+        }
+        else if (is_bit_set(pieceBoards[6 * sideToMove], double_push)) {
+            return make_move(double_push, to_sq, prom, cap, 0, 1);
+        }
+        else {
+            return 0;
+        }
+    }
+
+    for (char c : san) {
+        switch ( c ) {
+            case 'R':
+                mp = 1;
+                break;
+            case 'N':
+                mp = 2;
+                break;
+            case 'B':
+                mp = 3;
+                break;
+            case 'Q':
+                mp = 4;
+                break;
+            case 'K':
+                mp = 5;
+                break;
+
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+                from_rank = (int)(c - '1');
+                break;
+            case 'a':
+            case 'b':
+            case 'c':
+            case 'd':
+            case 'e':
+            case 'f':
+            case 'g':
+            case 'h':
+                from_file = (int)(c - 'a');
+                break;
+        }
+    }
+
+    colourPiece cp = colourPiece((flipColour(sideToMove) * 6) + mp);
+    bitboard poss_from = pieceTargets(to_sq, whiteSquares(),
+                                       blackSquares(), cp);
+    poss_from &= pieceBoards[(sideToMove * 6) + mp];
+
+    bitboard ambig = 0ULL;
+    if (from_file != -1 && from_rank == -1) {
+        for (int i=0; i<8; i++) {
+            ambig |= (1ULL << (from_file + i*8));
+        }
+    }
+    else if (from_rank != -1 && from_file == -1) {
+        for (int i=0; i<8; i++) {
+            ambig |= (1ULL << (from_rank*8 + i));
+        }
+    }
+    else if (from_file != -1 && from_rank != -1) {
+        ambig |= (1ULL << (from_rank*8 + from_file));
+    }
+    else {
+        ambig = ~(0ULL);
+    }
+
+    poss_from &= ambig;
+    if (count_bits_set(poss_from) == 1) {
+        from_sq = last_set_bit(poss_from);
+    }
+    else {
+        return 0;
+    }
+
+    bitboard opp_squares = (sideToMove == white ? blackSquares() : whiteSquares());
+    if (cap && ! is_bit_set(opp_squares, to_sq)) {
+        s0 = 1;
+        s1 = 0;
+    }
+
+    return make_move(from_sq, to_sq, prom, cap, s1, s0);
+
+    return 0;
+}
+
+//     p s1 s0 c ---to--- --from--
 move_t make_move(uint8_t from, uint8_t to, bool promotion,
        bool capture, bool spec1, bool spec0) {
     return (from) | (to << 6) | (promotion << 15) | (capture << 12) |
@@ -447,9 +503,9 @@ bool is_promotion(move_t move) {
  */
 piece which_promotion(move_t move) {
     uint16_t data = flags(move) & 6;
-    return data == 2 ? rook :
-           data == 4 ? bishop :
-           data == 6 ? knight : queen;
+    return data == 2 ? rook :               // 0 1
+           data == 4 ? bishop :             // 1 0
+           data == 6 ? knight : queen;      // 1 1 // 0 0
 }
 
 /**

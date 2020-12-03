@@ -1,16 +1,12 @@
 # To-do list
 - generate checking moves
 - better variable names
-- test suite with check-in-x challenges etc
-- SAN input
 - fix bugs in is_checking_move, was_lastmove_check
         - then use in san pre/post
 - logging
 - threading
 - universal chess interface (UCI)
-- test suites
-- use constexpr instead of const for constants
-- write some constexpr/inline functions for common piece/colour/index operations
 - split source code into more, smaller files
 - trans table for quiescence?
-- get hash from move without having to make child
+- improve evaluation function
+- play computer vs computer

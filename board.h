@@ -542,7 +542,9 @@ public:
      *  \return         A string representing the move in SAN format.
      */
     std::string SAN_post_move(move_t move) const;
-    //    move_t move_from_SAN(std::string);
+
+
+    move_t move_from_SAN(std::string san);
 
     /**
      *  Set the side to move.

@@ -329,6 +329,9 @@ bitboard queenPushNaive       (int sq, bitboard blockers);
 bitboard queenTargets         (int sq, bitboard _white, bitboard _black,
                                colour movingColour);
 
+bitboard piecePushesNaive     (int sq, bitboard _white, bitboard _black,
+                               colourPiece cP);
+
 /**
  *  Calculate all pseudo-legal moves from a given square for a given piece.
  *
