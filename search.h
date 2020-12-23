@@ -28,7 +28,7 @@ struct record_t {
     /** The hash value of the corresponding board state. */
     uint64_t signature;
     /** If available, the best move for this node. Leave = 0 if not. */
-    move_t best_ref_move;
+    move_t best_move;
     /** The depth to which this node has been searched. */
     uint8_t depth;
     /** The bound or value for this node. */

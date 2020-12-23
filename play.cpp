@@ -190,7 +190,7 @@ void Player::save_table(std::string filename) {
         fil << it->first << ",";
         rec = it->second;
         fil << rec.signature << ","
-            << + rec.best_ref_move << ","
+            << + rec.best_move << ","
             << + rec.depth << ","
             << rec.score << ","
             << + rec.age << ","
@@ -298,8 +298,6 @@ void Player::play(colour playerSide, int timeout) {
     move_t player_move;
     int num_moves = 0;
     colour movingSide;
-    int log = 1;
-    std::stringstream ss;
 
     if (gameover()) {
         std::cout << "Game is complete!\n";
@@ -322,11 +320,6 @@ void Player::play(colour playerSide, int timeout) {
             comp_move = search(timeout);
             std::cout << "Computer move: " << mtos(comp_move) << std::endl;
             doMoveInPlace(comp_move);
-            ss << "/home/freddy/Documents/cpl/chess_net/log/log"
-               << log << ".log";
-            save_table(ss.str());
-            ss.str("");
-            log++;
         }
         num_moves++;
     }
@@ -354,8 +347,6 @@ void Player::play() {
     move_t player_move;
     int num_moves = 0;
     colour movingSide;
-    int log = 1;
-    std::stringstream ss;
 
     if (gameover()) {
         std::cout << "Game is complete!\n";
@@ -364,9 +355,7 @@ void Player::play() {
 
     while (! gameover()) {
         print_board();
-
         getSide(&movingSide);
-
         if (movingSide == user_colour) {
             player_move = input_move();
             doMoveInPlace(player_move);
@@ -375,13 +364,8 @@ void Player::play() {
             std::cout << "Computer thinking...    " << std::endl;
             std::cout << "Timeout: " << iterative_deepening_timeout << std::endl;
             comp_move = search();
-            std::cout << "Computer move: " << mtos(comp_move) << std::endl;
+            std::cout << "Computer move: " << SAN_pre_move(comp_move) << std::endl;
             doMoveInPlace(comp_move);
-            ss << "/home/freddy/Documents/cpl/chess_net/log/log"
-               << log << ".log";
-            save_table(ss.str());
-            ss.str("");
-            log++;
         }
         num_moves++;
     }

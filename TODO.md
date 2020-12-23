@@ -10,3 +10,4 @@
 - trans table for quiescence?
 - improve evaluation function
 - play computer vs computer
+- prune transposition table
