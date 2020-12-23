@@ -63,6 +63,14 @@ private:
     TransTable* trans_table;
 
     /**
+     *  Prune all entries from the transposition table that are older
+     *  than a given value.
+     *
+     *  \param age  Discard any entries older than age.
+     */
+    void prune_table(uint8_t age);
+
+    /**
      *  \brief Perform a quiescence search on a position.
      *
      *  Quiescence search is a technique to mitigate the horizon effect,

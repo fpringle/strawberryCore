@@ -36,6 +36,17 @@ Searcher::Searcher(TransTable* tt) {
     trans_table = tt;
 }
 
+void Searcher::prune_table(uint8_t age) {
+    TransTable::const_iterator it;
+    for (it=trans_table->cbegin(); it!=trans_table->cend();) {
+        if (it->second.age < age) {
+            trans_table->erase(it++);
+        }
+        else {
+            ++it;
+        }
+    }
+}
 
 value_t Searcher::quiesce(board* b, value_t alpha, value_t beta) {
     colour side;
@@ -568,6 +579,17 @@ namespace {
 
 move_t Searcher::iterative_deepening_negamax(board* b, int timeout, bool cutoff) {
     clock_t start_time = clock();
+    uint8_t age;
+    b->getFullClock(&age);
+#if DEBUG
+    std::cout << "Size of transposition table: " << trans_table->size() << std::endl;
+#endif
+    if (age > 3) {
+        prune_table(age - 3);
+#if DEBUG
+    std::cout << "Size of transposition table after pruning: " << trans_table->size() << std::endl;
+#endif
+    }
     double time_taken = 0.0;
     uint8_t depth = 1;
     move_t best_move = 0;
