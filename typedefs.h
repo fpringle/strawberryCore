@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <iostream>
 #include <limits>
-#include <map>
+#include <unordered_map>
 #include <vector>
 
 namespace chessCore {
@@ -70,7 +70,7 @@ enum direction {dirN, dirNE, dirE, dirSE, dirS, dirSW, dirW, dirNW};
 struct record_t;
 
 /** A hash map used for search. */
-using TransTable = std::map<uint32_t, record_t>;
+using TransTable = std::unordered_map<uint32_t, record_t>;
 
 
 } // end of chessCore namespace

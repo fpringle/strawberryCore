@@ -185,7 +185,7 @@ void Player::print_board(std::ostream& cout) const {
 void Player::save_table(std::string filename) {
     std::ofstream fil(filename);
     record_t rec;
-    std::map<uint32_t, record_t>::iterator it;
+    TransTable::iterator it;
     for (it = trans_table.begin(); it != trans_table.end(); it++) {
         fil << it->first << ",";
         rec = it->second;
