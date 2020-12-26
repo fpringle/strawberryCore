@@ -150,7 +150,7 @@ bool board::was_lastmove_check(move_t lastmove) const {
     }
 
     if (! foundMovingPiece) {
-        return false;           // hmmm.....
+        return false;
     }
 
     // direct check
@@ -288,6 +288,12 @@ bool board::is_checking_move(move_t move) const {
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
     bitboard blockers = takenSquares();
+    blockers &= ~from_square;
+    blockers |= (1ULL << to_ind);
+    int other_pawn_ind = to_ind + ((sideToMove == white) ? S : N);
+    if (is_ep_capture(move)) {
+        blockers &= ~(1ULL << other_pawn_ind);
+    }
 
     // direct check
     if (pieceTargets(to_ind, _white, _black, movingPiece) & kingBoard) {
@@ -330,7 +336,6 @@ bool board::is_checking_move(move_t move) const {
 
     // en passant
     if (is_ep_capture(move)) {
-        int other_pawn_ind = to_ind + ((sideToMove == white) ? S : N);
         // rooks and queens
         for (i = 0; i < 8; i += 2) {
             if (kingBoard & rays[i][other_pawn_ind]) {
@@ -338,10 +343,18 @@ bool board::is_checking_move(move_t move) const {
                 _ray = rays[j][king_ind];
                 tmp = blockers & _ray;
                 if (tmp) {
-                    if ((j + 2) % 6 < 4) attacker = (1ULL << first_set_bit(tmp));
+                    if (j==0 || j==2) attacker = (1ULL << first_set_bit(tmp));
                     else attacker = (1ULL << last_set_bit(tmp));
-                    if (attacker & pieceBoards[(6 * sideToMove) + 1]) return true;
-                    if (attacker & pieceBoards[(6 * sideToMove) + 4]) return true;
+                    if (attacker & pieceBoards[(6 * sideToMove) + 1]) {
+//                        std::cout << "EP discovered check by rook at "
+//                                << last_set_bit(attacker) << "\n";
+                        return true;
+                    }
+                    if (attacker & pieceBoards[(6 * sideToMove) + 4]) {
+//                        std::cout << "EP discovered check by queen at "
+//                                << last_set_bit(attacker) << "\n";
+                        return true;
+                    }
                 }
             }
         }
@@ -352,10 +365,18 @@ bool board::is_checking_move(move_t move) const {
                 _ray = rays[j][king_ind];
                 tmp = blockers & _ray;
                 if (tmp) {
-                    if ((j + 2) % 6 < 4) attacker = (1ULL << first_set_bit(tmp));
+                    if (j==1 || j==7) attacker = (1ULL << first_set_bit(tmp));
                     else attacker = (1ULL << last_set_bit(tmp));
-                    if (attacker & pieceBoards[(6 * sideToMove) + 3]) return true;
-                    if (attacker & pieceBoards[(6 * sideToMove) + 4]) return true;
+                    if (attacker & pieceBoards[(6 * sideToMove) + 3]) {
+//                        std::cout << "EP discovered check by bishop at "
+//                                << last_set_bit(attacker) << "\n";
+                        return true;
+                    }
+                    if (attacker & pieceBoards[(6 * sideToMove) + 4]) {
+//                        std::cout << "EP discovered check by queen at "
+//                                << last_set_bit(attacker) << "\n";
+                        return true;
+                    }
                 }
             }
         }

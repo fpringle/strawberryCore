@@ -149,10 +149,10 @@ std::string board::SAN_pre_move(move_t move) const {
 
 
     // need to fix bug in is_checking_move
-    board child = *this;
-    child.doMoveInPlace(move);
 
-    if ( child.is_check( otherSide ) ) {
+    if ( is_checking_move(move)) {
+        board child = *this;
+        child.doMoveInPlace(move);
         if (child.is_checkmate()) san << "#";
         else                      san << "+";
     }
@@ -251,7 +251,7 @@ std::string board::SAN_post_move( move_t move ) const {
         }
     }
 
-    if (is_check(otherSide)) {
+    if (was_lastmove_check(move)) {
         if (is_checkmate()) san << "#";
         else                san << "+";
     }

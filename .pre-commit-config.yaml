@@ -1,0 +1,6 @@
+repos:
+-   repo: https://github.com/bmorcos/pre-commit-hooks-cpp
+    rev: master
+    hooks:
+    -   id: cppcheck
+        args: [--std=c++14, --language=c++]
