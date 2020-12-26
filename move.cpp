@@ -833,9 +833,6 @@ void board::add_moves(MoveList* dest, move_t move, bool check_legal) const {
 }
 
 
-// generate pseudo-legal moves (without checking for checks)
-// returns the number of moves
-
 MoveList board::gen_moves() const {
     MoveList moves;
     int piece;
@@ -1197,8 +1194,6 @@ bool board::can_get_out_of_check(colour side, piece checkingPiece,
     return false;
 }
 
-// generate captures
-// returns the number of captures
 MoveList board::gen_captures() const {
     MoveList moves;
     int _piece;
@@ -1255,9 +1250,6 @@ MoveList board::gen_captures() const {
 }
 
 
-
-// generate pseudo-legal moves (without checking for checks)
-// returns the number of moves
 
 MoveList board::gen_legal_moves() const {
     MoveList moves;

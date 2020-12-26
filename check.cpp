@@ -156,12 +156,16 @@ bool board::was_lastmove_check(move_t lastmove) const {
     // direct check
     switch (movingPiece % 6) {
     case 0:
-        if (kingBoard & pawnAttacks(to_ind, _white, _black, otherSide)) return true;
+        if (kingBoard & pawnAttacks(to_ind, _white, _black, otherSide)) {
+            return true;
+        }
         break;
     case 5:
         break;
     default:
-        if (kingBoard & pieceTargets(to_ind, _white, _black, movingPiece)) return true;
+        if (kingBoard & pieceTargets(to_ind, _white, _black, movingPiece))  {
+            return true;
+        }
         break;
     }
 
@@ -176,8 +180,10 @@ bool board::was_lastmove_check(move_t lastmove) const {
             _ray = rays[j][king_ind];
             tmp = blockers & _ray;
             if (tmp) {
-                if ((j + 2) % 6 < 4) attacker = (1ULL << first_set_bit(tmp));
+//                print_bb(tmp);
+                if (j==0 || j==2) attacker = (1ULL << first_set_bit(tmp));
                 else attacker = (1ULL << last_set_bit(tmp));
+//                print_bb(attacker);
                 if (attacker & pieceBoards[(6 * otherSide) + 1]) return true;
                 if (attacker & pieceBoards[(6 * otherSide) + 4]) return true;
             }
@@ -190,7 +196,8 @@ bool board::was_lastmove_check(move_t lastmove) const {
             _ray = rays[j][king_ind];
             tmp = blockers & _ray;
             if (tmp) {
-                if ((j + 2) % 6 < 4) attacker = (1ULL << first_set_bit(tmp));
+//                print_bb(tmp);
+                if (j==1 || j==7) attacker = (1ULL << first_set_bit(tmp));
                 else attacker = (1ULL << last_set_bit(tmp));
                 if (attacker & pieceBoards[(6 * otherSide) + 3]) return true;
                 if (attacker & pieceBoards[(6 * otherSide) + 4]) return true;
@@ -198,26 +205,42 @@ bool board::was_lastmove_check(move_t lastmove) const {
         }
     }
 
-
     // en passant
     if (is_ep_capture(lastmove)) {
         int other_pawn_ind = to_ind + ((sideToMove == black) ? S : N);
-        bitboard left_ray = rays[6][from_ind] & rays[6][other_pawn_ind] & blockers;
-        bitboard right_ray = rays[2][from_ind] & rays[2][other_pawn_ind] & blockers;
-        bitboard attacker_left = (1ULL << last_set_bit(left_ray));
-        bitboard attacker_right = (1ULL << first_set_bit(right_ray));
-
-        if ((attacker_left & pieceBoards[(sideToMove * 6) + 5]) &&
-                (attacker_right & (pieceBoards[(otherSide * 6) + 1] |
-                                   pieceBoards[(otherSide * 6) + 4]))) {
-            return true;
+        // rooks and queens
+        for (i = 0; i < 8; i += 2) {
+            if (kingBoard & rays[i][other_pawn_ind]) {
+                j = (i + 4) % 8;
+                _ray = rays[j][king_ind];
+                tmp = blockers & _ray;
+                if (tmp) {
+    //                print_bb(tmp);
+                    if (j==0 || j==2) attacker = (1ULL << first_set_bit(tmp));
+                    else attacker = (1ULL << last_set_bit(tmp));
+    //                print_bb(attacker);
+                    if (attacker & pieceBoards[(6 * otherSide) + 1]) return true;
+                    if (attacker & pieceBoards[(6 * otherSide) + 4]) return true;
+                }
+            }
         }
-        if ((attacker_right & pieceBoards[(sideToMove * 6) + 5]) &&
-                (attacker_left & (pieceBoards[(otherSide * 6) + 1] |
-                                  pieceBoards[(otherSide * 6) + 4]))) {
-            return true;
+        // bishops and queens
+        for (i = 1; i < 8; i += 2) {
+            if (kingBoard & rays[i][other_pawn_ind]) {
+                j = (i + 4) % 8;
+                _ray = rays[j][king_ind];
+                tmp = blockers & _ray;
+                if (tmp) {
+    //                print_bb(tmp);
+                    if (j==1 || j==7) attacker = (1ULL << first_set_bit(tmp));
+                    else attacker = (1ULL << last_set_bit(tmp));
+                    if (attacker & pieceBoards[(6 * otherSide) + 3]) return true;
+                    if (attacker & pieceBoards[(6 * otherSide) + 4]) return true;
+                }
+            }
         }
     }
+
     // castling rook
     if (is_kingCastle(lastmove)) {
         int rook_ind = to_ind - 1;
@@ -282,7 +305,7 @@ bool board::is_checking_move(move_t move) const {
             _ray = rays[j][king_ind];
             tmp = blockers & _ray;
             if (tmp) {
-                if ((j + 2) % 6 < 4) attacker = (1ULL << first_set_bit(tmp));
+                if (j==0 || j==2) attacker = (1ULL << first_set_bit(tmp));
                 else attacker = (1ULL << last_set_bit(tmp));
                 if (attacker & pieceBoards[(6 * sideToMove) + 1]) return true;
                 if (attacker & pieceBoards[(6 * sideToMove) + 4]) return true;
@@ -296,7 +319,7 @@ bool board::is_checking_move(move_t move) const {
             _ray = rays[j][king_ind];
             tmp = blockers & _ray;
             if (tmp) {
-                if ((j + 2) % 6 < 4) attacker = (1ULL << first_set_bit(tmp));
+                if (j==1 || j==7) attacker = (1ULL << first_set_bit(tmp));
                 else attacker = (1ULL << last_set_bit(tmp));
                 if (attacker & pieceBoards[(6 * sideToMove) + 3]) return true;
                 if (attacker & pieceBoards[(6 * sideToMove) + 4]) return true;
@@ -304,24 +327,39 @@ bool board::is_checking_move(move_t move) const {
         }
     }
 
+
     // en passant
     if (is_ep_capture(move)) {
         int other_pawn_ind = to_ind + ((sideToMove == white) ? S : N);
-        bitboard left_ray = rays[6][from_ind] & rays[6][other_pawn_ind] & blockers;
-        bitboard right_ray = rays[2][from_ind] & rays[2][other_pawn_ind] & blockers;
-        bitboard attacker_left = (1ULL << last_set_bit(left_ray));
-        bitboard attacker_right = (1ULL << first_set_bit(right_ray));
+        // rooks and queens
+        for (i = 0; i < 8; i += 2) {
+            if (kingBoard & rays[i][other_pawn_ind]) {
+                j = (i + 4) % 8;
+                _ray = rays[j][king_ind];
+                tmp = blockers & _ray;
+                if (tmp) {
+                    if ((j + 2) % 6 < 4) attacker = (1ULL << first_set_bit(tmp));
+                    else attacker = (1ULL << last_set_bit(tmp));
+                    if (attacker & pieceBoards[(6 * sideToMove) + 1]) return true;
+                    if (attacker & pieceBoards[(6 * sideToMove) + 4]) return true;
+                }
+            }
+        }
+        // bishops and queens
+        for (i = 1; i < 8; i += 2) {
+            if (kingBoard & rays[i][other_pawn_ind]) {
+                j = (i + 4) % 8;
+                _ray = rays[j][king_ind];
+                tmp = blockers & _ray;
+                if (tmp) {
+                    if ((j + 2) % 6 < 4) attacker = (1ULL << first_set_bit(tmp));
+                    else attacker = (1ULL << last_set_bit(tmp));
+                    if (attacker & pieceBoards[(6 * sideToMove) + 3]) return true;
+                    if (attacker & pieceBoards[(6 * sideToMove) + 4]) return true;
+                }
+            }
+        }
 
-        if ((attacker_left & pieceBoards[(otherSide * 6) + 5]) &&
-                (attacker_right & (pieceBoards[(sideToMove * 6) + 1] |
-                                   pieceBoards[(sideToMove * 6) + 4]))) {
-            return true;
-        }
-        if ((attacker_right & pieceBoards[(otherSide * 6) + 5]) &&
-                (attacker_left & (pieceBoards[(sideToMove * 6) + 1] |
-                                  pieceBoards[(sideToMove * 6) + 4]))) {
-            return true;
-        }
     }
 
 

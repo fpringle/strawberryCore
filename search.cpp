@@ -54,7 +54,6 @@ value_t Searcher::quiesce(board* b, value_t alpha, value_t beta) {
     colour side;
     b->getSide(&side);
     value_t stand_pat = b->getValue() * ((side == white) ? 1 : -1);
-//    return stand_pat;
     if (stand_pat >= beta) return beta;
     if (stand_pat > alpha) alpha = stand_pat;
 
@@ -572,7 +571,7 @@ move_t Searcher::iterative_deepening_negamax(board* b, int timeout, bool cutoff)
     value_t alpha = -VAL_INFINITY;
     value_t beta = VAL_INFINITY;
 
-    while (time_taken < timeout) {
+    while (time_taken < timeout && depth < 100) {
         negamax_alphabeta(b, depth, alpha, beta, timeout - time_taken, best_move);
 //        new_move = getBest(b, trans_table);
         new_move = trans_table->operator[](ind).best_move;
@@ -614,7 +613,7 @@ move_t Searcher::iterative_deepening_pv(board* b, int timeout, bool cutoff) {
     value_t alpha = -VAL_INFINITY;
     value_t beta = VAL_INFINITY;
 
-    while (time_taken < timeout) {
+    while (time_taken < timeout && depth < 100) {
         principal_variation(b, depth, alpha, beta, timeout - time_taken);
         new_move = trans_table->operator[](ind).best_move;
         depth++;
