@@ -1,5 +1,5 @@
-#ifndef __EVAL_H
-#define __EVAL_H
+#ifndef SRC_CORE_EVAL_H_
+#define SRC_CORE_EVAL_H_
 
 #include "typedefs.h"
 
@@ -8,8 +8,10 @@ namespace chessCore {
 /**
  *  Constant values for material evaluation, indexed by phase and square index.
  */
-constexpr value_t pieceValues[2][12] = {{100, 500, 320, 330, 900, 20000, -100, -500, -320, -330, -900, -20000},
-                                        {100, 500, 320, 330, 900, 20000, -100, -500, -320, -330, -900, -20000}};
+constexpr value_t pieceValues[2][12] = {
+    {100, 500, 320, 330, 900, 20000, -100, -500, -320, -330, -900, -20000},
+    {100, 500, 320, 330, 900, 20000, -100, -500, -320, -330, -900, -20000}
+};
 
 
 /**
@@ -272,7 +274,7 @@ constexpr value_t pieceSquareTables[2][12][64] = {
                 +50, +40, +30, +30, +30, +30, +40, +50
             },
 
-        //black bishop - endgame
+        // black bishop - endgame
         {
             +20, +10, +10, +10, +10, +10, +10, +20,
                 +10, 0, 0, 0, 0, 0, 0, +10,
@@ -312,6 +314,6 @@ constexpr value_t pieceSquareTables[2][12][64] = {
 
 
 
-} // end of chessCore namespace
+}   // namespace chessCore
 
-#endif
+#endif  // SRC_CORE_EVAL_H_

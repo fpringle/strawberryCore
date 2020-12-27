@@ -1,5 +1,5 @@
-#ifndef __SEARCH_H
-#define __SEARCH_H
+#ifndef SRC_CORE_SEARCH_H_
+#define SRC_CORE_SEARCH_H_
 
 #include "board.h"
 #include "move.h"
@@ -56,7 +56,7 @@ std::ostream& operator<<(std::ostream& out, const record_t& rec);
  *  \brief A class to do all of the searching for the chess engine.
  */
 class Searcher {
-private:
+ private:
     /**
      *  The transposition table for the Searcher object.
      */
@@ -153,7 +153,9 @@ private:
      *                      best move several times in a row.
      *  \return             The best move to play from the current node.
      */
-    move_t iterative_deepening_negamax(board* b, int timeout, bool cutoff=false);
+    move_t iterative_deepening_negamax(board* b,
+                                       int timeout,
+                                       bool cutoff = false);
 
     /**
      *  Search using the Prinicpal Variation algorithm to increasing depth, to
@@ -166,9 +168,11 @@ private:
      *                      best move several times in a row.
      *  \return             The best move to play from the current node.
      */
-    move_t iterative_deepening_pv(board* b, int timeout, bool cutoff=false);
+    move_t iterative_deepening_pv(board* b,
+                                  int timeout,
+                                  bool cutoff = false);
 
-public:
+ public:
     /**
      *  Default constructor for Searcher.
      */
@@ -178,7 +182,7 @@ public:
      *
      *  \param tt           A pointer to the transposition table to use.
      */
-    Searcher(TransTable* tt);
+    explicit Searcher(TransTable* tt);
 
     /**
      *  Search from a node for the best move to play.
@@ -194,5 +198,7 @@ public:
 };
 
 
-} // end of chessCore namespace
-#endif
+}   // namespace chessCore
+
+
+#endif  // SRC_CORE_SEARCH_H_

@@ -14,18 +14,13 @@
 namespace chessCore {
 
 colour flipColour(colour side) {
-    if (side == white) return black;
-    else return white;
+    return side == white ? black : white;
 }
 
 // initialise constants declared in board.h
 const char symbols[12] = {'p', 'r', 'n', 'b', 'q', 'k',
                           'P', 'R', 'N', 'B', 'Q', 'K'
                          };
-//const char symbols[12] = {'\u2659', '\u2656', '\u2658', '\u2657', '\u2655', '\u2654',
-//                          '\u265F', '\u265C', '\u265E', '\u265D', '\u265B', '\u265A'
-//                         };
-//const char symbols[12] = {'♙','♘','♗','♖','♕','♔','♟','♞','♝','♜','♛','♚'};
 const char colours[2] = {'w', 'b'};
 
 // define starting configuration
@@ -166,7 +161,6 @@ board::board(const board& other) {
 }
 
 board::board(std::string fen) {
-    //std::cout << fen << std::endl;
     int j, i = 0;
     for (j = 0; j < 12; j++) pieceBoards[j] = 0;
     int cp = -1;
@@ -186,7 +180,7 @@ board::board(std::string fen) {
             case '6':
             case '7':
             case '8':
-                j += int(fen[i] - '0');
+                j += static_cast<int>(fen[i] - '0');
                 i++;
                 cp = -1;
                 break;
@@ -232,7 +226,6 @@ board::board(std::string fen) {
                 j++;
                 i++;
             }
-
         }
         i++;
     }
@@ -273,10 +266,9 @@ board::board(std::string fen) {
 
     if (fen[i] == '-') {
         lastMoveDoublePawnPush = false;
-    }
-    else {
+    } else {
         lastMoveDoublePawnPush = true;
-        dPPFile = int( fen[i] - 'a');
+        dPPFile = static_cast<int>(fen[i] - 'a');
         i++;
     }
 
@@ -469,8 +461,11 @@ void print_bb(bitboard bb, char c, std::ostream& cout) {
     int i, j;
     char to_print[64];
     for (i = 0; i < 64; i++) {
-        if (bb & 1ULL) to_print[i] = c;
-        else to_print[i] = '.';
+        if (bb & 1ULL) {
+            to_print[i] = c;
+        } else {
+            to_print[i] = '.';
+        }
         bb >>= 1;
     }
     for (i = 7; i >= 0; i--) {
@@ -492,13 +487,12 @@ void board::print_board(std::ostream& cout) const {
     for (i = 0; i < 64; i++) to_print[i] = '.';
 
     for (i = 0; i < 12; i++) {
-        tmp = pieceBoards[i]; //pieces[i];
+        tmp = pieceBoards[i];
         for (j = 0; j < 64; j++) {
             if (tmp & 1ULL) {
                 to_print[j] = symbols[i];
             }
             tmp >>= 1;
-            //if (~tmp) break;
         }
     }
 
@@ -521,13 +515,12 @@ void board::print_board_flipped(std::ostream& cout) const {
     for (i = 0; i < 64; i++) to_print[i] = '.';
 
     for (i = 0; i < 12; i++) {
-        tmp = pieceBoards[i]; //pieces[i];
+        tmp = pieceBoards[i];
         for (j = 0; j < 64; j++) {
             if (tmp & 1ULL) {
                 to_print[j] = symbols[i];
             }
             tmp >>= 1;
-            //if (~tmp) break;
         }
     }
 
@@ -546,8 +539,11 @@ void board::print_all(std::ostream& cout) const {
     print_board(cout);
 
     cout << "\nSide to move:\n";
-    if (sideToMove == white) cout << "  White\n";
-    else cout << "  Black\n";
+    if (sideToMove == white) {
+        cout << "  White\n";
+    } else {
+        cout << "  Black\n";
+    }
 
     cout << "\nCastling rights:\n";
     cout << "  White can";
@@ -564,9 +560,12 @@ void board::print_all(std::ostream& cout) const {
     cout << " castle queenside\n";
 
     cout << "\nEn passant:\n";
-    if (lastMoveDoublePawnPush) cout << "  last move was a double pawn push (file "
+    if (lastMoveDoublePawnPush) {
+        cout << "  last move was a double pawn push (file "
         << char('a' + dPPFile) << ")\n";
-    else cout << "  last move was not a double pawn push\n";
+    } else {
+        cout << "  last move was not a double pawn push\n";
+    }
 
     cout << "\nHalfmove Clock:\n";
     cout << "  " << + halfMoveClock;
@@ -631,27 +630,27 @@ std::string board::FEN() const {
                 while (to_print[i * 8 + count] == '.' && count < 8) count++;
                 ss << char('0' + (count - j));
                 j = count - 1;
-            }
-            else {
+            } else {
                 ss << to_print[i * 8 + j];
             }
         }
-        if (i != 7 ) {
+        if (i != 7) {
             ss << '/';
         }
     }
 
 
-    if (sideToMove == white) ss << " w ";
-    else ss << " b ";
+    if (sideToMove == white) {
+        ss << " w ";
+    } else {
+        ss << " b ";
+    }
 
 
     if (!(castleWhiteKingSide | castleWhiteQueenSide | castleBlackKingSide |
             castleBlackQueenSide)) {
         ss << "-";
-    }
-
-    else {
+    } else {
         if (castleWhiteKingSide) ss << "K";
         if (castleWhiteQueenSide) ss << "Q";
         if (castleBlackKingSide) ss << "k";
@@ -663,9 +662,7 @@ std::string board::FEN() const {
     if (lastMoveDoublePawnPush) {
         ss << char('a' + dPPFile)
            << ((sideToMove == white) ? "6" : "3");
-    }
-
-    else {
+    } else {
         ss << "-";
     }
 
@@ -713,4 +710,4 @@ bitboard board::emptySquares() const {
 }
 
 
-} // end of chessCore namespace
+}   // namespace chessCore

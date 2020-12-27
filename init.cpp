@@ -27,4 +27,4 @@ void init(uint64_t seed) {
 }
 
 
-} // end of chessCore namespace
+}   // namespace chessCore

@@ -106,12 +106,11 @@ bool board::is_checkmate() const {
     int checkingInd;
     bool double_check = false;
 
-    if (! is_check(sideToMove, &checkingPiece, &checkingInd, &double_check)) {
+    if (!is_check(sideToMove, &checkingPiece, &checkingInd, &double_check)) {
         return false;
-    }
-    else {
-        return ! can_get_out_of_check(sideToMove, checkingPiece, checkingInd,
-                    last_set_bit(pieceBoards[(6 * sideToMove) + 5]), double_check);
+    } else {
+        return !can_get_out_of_check(sideToMove, checkingPiece, checkingInd,
+                last_set_bit(pieceBoards[(6 * sideToMove) + 5]), double_check);
     }
 }
 
@@ -149,7 +148,7 @@ bool board::was_lastmove_check(move_t lastmove) const {
         }
     }
 
-    if (! foundMovingPiece) {
+    if (!foundMovingPiece) {
         return false;
     }
 
@@ -180,10 +179,11 @@ bool board::was_lastmove_check(move_t lastmove) const {
             _ray = rays[j][king_ind];
             tmp = blockers & _ray;
             if (tmp) {
-//                print_bb(tmp);
-                if (j==0 || j==2) attacker = (1ULL << first_set_bit(tmp));
-                else attacker = (1ULL << last_set_bit(tmp));
-//                print_bb(attacker);
+                if (j == 0 || j == 2) {
+                    attacker = (1ULL << first_set_bit(tmp));
+                } else {
+                    attacker = (1ULL << last_set_bit(tmp));
+                }
                 if (attacker & pieceBoards[(6 * otherSide) + 1]) return true;
                 if (attacker & pieceBoards[(6 * otherSide) + 4]) return true;
             }
@@ -197,8 +197,11 @@ bool board::was_lastmove_check(move_t lastmove) const {
             tmp = blockers & _ray;
             if (tmp) {
 //                print_bb(tmp);
-                if (j==1 || j==7) attacker = (1ULL << first_set_bit(tmp));
-                else attacker = (1ULL << last_set_bit(tmp));
+                if (j == 1 || j == 7) {
+                    attacker = (1ULL << first_set_bit(tmp));
+                } else {
+                    attacker = (1ULL << last_set_bit(tmp));
+                }
                 if (attacker & pieceBoards[(6 * otherSide) + 3]) return true;
                 if (attacker & pieceBoards[(6 * otherSide) + 4]) return true;
             }
@@ -216,11 +219,18 @@ bool board::was_lastmove_check(move_t lastmove) const {
                 tmp = blockers & _ray;
                 if (tmp) {
     //                print_bb(tmp);
-                    if (j==0 || j==2) attacker = (1ULL << first_set_bit(tmp));
-                    else attacker = (1ULL << last_set_bit(tmp));
+                    if (j == 0 || j == 2) {
+                        attacker = (1ULL << first_set_bit(tmp));
+                    } else {
+                        attacker = (1ULL << last_set_bit(tmp));
+                    }
     //                print_bb(attacker);
-                    if (attacker & pieceBoards[(6 * otherSide) + 1]) return true;
-                    if (attacker & pieceBoards[(6 * otherSide) + 4]) return true;
+                    if (attacker & pieceBoards[(6 * otherSide) + 1]) {
+                        return true;
+                    }
+                    if (attacker & pieceBoards[(6 * otherSide) + 4]) {
+                        return true;
+                    }
                 }
             }
         }
@@ -232,10 +242,17 @@ bool board::was_lastmove_check(move_t lastmove) const {
                 tmp = blockers & _ray;
                 if (tmp) {
     //                print_bb(tmp);
-                    if (j==1 || j==7) attacker = (1ULL << first_set_bit(tmp));
-                    else attacker = (1ULL << last_set_bit(tmp));
-                    if (attacker & pieceBoards[(6 * otherSide) + 3]) return true;
-                    if (attacker & pieceBoards[(6 * otherSide) + 4]) return true;
+                    if (j == 1 || j == 7) {
+                        attacker = (1ULL << first_set_bit(tmp));
+                    } else {
+                        attacker = (1ULL << last_set_bit(tmp));
+                    }
+                    if (attacker & pieceBoards[(6 * otherSide) + 3]) {
+                        return true;
+                    }
+                    if (attacker & pieceBoards[(6 * otherSide) + 4]) {
+                        return true;
+                    }
                 }
             }
         }
@@ -244,18 +261,23 @@ bool board::was_lastmove_check(move_t lastmove) const {
     // castling rook
     if (is_kingCastle(lastmove)) {
         int rook_ind = to_ind - 1;
-        if (kingBoard & rookTargets(rook_ind, _white, _black, otherSide)) return true;
-    }
-    else if (is_queenCastle(lastmove)) {
+        if (kingBoard & rookTargets(rook_ind, _white, _black, otherSide)) {
+            return true;
+        }
+    } else if (is_queenCastle(lastmove)) {
         int rook_ind = to_ind + 1;
-        if (kingBoard & rookTargets(rook_ind, _white, _black, otherSide)) return true;
+        if (kingBoard & rookTargets(rook_ind, _white, _black, otherSide)) {
+            return true;
+        }
     }
 
     // promotion
     if (is_promotion(lastmove)) {
         colourPiece prom_piece = colourPiece((6 * otherSide) +
                                              which_promotion(lastmove));
-        if (kingBoard & pieceTargets(to_ind, _white, _black, prom_piece)) return true;
+        if (kingBoard & pieceTargets(to_ind, _white, _black, prom_piece)) {
+            return true;
+        }
     }
 
     return false;
@@ -268,7 +290,7 @@ bool board::is_checking_move(move_t move) const {
     int from_ind = from_sq(move);
     int to_ind = to_sq(move);
     bitboard from_square = (1ULL << from_ind);
-    bitboard kingBoard = pieceBoards[((1 - sideToMove)*6) + 5]; // king under attack
+    bitboard kingBoard = pieceBoards[((1 - sideToMove)*6) + 5];
     int king_ind = last_set_bit(kingBoard);
     bool foundMovingPiece = false;
 
@@ -280,11 +302,11 @@ bool board::is_checking_move(move_t move) const {
         }
     }
 
-    if (! foundMovingPiece) {
+    if (!foundMovingPiece) {
         return false;
     }
 
-    colour otherSide = flipColour(sideToMove);
+//    colour otherSide = flipColour(sideToMove);
     bitboard _white = whiteSquares();
     bitboard _black = blackSquares();
     bitboard blockers = takenSquares();
@@ -311,8 +333,11 @@ bool board::is_checking_move(move_t move) const {
             _ray = rays[j][king_ind];
             tmp = blockers & _ray;
             if (tmp) {
-                if (j==0 || j==2) attacker = (1ULL << first_set_bit(tmp));
-                else attacker = (1ULL << last_set_bit(tmp));
+                if (j == 0 || j == 2) {
+                    attacker = (1ULL << first_set_bit(tmp));
+                } else {
+                    attacker = (1ULL << last_set_bit(tmp));
+                }
                 if (attacker & pieceBoards[(6 * sideToMove) + 1]) return true;
                 if (attacker & pieceBoards[(6 * sideToMove) + 4]) return true;
             }
@@ -325,8 +350,11 @@ bool board::is_checking_move(move_t move) const {
             _ray = rays[j][king_ind];
             tmp = blockers & _ray;
             if (tmp) {
-                if (j==1 || j==7) attacker = (1ULL << first_set_bit(tmp));
-                else attacker = (1ULL << last_set_bit(tmp));
+                if (j == 1 || j == 7) {
+                    attacker = (1ULL << first_set_bit(tmp));
+                } else {
+                    attacker = (1ULL << last_set_bit(tmp));
+                }
                 if (attacker & pieceBoards[(6 * sideToMove) + 3]) return true;
                 if (attacker & pieceBoards[(6 * sideToMove) + 4]) return true;
             }
@@ -343,8 +371,11 @@ bool board::is_checking_move(move_t move) const {
                 _ray = rays[j][king_ind];
                 tmp = blockers & _ray;
                 if (tmp) {
-                    if (j==0 || j==2) attacker = (1ULL << first_set_bit(tmp));
-                    else attacker = (1ULL << last_set_bit(tmp));
+                    if (j == 0 || j == 2) {
+                        attacker = (1ULL << first_set_bit(tmp));
+                    } else {
+                        attacker = (1ULL << last_set_bit(tmp));
+                    }
                     if (attacker & pieceBoards[(6 * sideToMove) + 1]) {
 //                        std::cout << "EP discovered check by rook at "
 //                                << last_set_bit(attacker) << "\n";
@@ -365,8 +396,11 @@ bool board::is_checking_move(move_t move) const {
                 _ray = rays[j][king_ind];
                 tmp = blockers & _ray;
                 if (tmp) {
-                    if (j==1 || j==7) attacker = (1ULL << first_set_bit(tmp));
-                    else attacker = (1ULL << last_set_bit(tmp));
+                    if (j == 1 || j == 7) {
+                        attacker = (1ULL << first_set_bit(tmp));
+                    } else {
+                        attacker = (1ULL << last_set_bit(tmp));
+                    }
                     if (attacker & pieceBoards[(6 * sideToMove) + 3]) {
 //                        std::cout << "EP discovered check by bishop at "
 //                                << last_set_bit(attacker) << "\n";
@@ -380,28 +414,33 @@ bool board::is_checking_move(move_t move) const {
                 }
             }
         }
-
     }
 
 
     // castling rook
     if (is_kingCastle(move)) {
         int rook_ind = to_ind - 1;
-        if (kingBoard & rookTargets(rook_ind, _white, _black, sideToMove)) return true;
-    }
-    else if (is_queenCastle(move)) {
+        if (kingBoard & rookTargets(rook_ind, _white, _black, sideToMove)) {
+            return true;
+        }
+    } else if (is_queenCastle(move)) {
         int rook_ind = to_ind + 1;
-        if (kingBoard & rookTargets(rook_ind, _white, _black, sideToMove)) return true;
+        if (kingBoard & rookTargets(rook_ind, _white, _black, sideToMove)) {
+            return true;
+        }
     }
 
     // promotion
     if (is_promotion(move)) {
-        colourPiece prom_piece = colourPiece((6 * sideToMove) + which_promotion(move));
-        if (kingBoard & pieceTargets(to_ind, _white, _black, prom_piece)) return true;
+        colourPiece prom_piece = colourPiece((6 * sideToMove) +
+                                             which_promotion(move));
+        if (kingBoard & pieceTargets(to_ind, _white, _black, prom_piece)) {
+            return true;
+        }
     }
 
     return false;
 }
 
 
-} // end of chessCore namespace
+}   // namespace chessCore

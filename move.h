@@ -1,5 +1,5 @@
-#ifndef __MOVE_H
-#define __MOVE_H
+#ifndef SRC_CORE_MOVE_H_
+#define SRC_CORE_MOVE_H_
 
 #include <cstdint>
 #include <iostream>
@@ -207,7 +207,7 @@ move_t stom(MoveList moves, std::string s);
  *  \param movingColour     The side to move.
  *  \return                 The bitboard representing the possible pushes.
  */
-bitboard pawnPushNaive        (int sq, bitboard blockers, colour movingColour);
+bitboard pawnPushNaive(int sq, bitboard blockers, colour movingColour);
 /**
  *  Calculate the naive pawn attacks from a given square (not taking into
  *  account the other pieces).
@@ -216,7 +216,7 @@ bitboard pawnPushNaive        (int sq, bitboard blockers, colour movingColour);
  *  \param movingColour     The side to move.
  *  \return                 The bitboard representing the possible attacks.
  */
-bitboard pawnAttackNaive      (int sq, colour movingColour);
+bitboard pawnAttackNaive(int sq, colour movingColour);
 /**
  *  Calculate the pseudo-legal pawn attacks from a given square.
  *
@@ -226,8 +226,8 @@ bitboard pawnAttackNaive      (int sq, colour movingColour);
  *  \param movingColour     The side to move.
  *  \return                 The bitboard representing the possible attacks.
  */
-bitboard pawnAttacks          (int sq, bitboard _white, bitboard _black,
-                               colour movingColour);
+bitboard pawnAttacks(int sq, bitboard _white, bitboard _black,
+                     colour movingColour);
 /**
  *  Calculate all pseudo-legal pawn moves from a given square.
  *
@@ -237,8 +237,8 @@ bitboard pawnAttacks          (int sq, bitboard _white, bitboard _black,
  *  \param movingColour     The side to move.
  *  \return                 The bitboard representing the possible moves.
  */
-bitboard pawnTargets          (int sq, bitboard _white, bitboard _black,
-                               colour movingColour);
+bitboard pawnTargets(int sq, bitboard _white, bitboard _black,
+                     colour movingColour);
 
 /**
  *  Calculate the naive knight moves from a given square (not taking into
@@ -247,7 +247,7 @@ bitboard pawnTargets          (int sq, bitboard _white, bitboard _black,
  *  \param sq               The square to move from.
  *  \return                 The bitboard representing the possible moves.
  */
-bitboard knightPushNaive      (int sq);
+bitboard knightPushNaive(int sq);
 /**
  *  Calculate all pseudo-legal knight moves from a given square.
  *
@@ -257,8 +257,8 @@ bitboard knightPushNaive      (int sq);
  *  \param movingColour     The side to move.
  *  \return                 The bitboard representing the possible moves.
  */
-bitboard knightTargets        (int sq, bitboard _white, bitboard _black,
-                               colour movingColour);
+bitboard knightTargets(int sq, bitboard _white, bitboard _black,
+                       colour movingColour);
 
 /**
  *  Calculate the naive king moves from a given square (not taking into
@@ -267,7 +267,7 @@ bitboard knightTargets        (int sq, bitboard _white, bitboard _black,
  *  \param sq               The square to move from.
  *  \return                 The bitboard representing the possible moves.
  */
-bitboard kingPushNaive        (int sq);
+bitboard kingPushNaive(int sq);
 /**
  *  Calculate all pseudo-legal king moves from a given square.
  *
@@ -277,8 +277,8 @@ bitboard kingPushNaive        (int sq);
  *  \param movingColour     The side to move.
  *  \return                 The bitboard representing the possible moves.
  */
-bitboard kingTargets          (int sq, bitboard _white, bitboard _black,
-                               colour movingColour);
+bitboard kingTargets(int sq, bitboard _white, bitboard _black,
+                     colour movingColour);
 
 /**
  *  Calculate the naive bishop moves from a given square.
@@ -287,7 +287,7 @@ bitboard kingTargets          (int sq, bitboard _white, bitboard _black,
  *  \param blockers         A bitboard representing all pieces on the board.
  *  \return                 The bitboard representing the possible moves.
  */
-bitboard bishopPushNaive      (int sq, bitboard blockers);
+bitboard bishopPushNaive(int sq, bitboard blockers);
 /**
  *  Calculate all pseudo-legal bishop moves from a given square.
  *
@@ -297,8 +297,8 @@ bitboard bishopPushNaive      (int sq, bitboard blockers);
  *  \param movingColour     The side to move.
  *  \return                 The bitboard representing the possible moves.
  */
-bitboard bishopTargets        (int sq, bitboard _white, bitboard _black,
-                               colour movingColour);
+bitboard bishopTargets(int sq, bitboard _white, bitboard _black,
+                       colour movingColour);
 
 /**
  *  Calculate the naive rook moves from a given square.
@@ -307,7 +307,7 @@ bitboard bishopTargets        (int sq, bitboard _white, bitboard _black,
  *  \param blockers         A bitboard representing all pieces on the board.
  *  \return                 The bitboard representing the possible moves.
  */
-bitboard rookPushNaive        (int sq, bitboard blockers);
+bitboard rookPushNaive(int sq, bitboard blockers);
 /**
  *  Calculate all pseudo-legal rook moves from a given square.
  *
@@ -317,8 +317,8 @@ bitboard rookPushNaive        (int sq, bitboard blockers);
  *  \param movingColour     The side to move.
  *  \return                 The bitboard representing the possible moves.
  */
-bitboard rookTargets          (int sq, bitboard _white, bitboard _black,
-                               colour movingColour);
+bitboard rookTargets(int sq, bitboard _white, bitboard _black,
+                     colour movingColour);
 
 /**
  *  Calculate the naive queen moves from a given square.
@@ -327,7 +327,7 @@ bitboard rookTargets          (int sq, bitboard _white, bitboard _black,
  *  \param blockers         A bitboard representing all pieces on the board.
  *  \return                 The bitboard representing the possible moves.
  */
-bitboard queenPushNaive       (int sq, bitboard blockers);
+bitboard queenPushNaive(int sq, bitboard blockers);
 /**
  *  Calculate all pseudo-legal queen moves from a given square.
  *
@@ -337,8 +337,8 @@ bitboard queenPushNaive       (int sq, bitboard blockers);
  *  \param movingColour     The side to move.
  *  \return                 The bitboard representing the possible moves.
  */
-bitboard queenTargets         (int sq, bitboard _white, bitboard _black,
-                               colour movingColour);
+bitboard queenTargets(int sq, bitboard _white, bitboard _black,
+                      colour movingColour);
 
 /**
  *  Calculate all pseudo-legal moves from a given square for a given piece.
@@ -349,8 +349,8 @@ bitboard queenTargets         (int sq, bitboard _white, bitboard _black,
  *  \param cP               The colour/piece combination to move.
  *  \return                 The bitboard representing the possible moves.
  */
-bitboard pieceTargets         (int sq, bitboard _white, bitboard _black,
-                               colourPiece cP);
+bitboard pieceTargets(int sq, bitboard _white, bitboard _black,
+                      colourPiece cP);
 
 /**
  *  Calculate all squares under attack by a particular side.
@@ -361,11 +361,11 @@ bitboard pieceTargets         (int sq, bitboard _white, bitboard _black,
  *  \return                 A bitboard representing all the squares under
  *                          attack by side.
  */
-bitboard allTargets           (colour side, bitboard* pieces);
+bitboard allTargets(colour side, bitboard* pieces);
 
 
 
-} // end of chessCore namespace
+}   // namespace chessCore
 
 
-#endif
+#endif  // SRC_CORE_MOVE_H_

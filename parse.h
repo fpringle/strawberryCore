@@ -1,5 +1,5 @@
-#ifndef __CHESS_CONFIG_PARSER_H
-#define __CHESS_CONFIG_PARSER_H
+#ifndef SRC_CORE_PARSE_H_
+#define SRC_CORE_PARSE_H_
 
 #include <fstream>
 #include <iostream>
@@ -9,36 +9,32 @@
 #include <utility>
 #include <vector>
 
-namespace {
+using Config = std::map<std::string, std::string>;
 
-    std::vector<std::string> tokenise_string(std::string s) {
-        const std::regex re("\\s+");
-        std::sregex_token_iterator it{s.begin(), s.end(), re, -1};
-        std::vector<std::string> tokens{it, {}};
-        tokens.erase(
-            std::remove_if(tokens.begin(),
-                           tokens.end(),
-                           [](std::string const& str) {
-                               return str.size() == 0;
-                           }),
-            tokens.end());
 
-        return tokens;
-    }
+std::vector<std::string> tokenise_string(std::string s) {
+    const std::regex re("\\s+");
+    std::sregex_token_iterator it{s.begin(), s.end(), re, -1};
+    std::vector<std::string> tokens{it, {}};
+    tokens.erase(
+        std::remove_if(tokens.begin(),
+                       tokens.end(),
+                       [](std::string const& str) {
+                           return str.size() == 0;
+                       }),
+        tokens.end());
 
-    std::pair<std::string, std::string> parse_line(std::string s) {
-        std::vector<std::string> tokens = tokenise_string(s);
-        if (tokens.size() != 3 || tokens[1] != "=") {
-            return std::pair<std::string, std::string>("", "");
-        }
-        else {
-            return std::pair<std::string, std::string>(tokens[0], tokens[2]);
-        }
-    }
-
+    return tokens;
 }
 
-using Config = std::map<std::string, std::string>;
+std::pair<std::string, std::string> parse_line(std::string s) {
+    std::vector<std::string> tokens = tokenise_string(s);
+    if (tokens.size() != 3 || tokens[1] != "=") {
+        return std::pair<std::string, std::string>("", "");
+    } else {
+        return std::pair<std::string, std::string>(tokens[0], tokens[2]);
+    }
+}
 
 void parse_file(std::ifstream& file, Config* dest) {
     if (!file.is_open()) return;
@@ -61,4 +57,4 @@ void parse_file(std::string filename, Config* dest) {
 }
 
 
-#endif
+#endif  // SRC_CORE_PARSE_H_

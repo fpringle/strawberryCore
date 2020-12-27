@@ -1,5 +1,5 @@
-#ifndef __PLAY_H
-#define __PLAY_H
+#ifndef SRC_CORE_PLAY_H_
+#define SRC_CORE_PLAY_H_
 
 #include <cstdint>
 #include <iostream>
@@ -28,7 +28,7 @@ namespace chessCore {
  *
  */
 class Player : public board {
-private:
+ private:
     /**
      *  A table storing the nodes that have been visited in previous searches.
      *  See \ref record_t.
@@ -57,7 +57,8 @@ private:
      *  The maximum time the computer can use to search for each move.
      */
     int iterative_deepening_timeout;
-public:
+
+ public:
     // constructors
     // defined in play.cpp
     /**
@@ -78,7 +79,7 @@ public:
      *
      *  \param userColour           The colour the user will play as.
      */
-    Player(colour userColour);
+    explicit Player(colour userColour);
 
     /**
      *  \brief Parameterised constructor for Player.
@@ -120,7 +121,7 @@ public:
      *
      *  \param other    The Player object to be copied.
      */
-    Player(Player& other);
+    Player(const Player& other);
 
     /**
      *  \brief FEN constructor for Player.
@@ -131,7 +132,7 @@ public:
      *  \param fen      The string representing the required board state
      *                  in FEN format.
      */
-    Player(std::string fen);
+    explicit Player(std::string fen);
 
     /**
      *  Set the search timeout.
@@ -262,7 +263,6 @@ public:
      *  \param timeout      The cutoff time for computer search per move.
      */
     void play(colour playerSide, int timeout);
-
 };
 
 
@@ -272,6 +272,6 @@ void two_players();
 /** Play out a game with both sides controlled by the engine. */
 void two_computers();
 
-} // end of chessCore namespace
+}   // namespace chessCore
 
-#endif
+#endif  // SRC_CORE_PLAY_H_

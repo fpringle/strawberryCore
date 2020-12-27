@@ -94,4 +94,4 @@ int board::getPhase() const {
 
 
 
-} // end of chessCore namespace
+}   // namespace chessCore

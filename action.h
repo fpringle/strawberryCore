@@ -1,5 +1,5 @@
-#ifndef __ACTION_H
-#define __ACTION_H
+#ifndef SRC_CORE_ACTION_H_
+#define SRC_CORE_ACTION_H_
 
 #include "board.h"
 #include "move.h"
@@ -13,7 +13,7 @@ namespace chessCore {
  *  \param move             The move to be made.
  *  \return                 The board after the move is made.
  */
-board doMove (board startBoard, move_t move);
+board doMove(board startBoard, move_t move);
 
 /**
  *  Perform a move and return a pointer to the resultant board object.
@@ -22,8 +22,8 @@ board doMove (board startBoard, move_t move);
  *  \param move             The move to be made.
  *  \return                 A pointer to the board after the move is made.
  */
-board* doMove (board* startBoard, move_t move);
+board* doMove(board* startBoard, move_t move);
 
-}
+}  // namespace chessCore
 
-#endif
+#endif  // SRC_CORE_ACTION_H_

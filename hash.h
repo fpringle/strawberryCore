@@ -1,5 +1,5 @@
-#ifndef __HASH_H
-#define __HASH_H
+#ifndef SRC_CORE_HASH_H_
+#define SRC_CORE_HASH_H_
 
 #include <cstdint>
 
@@ -44,7 +44,6 @@ void init_keys();
  */
 void init_keys(uint64_t seed);
 
+}  // namespace chessCore
 
-} // end of chessCore namespace
-
-#endif
+#endif  // SRC_CORE_HASH_H_

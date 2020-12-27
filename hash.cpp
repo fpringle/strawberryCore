@@ -3,12 +3,12 @@
 #include <assert.h>
 #include <time.h>
 
+#include <cstdint>
+
 #include "board.h"
 #include "move.h"
 #include "twiddle.h"
 #include "typedefs.h"
-
-#include <cstdint>
 
 
 namespace chessCore {
@@ -142,7 +142,7 @@ uint64_t board::childHash(move_t move) const {
         }
     }
 
-    if (! foundMovingPiece) {
+    if (!foundMovingPiece) {
         return 0;
     }
 
@@ -155,19 +155,16 @@ uint64_t board::childHash(move_t move) const {
                     break;
                 }
             }
-        }
-
-        else {
+        } else {
             int _dir = (sideToMove == white) ? S : N;
-            child_hash ^= zobristKeys[(1 - sideToMove)*6 * 64 + toSquare + _dir];
+            child_hash ^= zobristKeys[(1 - sideToMove)*384 + toSquare + _dir];
         }
     }
 
     if (is_kingCastle(move)) {
         child_hash ^= zobristKeys[(1 + (6 * sideToMove))*64 + fromSquare + 3];
         child_hash ^= zobristKeys[(1 + (6 * sideToMove))*64 + toSquare - 1];
-    }
-    else if (is_queenCastle(move)) {
+    } else if (is_queenCastle(move)) {
         child_hash ^= zobristKeys[(1 + (6 * sideToMove))*64 + fromSquare - 4];
         child_hash ^= zobristKeys[(1 + (6 * sideToMove))*64 + toSquare + 1];
     }
@@ -175,7 +172,8 @@ uint64_t board::childHash(move_t move) const {
     // promotion
     if (is_promotion(move)) {
         child_hash ^= zobristKeys[6 * sideToMove * 64 + toSquare];
-        colourPiece prom_piece = colourPiece((6 * sideToMove) + which_promotion(move));
+        colourPiece prom_piece = colourPiece((6 * sideToMove) +
+                                             which_promotion(move));
         child_hash ^= zobristKeys[prom_piece * 64 + toSquare];
     }
 
@@ -216,8 +214,7 @@ uint64_t board::childHash(move_t move) const {
             }
             break;
         }
-    }
-    else if (movingPiece % 6 == 5) {
+    } else if (movingPiece % 6 == 5) {
         switch (sideToMove) {
         case white:
             if (castling[1]) {
@@ -275,4 +272,4 @@ uint64_t board::childHash(move_t move) const {
 
 
 
-} // end of chessCore namespace
+}   // namespace chessCore

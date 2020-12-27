@@ -35,13 +35,12 @@ Player::Player(bitboard * startPositions, bool * castling, bool ep, int dpp,
         value_t open_val, value_t end_val, uint64_t hash) :
     board::board(startPositions, castling, ep, dpp, clock, full_clock,
         side, open_val, end_val, hash) {
-
     user_colour = white;
     iterative_deepening_timeout = 60;
     searcher = new Searcher(&trans_table);
 }
 
-Player::Player(Player& p1) : board::board(p1) {
+Player::Player(const Player& p1) : board::board(p1) {
     trans_table = p1.getTable();
     move_history = p1.getHistory();
     move_history_san = p1.getHistorySAN();
@@ -75,7 +74,6 @@ namespace {
 }
 
 void Player::read_config(std::string filename) {
-
     std::cout << "Reading config file\n";
     Config cfg;
 
@@ -97,15 +95,14 @@ void Player::read_config(std::string filename) {
             iterative_deepening_timeout = max_search_time;
         }
         catch(...) {
-            std::cerr << "Unable to parse config file for MAX_SEARCH_TIME." << std::endl
-                      << "Using default value of " << iterative_deepening_timeout
-                      << "." << std::endl;
+            std::cerr << "Unable to parse config file for MAX_SEARCH_TIME."
+                      << std::endl << "Using default value of "
+                      << iterative_deepening_timeout << "." << std::endl;
         }
-    }
-    else {
-        std::cerr << "Unable to parse config file for MAX_SEARCH_TIME." << std::endl
-                  << "Using default value of " << iterative_deepening_timeout
-                  << "." << std::endl;
+    } else {
+        std::cerr << "Unable to parse config file for MAX_SEARCH_TIME."
+                  << std::endl << "Using default value of "
+                  << iterative_deepening_timeout << "." << std::endl;
     }
 
     // user colour
@@ -113,21 +110,23 @@ void Player::read_config(std::string filename) {
     if (it != cfg.end()) {
         try {
             std::string parsed_user_colour = upper_string(it->second);
-            if (parsed_user_colour == "WHITE") user_colour = white;
-            else if (parsed_user_colour == "BLACK") user_colour = black;
-            else throw;
+            if (parsed_user_colour == "WHITE") {
+                user_colour = white;
+            } else if (parsed_user_colour == "BLACK") {
+                user_colour = black;
+            } else {
+                throw;
+            }
         }
         catch(...) {
-            std::cerr << "Unable to parse config file for USER_COLOUR." << std::endl
-                      << "Using default value of " << user_colour
+            std::cerr << "Unable to parse config file for USER_COLOUR."
+                      << std::endl << "Using default value of " << user_colour
                       << "." << std::endl;
         }
-    }
-    else {
+    } else {
         std::cerr << "Unable to parse config file for USER_COLOUR." << std::endl
                   << "Using default value of " << user_colour
                   << "." << std::endl;
-
     }
 }
 
@@ -145,12 +144,11 @@ TransTable Player::getTable() const {
 
 void Player::print_history(std::ostream& cout) const {
     int sz = move_history.size();
-    for (int i=0; i<sz; i+=2) {
+    for (int i=0; i < sz; i+=2) {
         cout << int((i / 2) + 1) << ". " << mtos(move_history[i]);
         if (i + 1 < sz) {
             cout << "    " << mtos(move_history[i + 1]) << std::endl;
-        }
-        else {
+        } else {
             cout << std::endl;
         }
     }
@@ -158,12 +156,11 @@ void Player::print_history(std::ostream& cout) const {
 
 void Player::print_history_san(std::ostream& cout) const {
     int sz = move_history_san.size();
-    for (int i=0; i<sz; i+=2) {
+    for (int i=0; i < sz; i+=2) {
         cout << int((i / 2) + 1) << ". " << move_history_san[i];
         if (i + 1 < sz) {
             cout << "    " << move_history_san[i + 1] << std::endl;
-        }
-        else {
+        } else {
             cout << std::endl;
         }
     }
@@ -178,8 +175,11 @@ void Player::print_table(std::ostream& cout) {
 }
 
 void Player::print_board(std::ostream& cout) const {
-    if (user_colour == white) board::print_board(cout);
-    else board::print_board_flipped(cout);
+    if (user_colour == white) {
+        board::print_board(cout);
+    } else {
+        board::print_board_flipped(cout);
+    }
 }
 
 void Player::save_table(std::string filename) {
@@ -220,7 +220,7 @@ void Player::load_table(std::string filename) {
         fil >> line;
 
         comma_1 = 0;
-        comma_2 = line.find(",",comma_1 + 1);
+        comma_2 = line.find(",", comma_1 + 1);
         length = comma_2 - comma_1;
         num << line.substr(comma_1, length);
         num >> ind;
@@ -228,7 +228,7 @@ void Player::load_table(std::string filename) {
         num.clear();
 
         comma_1 = comma_2 + 1;
-        comma_2 = line.find(",",comma_1);
+        comma_2 = line.find(",", comma_1);
         length = comma_2 - comma_1;
         num << line.substr(comma_1, length);
         num >> sig;
@@ -236,22 +236,22 @@ void Player::load_table(std::string filename) {
         num.clear();
 
         comma_1 = comma_2 + 1;
-        comma_2 = line.find(",",comma_1);
+        comma_2 = line.find(",", comma_1);
         length = comma_2 - comma_1;
         move = std::stoi(line.substr(comma_1, length));
 
         comma_1 = comma_2 + 1;
-        comma_2 = line.find(",",comma_1);
+        comma_2 = line.find(",", comma_1);
         length = comma_2 - comma_1;
         depth = std::stoi(line.substr(comma_1, length));
 
         comma_1 = comma_2 + 1;
-        comma_2 = line.find(",",comma_1);
+        comma_2 = line.find(",", comma_1);
         length = comma_2 - comma_1;
         ibv = std::stoi(line.substr(comma_1, length));
 
         comma_1 = comma_2 + 1;
-        comma_2 = line.find(",",comma_1);
+        comma_2 = line.find(",", comma_1);
         length = comma_2 - comma_1;
         age = std::stoi(line.substr(comma_1, length));
 
@@ -285,11 +285,12 @@ move_t Player::input_move() const {
 }
 
 move_t Player::search() {
-    return searcher->search((board*)this, iterative_deepening_timeout, true);
+    return searcher->search(reinterpret_cast<board*>(this),
+                            iterative_deepening_timeout, true);
 }
 
 move_t Player::search(int timeout) {
-    return searcher->search((board*)this, timeout, true);
+    return searcher->search(reinterpret_cast<board*>(this), timeout, true);
 }
 
 void Player::play(colour playerSide, int timeout) {
@@ -304,40 +305,45 @@ void Player::play(colour playerSide, int timeout) {
         return;
     }
 
-    while (! gameover()) {
-        if (playerSide == white) print_board();
-        else print_board_flipped();
+    while (!gameover()) {
+        if (playerSide == white) {
+            print_board();
+        } else {
+            print_board_flipped();
+        }
 
         getSide(&movingSide);
 
         if (movingSide == playerSide) {
             player_move = input_move();
             doMoveInPlace(player_move);
-        }
-        else {
+        } else {
             std::cout << "Computer thinking...    " << std::endl;
-            std::cout << "Timeout: " << iterative_deepening_timeout << std::endl;
+            std::cout << "Timeout: " << iterative_deepening_timeout
+                      << std::endl;
             comp_move = search(timeout);
-            std::cout << "Computer move: " << mtos(comp_move) << std::endl;
+            std::cout << "Computer move: " << mtos(comp_move)
+                      << std::endl;
             doMoveInPlace(comp_move);
         }
         num_moves++;
     }
 
-    if (playerSide == white) print_board();
-    else print_board_flipped();
+    if (playerSide == white) {
+        print_board();
+    } else {
+        print_board_flipped();
+    }
     print_history();
 
     if (is_checkmate()) {
         getSide(&movingSide);
         if (movingSide == playerSide) {
             std::cout << "Computer wins" << std::endl;
-        }
-        else {
+        } else {
             std::cout << "Player wins" << std::endl;
         }
-    }
-    else if (is_stalemate()) {
+    } else if (is_stalemate()) {
         std::cout << "Draw" << std::endl;
     }
 }
@@ -353,18 +359,19 @@ void Player::play() {
         return;
     }
 
-    while (! gameover()) {
+    while (!gameover()) {
         print_board();
         getSide(&movingSide);
         if (movingSide == user_colour) {
             player_move = input_move();
             doMoveInPlace(player_move);
-        }
-        else {
+        } else {
             std::cout << "Computer thinking...    " << std::endl;
-            std::cout << "Timeout: " << iterative_deepening_timeout << std::endl;
+            std::cout << "Timeout: " << iterative_deepening_timeout
+                      << std::endl;
             comp_move = search();
-            std::cout << "Computer move: " << SAN_pre_move(comp_move) << std::endl;
+            std::cout << "Computer move: " << SAN_pre_move(comp_move)
+                      << std::endl;
             doMoveInPlace(comp_move);
         }
         num_moves++;
@@ -377,12 +384,10 @@ void Player::play() {
         getSide(&movingSide);
         if (movingSide == user_colour) {
             std::cout << "Computer wins" << std::endl;
-        }
-        else {
+        } else {
             std::cout << "Player wins" << std::endl;
         }
-    }
-    else if (is_stalemate()) {
+    } else if (is_stalemate()) {
         std::cout << "Draw" << std::endl;
     }
 }
@@ -393,7 +398,7 @@ void two_players() {
     colour movingSide;
     move_t player_move;
 
-    while (! gamestate->gameover()) {
+    while (!gamestate->gameover()) {
         gamestate->print_board();
 
         gamestate->getSide(&movingSide);
@@ -410,8 +415,7 @@ void two_players() {
     if (gamestate->is_checkmate()) {
         gamestate->getSide(&movingSide);
         std::cout << movingSide << " wins!" << std::endl;
-    }
-    else if (gamestate->is_stalemate()) {
+    } else if (gamestate->is_stalemate()) {
         std::cout << "Draw" << std::endl;
     }
 }
@@ -424,13 +428,16 @@ void two_computers() {
     std::string side;
     move_t comp_move;
 
-    while (! gamestate->gameover()) {
+    while (!gamestate->gameover()) {
         gamestate->print_board();
         gamestate->getSide(&movingSide);
         side = (movingSide == white ? "White" : "Black");
         std::cout << side << " thinking...    " << std::endl;
-        if (movingSide == white) comp_move = whiteComp->search();
-        else comp_move = blackComp->search();
+        if (movingSide == white) {
+            comp_move = whiteComp->search();
+        } else {
+            comp_move = blackComp->search();
+        }
         std::cout << side << " move: " << mtos(comp_move) << std::endl;
         whiteComp->doMoveInPlace(comp_move);
         blackComp->doMoveInPlace(comp_move);
@@ -443,11 +450,10 @@ void two_computers() {
     if (gamestate->is_checkmate()) {
         gamestate->getSide(&movingSide);
         std::cout << movingSide << " wins!" << std::endl;
-    }
-    else if (gamestate->is_stalemate()) {
+    } else if (gamestate->is_stalemate()) {
         std::cout << "Draw" << std::endl;
     }
 }
 
 
-} // end of chessCore namespace
+}   // namespace chessCore

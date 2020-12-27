@@ -1,6 +1,7 @@
 #include "action.h"
 
 #include <cstdint>
+#include <string>
 
 #include "eval.h"
 #include "hash.h"
@@ -40,7 +41,8 @@ board doMove(board startBoard, move_t move) {
     for (i = (movingColour * 6); i < (1 + movingColour)*6; i++) {
         if (is_bit_set(startingPos[i], fromSquare)) {
             movingPiece = colourPiece(i);
-            startingPos[i] = (startingPos[i] & ~(1ULL << fromSquare)) | (1ULL << toSquare);
+            startingPos[i] = (startingPos[i] & ~(1ULL << fromSquare)) |
+                             (1ULL << toSquare);
             opening_value -= pieceSquareTables[0][i][fromSquare];
             endgame_value -= pieceSquareTables[1][i][fromSquare];
             opening_value += pieceSquareTables[0][i][toSquare];
@@ -52,7 +54,7 @@ board doMove(board startBoard, move_t move) {
         }
     }
 
-    if (! foundMovingPiece) {
+    if (!foundMovingPiece) {
         return startBoard;
     }
 
@@ -70,13 +72,14 @@ board doMove(board startBoard, move_t move) {
                     break;
                 }
             }
-        }
-
-        else {
+        } else {
             int _dir = (movingColour == white) ? S : N;
-            startingPos[(1 - movingColour)*6] &= ~(1ULL << (toSquare + _dir));
-            opening_value -= pieceSquareTables[0][(1 - movingColour)*6][toSquare + _dir];
-            endgame_value -= pieceSquareTables[1][(1 - movingColour)*6][toSquare + _dir];
+            startingPos[(1 - movingColour)*6] &=
+                ~(1ULL << (toSquare + _dir));
+            opening_value -= pieceSquareTables[0]
+                                [(1 - movingColour)*6][toSquare + _dir];
+            endgame_value -= pieceSquareTables[1]
+                                [(1 - movingColour)*6][toSquare + _dir];
             opening_value -= pieceValues[0][(1 - movingColour)*6];
             endgame_value -= pieceValues[1][(1 - movingColour)*6];
             hash ^= zobristKeys[(1 - movingColour)*6 * 64 + toSquare + _dir];
@@ -85,24 +88,33 @@ board doMove(board startBoard, move_t move) {
     }
 
     if (is_kingCastle(move)) {
-        startingPos[1 + (6 * movingColour)] = (startingPos[1 + (6 * movingColour)] & ~
-                                               (1ULL << (fromSquare + 3)))
-                                              | (1ULL << (toSquare - 1));
-        opening_value -= pieceSquareTables[0][1 + (6 * movingColour)][fromSquare + 3];
-        endgame_value -= pieceSquareTables[1][1 + (6 * movingColour)][fromSquare + 3];
-        opening_value += pieceSquareTables[0][1 + (6 * movingColour)][toSquare - 1];
-        endgame_value += pieceSquareTables[1][1 + (6 * movingColour)][toSquare - 1];
+        startingPos[1 + (6 * movingColour)] =
+                            (startingPos[1 + (6 * movingColour)] & ~
+                            (1ULL << (fromSquare + 3))) |
+                            (1ULL << (toSquare - 1));
+        opening_value -= pieceSquareTables[0]
+                            [1 + (6 * movingColour)][fromSquare + 3];
+        endgame_value -= pieceSquareTables[1]
+                            [1 + (6 * movingColour)][fromSquare + 3];
+        opening_value += pieceSquareTables[0]
+                            [1 + (6 * movingColour)][toSquare - 1];
+        endgame_value += pieceSquareTables[1]
+                            [1 + (6 * movingColour)][toSquare - 1];
         hash ^= zobristKeys[(1 + (6 * movingColour))*64 + fromSquare + 3];
         hash ^= zobristKeys[(1 + (6 * movingColour))*64 + toSquare - 1];
-    }
-    else if (is_queenCastle(move)) {
-        startingPos[1 + (6 * movingColour)] = (startingPos[1 + (6 * movingColour)] & ~
-                                               (1ULL << (fromSquare - 4)))
-                                              | (1ULL << (toSquare + 1));
-        opening_value -= pieceSquareTables[0][1 + (6 * movingColour)][fromSquare - 4];
-        endgame_value -= pieceSquareTables[1][1 + (6 * movingColour)][fromSquare - 4];
-        opening_value += pieceSquareTables[0][1 + (6 * movingColour)][toSquare + 1];
-        endgame_value += pieceSquareTables[1][1 + (6 * movingColour)][toSquare + 1];
+    } else if (is_queenCastle(move)) {
+        startingPos[1 + (6 * movingColour)] =
+                            (startingPos[1 + (6 * movingColour)] & ~
+                            (1ULL << (fromSquare - 4))) |
+                            (1ULL << (toSquare + 1));
+        opening_value -= pieceSquareTables[0]
+                            [1 + (6 * movingColour)][fromSquare - 4];
+        endgame_value -= pieceSquareTables[1]
+                            [1 + (6 * movingColour)][fromSquare - 4];
+        opening_value += pieceSquareTables[0]
+                            [1 + (6 * movingColour)][toSquare + 1];
+        endgame_value += pieceSquareTables[1]
+                            [1 + (6 * movingColour)][toSquare + 1];
         hash ^= zobristKeys[(1 + (6 * movingColour))*64 + fromSquare - 4];
         hash ^= zobristKeys[(1 + (6 * movingColour))*64 + toSquare + 1];
     }
@@ -139,8 +151,9 @@ board doMove(board startBoard, move_t move) {
         ep = true;
         dpp = fromSquare % 8;
         hash ^= zobristKeys[772 + dpp];
+    } else {
+        ep = false;
     }
-    else ep = false;
 
     // check for changes to castling rights
     if (movingPiece % 6 == 1) {
@@ -170,8 +183,7 @@ board doMove(board startBoard, move_t move) {
             }
             break;
         }
-    }
-    else if (movingPiece % 6 == 5) {
+    } else if (movingPiece % 6 == 5) {
         switch (movingColour) {
         case white:
             if (castling[1]) {
@@ -226,8 +238,11 @@ board doMove(board startBoard, move_t move) {
     }
 
     // increment halfMoveClock
-    if (is_capture(move) | (movingPiece % 6 == 0)) clk = 0;
-    else clk++;
+    if (is_capture(move) | (movingPiece % 6 == 0)) {
+        clk = 0;
+    } else {
+        clk++;
+    }
 
     // increment fullMoveClock
     if (movingColour == black) full_clk++;
@@ -269,7 +284,8 @@ board* doMove(board* startBoard, move_t move) {
     for (i = (movingColour * 6); i < (1 + movingColour)*6; i++) {
         if (is_bit_set(startingPos[i], fromSquare)) {
             movingPiece = colourPiece(i);
-            startingPos[i] = (startingPos[i] & ~(1ULL << fromSquare)) | (1ULL << toSquare);
+            startingPos[i] = (startingPos[i] & ~(1ULL << fromSquare)) |
+                             (1ULL << toSquare);
             opening_value -= pieceSquareTables[0][i][fromSquare];
             endgame_value -= pieceSquareTables[1][i][fromSquare];
             opening_value += pieceSquareTables[0][i][toSquare];
@@ -281,7 +297,7 @@ board* doMove(board* startBoard, move_t move) {
         }
     }
 
-    if (! foundMovingPiece) {
+    if (!foundMovingPiece) {
         return startBoard;
     }
 
@@ -299,13 +315,13 @@ board* doMove(board* startBoard, move_t move) {
                     break;
                 }
             }
-        }
-
-        else {
+        } else {
             int _dir = (movingColour == white) ? S : N;
             startingPos[(1 - movingColour)*6] &= ~(1ULL << (toSquare + _dir));
-            opening_value -= pieceSquareTables[0][(1 - movingColour)*6][toSquare + _dir];
-            endgame_value -= pieceSquareTables[1][(1 - movingColour)*6][toSquare + _dir];
+            opening_value -= pieceSquareTables[0]
+                                [(1 - movingColour)*6][toSquare + _dir];
+            endgame_value -= pieceSquareTables[1]
+                                [(1 - movingColour)*6][toSquare + _dir];
             opening_value -= pieceValues[0][(1 - movingColour)*6];
             endgame_value -= pieceValues[1][(1 - movingColour)*6];
             hash ^= zobristKeys[(1 - movingColour)*6 * 64 + toSquare + _dir];
@@ -314,24 +330,33 @@ board* doMove(board* startBoard, move_t move) {
     }
 
     if (is_kingCastle(move)) {
-        startingPos[1 + (6 * movingColour)] = (startingPos[1 + (6 * movingColour)] & ~
-                                               (1ULL << (fromSquare + 3)))
-                                              | (1ULL << (toSquare - 1));
-        opening_value -= pieceSquareTables[0][1 + (6 * movingColour)][fromSquare + 3];
-        endgame_value -= pieceSquareTables[1][1 + (6 * movingColour)][fromSquare + 3];
-        opening_value += pieceSquareTables[0][1 + (6 * movingColour)][toSquare - 1];
-        endgame_value += pieceSquareTables[1][1 + (6 * movingColour)][toSquare - 1];
+        startingPos[1 + (6 * movingColour)] =
+                            (startingPos[1 + (6 * movingColour)] & ~
+                            (1ULL << (fromSquare + 3))) |
+                            (1ULL << (toSquare - 1));
+        opening_value -= pieceSquareTables[0]
+                            [1 + (6 * movingColour)][fromSquare + 3];
+        endgame_value -= pieceSquareTables[1]
+                            [1 + (6 * movingColour)][fromSquare + 3];
+        opening_value += pieceSquareTables[0]
+                            [1 + (6 * movingColour)][toSquare - 1];
+        endgame_value += pieceSquareTables[1]
+                            [1 + (6 * movingColour)][toSquare - 1];
         hash ^= zobristKeys[(1 + (6 * movingColour))*64 + fromSquare + 3];
         hash ^= zobristKeys[(1 + (6 * movingColour))*64 + toSquare - 1];
-    }
-    else if (is_queenCastle(move)) {
-        startingPos[1 + (6 * movingColour)] = (startingPos[1 + (6 * movingColour)] & ~
-                                               (1ULL << (fromSquare - 4)))
-                                              | (1ULL << (toSquare + 1));
-        opening_value -= pieceSquareTables[0][1 + (6 * movingColour)][fromSquare - 4];
-        endgame_value -= pieceSquareTables[1][1 + (6 * movingColour)][fromSquare - 4];
-        opening_value += pieceSquareTables[0][1 + (6 * movingColour)][toSquare + 1];
-        endgame_value += pieceSquareTables[1][1 + (6 * movingColour)][toSquare + 1];
+    } else if (is_queenCastle(move)) {
+        startingPos[1 + (6 * movingColour)] =
+                            (startingPos[1 + (6 * movingColour)] & ~
+                            (1ULL << (fromSquare - 4))) |
+                            (1ULL << (toSquare + 1));
+        opening_value -= pieceSquareTables[0]
+                            [1 + (6 * movingColour)][fromSquare - 4];
+        endgame_value -= pieceSquareTables[1]
+                            [1 + (6 * movingColour)][fromSquare - 4];
+        opening_value += pieceSquareTables[0]
+                            [1 + (6 * movingColour)][toSquare + 1];
+        endgame_value += pieceSquareTables[1]
+                            [1 + (6 * movingColour)][toSquare + 1];
         hash ^= zobristKeys[(1 + (6 * movingColour))*64 + fromSquare - 4];
         hash ^= zobristKeys[(1 + (6 * movingColour))*64 + toSquare + 1];
     }
@@ -368,8 +393,9 @@ board* doMove(board* startBoard, move_t move) {
         ep = true;
         dpp = fromSquare % 8;
         hash ^= zobristKeys[772 + dpp];
+    } else {
+        ep = false;
     }
-    else ep = false;
 
     // check for changes to castling rights
     if (movingPiece % 6 == 1) {
@@ -399,8 +425,7 @@ board* doMove(board* startBoard, move_t move) {
             }
             break;
         }
-    }
-    else if (movingPiece % 6 == 5) {
+    } else if (movingPiece % 6 == 5) {
         switch (movingColour) {
         case white:
             if (castling[1]) {
@@ -455,8 +480,11 @@ board* doMove(board* startBoard, move_t move) {
     }
 
     // increment halfMoveClock
-    if (is_capture(move) | (movingPiece % 6 == 0)) clk = 0;
-    else clk++;
+    if (is_capture(move) | (movingPiece % 6 == 0)) {
+        clk = 0;
+    } else {
+        clk++;
+    }
 
     // increment fullMoveClock
     if (movingColour == black) full_clk++;
@@ -480,7 +508,8 @@ void board::doMoveInPlace(move_t move) {
     for (i = (sideToMove * 6); i < (1 + sideToMove)*6; i++) {
         if (is_bit_set(pieceBoards[i], fromSquare)) {
             movingPiece = colourPiece(i);
-            pieceBoards[i] = (pieceBoards[i] & ~(1ULL << fromSquare)) | (1ULL << toSquare);
+            pieceBoards[i] = (pieceBoards[i] & ~(1ULL << fromSquare)) |
+                             (1ULL << toSquare);
             opening_value -= pieceSquareTables[0][i][fromSquare];
             endgame_value -= pieceSquareTables[1][i][fromSquare];
             opening_value += pieceSquareTables[0][i][toSquare];
@@ -492,7 +521,7 @@ void board::doMoveInPlace(move_t move) {
         }
     }
 
-    if (! foundMovingPiece) {
+    if (!foundMovingPiece) {
         return;
     }
 
@@ -510,38 +539,47 @@ void board::doMoveInPlace(move_t move) {
                     break;
                 }
             }
-        }
-
-        else {
+        } else {
             int _dir = (sideToMove == white) ? S : N;
             pieceBoards[(1 - sideToMove)*6] &= ~(1ULL << (toSquare + _dir));
-            opening_value -= pieceSquareTables[0][(1 - sideToMove)*6][toSquare + _dir];
-            endgame_value -= pieceSquareTables[1][(1 - sideToMove)*6][toSquare + _dir];
+            opening_value -= pieceSquareTables[0]
+                                [(1 - sideToMove)*6][toSquare + _dir];
+            endgame_value -= pieceSquareTables[1]
+                                [(1 - sideToMove)*6][toSquare + _dir];
             opening_value -= pieceValues[0][(1 - sideToMove)*6];
             endgame_value -= pieceValues[1][(1 - sideToMove)*6];
-            hash_value ^= zobristKeys[(1 - sideToMove)*6 * 64 + toSquare + _dir];
+            hash_value ^= zobristKeys[(1 - sideToMove)*384 + toSquare + _dir];
         }
     }
 
     if (is_kingCastle(move)) {
-        pieceBoards[1 + (6 * sideToMove)] = (pieceBoards[1 + (6 * sideToMove)] & ~
-                                             (1ULL << (fromSquare + 3)))
-                                            | (1ULL << (toSquare - 1));
-        opening_value -= pieceSquareTables[0][1 + (6 * sideToMove)][fromSquare + 3];
-        endgame_value -= pieceSquareTables[1][1 + (6 * sideToMove)][fromSquare + 3];
-        opening_value += pieceSquareTables[0][1 + (6 * sideToMove)][toSquare - 1];
-        endgame_value += pieceSquareTables[1][1 + (6 * sideToMove)][toSquare - 1];
+        pieceBoards[1 + (6 * sideToMove)] =
+                            (pieceBoards[1 + (6 * sideToMove)] & ~
+                            (1ULL << (fromSquare + 3))) |
+                            (1ULL << (toSquare - 1));
+        opening_value -= pieceSquareTables[0]
+                            [1 + (6 * sideToMove)][fromSquare + 3];
+        endgame_value -= pieceSquareTables[1]
+                            [1 + (6 * sideToMove)][fromSquare + 3];
+        opening_value += pieceSquareTables[0]
+                            [1 + (6 * sideToMove)][toSquare - 1];
+        endgame_value += pieceSquareTables[1]
+                            [1 + (6 * sideToMove)][toSquare - 1];
         hash_value ^= zobristKeys[(1 + (6 * sideToMove))*64 + fromSquare + 3];
         hash_value ^= zobristKeys[(1 + (6 * sideToMove))*64 + toSquare - 1];
-    }
-    else if (is_queenCastle(move)) {
-        pieceBoards[1 + (6 * sideToMove)] = (pieceBoards[1 + (6 * sideToMove)] & ~
-                                             (1ULL << (fromSquare - 4)))
-                                            | (1ULL << (toSquare + 1));
-        opening_value -= pieceSquareTables[0][1 + (6 * sideToMove)][fromSquare - 4];
-        endgame_value -= pieceSquareTables[1][1 + (6 * sideToMove)][fromSquare - 4];
-        opening_value += pieceSquareTables[0][1 + (6 * sideToMove)][toSquare + 1];
-        endgame_value += pieceSquareTables[1][1 + (6 * sideToMove)][toSquare + 1];
+    } else if (is_queenCastle(move)) {
+        pieceBoards[1 + (6 * sideToMove)] =
+                            (pieceBoards[1 + (6 * sideToMove)] & ~
+                            (1ULL << (fromSquare - 4))) |
+                            (1ULL << (toSquare + 1));
+        opening_value -= pieceSquareTables[0]
+                            [1 + (6 * sideToMove)][fromSquare - 4];
+        endgame_value -= pieceSquareTables[1]
+                            [1 + (6 * sideToMove)][fromSquare - 4];
+        opening_value += pieceSquareTables[0]
+                            [1 + (6 * sideToMove)][toSquare + 1];
+        endgame_value += pieceSquareTables[1]
+                            [1 + (6 * sideToMove)][toSquare + 1];
         hash_value ^= zobristKeys[(1 + (6 * sideToMove))*64 + fromSquare - 4];
         hash_value ^= zobristKeys[(1 + (6 * sideToMove))*64 + toSquare + 1];
     }
@@ -555,7 +593,8 @@ void board::doMoveInPlace(move_t move) {
         endgame_value -= pieceValues[1][6 * sideToMove];
         hash_value ^= zobristKeys[6 * sideToMove * 64 + toSquare];
 
-        colourPiece prom_piece = colourPiece((6 * sideToMove) + which_promotion(move));
+        colourPiece prom_piece = colourPiece((6 * sideToMove) +
+                                             which_promotion(move));
 
         pieceBoards[prom_piece] |= (1ULL << toSquare);
         opening_value += pieceSquareTables[0][prom_piece][toSquare];
@@ -574,8 +613,9 @@ void board::doMoveInPlace(move_t move) {
         lastMoveDoublePawnPush = true;
         dPPFile = fromSquare % 8;
         hash_value ^= zobristKeys[772 + dPPFile];
+    } else {
+        lastMoveDoublePawnPush = false;
     }
-    else lastMoveDoublePawnPush = false;
 
     // check for changes to castling rights
     if (movingPiece % 6 == 1) {
@@ -605,8 +645,7 @@ void board::doMoveInPlace(move_t move) {
             }
             break;
         }
-    }
-    else if (movingPiece % 6 == 5) {
+    } else if (movingPiece % 6 == 5) {
         switch (sideToMove) {
         case white:
             if (castleWhiteQueenSide) {
@@ -661,8 +700,11 @@ void board::doMoveInPlace(move_t move) {
     }
 
     // increment halfMoveClock
-    if (is_capture(move) | (movingPiece % 6 == 0)) halfMoveClock = 0;
-    else halfMoveClock++;
+    if (is_capture(move) | (movingPiece % 6 == 0)) {
+        halfMoveClock = 0;
+    } else {
+        halfMoveClock++;
+    }
 
     // increment fullMoveClock
     if (sideToMove == black) fullMoveClock++;
@@ -687,4 +729,4 @@ void Player::makeChild(board* child, move_t move) const {
     child->doMoveInPlace(move);
 }
 
-} // end of chessCore namespace
+}   // namespace chessCore

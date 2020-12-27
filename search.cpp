@@ -40,11 +40,10 @@ Searcher::Searcher(TransTable* tt) {
 
 void Searcher::prune_table(uint8_t age) {
     TransTable::const_iterator it;
-    for (it=trans_table->cbegin(); it!=trans_table->cend();) {
+    for (it=trans_table->cbegin(); it != trans_table->cend();) {
         if (it->second.age < age) {
             trans_table->erase(it++);
-        }
-        else {
+        } else {
             ++it;
         }
     }
@@ -82,12 +81,16 @@ namespace {
      *  \param best_move    The move we want to search first.
      */
     void reorder_moves(MoveList* moves, move_t best_move) {
-        MoveList::iterator it = std::find(moves->begin(),moves->end(), best_move);
+        MoveList::iterator it;
+        it = std::find(moves->begin(), moves->end(), best_move);
         if (it == moves->end()) return;
         std::iter_swap(it, moves->begin());
     }
 
-    bool table_lookup(uint64_t sig, uint32_t ind, TransTable* tt, record_t* rec) {
+    bool table_lookup(uint64_t sig,
+                      uint32_t ind,
+                      TransTable* tt,
+                      record_t* rec) {
         TransTable::iterator it = tt->find(ind);
         if (it == tt->end()) return false;
         if (it->second.signature != sig) return false;
@@ -95,17 +98,27 @@ namespace {
         return true;
     }
 
-    void table_save(uint64_t sig, uint32_t ind, move_t best_move, uint8_t depth,
-                    value_t score, uint8_t age, valueType flag, TransTable* tt) {
-
+    void table_save(uint64_t sig,
+                    uint32_t ind,
+                    move_t best_move,
+                    uint8_t depth,
+                    value_t score,
+                    uint8_t age,
+                    valueType flag,
+                    TransTable* tt) {
         record_t rec({sig, best_move, depth, score, age, flag});
         tt->operator[](ind) = rec;
     }
-}
+
+    double time_diff(clock_t start_time) {
+        return static_cast<double>(clock() - start_time) /
+                    static_cast<double>(CLOCKS_PER_SEC);
+    }
+
+}   // namespace
 
 value_t Searcher::principal_variation(board* b, uint8_t depth,
                                  value_t alpha, value_t beta) {
-
     colour side;
     b->getSide(&side);
     value_t ret;
@@ -155,11 +168,10 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
     if (moves.empty()) {
         if (b->is_checkmate()) {
             ret = value * ((side == white) ? 1 : -1);
-        }
-        else {
+        } else {
             ret = 0;
         }
-        table_save(sig,ind,bestMove,depth,ret,age,EXACT,trans_table);
+        table_save(sig, ind, bestMove, depth, ret, age, EXACT, trans_table);
         return ret;
     }
 
@@ -171,8 +183,7 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
         child = doMove(b, move);
         if (bSearchPv) {
             score = - principal_variation(child, depth - 1, -beta, -alpha);
-        }
-        else {
+        } else {
             score = - principal_variation(child, depth - 1, -alpha - 1, -alpha);
             if (score > alpha) {
                 score = - principal_variation(child, depth - 1, -beta, -alpha);
@@ -190,7 +201,7 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
         }
         if (alpha >= beta) {
             // lower bound
-            table_save(sig,ind,move,depth,beta,age,LOWER,trans_table);
+            table_save(sig, ind, move, depth, beta, age, LOWER, trans_table);
             return beta;
         }
 /*
@@ -212,11 +223,10 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
     }
     if (bSearchPv) {
         // exact
-        table_save(sig,ind,bestMove,depth,value,age,EXACT,trans_table);
-    }
-    else {
+        table_save(sig, ind, bestMove, depth, value, age, EXACT, trans_table);
+    } else {
         // upper bound
-        table_save(sig,ind,bestMove,depth,value,age,UPPER,trans_table);
+        table_save(sig, ind, bestMove, depth, value, age, UPPER, trans_table);
     }
     return alpha;
 }
@@ -225,7 +235,6 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
 value_t Searcher::principal_variation(board* b, uint8_t depth,
                                       value_t alpha, value_t beta,
                                       double time_remaining) {
-
     clock_t start_time = clock();
     colour side;
     b->getSide(&side);
@@ -262,8 +271,7 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
         }
     }
 
-    if (double(clock() - start_time) / double(CLOCKS_PER_SEC) > time_remaining ||
-                depth <= 0) {
+    if (time_diff(start_time) > time_remaining || depth <= 0) {
         ret = quiesce(b, alpha, beta);
         return ret;
     }
@@ -276,11 +284,10 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
     if (moves.empty()) {
         if (b->is_checkmate()) {
             ret = score * ((side == white) ? 1 : -1);
-        }
-        else {
+        } else {
             ret = 0;
         }
-        table_save(sig,ind,bestMove,depth,ret,age,EXACT,trans_table);
+        table_save(sig, ind, bestMove, depth, ret, age, EXACT, trans_table);
         return ret;
     }
 
@@ -290,22 +297,24 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
 
     for (move_t move : moves) {
         child = doMove(b, move);
-        time_remaining -= double(clock() - start_time) / double(CLOCKS_PER_SEC);
+        time_remaining -= time_diff(start_time);
         if (time_remaining <= 0) break;
 
         if (bSearchPv) {
-            score = - principal_variation(child, depth - 1, -beta, -alpha, time_remaining);
-        }
-        else {
-            score = - principal_variation(child, depth - 1, -alpha - 1, -alpha, time_remaining);
+            score = - principal_variation(child, depth-1, -beta,
+                                          -alpha, time_remaining);
+        } else {
+            score = - principal_variation(child, depth - 1, -alpha - 1,
+                                          -alpha, time_remaining);
             if (score > alpha) {
-                score = - principal_variation(child, depth - 1, -beta, -alpha, time_remaining);
+                score = - principal_variation(child, depth - 1, -beta,
+                                              -alpha, time_remaining);
             }
         }
 
         if (score >= beta) {
             // lower bound
-            table_save(sig,ind,move,depth,beta,age,LOWER,trans_table);
+            table_save(sig, ind, move, depth, beta, age, LOWER, trans_table);
             return beta;
         }
         if (score > alpha) {
@@ -317,11 +326,10 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
     }
     if (bSearchPv) {
         // exact
-        table_save(sig,ind,bestMove,depth,alpha,age,EXACT,trans_table);
-    }
-    else {
+        table_save(sig, ind, bestMove, depth, alpha, age, EXACT, trans_table);
+    } else {
         // upper bound
-        table_save(sig,ind,bestMove,depth,alpha,age,UPPER,trans_table);
+        table_save(sig, ind, bestMove, depth, alpha, age, UPPER, trans_table);
     }
     return alpha;
 }
@@ -329,7 +337,6 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
 
 value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
                                     value_t alpha, value_t beta) {
-
     colour side;
     b->getSide(&side);
     value_t ret;
@@ -378,11 +385,10 @@ value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
     if (moves.empty()) {
         if (b->is_checkmate()) {
             ret = value * ((side == white) ? 1 : -1);
-        }
-        else {
+        } else {
             ret = 0;
         }
-        table_save(sig,ind,bestMove,depth,ret,age,EXACT,trans_table);
+        table_save(sig, ind, bestMove, depth, ret, age, EXACT, trans_table);
         return ret;
     }
 
@@ -401,16 +407,13 @@ value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
             alpha = value;
         }
         if (alpha >= beta) break;
-
     }
     if (value <= alphaOrig) {
-        table_save(sig,ind,bestMove,depth,value,age,UPPER,trans_table);
-    }
-    else if (value >= beta) {
-        table_save(sig,ind,bestMove,depth,value,age,LOWER,trans_table);
-    }
-    else {
-        table_save(sig,ind,bestMove,depth,value,age,EXACT,trans_table);
+        table_save(sig, ind, bestMove, depth, value, age, UPPER, trans_table);
+    } else if (value >= beta) {
+        table_save(sig, ind, bestMove, depth, value, age, LOWER, trans_table);
+    } else {
+        table_save(sig, ind, bestMove, depth, value, age, EXACT, trans_table);
     }
     return value;
 }
@@ -451,16 +454,18 @@ value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
                     break;
             }
             if (alpha >= beta) {
-                table_save(sig,ind,bestMove,depth,record.score,age,LOWER,trans_table);
+                table_save(sig, ind, bestMove, depth, record.score,
+                           age, LOWER, trans_table);
                 return record.score;
             }
         }
     }
 
-    if (double(clock() - start_time) / double(CLOCKS_PER_SEC) > time_remaining ||
-        depth <= 0) {
+    if (time_diff(start_time) > time_remaining
+            || depth <= 0) {
         ret = quiesce(b, alpha, beta);      // check this
-        table_save(sig,ind,bestMove,depth,record.score,age,LOWER,trans_table);
+        table_save(sig, ind, bestMove, depth, record.score,
+                   age, LOWER, trans_table);
         return ret;
     }
 
@@ -469,7 +474,7 @@ value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
     MoveList moves = b->gen_legal_moves();
     if (moves.empty()) {
         ret = (b->is_checkmate()) ? -VAL_INFINITY : 0;
-        table_save(sig,ind,bestMove,depth,ret,age,EXACT,trans_table);
+        table_save(sig, ind, bestMove, depth, ret, age, EXACT, trans_table);
         return ret;
     }
 
@@ -484,10 +489,11 @@ value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
     value_t score, value = -VAL_INFINITY;
 
     for (move_t move : moves) {
-        time_remaining -= double(clock() - start_time) / double(CLOCKS_PER_SEC);
+        time_remaining -= time_diff(start_time);
         if (time_remaining <= 0) break;
         child = doMove(b, move);
-        score = - negamax_alphabeta(child, depth - 1, -beta, -alpha, time_remaining);
+        score = - negamax_alphabeta(child, depth - 1, -beta,
+                                    -alpha, time_remaining);
         if (score > value) {
             bestMove = move;
             value = score;
@@ -496,16 +502,13 @@ value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
             alpha = value;
         }
         if (alpha >= beta) break;
-
     }
     if (value <= alphaOrig) {
-        table_save(sig,ind,bestMove,depth,value,age,UPPER,trans_table);
-    }
-    else if (value >= beta) {
-        table_save(sig,ind,bestMove,depth,value,age,LOWER,trans_table);
-    }
-    else {
-        table_save(sig,ind,bestMove,depth,value,age,EXACT,trans_table);
+        table_save(sig, ind, bestMove, depth, value, age, UPPER, trans_table);
+    } else if (value >= beta) {
+        table_save(sig, ind, bestMove, depth, value, age, LOWER, trans_table);
+    } else {
+        table_save(sig, ind, bestMove, depth, value, age, EXACT, trans_table);
     }
     return value;
 }
@@ -516,7 +519,7 @@ namespace {
         b->getSide(&side);
         board* child;
         MoveList moves = b->gen_legal_moves();
-        value_t best_value = VAL_INFINITY * (side==white ? -1 : 1);
+        value_t best_value = VAL_INFINITY * (side == white ? -1 : 1);
         value_t value;
         move_t best_move = 0;
         uint64_t hash;
@@ -532,28 +535,31 @@ namespace {
             if (side == white &&  value >= best_value) {
                 best_value = value;
                 best_move = move;
-            }
-            else if (side == black && value <= best_value) {
+            } else if (side == black && value <= best_value) {
                 best_value = value;
                 best_move = move;
             }
         }
         return best_move;
     }
-}
+}   // namespace
 
 
-move_t Searcher::iterative_deepening_negamax(board* b, int timeout, bool cutoff) {
+move_t Searcher::iterative_deepening_negamax(board* b,
+                                             int timeout,
+                                             bool cutoff) {
     clock_t start_time = clock();
     uint8_t age;
     b->getFullClock(&age);
 #if DEBUG
-    std::cout << "Size of transposition table: " << trans_table->size() << std::endl;
+    std::cout << "Size of transposition table: "
+              << trans_table->size() << std::endl;
 #endif
     if (age > 3) {
         prune_table(age - 3);
 #if DEBUG
-    std::cout << "Size of transposition table after pruning: " << trans_table->size() << std::endl;
+    std::cout << "Size of transposition table after pruning: "
+              << trans_table->size() << std::endl;
 #endif
     }
     double time_taken = 0.0;
@@ -572,7 +578,8 @@ move_t Searcher::iterative_deepening_negamax(board* b, int timeout, bool cutoff)
     value_t beta = VAL_INFINITY;
 
     while (time_taken < timeout && depth < 100) {
-        negamax_alphabeta(b, depth, alpha, beta, timeout - time_taken, best_move);
+        negamax_alphabeta(b, depth, alpha, beta,
+                          timeout - time_taken, best_move);
 //        new_move = getBest(b, trans_table);
         new_move = trans_table->operator[](ind).best_move;
         depth++;
@@ -580,7 +587,7 @@ move_t Searcher::iterative_deepening_negamax(board* b, int timeout, bool cutoff)
             best_move = new_move;
             moves.push_back(best_move);
         }
-        time_taken = double(clock() - start_time) / double(CLOCKS_PER_SEC);
+        time_taken = time_diff(start_time);
 #if DEBUG
         std::cout << "Depth searched: " << depth - 1 << "   ("
                   << time_taken
@@ -589,7 +596,8 @@ move_t Searcher::iterative_deepening_negamax(board* b, int timeout, bool cutoff)
                   << b->SAN_pre_move(best_move) << ")" << std::endl;
 #endif
         sz = moves.size();
-        if (cutoff && ((sz >= 8) || (sz >= 5 && time_taken > 20.0)) && moves[sz - 1] == moves[sz - 2]) {
+        if (cutoff && ((sz >= 8) || (sz >= 5 && time_taken > 20.0))
+            && moves[sz - 1] == moves[sz - 2]) {
             break;
         }
     }
@@ -621,21 +629,21 @@ move_t Searcher::iterative_deepening_pv(board* b, int timeout, bool cutoff) {
             best_move = new_move;
             moves.push_back(best_move);
         }
-        time_taken = double(clock() - start_time) / double(CLOCKS_PER_SEC);
+        time_taken = time_diff(start_time);
 #if DEBUG
         std::cout << "Depth searched: " << depth - 1 << "   ("
                   << time_taken
                   << " seconds total)"
                   << "  (best move so far: "
-                  << b->SAN_pre_move(moves.empty() ? 0 : moves.back()) << ")" << std::endl;
+                  << b->SAN_pre_move(moves.empty() ? 0 : moves.back())
+                  << ")" << std::endl;
 #endif
         sz = moves.size();
-        if (cutoff && ((sz >= 8) || (sz >= 5 && time_taken > 20.0)) && moves[sz - 1] == moves[sz - 2]) {
+        if (cutoff && ((sz >= 8) || (sz >= 5 && time_taken > 20.0))
+            && moves[sz - 1] == moves[sz - 2]) {
             break;
         }
-
     }
-
     return moves.back();
 }
 
@@ -643,4 +651,4 @@ move_t Searcher::search(board* b, int timeout, bool cutoff) {
     return iterative_deepening_negamax(b, timeout, cutoff);
 }
 
-} // end of chessCore namespace
+}   // namespace chessCore

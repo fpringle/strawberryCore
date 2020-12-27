@@ -12,12 +12,9 @@
 #include "twiddle.h"
 
 
-using namespace chessCore;
-
-
 int main() {
-    init();
-    Player* player = new Player(white);
+    chessCore::init();
+    chessCore::Player* player = new chessCore::Player(white);
     player->play();
     return 0;
 }

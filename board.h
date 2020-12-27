@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef __BOARD_H
-#define __BOARD_H
+#ifndef SRC_CORE_BOARD_H_
+#define SRC_CORE_BOARD_H_
 
 #include <cstdint>
 #include <iostream>
@@ -92,7 +92,6 @@ void print_bb(bitboard bb, char c = 'x', std::ostream& cout = std::cout);
  *  checkmate information.
  */
 class board {
-
     /**
      *  \brief An array of 12 bitboards representing the positions of each piece.
      *
@@ -289,7 +288,7 @@ class board {
     bool can_get_out_of_check(colour side, piece checkingPiece,
                          int checkingInd, int kingInd, bool double_check) const;
 
-public:
+ public:
     // constructors
     // defined in board.cpp
     /**
@@ -346,7 +345,7 @@ public:
      *  \param fen      The string representing the required board state
      *                  in FEN format.
      */
-    board(std::string fen);
+    explicit board(std::string fen);
 
     /**
      *  Equality comparison operator for board.
@@ -675,7 +674,7 @@ public:
 };
 
 
-} // end of chessCore namespace
+}   // namespace chessCore
 
 
-#endif
+#endif  // SRC_CORE_BOARD_H_

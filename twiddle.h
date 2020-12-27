@@ -1,17 +1,16 @@
 // bit twiddling functions
 
-#ifndef __TWIDDLE_H
-#define __TWIDDLE_H
+#ifndef SRC_CORE_TWIDDLE_H_
+#define SRC_CORE_TWIDDLE_H_
 
 #include <math.h>
-//#include "move.h"
 #include "typedefs.h"
 
 namespace chessCore {
 
 #define FSB first_set_bit
 #define ITER_BITBOARD(ind, bb) \
-    for(ind = FSB(bb); bb; bb &= (bb - 1ULL), ind = FSB(bb))
+    for (ind = FSB(bb); bb; bb &= (bb - 1ULL), ind = FSB(bb))
 
 
 /**@{*/
@@ -67,7 +66,7 @@ constexpr bitboard notRankEight = ~rankEight;
  */
 constexpr int count_bits_set(bitboard v) {
     // thanks Brian Kernighan
-    int c=0;
+    int c = 0;
     for (; v; c++) {
         v &= v - 1;
     }
@@ -348,6 +347,6 @@ constexpr bitboard oneNNW(bitboard b) {
 
 
 
-} // end of chessCore namespace
+}   // namespace chessCore
 
-#endif
+#endif  // SRC_CORE_TWIDDLE_H_

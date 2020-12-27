@@ -1,5 +1,5 @@
-#ifndef __INIT_H
-#define __INIT_H
+#ifndef SRC_CORE_INIT_H_
+#define SRC_CORE_INIT_H_
 
 #include <cstdint>
 
@@ -28,6 +28,6 @@ void init();
 void init(uint64_t seed);
 
 
-} // end of chessCore namespace
+}   // namespace chessCore
 
-#endif
+#endif  // SRC_CORE_INIT_H_

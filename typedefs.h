@@ -1,5 +1,5 @@
-#ifndef __TYPEDEFS_H
-#define __TYPEDEFS_H
+#ifndef SRC_CORE_TYPEDEFS_H_
+#define SRC_CORE_TYPEDEFS_H_
 
 #include <cstdint>
 #include <iostream>
@@ -31,7 +31,10 @@ using MoveList = std::vector<move_t>;
  *  \enum colour
  *  An Enum to represents the two colours of pieces.
  */
-enum colour {white,black};
+enum colour {
+    white,
+    black
+};
 
 /**
  *  Print the name of a colour to an output stream.
@@ -49,23 +52,48 @@ inline std::ostream& operator<<(std::ostream& out, const colour& colour) {
  *  \enum piece
  *  An Enum to represents the six types of piece.
  */
-enum piece {pawn,rook,knight,bishop,queen,king};
+enum piece {
+    pawn,
+    rook,
+    knight,
+    bishop,
+    queen,
+    king
+};
 
 /**
  *  \enum colourPiece
  *  An Enum to represents the twelve combinations of colour and piece.
  */
-enum colourPiece {whitePawn,whiteRook,whiteKnight,
-                  whiteBishop,whiteQueen,whiteKing,
-                  blackPawn,blackRook,blackKnight,
-                  blackBishop,blackQueen,blackKing
-                 };
+enum colourPiece {
+    whitePawn,
+    whiteRook,
+    whiteKnight,
+    whiteBishop,
+    whiteQueen,
+    whiteKing,
+    blackPawn,
+    blackRook,
+    blackKnight,
+    blackBishop,
+    blackQueen,
+    blackKing
+};
 
 /**
  *  \enum direction
  *  An Enum to represent directions for ray generation.
  */
-enum direction {dirN, dirNE, dirE, dirSE, dirS, dirSW, dirW, dirNW};
+enum direction {
+    dirN,
+    dirNE,
+    dirE,
+    dirSE,
+    dirS,
+    dirSW,
+    dirW,
+    dirNW
+};
 
 struct record_t;
 
@@ -73,6 +101,6 @@ struct record_t;
 using TransTable = std::unordered_map<uint32_t, record_t>;
 
 
-} // end of chessCore namespace
+}   // namespace chessCore
 
-#endif
+#endif  // SRC_CORE_TYPEDEFS_H_
