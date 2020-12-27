@@ -1,3 +1,4 @@
+/* Copyright 2020 Freddy Pringle */
 #ifndef SRC_CORE_TYPEDEFS_H_
 #define SRC_CORE_TYPEDEFS_H_
 

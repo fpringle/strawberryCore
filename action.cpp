@@ -1,3 +1,4 @@
+/* Copyright 2020 Freddy Pringle */
 #include "action.h"
 
 #include <cstdint>

@@ -1,5 +1,4 @@
-// bit twiddling functions
-
+/* Copyright 2020 Freddy Pringle */
 #ifndef SRC_CORE_TWIDDLE_H_
 #define SRC_CORE_TWIDDLE_H_
 

@@ -1,3 +1,4 @@
+/* Copyright 2020 Freddy Pringle */
 #ifndef SRC_CORE_INIT_H_
 #define SRC_CORE_INIT_H_
 

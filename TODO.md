@@ -1,13 +1,6 @@
 # To-do list
-- generate checking moves
-- better variable names
-- fix bugs in is_checking_move, was_lastmove_check
-        - then use in san pre/post
 - logging
 - threading
 - universal chess interface (UCI)
-- split source code into more, smaller files
-- trans table for quiescence?
 - improve evaluation function
-- play computer vs computer
 - prune transposition table

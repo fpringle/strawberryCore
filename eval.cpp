@@ -1,3 +1,4 @@
+/* Copyright 2020 Freddy Pringle */
 #include "eval.h"
 
 #include "board.h"

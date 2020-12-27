@@ -1,17 +1,4 @@
-/*
- * A header file to define a "board" class to represent
- * the current state of the chessboard.
- *
- * We are using an unsigned 64-bit integer to represent
- * the positions of each type of piece. e.g. if the 10th
- * bit of whiteKnight is set to 1, there is a white knight
- * at position 10.
- *
- * For the square-mapping we use Little-Endian Rank-File,
- * so 0 = A1, 7 = H1, 56 = A8, 63 = H8
- *
- */
-
+/* Copyright 2020 Freddy Pringle */
 #ifndef SRC_CORE_BOARD_H_
 #define SRC_CORE_BOARD_H_
 

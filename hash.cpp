@@ -1,3 +1,4 @@
+/* Copyright 2020 Freddy Pringle */
 #include "hash.h"
 
 #include <assert.h>

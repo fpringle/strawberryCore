@@ -1,3 +1,4 @@
+/* Copyright 2020 Freddy Pringle */
 #include "search.h"
 
 #include <time.h>

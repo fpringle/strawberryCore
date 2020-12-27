@@ -1,3 +1,4 @@
+/* Copyright 2020 Freddy Pringle */
 #include "board.h"
 
 #include <math.h>

@@ -1,3 +1,4 @@
+/* Copyright 2020 Freddy Pringle */
 #include "move.h"
 
 #include <stdlib.h>

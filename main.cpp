@@ -1,3 +1,4 @@
+/* Copyright 2020 Freddy Pringle */
 #include <cstdlib>
 #include <limits>
 
@@ -14,7 +15,7 @@
 
 int main() {
     chessCore::init();
-    chessCore::Player* player = new chessCore::Player(white);
+    chessCore::Player* player = new chessCore::Player(chessCore::white);
     player->play();
     return 0;
 }

@@ -1,3 +1,4 @@
+/* Copyright 2020 Freddy Pringle */
 #ifndef SRC_CORE_MOVE_H_
 #define SRC_CORE_MOVE_H_
 
