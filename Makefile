@@ -376,8 +376,7 @@ obj/action.o: action.cpp action.h \
 		eval.h \
 		hash.h \
 		play.h \
-		search.h \
-		tree.h
+		search.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/action.o action.cpp
 
 obj/board.o: board.cpp board.h \
@@ -423,8 +422,7 @@ obj/main.o: main.cpp action.h \
 		hash.h \
 		init.h \
 		play.h \
-		search.h \
-		tree.h
+		search.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/main.o main.cpp
 
 obj/move.o: move.cpp move.h \
@@ -440,7 +438,6 @@ obj/play.o: play.cpp play.h \
 		typedefs.h \
 		twiddle.h \
 		search.h \
-		tree.h \
 		action.h \
 		init.h \
 		parse.h
@@ -452,8 +449,7 @@ obj/search.o: search.cpp search.h \
 		typedefs.h \
 		twiddle.h \
 		action.h \
-		play.h \
-		tree.h
+		play.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o obj/search.o search.cpp
 
 ####### Install

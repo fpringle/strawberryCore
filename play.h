@@ -9,7 +9,6 @@
 #include "board.h"
 #include "move.h"
 #include "search.h"
-#include "tree.h"
 #include "typedefs.h"
 
 
