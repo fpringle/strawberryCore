@@ -1,6 +1,7 @@
 /* Copyright 2020 Freddy Pringle */
 #include "play.h"
 
+#include <algorithm>
 #include <cstdint>
 #include <fstream>
 #include <iostream>
@@ -285,6 +286,24 @@ move_t Player::input_move() const {
     return ret;
 }
 
+move_t Player::input_move_SAN() {
+    move_t ret;
+    MoveList moves = gen_legal_moves();
+
+    std::string inp;
+    std::cout << "Enter move in Standard Algebraic Notation (SAN): ";
+    std::cin >> inp;
+    ret = move_from_SAN(inp);
+
+    while (std::find(moves.begin(), moves.end(), ret) == moves.end()) {
+        std::cout << "Sorry, that's not a valid move.\n"
+                  << "Enter move in Standard Algebraic Notation (SAN): ";
+        std::cin >> inp;
+        ret = move_from_SAN(inp);
+    }
+    return ret;
+}
+
 move_t Player::search() {
     return searcher->search(reinterpret_cast<board*>(this),
                             iterative_deepening_timeout, true);
@@ -316,7 +335,7 @@ void Player::play(colour playerSide, int timeout) {
         getSide(&movingSide);
 
         if (movingSide == playerSide) {
-            player_move = input_move();
+            player_move = input_move_SAN();
             doMoveInPlace(player_move);
         } else {
             std::cout << "Computer thinking...    " << std::endl;
@@ -364,7 +383,7 @@ void Player::play() {
         print_board();
         getSide(&movingSide);
         if (movingSide == user_colour) {
-            player_move = input_move();
+            player_move = input_move_SAN();
             doMoveInPlace(player_move);
         } else {
             std::cout << "Computer thinking...    " << std::endl;

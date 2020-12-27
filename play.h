@@ -232,6 +232,13 @@ class Player : public board {
     move_t input_move() const;
 
     /**
+     *  Prompt the user for a move in SAN format.
+     *
+     *  \return             The move the player has entered.
+     */
+    move_t input_move_SAN();
+
+    /**
      *  Search from the current node to get the best move.
      *
      *  \return             The best move to play from this position.

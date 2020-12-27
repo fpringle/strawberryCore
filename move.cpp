@@ -451,8 +451,6 @@ move_t board::move_from_SAN(std::string san) {
     }
 
     return make_move(from_sq, to_sq, prom, cap, s1, s0);
-
-    return 0;
 }
 
 move_t make_move(uint8_t from, uint8_t to, bool promotion,
