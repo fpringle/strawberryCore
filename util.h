@@ -81,9 +81,16 @@ class Logger {
     /** Destructor for Logger class. */
     virtual ~Logger();
     /**
-     *  Overloaded insertion operator.
-     *  Usage:      log << logWARN << "Example warning message";
+     *  \brief Overloaded insertion operator.
      *
+     *  Write a message to a log file with a certain message severity.
+     *  For example, to write "2020/12/27 19:45:37 | WARNING | Example warning message"
+     *  to the file "log/logfile.log":
+     *
+     *  \code
+     *  Logger log("logfile");
+     *  log << logWARN << "Example warning message";
+     *  \endcode
      *
      *  \param log      The Logger object
      *  \param level    The log message severity.
