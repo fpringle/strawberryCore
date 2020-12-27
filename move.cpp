@@ -180,7 +180,6 @@ std::string board::SAN_post_move(move_t move) const {
     std::stringstream san;
     int i;
     colour side_to_move = flipColour(sideToMove);
-    colour otherSide = sideToMove;
 
     if (is_queenCastle(move)) {
         san << "O-O-O";

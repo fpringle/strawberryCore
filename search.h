@@ -2,6 +2,8 @@
 #ifndef SRC_CORE_SEARCH_H_
 #define SRC_CORE_SEARCH_H_
 
+#include <limits>
+
 #include "board.h"
 #include "move.h"
 #include "typedefs.h"
@@ -89,19 +91,6 @@ class Searcher {
      *  Search using Principal Variation search, to
      *  estimate the value of the given node.
      *
-     *  \param b            The board state of the node to be searched.
-     *  \param depth        The depth to search to.
-     *  \param alpha        The current value of alpha.
-     *  \param beta         The current value of beta.
-     *  \return             The estimated value of node b.
-     */
-    value_t principal_variation(board* b, uint8_t depth,
-                                value_t alpha, value_t beta);
-
-    /**
-     *  Search using Principal Variation search, to
-     *  estimate the value of the given node.
-     *
      *  \param b                The board state of the node to be searched.
      *  \param depth            The depth to search to.
      *  \param alpha            The current value of alpha.
@@ -110,21 +99,10 @@ class Searcher {
      *  \return                 The estimated value of node b.
      */
     value_t principal_variation(board* b, uint8_t depth,
-                                value_t alpha, value_t beta,
-                                double time_remaining);
-
-    /**
-     *  Search using the Negamax algorithm with alpha-beta pruning, to
-     *  estimate the value of the given node.
-     *
-     *  \param b            The board state of the node to be searched.
-     *  \param depth        The depth to search to.
-     *  \param alpha        The current value of alpha.
-     *  \param beta         The current value of beta.
-     *  \return             The estimated value of node b.
-     */
-    value_t negamax_alphabeta(board* b, uint8_t depth,
-                              value_t alpha, value_t beta);
+                              value_t alpha, value_t beta,
+                              double time_remaining =
+                                std::numeric_limits<double>::max(),
+                              move_t first_move = 0);
 
     /**
      *  Search using the Negamax algorithm with alpha-beta pruning, to
@@ -140,7 +118,8 @@ class Searcher {
      */
     value_t negamax_alphabeta(board* b, uint8_t depth,
                               value_t alpha, value_t beta,
-                              double time_remaining,
+                              double time_remaining =
+                                std::numeric_limits<double>::max(),
                               move_t first_move = 0);
 
     /**
