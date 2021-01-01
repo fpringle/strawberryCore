@@ -122,13 +122,13 @@ class CompMoves {
     }
 
     bool operator()(move_t move1, move_t move2) {
-        if (is_capture(move1) && !is_capture(move2)) {
-            return true;
-        } else if (!is_capture(move1) && is_capture(move2)) {
-            return false;
-        } else {
+//        if (is_capture(move1) && !is_capture(move2)) {
+//            return true;
+//        } else if (!is_capture(move1) && is_capture(move2)) {
+//            return false;
+//        } else {
             return get_value(move1) > get_value(move2);
-        }
+//        }
     }
 };
 
