@@ -339,7 +339,6 @@ move_t Searcher::iterative_deepening_negamax(board* b,
               << trans_table->size() << std::endl;
 #endif
     }
-    double time_taken = 0.0;
     uint8_t depth = 1;
     move_t best_move = 0;
     move_t new_move;
@@ -353,6 +352,7 @@ move_t Searcher::iterative_deepening_negamax(board* b,
     ind = (uint32_t)hsh;
     value_t alpha = -VAL_INFINITY;
     value_t beta = VAL_INFINITY;
+    double time_taken = time_diff(start_time);
 
     while (time_taken < timeout && depth < 100) {
         negamax_alphabeta(b, depth, alpha, beta,
