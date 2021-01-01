@@ -189,18 +189,18 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
 
     for (move_t move : moves) {
         child = doMove(b, move);
-        time_remaining -= time_diff(start_time);
+        if (time_diff(start_time) >= time_remaining) break;
         if (time_remaining <= 0) break;
 
         if (bSearchPv) {
             score = - principal_variation(child, depth-1, -beta,
-                                          -alpha, time_remaining);
+                              -alpha, time_remaining - time_diff(start_time));
         } else {
             score = - principal_variation(child, depth - 1, -alpha - 1,
-                                          -alpha, time_remaining);
+                              -alpha, time_remaining - time_diff(start_time));
             if (score > alpha) {
                 score = - principal_variation(child, depth - 1, -beta,
-                                              -alpha, time_remaining);
+                              -alpha, time_remaining - time_diff(start_time));
             }
         }
 
@@ -269,8 +269,7 @@ value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
         }
     }
 
-    if (time_diff(start_time) > time_remaining
-            || depth <= 0) {
+    if (time_diff(start_time) > time_remaining || depth <= 0) {
         ret = quiesce(b, alpha, beta);      // check this
         table_save(sig, ind, bestMove, depth, record.score,
                    age, LOWER, trans_table);
@@ -297,11 +296,10 @@ value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
     value_t score, value = -VAL_INFINITY;
 
     for (move_t move : moves) {
-        time_remaining -= time_diff(start_time);
-        if (time_remaining <= 0) break;
         child = doMove(b, move);
+        if (time_diff(start_time) >= time_remaining) break;
         score = - negamax_alphabeta(child, depth - 1, -beta,
-                                    -alpha, time_remaining);
+                            -alpha, time_remaining - time_diff(start_time));
         if (score > value) {
             bestMove = move;
             value = score;
