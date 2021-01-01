@@ -76,7 +76,7 @@ namespace {
 }
 
 void Player::read_config(std::string filename) {
-    std::cout << "Reading config file\n";
+    std::cerr << "Reading config file\n";
     Config cfg;
 
     try {

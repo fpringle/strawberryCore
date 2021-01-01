@@ -329,13 +329,13 @@ move_t Searcher::iterative_deepening_negamax(board* b,
     uint8_t age;
     b->getFullClock(&age);
 #if DEBUG
-    std::cout << "Size of transposition table: "
+    std::cerr << "Size of transposition table: "
               << trans_table->size() << std::endl;
 #endif
     if (age > 3) {
         prune_table(age - 3);
 #if DEBUG
-    std::cout << "Size of transposition table after pruning: "
+    std::cerr << "Size of transposition table after pruning: "
               << trans_table->size() << std::endl;
 #endif
     }
@@ -365,7 +365,7 @@ move_t Searcher::iterative_deepening_negamax(board* b,
             best_move = new_move;
             moves.push_back(best_move);
 #if DEBUG
-            std::cout << "Depth searched: " << depth - 1 << "   ("
+            std::cerr << "Depth searched: " << depth - 1 << "   ("
                       << time_taken
                       << " seconds total)"
                       << "  (best move so far: "
@@ -389,13 +389,13 @@ move_t Searcher::iterative_deepening_pv(board* b,
     uint8_t age;
     b->getFullClock(&age);
 #if DEBUG
-    std::cout << "Size of transposition table: "
+    std::cerr << "Size of transposition table: "
               << trans_table->size() << std::endl;
 #endif
     if (age > 3) {
         prune_table(age - 3);
 #if DEBUG
-    std::cout << "Size of transposition table after pruning: "
+    std::cerr << "Size of transposition table after pruning: "
               << trans_table->size() << std::endl;
 #endif
     }
@@ -425,7 +425,7 @@ move_t Searcher::iterative_deepening_pv(board* b,
             best_move = new_move;
             moves.push_back(best_move);
 #if DEBUG
-            std::cout << "Depth searched: " << depth - 1 << "   ("
+            std::cerr << "Depth searched: " << depth - 1 << "   ("
                       << time_taken
                       << " seconds total)"
                       << "  (best move so far: "

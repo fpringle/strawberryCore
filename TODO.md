@@ -8,4 +8,3 @@
 - something wrong with time management  - search.cpp line 300
 - use CG tic-tac-toe to test ideas?
 - move re-ordering
-- change std::cout to std::cerr for debugging

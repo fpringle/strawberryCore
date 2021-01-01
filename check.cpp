@@ -378,12 +378,12 @@ bool board::is_checking_move(move_t move) const {
                         attacker = (1ULL << last_set_bit(tmp));
                     }
                     if (attacker & pieceBoards[(6 * sideToMove) + 1]) {
-//                        std::cout << "EP discovered check by rook at "
+//                        std::cerr << "EP discovered check by rook at "
 //                                << last_set_bit(attacker) << "\n";
                         return true;
                     }
                     if (attacker & pieceBoards[(6 * sideToMove) + 4]) {
-//                        std::cout << "EP discovered check by queen at "
+//                        std::cerr << "EP discovered check by queen at "
 //                                << last_set_bit(attacker) << "\n";
                         return true;
                     }
@@ -403,12 +403,12 @@ bool board::is_checking_move(move_t move) const {
                         attacker = (1ULL << last_set_bit(tmp));
                     }
                     if (attacker & pieceBoards[(6 * sideToMove) + 3]) {
-//                        std::cout << "EP discovered check by bishop at "
+//                        std::cerr << "EP discovered check by bishop at "
 //                                << last_set_bit(attacker) << "\n";
                         return true;
                     }
                     if (attacker & pieceBoards[(6 * sideToMove) + 4]) {
-//                        std::cout << "EP discovered check by queen at "
+//                        std::cerr << "EP discovered check by queen at "
 //                                << last_set_bit(attacker) << "\n";
                         return true;
                     }
