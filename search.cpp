@@ -73,48 +73,100 @@ value_t Searcher::quiesce(board* b, value_t alpha, value_t beta) {
 }
 
 namespace {
-    /**
-     *  Given an array of moves and a preferred "best move" to search first,
-     *  reorder the array so that the move is searched first.
-     *
-     *  \param moves        An array of moves to search.
-     *  \param num_moves    The length of the array moves.
-     *  \param best_move    The move we want to search first.
-     */
-    void reorder_moves(MoveList* moves, move_t best_move) {
-        MoveList::iterator it;
-        it = std::find(moves->begin(), moves->end(), best_move);
-        if (it == moves->end()) return;
-        std::iter_swap(it, moves->begin());
+bool table_lookup(uint64_t sig,
+                  uint32_t ind,
+                  TransTable* tt,
+                  record_t* rec) {
+    TransTable::iterator it = tt->find(ind);
+    if (it == tt->end()) return false;
+    if (it->second.signature != sig) return false;
+    *rec = it->second;
+    return true;
+}
+
+void table_save(uint64_t sig,
+                uint32_t ind,
+                move_t best_move,
+                uint8_t depth,
+                value_t score,
+                uint8_t age,
+                valueType flag,
+                TransTable* tt) {
+    record_t rec({sig, best_move, depth, score, age, flag});
+    tt->operator[](ind) = rec;
+}
+
+class CompMoves {
+ private:
+    board* b;
+    colour side;
+    TransTable* trans_table;
+
+    value_t get_value(move_t move) {
+        uint64_t child_hash = b->childHash(move);
+        uint32_t child_index = static_cast<uint32_t>(child_hash);
+        record_t rec;
+        if (table_lookup(child_hash, child_index, trans_table, &rec)) {
+            return rec.score;
+        } else {
+            board* child = doMove(b, move);
+            return child->getValue() * (side == white ? 1 : -1);
+        }
     }
 
-    bool table_lookup(uint64_t sig,
-                      uint32_t ind,
-                      TransTable* tt,
-                      record_t* rec) {
-        TransTable::iterator it = tt->find(ind);
-        if (it == tt->end()) return false;
-        if (it->second.signature != sig) return false;
-        *rec = it->second;
-        return true;
+ public:
+    CompMoves(board* curboard, TransTable* tt) {
+        b = curboard;
+        b->getSide(&side);
+        trans_table = tt;
     }
 
-    void table_save(uint64_t sig,
-                    uint32_t ind,
-                    move_t best_move,
-                    uint8_t depth,
-                    value_t score,
-                    uint8_t age,
-                    valueType flag,
-                    TransTable* tt) {
-        record_t rec({sig, best_move, depth, score, age, flag});
-        tt->operator[](ind) = rec;
+    bool operator()(move_t move1, move_t move2) {
+//        if (is_capture(move1) && !is_capture(move2)) {
+//            return true;
+//        } else if (!is_capture(move1) && is_capture(move2)) {
+//            return false;
+//        } else {
+            return get_value(move1) > get_value(move2);
+//        }
     }
+};
 
-    double time_diff(clock_t start_time) {
-        return static_cast<double>(clock() - start_time) /
-                    static_cast<double>(CLOCKS_PER_SEC);
+/**
+ *  Given an array of moves and a preferred "best move" to search first,
+ *  reorder the array so that the move is searched first.
+ *
+ *  \param moves        A pointer to an array of moves to search.
+ *  \param b            A pointer to the board we're searching from.
+ *  \param tt           A pointer to the transposition table to use.
+ *  \param first_move   If given, the move we want to search first.
+ *  \param second_move  If given, the move we want to search second.
+ */
+void reorder_moves(MoveList* moves, board* b, TransTable*tt,
+                   move_t first_move = 0, move_t second_move = 0) {
+    MoveList::iterator it;
+    int start = 0;
+    if (first_move) {
+        it = std::find(moves->begin(), moves->end(), first_move);
+        if (it != moves->end()) {
+            std::iter_swap(it, moves->begin());
+            start++;
+        }
     }
+    if ((second_move) && (second_move != first_move)) {
+        it = std::find(moves->begin(), moves->end(), second_move);
+        if (it != moves->end()) {
+            std::iter_swap(it, moves->begin()+start);
+            start++;
+        }
+    }
+    std::sort(moves->begin()+start, moves->end(), CompMoves(b, tt));
+}
+
+double time_diff(clock_t start_time) {
+    return static_cast<double>(clock() - start_time) /
+                static_cast<double>(CLOCKS_PER_SEC);
+}
 
 }   // namespace
 
@@ -179,13 +231,7 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
         return ret;
     }
 
-    if (bestMove) {
-        reorder_moves(&moves, bestMove);
-    }
-
-    if (first_move) {
-        reorder_moves(&moves, first_move);
-    }
+    reorder_moves(&moves, b, trans_table, first_move, bestMove);
 
     for (move_t move : moves) {
         child = doMove(b, move);
@@ -285,13 +331,7 @@ value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
         return ret;
     }
 
-    if (bestMove) {
-        reorder_moves(&moves, bestMove);
-    }
-
-    if (first_move) {
-        reorder_moves(&moves, first_move);
-    }
+    reorder_moves(&moves, b, trans_table, first_move, bestMove);
 
     value_t score, value = -VAL_INFINITY;
 
