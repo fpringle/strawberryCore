@@ -39,6 +39,10 @@ Searcher::Searcher(TransTable* tt) {
     trans_table = tt;
 }
 
+Searcher::~Searcher() {
+    delete trans_table;
+}
+
 void Searcher::prune_table(uint8_t age) {
     TransTable::const_iterator it;
     for (it=trans_table->cbegin(); it != trans_table->cend();) {

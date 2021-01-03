@@ -96,6 +96,7 @@ class Searcher {
      *  \param alpha            The current value of alpha.
      *  \param beta             The current value of beta.
      *  \param time_remaining   The timeout in seconds.
+     *  \param first_move       If given, search this move first.
      *  \return                 The estimated value of node b.
      */
     value_t principal_variation(board* b, uint8_t depth,
@@ -157,12 +158,16 @@ class Searcher {
      *  Default constructor for Searcher.
      */
     Searcher();
+
     /**
-     *  Default constructor for Searcher.
+     *  Constructor for Searcher. Supply an existing transposition table.
      *
      *  \param tt           A pointer to the transposition table to use.
      */
     explicit Searcher(TransTable* tt);
+
+    /** Destructor for Searcher. */
+    virtual ~Searcher();
 
     /**
      *  Search from a node for the best move to play.
