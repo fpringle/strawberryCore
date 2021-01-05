@@ -1,6 +1,7 @@
 /* Copyright 2020 Freddy Pringle */
 #include <cstdlib>
 #include <limits>
+#include <string>
 
 #include "action.h"
 #include "board.h"
@@ -15,7 +16,8 @@
 
 int main() {
     chessCore::init();
-    chessCore::Player* player = new chessCore::Player(chessCore::white);
+    std::string str = "1k1r4/pp1b1R2/3q2pp/4p3/2B5/4Q3/PPP2B2/2K5 b - -";
+    chessCore::Player* player = new chessCore::Player(str);
     player->play();
     return 0;
 }

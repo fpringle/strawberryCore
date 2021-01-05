@@ -43,6 +43,15 @@ Searcher::~Searcher() {
     delete trans_table;
 }
 
+void Searcher::set_timeout(int time) {
+    search_start_time = clock();
+    search_end_time = search_start_time + time * CLOCKS_PER_SEC;
+}
+
+void Searcher::kill_search() {
+    search_end_time = clock();
+}
+
 void Searcher::prune_table(uint8_t age) {
     TransTable::const_iterator it;
     for (it=trans_table->cbegin(); it != trans_table->cend();) {
@@ -172,14 +181,17 @@ double time_diff(clock_t start_time) {
                 static_cast<double>(CLOCKS_PER_SEC);
 }
 
+double time_diff(clock_t start_time, clock_t end_time) {
+    return static_cast<double>(end_time - start_time) /
+                static_cast<double>(CLOCKS_PER_SEC);
+}
+
 }   // namespace
 
 
 value_t Searcher::principal_variation(board* b, uint8_t depth,
                                     value_t alpha, value_t beta,
-                                    double time_remaining,
                                     move_t first_move) {
-    clock_t start_time = clock();
     colour side;
     b->getSide(&side);
     value_t ret;
@@ -215,7 +227,7 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
         }
     }
 
-    if (time_diff(start_time) > time_remaining || depth <= 0) {
+    if (clock() > search_end_time || depth <= 0) {
         ret = quiesce(b, alpha, beta);
         return ret;
     }
@@ -239,18 +251,14 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
 
     for (move_t move : moves) {
         child = doMove(b, move);
-        if (time_diff(start_time) >= time_remaining) break;
-        if (time_remaining <= 0) break;
+        if (clock() > search_end_time) break;
 
         if (bSearchPv) {
-            score = - principal_variation(child, depth-1, -beta,
-                              -alpha, time_remaining - time_diff(start_time));
+            score = - principal_variation(child, depth-1, -beta, -alpha);
         } else {
-            score = - principal_variation(child, depth - 1, -alpha - 1,
-                              -alpha, time_remaining - time_diff(start_time));
+            score = - principal_variation(child, depth - 1, -alpha - 1, -alpha);
             if (score > alpha) {
-                score = - principal_variation(child, depth - 1, -beta,
-                              -alpha, time_remaining - time_diff(start_time));
+                score = - principal_variation(child, depth - 1, -beta, -alpha);
             }
         }
 
@@ -278,9 +286,7 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
 
 value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
                                     value_t alpha, value_t beta,
-                                    double time_remaining,
                                     move_t first_move) {
-    clock_t start_time = clock();
     colour side;
     b->getSide(&side);
     value_t ret;
@@ -319,7 +325,7 @@ value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
         }
     }
 
-    if (time_diff(start_time) > time_remaining || depth <= 0) {
+    if (clock() > search_end_time || depth <= 0) {
         ret = quiesce(b, alpha, beta);      // check this
         table_save(sig, ind, bestMove, depth, record.score,
                    age, LOWER, trans_table);
@@ -341,9 +347,8 @@ value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
 
     for (move_t move : moves) {
         child = doMove(b, move);
-        if (time_diff(start_time) >= time_remaining) break;
-        score = - negamax_alphabeta(child, depth - 1, -beta,
-                            -alpha, time_remaining - time_diff(start_time));
+        if (clock() > search_end_time) break;
+        score = - negamax_alphabeta(child, depth - 1, -beta, -alpha);
         if (score > value) {
             bestMove = move;
             value = score;
@@ -367,7 +372,7 @@ value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
 move_t Searcher::iterative_deepening_negamax(board* b,
                                              int timeout,
                                              bool cutoff) {
-    clock_t start_time = clock();
+    set_timeout(timeout);
     uint8_t age;
     b->getFullClock(&age);
 #if DEBUG
@@ -394,28 +399,26 @@ move_t Searcher::iterative_deepening_negamax(board* b,
     ind = (uint32_t)hsh;
     value_t alpha = -VAL_INFINITY;
     value_t beta = VAL_INFINITY;
-    double time_taken = time_diff(start_time);
 
-    while (time_taken < timeout && depth < 100) {
-        negamax_alphabeta(b, depth, alpha, beta,
-                          timeout - time_taken, best_move);
+    while (clock() < search_end_time && depth < 100) {
+        negamax_alphabeta(b, depth, alpha, beta, best_move);
         new_move = trans_table->operator[](ind).best_move;
         depth++;
-        time_taken = time_diff(start_time);
 
         if (new_move) {
             best_move = new_move;
             moves.push_back(best_move);
 #if DEBUG
             std::cerr << "Depth searched: " << depth - 1 << "   ("
-                      << time_taken
+                      << time_diff(search_start_time)
                       << " seconds total)"
                       << "  (best move so far: "
                       << b->SAN_pre_move(best_move) << ")" << std::endl;
 #endif
         }
         sz = moves.size();
-        if (cutoff && ((sz >= 8) || (sz >= 5 && time_taken > 20.0))
+        if (cutoff && ((sz >= 8) || (sz >= 5 &&
+            time_diff(search_start_time) > 20.0))
             && moves[sz - 1] == moves[sz - 2]) {
             break;
         }
@@ -427,7 +430,7 @@ move_t Searcher::iterative_deepening_negamax(board* b,
 move_t Searcher::iterative_deepening_pv(board* b,
                                         int timeout,
                                         bool cutoff) {
-    clock_t start_time = clock();
+    set_timeout(timeout);
     uint8_t age;
     b->getFullClock(&age);
 #if DEBUG
@@ -441,7 +444,6 @@ move_t Searcher::iterative_deepening_pv(board* b,
               << trans_table->size() << std::endl;
 #endif
     }
-    double time_taken = 0.0;
     uint8_t depth = 1;
     move_t best_move = 0;
     move_t new_move;
@@ -456,27 +458,26 @@ move_t Searcher::iterative_deepening_pv(board* b,
     value_t alpha = -VAL_INFINITY;
     value_t beta = VAL_INFINITY;
 
-    while (time_taken < timeout && depth < 100) {
-        negamax_alphabeta(b, depth, alpha, beta,
-                          timeout - time_taken, best_move);
+    while (clock() < search_end_time && depth < 100) {
+        principal_variation(b, depth, alpha, beta, best_move);
         new_move = trans_table->operator[](ind).best_move;
         depth++;
-        time_taken = time_diff(start_time);
 
         if (new_move) {
             best_move = new_move;
             moves.push_back(best_move);
 #if DEBUG
             std::cerr << "Depth searched: " << depth - 1 << "   ("
-                      << time_taken
+                      << time_diff(search_start_time)
                       << " seconds total)"
                       << "  (best move so far: "
                       << b->SAN_pre_move(best_move) << ")" << std::endl;
 #endif
         }
         sz = moves.size();
-        if (cutoff && ((sz >= 8) || (sz >= 5 && time_taken > 20.0))
-            && moves[sz - 1] == moves[sz - 2]) {
+        if (cutoff && ((sz >= 8) || (sz >= 5 &&
+            time_diff(search_start_time) > 20.0)) &&
+            moves[sz - 1] == moves[sz - 2]) {
             break;
         }
     }

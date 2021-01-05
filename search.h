@@ -65,6 +65,22 @@ class Searcher {
      */
     TransTable* trans_table;
 
+    /** The time when we started the current search. */
+    clock_t search_start_time;
+
+    /** The time when the current search will end. */
+    clock_t search_end_time;
+
+    /**
+     *  Set the search timeout.
+     *
+     *  \param time     The number of seconds to search for.
+     */
+    void set_timeout(int time);
+
+    /** End the search, i.e. set the timeout to 0. Not yet thread-safe. */
+    void kill_search();
+
     /**
      *  Prune all entries from the transposition table that are older
      *  than a given value.
@@ -95,32 +111,26 @@ class Searcher {
      *  \param depth            The depth to search to.
      *  \param alpha            The current value of alpha.
      *  \param beta             The current value of beta.
-     *  \param time_remaining   The timeout in seconds.
      *  \param first_move       If given, search this move first.
      *  \return                 The estimated value of node b.
      */
     value_t principal_variation(board* b, uint8_t depth,
                               value_t alpha, value_t beta,
-                              double time_remaining =
-                                std::numeric_limits<double>::max(),
                               move_t first_move = 0);
 
     /**
      *  Search using the Negamax algorithm with alpha-beta pruning, to
-     *  estimate the value of the given node. Specify a timeout in seconds.
+     *  estimate the value of the given node.
      *
      *  \param b                The board state of the node to be searched.
      *  \param depth            The depth to search to.
      *  \param alpha            The current value of alpha.
      *  \param beta             The current value of beta.
-     *  \param time_remaining   The timeout in seconds.
      *  \param first_move       If given, search this move first.
      *  \return                 The estimated value of node b.
      */
     value_t negamax_alphabeta(board* b, uint8_t depth,
                               value_t alpha, value_t beta,
-                              double time_remaining =
-                                std::numeric_limits<double>::max(),
                               move_t first_move = 0);
 
     /**
