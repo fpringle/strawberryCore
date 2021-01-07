@@ -73,7 +73,7 @@ std::string mtos(move_t move) {
     return ss.str();
 }
 
-std::string board::SAN_pre_move(move_t move) const {
+std::string Board::SAN_pre_move(move_t move) const {
     if (move == 0) return "NULL";
     std::stringstream san;
     int i;
@@ -162,7 +162,7 @@ std::string board::SAN_pre_move(move_t move) const {
     // need to fix bug in is_checking_move
 
     if (is_checking_move(move)) {
-        board child = *this;
+        Board child = *this;
         child.doMoveInPlace(move);
         if (child.is_checkmate()) {
             san << "#";
@@ -175,7 +175,7 @@ std::string board::SAN_pre_move(move_t move) const {
 }
 
 
-std::string board::SAN_post_move(move_t move) const {
+std::string Board::SAN_post_move(move_t move) const {
     if (move == 0) return "NULL";
     std::stringstream san;
     int i;
@@ -284,7 +284,7 @@ std::string board::SAN_post_move(move_t move) const {
 
 
 
-move_t board::move_from_SAN(std::string san) {
+move_t Board::move_from_SAN(std::string san) {
     // castling
     if (san == "O-O") {
         if (sideToMove == white) {
@@ -858,7 +858,7 @@ bitboard allTargets(colour side, bitboard* pieces) {
 
 
 
-void board::add_moves(MoveList* dest, move_t move, bool check_legal) const {
+void Board::add_moves(MoveList* dest, move_t move, bool check_legal) const {
     if (check_legal) {
         if (is_legal(move)) {
             dest->push_back(move);
@@ -869,7 +869,7 @@ void board::add_moves(MoveList* dest, move_t move, bool check_legal) const {
 }
 
 
-MoveList board::gen_moves() const {
+MoveList Board::gen_moves() const {
     MoveList moves;
     int piece;
     int from_sq;
@@ -1007,7 +1007,7 @@ MoveList board::gen_moves() const {
     return moves;
 }
 
-MoveList board::get_out_of_check(colour side, piece checkingPiece,
+MoveList Board::get_out_of_check(colour side, piece checkingPiece,
                                  int checkingInd, int kingInd,
                                  bool double_check) const {
     MoveList moves;
@@ -1165,7 +1165,7 @@ MoveList board::get_out_of_check(colour side, piece checkingPiece,
     return moves;
 }
 
-bool board::can_get_out_of_check(colour side, piece checkingPiece,
+bool Board::can_get_out_of_check(colour side, piece checkingPiece,
                                  int checkingInd, int kingInd,
                                  bool double_check) const {
     bitboard _white = whiteSquares();
@@ -1308,7 +1308,7 @@ bool board::can_get_out_of_check(colour side, piece checkingPiece,
     return false;
 }
 
-MoveList board::gen_captures() const {
+MoveList Board::gen_captures() const {
     MoveList moves;
     int _piece;
     int from_sq;
@@ -1379,7 +1379,7 @@ MoveList board::gen_captures() const {
 
 
 
-MoveList board::gen_legal_moves() const {
+MoveList Board::gen_legal_moves() const {
     MoveList moves;
     int _piece;
     int from_sq;
@@ -1528,7 +1528,7 @@ MoveList board::gen_legal_moves() const {
     return moves;
 }
 
-bool board::is_legal(move_t move) const {
+bool Board::is_legal(move_t move) const {
     colourPiece movingPiece;
     int from_ind = from_sq(move);
     int to_ind = to_sq(move);

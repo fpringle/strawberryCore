@@ -7,7 +7,7 @@
 
 namespace chessCore {
 
-bool board::is_check(colour side) const {
+bool Board::is_check(colour side) const {
     // on-the-fly check detection
     int kingpos = last_set_bit(pieceBoards[ (6 * side) + 5 ]);
     bitboard _white = whiteSquares();
@@ -33,7 +33,7 @@ bool board::is_check(colour side) const {
     return false;
 }
 
-bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
+bool Board::is_check(colour side, piece * checkingPiece, int * checkingInd,
                      bool * doubleCheck) const {
     // on-the-fly check detection
     int kingpos = last_set_bit(pieceBoards[ (6 * side) + 5 ]);
@@ -102,7 +102,7 @@ bool board::is_check(colour side, piece * checkingPiece, int * checkingInd,
     return ( count > 0);
 }
 
-bool board::is_checkmate() const {
+bool Board::is_checkmate() const {
     piece checkingPiece;
     int checkingInd;
     bool double_check = false;
@@ -115,17 +115,17 @@ bool board::is_checkmate() const {
     }
 }
 
-bool board::is_stalemate() const {
+bool Board::is_stalemate() const {
     if (halfMoveClock >= 50) return true;
     if (is_check(sideToMove)) return false;
     return gen_legal_moves().empty();
 }
 
-bool board::gameover() const {
+bool Board::gameover() const {
     return is_checkmate() || is_stalemate();
 }
 
-bool board::was_lastmove_check(move_t lastmove) const {
+bool Board::was_lastmove_check(move_t lastmove) const {
     int i, j;
     colourPiece movingPiece;
     int from_ind = from_sq(lastmove);
@@ -284,7 +284,7 @@ bool board::was_lastmove_check(move_t lastmove) const {
     return false;
 }
 
-bool board::is_checking_move(move_t move) const {
+bool Board::is_checking_move(move_t move) const {
     // assume the move is legal
     int i, j;
     colourPiece movingPiece;

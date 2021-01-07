@@ -63,7 +63,7 @@ void Searcher::prune_table(uint8_t age) {
     }
 }
 
-value_t Searcher::quiesce(board* b, value_t alpha, value_t beta) {
+value_t Searcher::quiesce(Board* b, value_t alpha, value_t beta) {
     colour side;
     b->getSide(&side);
     value_t stand_pat = b->getValue() * ((side == white) ? 1 : -1);
@@ -72,7 +72,7 @@ value_t Searcher::quiesce(board* b, value_t alpha, value_t beta) {
 
 
     MoveList captures = b->gen_captures();
-    board* child;
+    Board* child;
     value_t score;
 
     for (move_t capture : captures) {
@@ -111,7 +111,7 @@ void table_save(uint64_t sig,
 
 class CompMoves {
  private:
-    board* b;
+    Board* b;
     colour side;
     TransTable* trans_table;
 
@@ -122,13 +122,13 @@ class CompMoves {
         if (table_lookup(child_hash, child_index, trans_table, &rec)) {
             return rec.score;
         } else {
-            board* child = doMove(b, move);
+            Board* child = doMove(b, move);
             return child->getValue() * (side == white ? 1 : -1);
         }
     }
 
  public:
-    CompMoves(board* curboard, TransTable* tt) {
+    CompMoves(Board* curboard, TransTable* tt) {
         b = curboard;
         b->getSide(&side);
         trans_table = tt;
@@ -155,7 +155,7 @@ class CompMoves {
  *  \param first_move   If given, the move we want to search first.
  *  \param second_move  If given, the move we want to search second.
  */
-void reorder_moves(MoveList* moves, board* b, TransTable*tt,
+void reorder_moves(MoveList* moves, Board* b, TransTable*tt,
                    move_t first_move = 0, move_t second_move = 0) {
     MoveList::iterator it;
     int start = 0;
@@ -189,7 +189,7 @@ double time_diff(clock_t start_time, clock_t end_time) {
 }   // namespace
 
 
-value_t Searcher::principal_variation(board* b, uint8_t depth,
+value_t Searcher::principal_variation(Board* b, uint8_t depth,
                                     value_t alpha, value_t beta,
                                     move_t first_move) {
     colour side;
@@ -233,7 +233,7 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
     }
 
     bool bSearchPv = true;
-    board* child;
+    Board* child;
     value_t score = -VAL_INFINITY;
 
     MoveList moves = b->gen_legal_moves();
@@ -284,7 +284,7 @@ value_t Searcher::principal_variation(board* b, uint8_t depth,
     return alpha;
 }
 
-value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
+value_t Searcher::negamax_alphabeta(Board* b, uint8_t depth,
                                     value_t alpha, value_t beta,
                                     move_t first_move) {
     colour side;
@@ -332,7 +332,7 @@ value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
         return ret;
     }
 
-    board* child;
+    Board* child;
 
     MoveList moves = b->gen_legal_moves();
     if (moves.empty()) {
@@ -369,7 +369,7 @@ value_t Searcher::negamax_alphabeta(board* b, uint8_t depth,
 }
 
 
-move_t Searcher::iterative_deepening_negamax(board* b,
+move_t Searcher::iterative_deepening_negamax(Board* b,
                                              int timeout,
                                              bool cutoff) {
     set_timeout(timeout);
@@ -427,7 +427,7 @@ move_t Searcher::iterative_deepening_negamax(board* b,
     return best_move;
 }
 
-move_t Searcher::iterative_deepening_pv(board* b,
+move_t Searcher::iterative_deepening_pv(Board* b,
                                         int timeout,
                                         bool cutoff) {
     set_timeout(timeout);
@@ -485,7 +485,7 @@ move_t Searcher::iterative_deepening_pv(board* b,
     return best_move;
 }
 
-move_t Searcher::search(board* b, int timeout, bool cutoff) {
+move_t Searcher::search(Board* b, int timeout, bool cutoff) {
     return iterative_deepening_negamax(b, timeout, cutoff);
 }
 

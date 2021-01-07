@@ -67,10 +67,10 @@ void print_bb(bitboard bb, char c = 'x', std::ostream& cout = std::cout);
 
 
 /**
- *  \class board
+ *  \class Board
  *  \brief Represents the state of the chessboard.
  *
- *  The board class completely represents the state of the chessboard at any given time.
+ *  The Board class completely represents the state of the chessboard at any given time.
  *  Contains all information such as piece positions, castling rights, half- and full-
  *  move clock, whether the last move was a double pawn push and if so on which file,
  *  the side to move, a heuristic of the value at this state, and the board hash.
@@ -78,7 +78,7 @@ void print_bb(bitboard bb, char c = 'x', std::ostream& cout = std::cout);
  *  position evaluation, hashing, various forms of output, and getting check and
  *  checkmate information.
  */
-class board {
+class Board {
     /**
      *  \brief An array of 12 bitboards representing the positions of each piece.
      *
@@ -239,7 +239,7 @@ class board {
 
     /**
      *  Add a move to a MoveList object, with the option to check if the move is legal.
-     *  Used by \ref board::gen_moves and \ref board::gen_legal_moves.
+     *  Used by \ref Board::gen_moves and \ref Board::gen_legal_moves.
      *
      *  \param dest             A pointer to the MoveList object.
      *  \param move             The move to add to the MoveList object.
@@ -279,15 +279,15 @@ class board {
     // constructors
     // defined in board.cpp
     /**
-     *  \brief The default constructor for board.
+     *  \brief The default constructor for Board.
      *
      *  Construct the default board with starting bitboards, all
      *  castling rights, value 0 and generate the hash.
      */
-    board();
+    Board();
 
     /**
-     *  \brief Parameterised constructor for board.
+     *  \brief Parameterised constructor for Board.
      *
      *  \param startPositions   An array of 12 bitboards representing the
      *                          positions of the pieces. See \ref pieceBoards.
@@ -312,19 +312,19 @@ class board {
      *                          See \ref endgame_value.
      *  \param hash             The Zobrist hash. See \ref hash_value.
      */
-    board(bitboard * startPositions, bool * castling, bool ep, int dpp,
+    Board(bitboard * startPositions, bool * castling, bool ep, int dpp,
              uint8_t clock, uint8_t full_clock, colour side,
              value_t open_val, value_t end_val, uint64_t hash = 0);
 
     /**
-     *  \brief Copy constructor for board.
+     *  \brief Copy constructor for Board.
      *
-     *  \param other    The board object to be copied.
+     *  \param other    The Board object to be copied.
      */
-    board(const board& other);
+    Board(const Board& other);
 
     /**
-     *  \brief FEN constructor for board.
+     *  \brief FEN constructor for Board.
      *
      *  Construct a board from a string in Forsyth-Edwards Notation (FEN),
      *  a standard way of representing the state of the board.
@@ -332,23 +332,23 @@ class board {
      *  \param fen      The string representing the required board state
      *                  in FEN format.
      */
-    explicit board(std::string fen);
+    explicit Board(std::string fen);
 
     /**
-     *  Equality comparison operator for board.
+     *  Equality comparison operator for Board.
      *
-     *  \param other        RHS board object to compare.
+     *  \param other        RHS Board object to compare.
      *  \return             True if the moves are equal, false otherwise.
      */
-    bool operator==(const board& other) const;
+    bool operator==(const Board& other) const;
 
     /**
-     *  Inequality comparison operator for board.
+     *  Inequality comparison operator for Board.
      *
-     *  \param other        RHS board object to compare.
+     *  \param other        RHS Board object to compare.
      *  \return             False if the moves are equal, true otherwise.
      */
-    bool operator!=(const board& other) const;
+    bool operator!=(const Board& other) const;
 
     /**
      *  Print the board to an output stream.
@@ -358,15 +358,15 @@ class board {
      *  \param brd          The board to print.
      *  \return             The output stream.
      */
-    friend std::ostream& operator<<(std::ostream& out, const board& brd);
+    friend std::ostream& operator<<(std::ostream& out, const Board& brd);
 
     /**
-     *  Assignment operator for board.
+     *  Assignment operator for Board.
      *
-     *  \param other        RHS board object to copy.
+     *  \param other        RHS Board object to copy.
      *  \return             Self.
      */
-    board& operator=(const board& other);
+    Board& operator=(const Board& other);
 
     /**
      *  Get a copy of the piece bitboards.

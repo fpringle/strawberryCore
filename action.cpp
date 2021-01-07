@@ -14,7 +14,7 @@
 namespace chessCore {
 
 
-board doMove(board startBoard, move_t move) {
+Board doMove(Board startBoard, move_t move) {
     int i;
     uint16_t fromSquare = from_sq(move);
     uint16_t toSquare = to_sq(move);
@@ -251,13 +251,13 @@ board doMove(board startBoard, move_t move) {
     // change hash for different side to move
     hash ^= zobristKeys[780];
 
-    board endBoard(startingPos, castling, ep, dpp, clk, full_clk, otherColour,
+    Board endBoard(startingPos, castling, ep, dpp, clk, full_clk, otherColour,
                    opening_value, endgame_value, hash);
 
     return endBoard;
 }
 
-board* doMove(board* startBoard, move_t move) {
+Board* doMove(Board* startBoard, move_t move) {
     int i;
     uint16_t fromSquare = from_sq(move);
     uint16_t toSquare = to_sq(move);
@@ -493,11 +493,11 @@ board* doMove(board* startBoard, move_t move) {
     // change hash for different side to move
     hash ^= zobristKeys[780];
 
-    return new board(startingPos, castling, ep, dpp, clk, full_clk, otherColour,
+    return new Board(startingPos, castling, ep, dpp, clk, full_clk, otherColour,
                    opening_value, endgame_value, hash);
 }
 
-void board::doMoveInPlace(move_t move) {
+void Board::doMoveInPlace(move_t move) {
     int i;
     uint16_t fromSquare = from_sq(move);
     uint16_t toSquare = to_sq(move);
@@ -720,12 +720,12 @@ void board::doMoveInPlace(move_t move) {
 
 void Player::doMoveInPlace(move_t move) {
     std::string san = SAN_pre_move(move);
-    board::doMoveInPlace(move);
+    Board::doMoveInPlace(move);
     move_history.push_back(move);
     move_history_san.push_back(san);
 }
 
-void Player::makeChild(board* child, move_t move) const {
+void Player::makeChild(Board* child, move_t move) const {
     *child = *this;
     child->doMoveInPlace(move);
 }

@@ -101,7 +101,7 @@ class Searcher {
      *  \param beta         The current value of beta in negamax search.
      *  \return             The heuristic value for the node.
      */
-    value_t quiesce(board* b, value_t alpha, value_t beta);
+    value_t quiesce(Board* b, value_t alpha, value_t beta);
 
     /**
      *  Search using Principal Variation search, to
@@ -114,7 +114,7 @@ class Searcher {
      *  \param first_move       If given, search this move first.
      *  \return                 The estimated value of node b.
      */
-    value_t principal_variation(board* b, uint8_t depth,
+    value_t principal_variation(Board* b, uint8_t depth,
                               value_t alpha, value_t beta,
                               move_t first_move = 0);
 
@@ -129,7 +129,7 @@ class Searcher {
      *  \param first_move       If given, search this move first.
      *  \return                 The estimated value of node b.
      */
-    value_t negamax_alphabeta(board* b, uint8_t depth,
+    value_t negamax_alphabeta(Board* b, uint8_t depth,
                               value_t alpha, value_t beta,
                               move_t first_move = 0);
 
@@ -144,7 +144,7 @@ class Searcher {
      *                      best move several times in a row.
      *  \return             The best move to play from the current node.
      */
-    move_t iterative_deepening_negamax(board* b,
+    move_t iterative_deepening_negamax(Board* b,
                                        int timeout,
                                        bool cutoff = false);
 
@@ -159,7 +159,7 @@ class Searcher {
      *                      best move several times in a row.
      *  \return             The best move to play from the current node.
      */
-    move_t iterative_deepening_pv(board* b,
+    move_t iterative_deepening_pv(Board* b,
                                   int timeout,
                                   bool cutoff = false);
 
@@ -189,7 +189,7 @@ class Searcher {
      *                      best move several times in a row.
      *  \return             The best move to play from the current node.
      */
-    move_t search(board* b, int timeout, bool cutoff = false);
+    move_t search(Board* b, int timeout, bool cutoff = false);
 };
 
 

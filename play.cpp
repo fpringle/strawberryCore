@@ -20,13 +20,13 @@
 
 namespace chessCore {
 
-Player::Player() : board::board() {
+Player::Player() : Board::Board() {
     user_colour = white;
     iterative_deepening_timeout = 60;
     searcher = new Searcher(&trans_table);
 }
 
-Player::Player(colour userColour) : board::board() {
+Player::Player(colour userColour) : Board::Board() {
     user_colour = userColour;
     iterative_deepening_timeout = 60;
     searcher = new Searcher(&trans_table);
@@ -35,14 +35,14 @@ Player::Player(colour userColour) : board::board() {
 Player::Player(bitboard * startPositions, bool * castling, bool ep, int dpp,
         uint8_t clock, uint8_t full_clock, colour side,
         value_t open_val, value_t end_val, uint64_t hash) :
-    board::board(startPositions, castling, ep, dpp, clock, full_clock,
+    Board::Board(startPositions, castling, ep, dpp, clock, full_clock,
         side, open_val, end_val, hash) {
     user_colour = white;
     iterative_deepening_timeout = 60;
     searcher = new Searcher(&trans_table);
 }
 
-Player::Player(const Player& p1) : board::board(p1) {
+Player::Player(const Player& p1) : Board::Board(p1) {
     trans_table = p1.getTable();
     move_history = p1.getHistory();
     move_history_san = p1.getHistorySAN();
@@ -51,7 +51,7 @@ Player::Player(const Player& p1) : board::board(p1) {
     searcher = new Searcher(&trans_table);
 }
 
-Player::Player(std::string fen) : board::board(fen) {
+Player::Player(std::string fen) : Board::Board(fen) {
     user_colour = white;
     iterative_deepening_timeout = 60;
     searcher = new Searcher(&trans_table);
@@ -178,9 +178,9 @@ void Player::print_table(std::ostream& cout) {
 
 void Player::print_board(std::ostream& cout) const {
     if (user_colour == white) {
-        board::print_board(cout);
+        Board::print_board(cout);
     } else {
-        board::print_board_flipped(cout);
+        Board::print_board_flipped(cout);
     }
 }
 
@@ -305,12 +305,12 @@ move_t Player::input_move_SAN() {
 }
 
 move_t Player::search() {
-    return searcher->search(reinterpret_cast<board*>(this),
+    return searcher->search(reinterpret_cast<Board*>(this),
                             iterative_deepening_timeout, true);
 }
 
 move_t Player::search(int timeout) {
-    return searcher->search(reinterpret_cast<board*>(this), timeout, true);
+    return searcher->search(reinterpret_cast<Board*>(this), timeout, true);
 }
 
 void Player::play(colour playerSide, int timeout) {
@@ -441,7 +441,7 @@ void two_players() {
 }
 
 void two_computers() {
-    board* gamestate = new board;
+    Board* gamestate = new Board;
     Player* whiteComp = new Player();
     Player* blackComp = new Player();
     colour movingSide;

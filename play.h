@@ -20,14 +20,14 @@ namespace chessCore {
  *  \class Player
  *  \brief Represents the computer player in a game of chess.
  *
- *  The Player class wraps around the \ref board class to provide an interface
+ *  The Player class wraps around the \ref Board class to provide an interface
  *  for the user to play against. It will compute the engine's move, keep track
  *  of the move history, and maintain a transposition table for lookup to speed
  *  up search.
  *
  *
  */
-class Player : public board {
+class Player : public Board {
  private:
     /**
      *  A table storing the nodes that have been visited in previous searches.
@@ -86,31 +86,31 @@ class Player : public board {
      *
      *  \param startPositions   An array of 12 bitboards representing the
      *                          positions of the pieces.
-     *                          See \ref board::pieceBoards.
+     *                          See \ref Board::pieceBoards.
      *  \param castling         An array of 4 booleans representing the
      *                          castling rights for each side. See
-     *                          \ref board::castleWhiteKingSide,
-     *                          \ref board::castleWhiteQueenSide,
-     *                          \ref board::castleBlackKingSide and
-     *                          \ref board::castleBlackQueenSide.
+     *                          \ref Board::castleWhiteKingSide,
+     *                          \ref Board::castleWhiteQueenSide,
+     *                          \ref Board::castleBlackKingSide and
+     *                          \ref Board::castleBlackQueenSide.
      *  \param ep               A boolean indicating whether the last move
      *                          was a double pawn push. See
-     *                          \ref board::lastMoveDoublePawnPush.
+     *                          \ref Board::lastMoveDoublePawnPush.
      *  \param dpp              An integer represents the file of the pawn
      *                          that was double-pushed (if relevant).
-     *                          See \ref board::dPPFile.
+     *                          See \ref Board::dPPFile.
      *  \param clock            The half-move clock.
-     *                          See \ref board::halfMoveClock.
+     *                          See \ref Board::halfMoveClock.
      *  \param full_clock       The full-move clock.
-     *                          See \ref board::fullMoveClock.
+     *                          See \ref Board::fullMoveClock.
      *  \param side             The side whose turn it is.
- *                              See \ref board::sideToMove.
+ *                              See \ref Board::sideToMove.
      *  \param open_val         Evaluation corresponding to the opening.
-     *                          See \ref board::opening_value.
+     *                          See \ref Board::opening_value.
      *  \param end_val          Evaluation corresponding to the endgame.
-     *                          See \ref board::endgame_value.
+     *                          See \ref Board::endgame_value.
      *  \param hash             The Zobrist hash.
-     *                          See \ref board::hash_value.
+     *                          See \ref Board::hash_value.
      */
     Player(bitboard * startPositions, bool * castling, bool ep, int dpp,
              uint8_t clock, uint8_t full_clock, colour side,
@@ -222,7 +222,7 @@ class Player : public board {
      *  \param child            A pointer to the board to transform.
      *  \param move             The move to make.
      */
-    void makeChild(board* child, move_t move) const;    // private?
+    void makeChild(Board* child, move_t move) const;    // private?
 
     /**
      *  Prompt the user for a move.

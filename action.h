@@ -14,7 +14,7 @@ namespace chessCore {
  *  \param move             The move to be made.
  *  \return                 The board after the move is made.
  */
-board doMove(board startBoard, move_t move);
+Board doMove(Board startBoard, move_t move);
 
 /**
  *  Perform a move and return a pointer to the resultant board object.
@@ -23,7 +23,7 @@ board doMove(board startBoard, move_t move);
  *  \param move             The move to be made.
  *  \return                 A pointer to the board after the move is made.
  */
-board* doMove(board* startBoard, move_t move);
+Board* doMove(Board* startBoard, move_t move);
 
 }  // namespace chessCore
 

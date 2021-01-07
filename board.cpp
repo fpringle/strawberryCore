@@ -43,7 +43,7 @@ bitboard blackKingStart = 0x1000000000000000;
 
 // define class constructors
 
-board::board() {
+Board::Board() {
     // default constructor
 
     // initialise an array of pointers to the piece bitboards
@@ -88,7 +88,7 @@ board::board() {
     hash_value = zobrist_hash();
 }
 
-board::board(bitboard * startPositions, bool * castling, bool ep, int dpp,
+Board::Board(bitboard * startPositions, bool * castling, bool ep, int dpp,
              uint8_t clock, uint8_t full_clock, colour side,
              value_t open_val, value_t end_val, uint64_t hash) {
     // parameterised constructor
@@ -124,7 +124,7 @@ board::board(bitboard * startPositions, bool * castling, bool ep, int dpp,
     hash_value = hash;
 }
 
-board::board(const board& other) {
+Board::Board(const Board& other) {
     // copy constructor
 
     // initialise an array of pointers to the piece bitboards
@@ -161,7 +161,7 @@ board::board(const board& other) {
     hash_value = other.hash_value;
 }
 
-board::board(std::string fen) {
+Board::Board(std::string fen) {
     int j, i = 0;
     for (j = 0; j < 12; j++) pieceBoards[j] = 0;
     int cp = -1;
@@ -316,7 +316,7 @@ board::board(std::string fen) {
 
 // operator overloading - do this with hashes instead?
 
-bool board::operator==(const board& other) const {
+bool Board::operator==(const Board& other) const {
     int i;
 
     for (i = 0; i < 12; i++) {
@@ -363,11 +363,11 @@ bool board::operator==(const board& other) const {
     return true;
 }
 
-bool board::operator!=(const board& other) const {
+bool Board::operator!=(const Board& other) const {
     return !(*this == other);
 }
 
-board& board::operator=(const board& other) {
+Board& Board::operator=(const Board& other) {
 //    bitboard * p = other.pieceBoards;
 //    bitboard * q = pieceBoards;
 
@@ -409,48 +409,48 @@ board& board::operator=(const board& other) {
 
 // get data
 
-void board::getBitboards(bitboard * dest) const {
+void Board::getBitboards(bitboard * dest) const {
     const bitboard * p = pieceBoards;
 
     while (p < pieceBoards + 12) *dest++ = *p++;
 }
 
-void board::getCastlingRights(bool * dest) const {
+void Board::getCastlingRights(bool * dest) const {
     dest[0] = castleWhiteKingSide;
     dest[1] = castleWhiteQueenSide;
     dest[2] = castleBlackKingSide;
     dest[3] = castleBlackQueenSide;
 }
 
-void board::getEP(bool * dest) const {
+void Board::getEP(bool * dest) const {
     *dest = lastMoveDoublePawnPush;
 }
 
-void board::getdPPFile(int * dest) const {
+void Board::getdPPFile(int * dest) const {
     *dest = dPPFile;
 }
 
-void board::getClock(uint8_t * dest) const {
+void Board::getClock(uint8_t * dest) const {
     *dest = halfMoveClock;
 }
 
-void board::getFullClock(uint8_t * dest) const {
+void Board::getFullClock(uint8_t * dest) const {
     *dest = fullMoveClock;
 }
 
-void board::getSide(colour * dest) const {
+void Board::getSide(colour * dest) const {
     *dest = sideToMove;
 }
 
-void board::getHash(uint64_t * dest) const {
+void Board::getHash(uint64_t * dest) const {
     *dest = hash_value;
 }
 
-int board::num_pieces_left(colourPiece cp) const {
+int Board::num_pieces_left(colourPiece cp) const {
     return count_bits_set(pieceBoards[cp]);
 }
 
-int board::num_pieces_left() const {
+int Board::num_pieces_left() const {
     int ret = 0;
     for (int i = 0; i < 12; i++) {
         ret += num_pieces_left(colourPiece(i));
@@ -480,7 +480,7 @@ void print_bb(bitboard bb, char c, std::ostream& cout) {
 
 // display the current state of the board
 
-void board::print_board(std::ostream& cout) const {
+void Board::print_board(std::ostream& cout) const {
     // uppercase = black, lowercase = white
     int i, j;
     bitboard tmp;
@@ -508,7 +508,7 @@ void board::print_board(std::ostream& cout) const {
     cout << "\n   A B C D E F G H\n";
 }
 
-void board::print_board_flipped(std::ostream& cout) const {
+void Board::print_board_flipped(std::ostream& cout) const {
     // uppercase = black, lowercase = white
     int i, j;
     bitboard tmp;
@@ -536,7 +536,7 @@ void board::print_board_flipped(std::ostream& cout) const {
     cout << "\n   H G F E D C B A\n";
 }
 
-void board::print_all(std::ostream& cout) const {
+void Board::print_all(std::ostream& cout) const {
     print_board(cout);
 
     cout << "\nSide to move:\n";
@@ -574,7 +574,7 @@ void board::print_all(std::ostream& cout) const {
     cout << "  " << + fullMoveClock << "\n";
 }
 
-std::ostream& operator<<(std::ostream& out, const board& brd) {
+std::ostream& operator<<(std::ostream& out, const Board& brd) {
     // uppercase = black, lowercase = white
     int i, j;
     bitboard pieceBoards[12];
@@ -604,7 +604,7 @@ std::ostream& operator<<(std::ostream& out, const board& brd) {
     return out;
 }
 
-std::string board::FEN() const {
+std::string Board::FEN() const {
     int count;
     std::stringstream ss;
     int i, j, k;
@@ -673,20 +673,20 @@ std::string board::FEN() const {
     return ss.str();
 }
 
-void board::set_side(colour side) {
+void Board::set_side(colour side) {
     sideToMove = side;
 }
 
-void board::update_value() {
+void Board::update_value() {
     opening_value = evaluateOpening();
     endgame_value = evaluateEndgame();
 }
 
-void board::update_hash() {
+void Board::update_hash() {
     hash_value = zobrist_hash();
 }
 
-bitboard board::whiteSquares() const {
+bitboard Board::whiteSquares() const {
     int i;
     bitboard ret = 0;
 
@@ -694,7 +694,7 @@ bitboard board::whiteSquares() const {
     return ret;
 }
 
-bitboard board::blackSquares() const {
+bitboard Board::blackSquares() const {
     int i;
     bitboard ret = 0;
 
@@ -702,11 +702,11 @@ bitboard board::blackSquares() const {
     return ret;
 }
 
-bitboard board::takenSquares() const {
+bitboard Board::takenSquares() const {
     return (whiteSquares() | blackSquares());
 }
 
-bitboard board::emptySquares() const {
+bitboard Board::emptySquares() const {
     return ( ~takenSquares());
 }
 

@@ -92,7 +92,7 @@ void init_keys(uint64_t seed) {
 
 // zobrist hash
 
-uint64_t board::zobrist_hash() const {
+uint64_t Board::zobrist_hash() const {
     uint64_t ret = 0;
     int cP;
     bitboard tmp;
@@ -121,7 +121,7 @@ uint64_t board::zobrist_hash() const {
     return ret;
 }
 
-uint64_t board::childHash(move_t move) const {
+uint64_t Board::childHash(move_t move) const {
     int i;
     uint16_t fromSquare = from_sq(move);
     uint16_t toSquare = to_sq(move);
